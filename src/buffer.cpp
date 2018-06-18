@@ -548,9 +548,9 @@ void MultiLine::matchCurrentParen() {
         cursor.at(i) = loc;
     }
     if(isOpen)
-        lineDown();
-    else
         lineUp();
+    else
+        lineDown();
     cursor.removeDuplicates();
 }
 

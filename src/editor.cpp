@@ -179,8 +179,8 @@ void Editor::run() {
     while(true) {
         auto& kcMap = getBuff().getKeyCmdMap();
         int status = pollEvent();
-        DEBUG("Editor:run: status=%d meta=%u key=%u keystr='%s'\n", status,
-              input.mk.getMeta(), input.mk.getKey(), input.mk.toStr().c_str());
+        // DEBUG("Editor:run: status=%d meta=%u key=%u keystr='%s'\n", status,
+        //       input.mk.getMeta(), input.mk.getKey(), input.mk.toStr().c_str());
         if(status == Input::UndefinedSequence) {
             MESSAGE("Editor:run:: Undefined sequence: %s\n",
                     input.getOldSeq().c_str());
@@ -451,8 +451,8 @@ std::string Editor::prompt(const std::string& msg) {
     while(!quitPromptLoop) {
         auto& kcMap = cmBar.getKeyCmdMap();
         int status = pollEvent();
-        DEBUG("Editor:prompt: status=%d meta=%u key=%u keystr='%s'\n", status,
-              input.mk.getMeta(), input.mk.getKey(), input.mk.toStr().c_str());
+        // DEBUG("Editor:prompt: status=%d meta=%u key=%u keystr='%s'\n", status,
+        //       input.mk.getMeta(), input.mk.getKey(), input.mk.toStr().c_str());
         if(status == Input::UndefinedSequence) {
             MESSAGE("Editor:prompt:: Undefined sequence: %s\n",
                     input.getOldSeq().c_str());
@@ -480,7 +480,6 @@ std::string Editor::prompt(const std::string& msg) {
         ret.clear();
     cmBar.clear();
     cmBar.setMinLoc(0);
-    DEBUG("Editor:prompt: return=%s\n", ret.c_str());
     return ret;
 }
 
