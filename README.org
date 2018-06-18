@@ -1,0 +1,48 @@
+* teditor
+While all editors support terminal capabilities, how about we try to have a
+terminal support editor capabilities!? *teditor* is a terminal based editor,
+written in C++, to explore this aspect. Teditor is inspired from [[https://github.com/tomas/eon][eon]].
+* Pre-reqs
+Very minimal set of pre-reqs are needed for this project!
+1. GNU-make (>=4.2.1)
+2. G++ (>= 5.4.0)
+3. mintty (for running the editor)
+4. doxygen (>=1.8.13) (for documentation generation)
+5. curl (for downloading from web)
+* Download and Installation
+Currently, only been tested on cygwin with xterm-256.
+#+BEGIN_SRC bash
+```bash
+$ git clone --recursive https://github.com/teju85/teditor
+$ cd teditor
+$ make -j teditor
+$ ./teditor
+#+END_SRC
+NOTE: If you have customized your minttyrc for the user configured colors,
+then your experience with the default colors may vary!!
+* Third-party stuff
+** googletest
+- Location: tests/googletest
+- https://github.com/googletest/googletest
+- CommitId: 278aba369c41e90e9e77a6f51443beb3692919cf
+- Changes:
+  - only kept googletest/src and googletest/include subdirs
+* Issues/TODOs
+1. support for use-case tests on the editor
+2. Add support for headless mode?
+3. Check out the draw/render issue with S-insert
+4. Support for unicode in Line
+5. how to page when a single line crosses the whole screen!?
+6. Support for mouse events
+7. Remote file handling support
+8. support for substitute in Pcre
+9. Support for syntax highlighting
+10. Support for rectangle mode
+11. support for buffer split on the screen (vertically and horizontally)
+12. Support for file completion in the prompt
+13. Support for prompt history and traversal on it
+14. support for filename-based mode selection
+15. support for indentation
+16. Support for a mode in the buffer
+17. Ctrl-F - search for keywords and jump to the locations
+18. add a find-first-upwards util function
