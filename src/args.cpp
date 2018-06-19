@@ -26,7 +26,8 @@ FileInfo Args::readFileInfo(const std::string& arg) {
 
 Args::Args(int argc, char** argv): quitAfterLoad(false), ttyFile("/dev/tty"),
                                    files(), logLevel(-1), cmdMsgBarHeight(1),
-                                   pageScrollJump(0.5f) {
+                                   cmdMsgBarActiveHeight(5),
+                                   pageScrollJump(0.75f) {
     for(int i=1;i<argc;++i) {
         if(!strcmp(argv[i], "-Q")) {
             quitAfterLoad = true;
@@ -40,8 +41,12 @@ Args::Args(int argc, char** argv): quitAfterLoad(false), ttyFile("/dev/tty"),
             ttyFile = argv[i];
         } else if(!strcmp(argv[i], "-cmd-msg-bar-height")) {
             ++i;
-            ASSERT(i < argc, "'-tty' option expects an argument!");
+            ASSERT(i < argc, "'-cmd-msg-bar-height' expects an argument!");
             cmdMsgBarHeight = str2num(argv[i]);
+        } else if(!strcmp(argv[i], "-cmd-msg-bar-active-height")) {
+            ++i;
+            ASSERT(i < argc, "'-cmd-msg-bar-active-height' expects an argument!");
+            cmdMsgBarActiveHeight = str2num(argv[i]);
         } else if(!strcmp(argv[i], "-page-scroll-jump")) {
             ++i;
             ASSERT(i < argc, "'-page-scroll-jump' option expects an argument!");

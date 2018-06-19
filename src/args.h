@@ -17,7 +17,7 @@ struct Args {
     bool quitAfterLoad;
     std::string ttyFile;
     std::vector<FileInfo> files;
-    int logLevel, cmdMsgBarHeight;
+    int logLevel, cmdMsgBarHeight, cmdMsgBarActiveHeight;
     float pageScrollJump;
 
 private:
