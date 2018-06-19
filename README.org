@@ -61,7 +61,7 @@ $ make -j gtests
 19. Support for file completion in the prompt
 20. support for multiple lines in cmd-msg-bar
 21. command to quickly search through file history
-22. option to filter through this string vector, during the draw call
-23. option to enable multi-line cmd-msg-bar, if chosen the string vector path
-24. have option to print other lines as well from an external string vector in cmd-msg-bar
-25. support for enabling/disabling logging during build
+22. support for enabling/disabling logging during build
+23. fix the issue when cursor is in the cmBar expansion region!
+24. option to filter through this string vector, during the draw call
+25. pass options for the M-x command

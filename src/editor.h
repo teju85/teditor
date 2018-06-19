@@ -32,7 +32,8 @@ public:
     CmdMsgBar& getCmBar() { return cmBar; }
     MultiLine& getMessagesBuff();
     bool isRegionActive() const { return getBuff().isRegionActive(); }
-    std::string prompt(const std::string& msg, KeyCmdMap* kcMap=nullptr);
+    std::string prompt(const std::string& msg, KeyCmdMap* kcMap=nullptr,
+                       const std::vector<std::string>* opts=nullptr);
     bool promptYesNo(const std::string& msg);
     std::string promptEnum(const std::string& msg, OptionMap& opts);
     void load(const std::string& file, int line);

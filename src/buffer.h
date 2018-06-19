@@ -292,10 +292,15 @@ public:
     void clear();
     void setMinLoc(int loc) { minLoc = loc; }
     int getMinStartLoc() const override { return minLoc; }
+    void setOptions(const std::vector<std::string>& opts) { options = opts; }
+    void clearOptions() { options.clear(); }
+    bool usingOptions() const { return !options.empty(); }
 
 private:
-    // useful during prompts, so as to not cross into the message itself!
+    /** useful during prompts, so as to not cross into the message itself! */
     int minLoc;
+    /** external vector (usually options) that need to be rendered */
+    std::vector<std::string> options;
 };
 
 }; // end namespace teditor

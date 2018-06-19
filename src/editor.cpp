@@ -77,9 +77,8 @@ std::vector<std::string> Editor::fileHistoryToString() const {
     return fileshist.toString();
 }
 
-///@todo: only use multi in case of using external vector for rendering
 int Editor::cmBarHeight() const {
-    return false? args.cmdMsgBarMultiHeight : args.cmdMsgBarHeight;
+    return cmBar.usingOptions()? args.cmdMsgBarMultiHeight : args.cmdMsgBarHeight;
 }
 
 const AttrColor& Editor::getColor(const std::string& name) const {
@@ -442,10 +441,15 @@ std::string Editor::promptEnum(const std::string& msg, OptionMap& opts) {
     return opts[itr->second];
 }
 
-std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap) {
+std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
+                           const std::vector<std::string>* opts) {
+    selectCmBar();
+    if(kcMap == nullptr)
+        kcMap = &(cmBar.getKeyCmdMap());
+    if(opts != nullptr)
+        cmBar.setOptions(*opts);
     int msgLen = (int)msg.size();
     cmBar.setMinLoc(msgLen);
-    selectCmBar();
     mlResize(&getBuff());
     quitPromptLoop = cancelPromptLoop = false;
     cmBar.insert(msg.c_str());
@@ -453,8 +457,6 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap) {
     TrieStatus state = TS_NULL;
     draw();
     render();
-    if(kcMap == nullptr)
-        kcMap = &(cmBar.getKeyCmdMap());
     while(!quitPromptLoop) {
         int status = pollEvent();
         // DEBUG("Editor:prompt: status=%d meta=%u key=%u keystr='%s'\n", status,
@@ -486,6 +488,8 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap) {
     cmBar.setMinLoc(0);
     unselectCmBar();
     mlResize(&getBuff());
+    if(opts != nullptr)
+        cmBar.clearOptions();
     return ret;
 }
 
