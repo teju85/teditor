@@ -297,7 +297,8 @@ void MultiLine::resize(const Pos2d<int>& start, const Pos2d<int>& dim) {
     screenStart = start;
     screenDim = dim;
     // last line is kept for status bar for this buffer
-    screenDim.y -= 1;
+    --screenDim.y;
+    lineUp();
 }
 
 void MultiLine::load(const std::string& file, int line) {
