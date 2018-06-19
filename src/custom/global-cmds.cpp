@@ -606,4 +606,11 @@ CMD_UNDO3(DownloadBuffer, "download-to-buffer", Positions before, Positions afte
     };
 }
 
+CMD_NO_UNDO(MakeDir, "mkdir") {
+    auto& ed = Editor::getInstance();
+    auto res = ed.prompt("Dir name: ");
+    if(!res.empty())
+        makeDir(res);
+}
+
 } // end namespace teditor

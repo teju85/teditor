@@ -44,6 +44,7 @@ bool operator>(const struct timeval& ta, const struct timeval& tb);
 bool isDir(const char* f);
 bool isFile(const char* f);
 bool isReadOnly(const char* f);
+void makeDir(const std::string& d);
 
 bool isRemote(const char* f);
 

@@ -55,6 +55,10 @@ bool isReadOnly(const char* f) {
     return (access(f, R_OK) == 0) && (access(f, W_OK) < 0);
 }
 
+void makeDir(const std::string& d) {
+    mkdir(d.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+}
+
 bool isRemote(const char* f) {
     return !strncmp(f, "/ssh:", 5);
 }
