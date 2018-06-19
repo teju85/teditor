@@ -57,4 +57,4 @@ $ make -j gtests
 15. Support for a mode in the buffer
 16. Ctrl-F - search for keywords and jump to the locations
 17. add a find-first-upwards util function
-18. fix the issue when cursor is in the cmBar expansion region!
+18. Support for file completion in the prompt
