@@ -852,7 +852,12 @@ void CmdMsgBar::drawBuffer(Editor& ed) {
     // draw current buffer
     int h = screenStart.y + screenDim.y;
     int len = length();
-    for(int y=screenStart.y,idx=startLine;y<h&&idx<len;++idx) {
+    // first line is always the cmd prompt!
+    int y = lines[0].draw(screenStart.y, screenStart.x, screenDim.x, ed, 0,
+                            regions, cursor, "cmdmsgbarfg", "cmdmsgbarbg");
+    // the remaining ones must be page-able
+    int idx = startLine == 0? startLine + 1 : startLine;
+    for(;y<h&&idx<len;++idx) {
         y = lines[idx].draw(y, screenStart.x, screenDim.x, ed, idx, regions,
                             cursor, "cmdmsgbarfg", "cmdmsgbarbg");
     }
