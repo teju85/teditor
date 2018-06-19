@@ -11,6 +11,8 @@
 #include <sys/wait.h>
 #include <dirent.h>
 #include <fcntl.h>
+#include <fstream>
+#include <iostream>
 
 
 namespace teditor {
@@ -71,8 +73,12 @@ bool isRemote(const char* f) {
 }
 
 std::string env(const char* s) {
-    std::string ret(getenv(s));
-    return ret;
+    auto* val = getenv(s);
+    return val == nullptr? "" : val;
+}
+
+std::string env(const std::string& s) {
+    return env(s.c_str());
 }
 
 std::string slurp(const char* file) {
@@ -95,6 +101,22 @@ std::string slurp(const char* file) {
 
 std::string slurp(const std::string& file) {
     return slurp(file.c_str());
+}
+
+std::vector<std::string> slurpToArr(const char* file) {
+    std::vector<std::string> ret;
+    std::fstream fp;
+    fp.open(file, std::fstream::in);
+    ASSERT(fp.is_open(), "Failed to open file '%s'!", file);
+    std::string currLine;
+    while(std::getline(fp, currLine, '\n')) {
+        ret.push_back(currLine);
+    }
+    return ret;
+}
+
+std::vector<std::string> slurpToArr(const std::string& file) {
+    return slurpToArr(file.c_str());
 }
 
 bool startsWith(const char* s1, int len1, const char* s2) {
@@ -325,16 +347,11 @@ char getMatchingParen(char c) {
     };
 }
 
-std::string getEnv(const std::string& env) {
-    auto* var = getenv(env.c_str());
-    return var == nullptr? "" : var;
-}
-
 std::string expandEnvVars(const std::string& str,
                           const std::vector<std::string>& vars) {
     std::string ret(str);
     for(const auto& var : vars) {
-        auto val = getEnv(var);
+        auto val = env(var);
         auto name = "$" + var;
         size_t pos = 0;
         while(pos < ret.size()) {
@@ -345,6 +362,23 @@ std::string expandEnvVars(const std::string& str,
         }
     }
     return ret;
+}
+
+FileInfo readFileInfo(const std::string& arg) {
+    std::string file;
+    int line;
+    const auto tokens = split(arg, ':');
+    if(tokens.size() == 1U) {
+        file = tokens[0];
+        line = 0;
+    } else if(tokens.size() == 2U) {
+        file = tokens[0];
+        line = str2num(tokens[1]);
+    } else {
+        ASSERT(false, "File: Bad arg passed. Usage: <file>[:<line>]. '%s'!\n",
+               arg.c_str());
+    }
+    return FileInfo(file, line);
 }
 
 } // end namespace teditor

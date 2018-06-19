@@ -4,12 +4,10 @@
 #include <string>
 #include "colors.h"
 #include <utility>
-#include "gtest/gtest_prod.h"
+#include "utils.h"
 
 
 namespace teditor {
-
-typedef std::pair<std::string, int> FileInfo;
 
 struct Args {
     Args(int argc, char** argv);
@@ -20,11 +18,7 @@ struct Args {
     std::vector<FileInfo> files;
     int logLevel, cmdMsgBarHeight, cmdMsgBarActiveHeight;
     float pageScrollJump;
-
-private:
-    FileInfo readFileInfo(const std::string& arg);
-
-    FRIEND_TEST(Args, ReadFileInfo);
+    int maxFileHistory;
 };
 
 } // end namespace teditor

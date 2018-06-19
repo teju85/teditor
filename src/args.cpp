@@ -1,28 +1,10 @@
 #include "args.h"
-#include "utils.h"
 #include <cstring>
 #include "logger.h"
 #include <stdlib.h>
 
 
 namespace teditor {
-
-FileInfo Args::readFileInfo(const std::string& arg) {
-    std::string file;
-    int line;
-    const auto tokens = split(arg, ':');
-    if(tokens.size() == 1U) {
-        file = tokens[0];
-        line = 0;
-    } else if(tokens.size() == 2U) {
-        file = tokens[0];
-        line = str2num(tokens[1]);
-    } else {
-        ASSERT(false, "File: Bad arg passed. Usage: <file>[:<line>]. '%s'!\n",
-               arg.c_str());
-    }
-    return FileInfo(file, line);
-}
 
 std::string Args::wrtHomeFolder(const std::string& s) {
     return homeFolder + '/' + s;
@@ -32,7 +14,7 @@ Args::Args(int argc, char** argv): quitAfterLoad(false), ttyFile("/dev/tty"),
                                    homeFolder("$HOME/.teditor"), files(),
                                    logLevel(-1), cmdMsgBarHeight(1),
                                    cmdMsgBarActiveHeight(6),
-                                   pageScrollJump(0.75f) {
+                                   pageScrollJump(0.75f), maxFileHistory(20) {
     for(int i=1;i<argc;++i) {
         if(!strcmp(argv[i], "-Q")) {
             quitAfterLoad = true;
@@ -60,6 +42,10 @@ Args::Args(int argc, char** argv): quitAfterLoad(false), ttyFile("/dev/tty"),
             ++i;
             ASSERT(i < argc, "'-page-scroll-jump' option expects an argument!");
             pageScrollJump = str2real(argv[i]);
+        } else if(!strcmp(argv[i], "-max-file-history")) {
+            ++i;
+            ASSERT(i < argc, "-max-file-history' option expects an argument!");
+            maxFileHistory = str2num(argv[i]);
         } else {
             if(argv[i][0] == '-')
                 ASSERT(false, "Invalid arg passed! '%s'", argv[i]);

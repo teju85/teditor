@@ -50,8 +50,14 @@ void makeDir(const std::string& d);
 bool isRemote(const char* f);
 
 std::string env(const char* s);
+std::string env(const std::string& s);
+std::string expandEnvVars(const std::string& str,
+                          const std::vector<std::string>& vars);
+
 std::string slurp(const char* file);
 std::string slurp(const std::string& file);
+std::vector<std::string> slurpToArr(const char* file);
+std::vector<std::string> slurpToArr(const std::string& file);
 
 bool startsWith(const char* s1, int len, const char* s2);
 std::vector<std::string> split(const std::string &s, char delim);
@@ -115,9 +121,8 @@ bool isCloseParen(char c);
 bool isParen(char);
 char getMatchingParen(char c);
 
+typedef std::pair<std::string, int> FileInfo;
 
-std::string getEnv(const std::string& env);
-std::string expandEnvVars(const std::string& str,
-                          const std::vector<std::string>& vars);
+FileInfo readFileInfo(const std::string& arg);
 
 } // end namespace teditor

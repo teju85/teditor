@@ -56,6 +56,14 @@ TEST(Utils, Slurp) {
     ASSERT_THROW(slurp("i_dont_exist"), std::runtime_error);
 }
 
+TEST(Utils, SlurpToArr) {
+    auto arr = slurpToArr("tests/samples/multiline.txt");
+    ASSERT_EQ(3U, arr.size());
+    ASSERT_EQ("* Hello", arr[0]);
+    ASSERT_EQ("Testing123", arr[1]);
+    ASSERT_EQ("for multi-line buffer!", arr[2]);
+}
+
 TEST(Utils, StartsWith) {
     ASSERT_TRUE(startsWith("Hello World!", 12, "Hell"));
     ASSERT_FALSE(startsWith("Hello World!", 12, "ell"));
@@ -196,6 +204,13 @@ TEST(Utils, ExpandEnvVars) {
     ASSERT_EQ("test/", expandEnvVars("$TEST/", {"TEST"}));
     ASSERT_EQ("test/some/test", expandEnvVars("$TEST/some/test", {"TEST"}));
     ASSERT_EQ("$TEST/", expandEnvVars("$TEST/", {"SOME"}));
+}
+
+TEST(Utils, ReadFileInfo) {
+    FileInfo fi = readFileInfo("README.org:10");
+    ASSERT_EQ("README.org", fi.first);
+    ASSERT_EQ(10, fi.second);
+    ASSERT_THROW(readFileInfo("README.org:10:10"), std::runtime_error);
 }
 
 } // end namespace teditor
