@@ -135,9 +135,8 @@ int Line::numLinesNeeded(int wid) const {
 
 
 void Regions::enable(const Positions& p) {
-    for(const auto& l : p) {
+    for(const auto& l : p)
         locs.push_back(l);
-    }
 }
 
 bool Regions::isInside(int y, int x, const Cursor& cu, int i) const {
@@ -176,10 +175,9 @@ bool Regions::isInside(int y, int x, const Cursor& cu) const {
     if(locs.empty())
         return false;
     int len = cu.count();
-    for(int i=0;i<len;++i) {
+    for(int i=0;i<len;++i)
         if(isInside(y, x, cu, i))
             return true;
-    }
     return false;
 }
 
