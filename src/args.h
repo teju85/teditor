@@ -13,9 +13,10 @@ typedef std::pair<std::string, int> FileInfo;
 
 struct Args {
     Args(int argc, char** argv);
+    std::string wrtHomeFolder(const std::string& s);
 
     bool quitAfterLoad;
-    std::string ttyFile;
+    std::string ttyFile, homeFolder;
     std::vector<FileInfo> files;
     int logLevel, cmdMsgBarHeight, cmdMsgBarActiveHeight;
     float pageScrollJump;

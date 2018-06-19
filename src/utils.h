@@ -44,6 +44,7 @@ bool operator>(const struct timeval& ta, const struct timeval& tb);
 bool isDir(const char* f);
 bool isFile(const char* f);
 bool isReadOnly(const char* f);
+bool dirExists(const std::string& f);
 void makeDir(const std::string& d);
 
 bool isRemote(const char* f);
@@ -113,5 +114,10 @@ bool isOpenParen(char c);
 bool isCloseParen(char c);
 bool isParen(char);
 char getMatchingParen(char c);
+
+
+std::string getEnv(const std::string& env);
+std::string expandEnvVars(const std::string& str,
+                          const std::vector<std::string>& vars);
 
 } // end namespace teditor

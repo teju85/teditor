@@ -55,8 +55,15 @@ bool isReadOnly(const char* f) {
     return (access(f, R_OK) == 0) && (access(f, W_OK) < 0);
 }
 
+bool dirExists(const std::string& f) {
+    return !isFile(f.c_str()) && isDir(f.c_str());
+}
+
 void makeDir(const std::string& d) {
-    mkdir(d.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    if(dirExists(d))
+        return;
+    int ret = mkdir(d.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    ASSERT(ret >= 0, "makeDir: '%s' failed!", d.c_str());
 }
 
 bool isRemote(const char* f) {
@@ -316,6 +323,28 @@ char getMatchingParen(char c) {
     case '>': return '<';
     default:  return c;
     };
+}
+
+std::string getEnv(const std::string& env) {
+    auto* var = getenv(env.c_str());
+    return var == nullptr? "" : var;
+}
+
+std::string expandEnvVars(const std::string& str,
+                          const std::vector<std::string>& vars) {
+    std::string ret(str);
+    for(const auto& var : vars) {
+        auto val = getEnv(var);
+        auto name = "$" + var;
+        size_t pos = 0;
+        while(pos < ret.size()) {
+            pos = ret.find(name, pos);
+            if(pos == std::string::npos)
+                break;
+            ret.replace(pos, name.size(), val);
+        }
+    }
+    return ret;
 }
 
 } // end namespace teditor

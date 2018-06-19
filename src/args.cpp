@@ -24,9 +24,14 @@ FileInfo Args::readFileInfo(const std::string& arg) {
     return FileInfo(file, line);
 }
 
+std::string Args::wrtHomeFolder(const std::string& s) {
+    return homeFolder + '/' + s;
+}
+
 Args::Args(int argc, char** argv): quitAfterLoad(false), ttyFile("/dev/tty"),
-                                   files(), logLevel(-1), cmdMsgBarHeight(1),
-                                   cmdMsgBarActiveHeight(5),
+                                   homeFolder("$HOME/.teditor"), files(),
+                                   logLevel(-1), cmdMsgBarHeight(1),
+                                   cmdMsgBarActiveHeight(6),
                                    pageScrollJump(0.75f) {
     for(int i=1;i<argc;++i) {
         if(!strcmp(argv[i], "-Q")) {
@@ -39,6 +44,10 @@ Args::Args(int argc, char** argv): quitAfterLoad(false), ttyFile("/dev/tty"),
             ++i;
             ASSERT(i < argc, "'-tty' option expects an argument!");
             ttyFile = argv[i];
+        } else if(!strcmp(argv[i], "-home")) {
+            ++i;
+            ASSERT(i < argc, "'-home' option expects an argument!");
+            homeFolder = argv[i];
         } else if(!strcmp(argv[i], "-cmd-msg-bar-height")) {
             ++i;
             ASSERT(i < argc, "'-cmd-msg-bar-height' expects an argument!");
@@ -58,6 +67,8 @@ Args::Args(int argc, char** argv): quitAfterLoad(false), ttyFile("/dev/tty"),
         }
     }
     Logger::setLevel(logLevel);
+    homeFolder = expandEnvVars(homeFolder, {"HOME"});
+    makeDir(homeFolder);
 }
 
 }; // end namespace teditor

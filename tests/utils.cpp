@@ -191,4 +191,11 @@ TEST(Utils, Paren) {
     ASSERT_FALSE(isCloseParen('^'));
 }
 
+TEST(Utils, ExpandEnvVars) {
+    setenv("TEST", "test", 1);
+    ASSERT_EQ("test/", expandEnvVars("$TEST/", {"TEST"}));
+    ASSERT_EQ("test/some/test", expandEnvVars("$TEST/some/test", {"TEST"}));
+    ASSERT_EQ("$TEST/", expandEnvVars("$TEST/", {"SOME"}));
+}
+
 } // end namespace teditor
