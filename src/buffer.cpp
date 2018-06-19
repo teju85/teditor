@@ -858,20 +858,6 @@ void CmdMsgBar::drawBuffer(Editor& ed) {
     }
 }
 
-void CmdMsgBar::insert(const char* str) {
-    auto& culoc = cursor.at(0);
-    auto& line = lines[culoc.y];
-    line.insert(str, culoc.x);
-    culoc.x += strlen(str);
-}
-
-void CmdMsgBar::insert(char c) {
-    auto& culoc = cursor.at(0);
-    auto& line = lines[culoc.y];
-    line.insert(c, culoc.x);
-    ++culoc.x;
-}
-
 void CmdMsgBar::clear() {
     auto& culoc = cursor.at(0);
     auto& line = lines[culoc.y];

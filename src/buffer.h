@@ -283,8 +283,6 @@ public:
     CmdMsgBar();
     void resize(const Pos2d<int>& start, const Pos2d<int>& dim);
     void load(const std::string& file, int line=0) {}
-    void insert(char c);
-    void insert(const char* str);
     void drawBuffer(Editor& ed);
     void drawStatusBar(Editor& ed) {}
     void save() {}
