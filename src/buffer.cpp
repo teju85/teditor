@@ -831,7 +831,7 @@ int Line::findLastNotOf(const std::string& str, int pos) const {
 
 
 CmdMsgBar::CmdMsgBar(): MultiLine(), minLoc(0) {
-    populateKeyMap<PromptKeys>(kcMap);
+    populateKeyMap<PromptKeys>(kcMap, true);
 }
 
 void CmdMsgBar::resize(const Pos2d<int>& start, const Pos2d<int>& dim) {

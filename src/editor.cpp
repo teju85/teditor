@@ -434,15 +434,17 @@ std::string Editor::promptForEnum(const std::string& msg, OptionMap& opts) {
     m += ": ";
     do {
         const auto res = prompt(m);
+        // cancel requested
+        if(res.empty())
+            break;
         const auto itr = letters.find(res[0]);
         if(itr != letters.end())
             return opts[itr->second];
     } while(true);
-    /// to keep compiler happy!
     return "";
 }
 
-std::string Editor::prompt(const std::string& msg) {
+std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap) {
     int msgLen = (int)msg.size();
     cmBar.setMinLoc(msgLen);
     selectCmBar();
@@ -453,8 +455,9 @@ std::string Editor::prompt(const std::string& msg) {
     TrieStatus state = TS_NULL;
     draw();
     render();
+    if(kcMap == nullptr)
+        kcMap = &(cmBar.getKeyCmdMap());
     while(!quitPromptLoop) {
-        auto& kcMap = cmBar.getKeyCmdMap();
         int status = pollEvent();
         // DEBUG("Editor:prompt: status=%d meta=%u key=%u keystr='%s'\n", status,
         //       input.mk.getMeta(), input.mk.getKey(), input.mk.toStr().c_str());
@@ -466,14 +469,13 @@ std::string Editor::prompt(const std::string& msg) {
             break;
         if(input.type == Event_Key) {
             currKey = input.mk.toStr();
-            state = kcMap.traverse(currKey);
+            state = kcMap->traverse(currKey);
             if(state == TS_LEAF) {
-                std::string cmd = kcMap.getCmd();
+                std::string cmd = kcMap->getCmd();
                 runCmd(cmd);
-                kcMap.resetTraversal();
-            } else if(state == TS_NULL) {
-                kcMap.resetTraversal();
-            }
+                kcMap->resetTraversal();
+            } else if(state == TS_NULL)
+                kcMap->resetTraversal();
         }
         draw();
         render();

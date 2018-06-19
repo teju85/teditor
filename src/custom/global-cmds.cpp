@@ -509,6 +509,8 @@ CMD_NO_UNDO(BrowserSearch, "browser-search") {
     opts["youtube"] = "https://www.youtube.com/results?search_query=\"%s\"";
     auto& ed = Editor::getInstance();
     auto command = ed.promptForEnum("Search:", opts);
+    if(command.empty())
+        return;
     command = "cygstart firefox -private-window '" + command + "'";
     // we'll only look at first cursor!
     auto query = ed.getBuff().regionAsStr();
@@ -517,9 +519,10 @@ CMD_NO_UNDO(BrowserSearch, "browser-search") {
         queryStr = ed.prompt("Query: ");
     else
         queryStr = query[0];
-    char buf[2048];
-    sprintf(buf, command.c_str(), queryStr.c_str());
-    check_output(buf);
+    if(queryStr.empty())
+        return;
+    auto buf = format(command.c_str(), queryStr.c_str());
+    check_output(buf.c_str());
 }
 
 CMD_NO_UNDO(CommandUndo, "command-undo") {
