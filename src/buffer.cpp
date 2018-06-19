@@ -755,9 +755,8 @@ char MultiLine::charAt(const Pos2d<int>& pos) const {
 int MultiLine::totalLinesNeeded() const {
     int end = cursor.at(0).y;
     int len = 0;
-    for(int i=startLine;i<=end;++i) {
+    for(int i=startLine;i<=end;++i)
         len += lines[i].numLinesNeeded(screenDim.x);
-    }
     return len;
 }
 
@@ -835,7 +834,7 @@ int Line::findLastNotOf(const std::string& str, int pos) const {
 }
 
 
-CmdMsgBar::CmdMsgBar(): MultiLine(), minLoc(0), options() {
+CmdMsgBar::CmdMsgBar(): MultiLine(), minLoc(0), options(), optLoc(0) {
     populateKeyMap<PromptKeys>(kcMap, true);
 }
 
@@ -847,8 +846,7 @@ void CmdMsgBar::resize(const Pos2d<int>& start, const Pos2d<int>& dim) {
 
 void CmdMsgBar::drawBuffer(Editor& ed) {
     // first line is always the cmd prompt!
-    int y = drawLine(screenStart.y, lines[0].get(), ed, 0,
-                     "cmdmsgbarfg", "cmdmsgbarbg");
+    int y = drawLine(screenStart.y, lines[0].get(), ed, 0, "cmbarfg", "cmbarbg");
     if(!usingOptions())
         return;
     int len = (int)options.size();
@@ -858,27 +856,53 @@ void CmdMsgBar::drawBuffer(Editor& ed) {
         const auto& line = options[idx];
         if(line.find(str) == std::string::npos)
             continue;
-        y = drawLine(y, line, ed, idx, "cmdmsgbarfg", "cmdmsgbarbg");
+        const char* fg = (idx == optLoc)? "cmbarhighlightfg" : "cmbarfg";
+        const char* bg = (idx == optLoc)? "cmbarhighlightbg" : "cmbarbg";
+        y = drawLine(y, line, ed, idx, fg, bg);
     }
 }
 
+int CmdMsgBar::linesNeeded(const std::string& str, int wid) const {
+    int len = (int)str.size();
+    if(len <= 0)
+        return 1;
+    return (len + wid - 1) / wid;
+}
+
+int CmdMsgBar::totalLinesNeeded() const {
+    int count = MultiLine::totalLinesNeeded();
+    if(!usingOptions())
+        return count;
+    const auto str = getStr();
+    for(int i=startLine;i<=optLoc;++i)
+        count += linesNeeded(options[i], screenDim.x);
+    return count;
+}
+
 void CmdMsgBar::insert(const char* str) {
-    int len = strlen(str);
-    for(int i=0;i<len;++i)
-        insert(str[i]);
+    auto& culoc = cursor.at(0);
+    lines[0].insert(str, culoc.x);
+    culoc.x += strlen(str);
 }
 
 // always insert on the first line!
 void CmdMsgBar::insert(char c) {
     auto& culoc = cursor.at(0);
-    auto& line = lines[0];
-    // if not on the first line, get back to it
-    if(culoc.y != 0) {
-        culoc.y = 0;
-        culoc.x = line.length();
-    }
-    line.insert(c, culoc.x);
+    lines[0].insert(c, culoc.x);
     ++culoc.x;
+    if(!usingOptions())
+        return;
+    // then jump to the first matching option at this point!
+    int len = (int)options.size();
+    const auto str = getStr();
+    for(int idx=startLine;idx<len;++idx) {
+        const auto& line = options[idx];
+        if(line.find(str) != std::string::npos) {
+            optLoc = idx;
+            startLine = idx;
+            break;
+        }
+    }
 }
 
 void CmdMsgBar::clear() {
@@ -887,6 +911,38 @@ void CmdMsgBar::clear() {
     line.erase(0, line.length());
     culoc = {0, 0};
     lineReset();
+}
+
+void CmdMsgBar::clearOptions() {
+    options.clear();
+    optLoc = 0;
+}
+
+void CmdMsgBar::down() {
+    if(!usingOptions())
+        return;
+    int len = (int)options.size();
+    const auto str = getStr();
+    for(int idx=optLoc+1;idx<len;++idx) {
+        if(options[idx].find(str) != std::string::npos) {
+            optLoc = idx;
+            break;
+        }
+    }
+    lineUp();
+}
+
+void CmdMsgBar::up() {
+    if(!usingOptions())
+        return;
+    const auto str = getStr();
+    for(int idx=optLoc-1;idx>=0;--idx) {
+        if(options[idx].find(str) != std::string::npos) {
+            optLoc = idx;
+            break;
+        }
+    }
+    lineDown();
 }
 
 

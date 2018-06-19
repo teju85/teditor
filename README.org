@@ -40,28 +40,26 @@ $ make -j gtests
 - Changes:
   - only kept googletest/src and googletest/include subdirs
 * Issues/TODOs
-1. support for use-case tests on the editor
-2. Add support for headless mode?
-3. Check out the draw/render issue with S-insert
-4. Support for unicode in Line
-5. how to page when a single line crosses the whole screen!?
-6. Support for mouse events
-7. Remote file handling support
-8. support for substitute in Pcre
-9. Support for syntax highlighting
-10. Support for rectangle mode
-11. support for buffer split on the screen (vertically and horizontally)
-12. Support for prompt history and traversal on it
-13. support for filename-based mode selection
-14. support for indentation
-15. Support for a mode in the buffer
-16. Ctrl-F - search for keywords and jump to the locations
-17. add a find-first-upwards util function
-18. command to switch to a specific buffer
-19. Support for file completion in the prompt
-20. support for multiple lines in cmd-msg-bar
-21. command to quickly search through file history
-22. support for enabling/disabling logging during build
-23. fix the issue when cursor is in the cmBar expansion region!
-24. option to navigate/select this string vector through up/down arrows
-25. support for highlighting the current selection while navigation through this string vector
+1. support for enabling/disabling logging during build
+2. support for use-case tests on the editor
+3. Add support for headless mode?
+4. Check out the draw/render issue with S-insert
+5. Support for unicode in Line
+6. how to page when a single line crosses the whole screen!?
+7. Support for mouse events
+8. Remote file handling support
+9. support for substitute in Pcre
+10. Support for syntax highlighting
+11. Support for rectangle mode
+12. support for buffer split on the screen (vertically and horizontally)
+13. Support for prompt history and traversal on it
+14. support for filename-based mode selection
+15. support for indentation
+16. Support for a mode in the buffer
+17. Ctrl-F - search for keywords and jump to the locations
+18. add a find-first-upwards util function
+19. fix the issue when cursor is in the cmBar expansion region!
+20. command to switch to a specific buffer
+21. Support for file completion in the prompt
+22. support for multiple lines in cmd-msg-bar
+23. command to quickly search through file history

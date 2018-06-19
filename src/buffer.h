@@ -175,10 +175,10 @@ public:
     virtual ~MultiLine();
 
     void insertLine(int i);
-    void insert(char c);
+    virtual void insert(char c);
     void insert(char c, int i);
     void insert(const std::vector<std::string>& strs);
-    void insert(const char* buf);
+    virtual void insert(const char* buf);
     std::vector<std::string> remove();
     /**
      * @brief removes regions between start and end
@@ -210,15 +210,15 @@ public:
     /** goto the specified line number */
     void gotoLine(int lineNum);
 
-    void resize(const Pos2d<int>& start, const Pos2d<int>& dim);
-    void load(const std::string& file, int line=0);
+    virtual void resize(const Pos2d<int>& start, const Pos2d<int>& dim);
+    virtual void load(const std::string& file, int line=0);
     int length() const { return (int)lines.size(); }
     Line& at(int idx) { return lines[idx]; }
     const Line& at(int idx) const { return lines[idx]; }
 
-    void drawBuffer(Editor& ed);
+    virtual void drawBuffer(Editor& ed);
     void drawCursor(Editor& ed, const std::string& bg);
-    void drawStatusBar(Editor& ed);
+    virtual void drawStatusBar(Editor& ed);
     int drawLine(int y, const std::string& line, Editor& ed, int lineNum,
                  const std::string& fg, const std::string& bg);
 
@@ -226,13 +226,13 @@ public:
     Cursor& getCursor() { return cursor; }
     const Cursor& getCursor() const { return cursor; }
     void addLine() { lines.push_back(Line()); }
-    int totalLinesNeeded() const;
+    virtual int totalLinesNeeded() const;
     char charAt(const Pos2d<int>& pos) const;
     void lineUp();
     void lineDown();
     void lineReset() { startLine = 0; }
     void lineEnd();
-    void save();
+    virtual void save();
     const std::string& bufferName() const { return buffName; }
     const std::string& getFileName() const { return fileName; }
     const std::string& pwd() const { return dirName; }
@@ -242,7 +242,7 @@ public:
     virtual int getMinStartLoc() const { return 0; }
     int dirModeFileOffset() const { return 24; }
     std::vector<std::string> regionAsStr() const;
-    void clear();
+    virtual void clear();
     void reload();
     void addCommand(CmdPtr c);
     void undo();
@@ -282,26 +282,33 @@ protected:
 class CmdMsgBar: public MultiLine {
 public:
     CmdMsgBar();
-    void resize(const Pos2d<int>& start, const Pos2d<int>& dim);
-    void load(const std::string& file, int line=0) {}
-    void insert(char c);
-    void insert(const char* str);
-    void drawBuffer(Editor& ed);
-    void drawStatusBar(Editor& ed) {}
-    void save() {}
-    void clear();
+    void resize(const Pos2d<int>& start, const Pos2d<int>& dim) override;
+    void insert(char c) override;
+    void insert(const char* str) override;
+    void drawBuffer(Editor& ed) override;
+    void load(const std::string& file, int line=0) override {}
+    void drawStatusBar(Editor& ed) override {}
+    void save() override {}
+    void clear() override;
     void setMinLoc(int loc) { minLoc = loc; }
     int getMinStartLoc() const override { return minLoc; }
+    int totalLinesNeeded() const override;
     void setOptions(const std::vector<std::string>& opts) { options = opts; }
-    void clearOptions() { options.clear(); }
+    void clearOptions();
     bool usingOptions() const { return !options.empty(); }
     std::string getStr() const { return lines[0].get().substr(minLoc); }
+    const std::string& getOptStr() const { return options[optLoc]; }
+    int linesNeeded(const std::string& str, int wid) const;
+    void down();
+    void up();
 
 private:
     /** useful during prompts, so as to not cross into the message itself! */
     int minLoc;
     /** external vector (usually options) that need to be rendered */
     std::vector<std::string> options;
+    /** currently selected option */
+    int optLoc;
 };
 
 }; // end namespace teditor

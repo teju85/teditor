@@ -33,40 +33,43 @@ CMD_NO_UNDO(PromptInsertCharQuit, "prompt-insert-char-quit") {
 }
 
 CMD_NO_UNDO(PromptCursorRight, "prompt-cursor-right") {
-    auto& ed = Editor::getInstance();
-    auto& cmBar = ed.getCmBar();
+    auto& cmBar = Editor::getInstance().getCmBar();
     cmBar.getCursor().right(&cmBar);
 }
 
 CMD_NO_UNDO(PromptCursorLeft, "prompt-cursor-left") {
-    auto& ed = Editor::getInstance();
-    auto& cmBar = ed.getCmBar();
+    auto& cmBar = Editor::getInstance().getCmBar();
     cmBar.getCursor().left(&cmBar);
 }
 
 CMD_NO_UNDO(PromptCursorHome, "prompt-cursor-home") {
-    auto& ed = Editor::getInstance();
-    auto& cmBar = ed.getCmBar();
+    auto& cmBar = Editor::getInstance().getCmBar();
     cmBar.getCursor().home(&cmBar);
 }
 
 CMD_NO_UNDO(PromptCursorLineEnd, "prompt-cursor-line-end") {
-    auto& ed = Editor::getInstance();
-    auto& cmBar = ed.getCmBar();
+    auto& cmBar = Editor::getInstance().getCmBar();
     cmBar.getCursor().lineEnd(&cmBar);
 }
 
 CMD_NO_UNDO(PromptBackspaceChar, "prompt-backspace-char") {
-    auto& ed = Editor::getInstance();
-    auto& cmBar = ed.getCmBar();
+    auto& cmBar = Editor::getInstance().getCmBar();
     cmBar.remove();
 }
 
 CMD_NO_UNDO(PromptDeleteChar, "prompt-delete-char") {
-    auto& ed = Editor::getInstance();
-    auto& cmBar = ed.getCmBar();
+    auto& cmBar = Editor::getInstance().getCmBar();
     cmBar.removeCurrent();
 }
 
-} // end namespace teditor
+CMD_NO_UNDO(PromptOptionsDown, "prompt-options-down") {
+    auto& cmBar = Editor::getInstance().getCmBar();
+    cmBar.down();
+}
 
+CMD_NO_UNDO(PromptOptionsUp, "prompt-options-up") {
+    auto& cmBar = Editor::getInstance().getCmBar();
+    cmBar.up();
+}
+
+} // end namespace teditor

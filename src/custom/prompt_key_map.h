@@ -99,5 +99,7 @@ std::vector<KeyCmdPair> PromptKeys::All = {
     {"home", "prompt-cursor-home"},
     {"end", "prompt-cursor-line-end"},
     {"backspace", "prompt-backspace-char"},
-    {"del", "prompt-delete-char"}
+    {"del", "prompt-delete-char"},
+    {"down", "prompt-options-down"},
+    {"up", "prompt-options-up"}
 };
