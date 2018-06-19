@@ -448,6 +448,16 @@ CMD_NO_UNDO(ScratchBuffer, "scratch-buffer") {
     ed.createScratchBuff(true);
 }
 
+CMD_NO_UNDO(FindFileHistory, "find-file-history") {
+    auto& ed = Editor::getInstance();
+    auto hist = ed.fileHistoryToString();
+    auto file = ed.prompt("Find File History: ", nullptr, &hist);
+    if(file.empty())
+        return;
+    auto fi = readFileInfo(file);
+    ed.load(fi.first, fi.second);
+}
+
 CMD_NO_UNDO(FindFile, "find-file") {
     auto& ed = Editor::getInstance();
     auto file = ed.prompt("Find File: ");
@@ -620,9 +630,8 @@ CMD_NO_UNDO(SwitchBuffer, "buffer-switch") {
     auto& ed = Editor::getInstance();
     auto names = ed.buffNamesToString();
     auto buf = ed.prompt("Buffer: ", nullptr, &names);
-    if(buf.empty())
-        return;
-    ed.switchToBuff(buf);
+    if(!buf.empty())
+        ed.switchToBuff(buf);
 }
 
 } // end namespace teditor

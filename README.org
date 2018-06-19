@@ -60,4 +60,3 @@ $ make -j gtests
 18. add a find-first-upwards util function
 19. fix the issue when cursor is in the cmBar expansion region!
 20. Support for file completion in the prompt
-21. command to quickly search through file history

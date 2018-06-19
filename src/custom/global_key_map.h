@@ -118,6 +118,7 @@ std::vector<KeyCmdPair> GlobalKeys::All = {
     {"C-Q C-O", "kill-other-buffers"},
     {"C-~", "start-region"},
     {"esc", "cancel"},
+    {"F10", "find-file-history"},
     {"F11", "find-file"},
     {"F12", "scratch-buffer"},
     {"M-x", "run-command"},
