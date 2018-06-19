@@ -60,3 +60,5 @@ $ make -j gtests
 18. Support for file completion in the prompt
 19. support for multiple lines in cmd-msg-bar
 20. command to quickly search through file history
+21. command to switch to a specific buffer
+22. Move the Line::draw method inside MultiLine itself

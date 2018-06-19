@@ -59,9 +59,8 @@ Editor::~Editor() {
     outbuff.puts(term.func(Func_ExitKeypad));
     outbuff.puts(term.func(Func_ExitMouse));
     flush();
-    for(auto itr : buffs) {
+    for(auto itr : buffs)
         delete itr;
-    }
     fileshist.prune();
     fileshist.store();
     tcsetattr(inout, TCSAFLUSH, &origTios);
@@ -115,6 +114,7 @@ void Editor::createScratchBuff(bool switchToIt) {
 }
 
 ///@todo: uniquify buffer names!
+///@todo: don't load the same file/dir more than once!
 void Editor::loadFiles() {
     DEBUG("loadFiles: started\n");
     currBuff = 0;
@@ -123,9 +123,8 @@ void Editor::loadFiles() {
         DEBUG("loadFiles: Added default buffer\n");
         return;
     }
-    for(auto& f : args.files) {
+    for(auto& f : args.files)
         load(f.first, f.second);
-    }
     DEBUG("loadFiles: ended\n");
 }
 
@@ -234,9 +233,8 @@ void Editor::run() {
 }
 
 void Editor::checkForModifiedBuffers() {
-    for(auto itr : buffs) {
+    for(auto itr : buffs)
         checkForModifiedBuffer(itr);
-    }
 }
 
 void Editor::checkForModifiedBuffer(MultiLine* mlb) {
@@ -339,9 +337,8 @@ void Editor::resize() {
     const auto& defaultfg = getColor("defaultfg");
     const auto& defaultbg = getColor("defaultbg");
     frontbuff.clear(defaultfg, defaultbg);
-    for(auto itr : buffs) {
+    for(auto itr : buffs)
         mlResize(itr);
-    }
     clearScreen();
 }
 
