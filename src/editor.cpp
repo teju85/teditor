@@ -77,6 +77,13 @@ std::vector<std::string> Editor::fileHistoryToString() const {
     return fileshist.toString();
 }
 
+std::vector<std::string> Editor::buffNamesToString() const {
+    std::vector<std::string> ret;
+    for(const auto& bn : buffNames)
+        ret.push_back(bn);
+    return ret;
+}
+
 int Editor::cmBarHeight() const {
     if(cmdMsgBarActive && cmBar.usingOptions())
         return args.cmdMsgBarMultiHeight;
@@ -149,6 +156,17 @@ void Editor::decrementCurrBuff() {
     --currBuff;
     if(currBuff < 0)
         currBuff = (int)buffs.size() - 1;
+}
+
+void Editor::switchToBuff(const std::string& name) {
+    int idx = 0;
+    for(const auto* buff : buffs) {
+        if(name == buff->bufferName()) {
+            currBuff = idx;
+            break;
+        }
+        ++idx;
+    }
 }
 
 void Editor::killCurrBuff() {

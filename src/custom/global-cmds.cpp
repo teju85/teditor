@@ -616,4 +616,13 @@ CMD_NO_UNDO(MakeDir, "mkdir") {
         makeDir(res);
 }
 
+CMD_NO_UNDO(SwitchBuffer, "buffer-switch") {
+    auto& ed = Editor::getInstance();
+    auto names = ed.buffNamesToString();
+    auto buf = ed.prompt("Buffer: ", nullptr, &names);
+    if(buf.empty())
+        return;
+    ed.switchToBuff(buf);
+}
+
 } // end namespace teditor

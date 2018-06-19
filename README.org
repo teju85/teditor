@@ -59,7 +59,5 @@ $ make -j gtests
 17. Ctrl-F - search for keywords and jump to the locations
 18. add a find-first-upwards util function
 19. fix the issue when cursor is in the cmBar expansion region!
-20. command to switch to a specific buffer
-21. Support for file completion in the prompt
-22. support for multiple lines in cmd-msg-bar
-23. command to quickly search through file history
+20. Support for file completion in the prompt
+21. command to quickly search through file history

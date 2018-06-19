@@ -68,6 +68,7 @@ public:
     Input& getInput() { return input; }
     void incrementCurrBuff();
     void decrementCurrBuff();
+    void switchToBuff(const std::string& name);
     void killCurrBuff();
     void killOtherBuffs();
     int currBuffId() const { return currBuff; }
@@ -78,6 +79,7 @@ public:
     const Args& getArgs() const { return args; }
     void addFileHistory(const std::string& file, int line);
     std::vector<std::string> fileHistoryToString() const;
+    std::vector<std::string> buffNamesToString() const;
 
 private:
     ByteBuffer outbuff;
