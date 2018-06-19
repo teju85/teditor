@@ -854,13 +854,32 @@ void CmdMsgBar::drawBuffer(Editor& ed) {
     int len = length();
     // first line is always the cmd prompt!
     int y = lines[0].draw(screenStart.y, screenStart.x, screenDim.x, ed, 0,
-                            regions, cursor, "cmdmsgbarfg", "cmdmsgbarbg");
+                          regions, cursor, "cmdmsgbarfg", "cmdmsgbarbg");
     // the remaining ones must be page-able
     int idx = startLine == 0? startLine + 1 : startLine;
     for(;y<h&&idx<len;++idx) {
         y = lines[idx].draw(y, screenStart.x, screenDim.x, ed, idx, regions,
                             cursor, "cmdmsgbarfg", "cmdmsgbarbg");
     }
+}
+
+void CmdMsgBar::insert(const char* str) {
+    int len = strlen(str);
+    for(int i=0;i<len;++i)
+        insert(str[i]);
+}
+
+// always insert on the first line!
+void CmdMsgBar::insert(char c) {
+    auto& culoc = cursor.at(0);
+    // if not on the first line, get back to it
+    if(culoc.y != 0) {
+        culoc.y = 0;
+        culoc.x = lines[0].length();
+    }
+    auto& line = lines[culoc.y];
+    line.insert(c, culoc.x);
+    ++culoc.x;
 }
 
 void CmdMsgBar::clear() {
