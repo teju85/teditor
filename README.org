@@ -57,8 +57,12 @@ $ make -j gtests
 15. Support for a mode in the buffer
 16. Ctrl-F - search for keywords and jump to the locations
 17. add a find-first-upwards util function
-18. Support for file completion in the prompt
-19. support for multiple lines in cmd-msg-bar
-20. command to quickly search through file history
-21. command to switch to a specific buffer
-22. Move the Line::draw method inside MultiLine itself
+18. command to switch to a specific buffer
+19. Support for file completion in the prompt
+20. support for multiple lines in cmd-msg-bar
+21. command to quickly search through file history
+22. option to filter through this string vector, during the draw call
+23. option to enable multi-line cmd-msg-bar, if chosen the string vector path
+24. have option to print other lines as well from an external string vector in cmd-msg-bar
+25. use only one 'Line' object inside cmd-msg-bar
+26. Move the Line::draw method inside MultiLine itself
