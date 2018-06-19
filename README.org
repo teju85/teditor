@@ -63,6 +63,5 @@ $ make -j gtests
 21. command to quickly search through file history
 22. support for enabling/disabling logging during build
 23. fix the issue when cursor is in the cmBar expansion region!
-24. option to filter through this string vector, during the draw call
-25. option to navigate/select this string vector through up/down arrows
-26. support for highlighting the current selection while navigation through this string vector
+24. option to navigate/select this string vector through up/down arrows
+25. support for highlighting the current selection while navigation through this string vector

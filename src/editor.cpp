@@ -482,8 +482,7 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
         draw();
         render();
     }
-    std::string ret = cmBar.at(0).get();
-    ret = ret.substr(msgLen);  // only keep the non-message part
+    std::string ret = cmBar.getStr();
     if(cancelPromptLoop)
         ret.clear();
     cmBar.clear();

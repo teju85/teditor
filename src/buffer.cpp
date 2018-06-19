@@ -845,7 +845,6 @@ void CmdMsgBar::resize(const Pos2d<int>& start, const Pos2d<int>& dim) {
     screenDim = dim;
 }
 
-///@todo: support for filtering on external vector
 void CmdMsgBar::drawBuffer(Editor& ed) {
     // first line is always the cmd prompt!
     int y = drawLine(screenStart.y, lines[0].get(), ed, 0,
@@ -854,8 +853,13 @@ void CmdMsgBar::drawBuffer(Editor& ed) {
         return;
     int len = (int)options.size();
     int h = screenStart.y + screenDim.y;
-    for(int idx=startLine;y<h&&idx<len;++idx)
-        y = drawLine(y, options[idx], ed, idx, "defaultfg", "defaultbg");
+    const auto str = getStr();
+    for(int idx=startLine;y<h&&idx<len;++idx) {
+        const auto& line = options[idx];
+        if(line.find(str) == std::string::npos)
+            continue;
+        y = drawLine(y, line, ed, idx, "cmdmsgbarfg", "cmdmsgbarbg");
+    }
 }
 
 void CmdMsgBar::insert(const char* str) {

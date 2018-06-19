@@ -295,6 +295,7 @@ public:
     void setOptions(const std::vector<std::string>& opts) { options = opts; }
     void clearOptions() { options.clear(); }
     bool usingOptions() const { return !options.empty(); }
+    std::string getStr() const { return lines[0].get().substr(minLoc); }
 
 private:
     /** useful during prompts, so as to not cross into the message itself! */
