@@ -64,5 +64,3 @@ $ make -j gtests
 22. option to filter through this string vector, during the draw call
 23. option to enable multi-line cmd-msg-bar, if chosen the string vector path
 24. have option to print other lines as well from an external string vector in cmd-msg-bar
-25. use only one 'Line' object inside cmd-msg-bar
-26. Move the Line::draw method inside MultiLine itself

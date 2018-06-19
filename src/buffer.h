@@ -218,9 +218,13 @@ public:
     int length() const { return (int)lines.size(); }
     Line& at(int idx) { return lines[idx]; }
     const Line& at(int idx) const { return lines[idx]; }
+
     void drawBuffer(Editor& ed);
     void drawCursor(Editor& ed, const std::string& bg);
     void drawStatusBar(Editor& ed);
+    int drawLine(int y, const std::string& line, Editor& ed, int lineNum,
+                 const std::string& fg, const std::string& bg);
+
     Pos2d<int> buffer2screen(const Pos2d<int>& loc) const;
     Cursor& getCursor() { return cursor; }
     const Cursor& getCursor() const { return cursor; }

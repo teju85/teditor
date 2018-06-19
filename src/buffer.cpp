@@ -394,10 +394,8 @@ void MultiLine::drawBuffer(Editor& ed) {
     // draw current buffer
     int h = screenStart.y + screenDim.y;
     int len = length();
-    for(int y=screenStart.y,idx=startLine;y<h&&idx<len;++idx) {
-        y = lines[idx].draw(y, screenStart.x, screenDim.x, ed, idx, regions,
-                            cursor, "defaultfg", "defaultbg");
-    }
+    for(int y=screenStart.y,idx=startLine;y<h&&idx<len;++idx)
+        y = drawLine(y, lines[idx].get(), ed, idx, "defaultfg", "defaultbg");
 }
 
 void MultiLine::drawCursor(Editor& ed, const std::string& bg) {
@@ -432,6 +430,34 @@ void MultiLine::drawStatusBar(Editor& ed) {
         ed.sendStringf(x+count, y, "statusfg", "statusbg",
                        " mc:%d", cursor.count());
     }
+}
+
+int MultiLine::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
+                        const std::string& fg, const std::string& bg) {
+    int xStart = screenStart.x;
+    int wid = screenDim.x;
+    int start = 0;
+    int len = (int)line.size();
+    // empty line
+    if(len <= 0)
+        return y + 1;
+    const auto* str = line.c_str();
+    while(start < len) {
+        int diff = len - start;
+        int count = std::min(diff, wid);
+        for(int i=0;i<count;++i) {
+            // under the highlighted region
+            auto c = str[start + i];
+            if(regions.isInside(lineNum, start+i, cursor)) {
+                ed.sendChar(xStart+i, y, "highlightfg", "highlightbg", c);
+            } else {
+                ed.sendChar(xStart+i, y, fg, bg, c);
+            }
+        }
+        start += wid;
+        ++y;
+    }
+    return y;
 }
 
 Pos2d<int> MultiLine::buffer2screen(const Pos2d<int>& loc) const {
@@ -848,19 +874,14 @@ void CmdMsgBar::resize(const Pos2d<int>& start, const Pos2d<int>& dim) {
     screenDim = dim;
 }
 
+///@todo: support for drawing from external vector
+///@todo: support for filtering on external vector
 void CmdMsgBar::drawBuffer(Editor& ed) {
-    // draw current buffer
-    int h = screenStart.y + screenDim.y;
-    int len = length();
     // first line is always the cmd prompt!
-    int y = lines[0].draw(screenStart.y, screenStart.x, screenDim.x, ed, 0,
-                          regions, cursor, "cmdmsgbarfg", "cmdmsgbarbg");
-    // the remaining ones must be page-able
-    int idx = startLine == 0? startLine + 1 : startLine;
-    for(;y<h&&idx<len;++idx) {
-        y = lines[idx].draw(y, screenStart.x, screenDim.x, ed, idx, regions,
-                            cursor, "cmdmsgbarfg", "cmdmsgbarbg");
-    }
+    int y = drawLine(screenStart.y, lines[0].get(), ed, 0,
+                     "cmdmsgbarfg", "cmdmsgbarbg");
+    ///@todo: use this while working with external vector
+    (void)y;
 }
 
 void CmdMsgBar::insert(const char* str) {
@@ -872,12 +893,12 @@ void CmdMsgBar::insert(const char* str) {
 // always insert on the first line!
 void CmdMsgBar::insert(char c) {
     auto& culoc = cursor.at(0);
+    auto& line = lines[0];
     // if not on the first line, get back to it
     if(culoc.y != 0) {
         culoc.y = 0;
-        culoc.x = lines[0].length();
+        culoc.x = line.length();
     }
-    auto& line = lines[culoc.y];
     line.insert(c, culoc.x);
     ++culoc.x;
 }
