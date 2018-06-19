@@ -75,6 +75,7 @@ public:
     void unselectCmBar() { cmdMsgBarActive = false; }
     const Args& getArgs() const { return args; }
     void addFileHistory(const std::string& file, int line);
+    std::vector<std::string> fileHistoryToString() const;
 
 private:
     ByteBuffer outbuff;
@@ -95,7 +96,7 @@ private:
     bool quitEventLoop, quitPromptLoop, cancelPromptLoop, cmdMsgBarActive;
     std::vector<std::string> copiedStr;
     ColorMap defcMap;
-    std::vector<FileInfo> fileHistory;
+    std::vector<FileInfo> filesHist;
 
     static const int OutBuffSize;
 

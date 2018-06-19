@@ -36,7 +36,7 @@ Editor::Editor(const Args& args_):
     winchFds(), tios(), origTios(), lastfg(), lastbg(), bufferResize(false),
     args(args_), cmBar(), buffs(), buffNames(), currBuff(0),
     quitEventLoop(false), quitPromptLoop(false), cancelPromptLoop(false),
-    cmdMsgBarActive(false), copiedStr(), defcMap(), fileHistory() {
+    cmdMsgBarActive(false), copiedStr(), defcMap(), filesHist() {
     inout = open(args.ttyFile.c_str(), O_RDWR);
     ASSERT(inout >= 0, "Failed to open tty '%s'!", args.ttyFile.c_str());
     ASSERT(pipe(winchFds) >= 0, "Failed to setup 'pipe'!");
@@ -75,7 +75,7 @@ void Editor::loadFileHistory() {
         return;
     auto arr = slurpToArr(file);
     for(const auto& a : arr) {
-        fileHistory.push_back(readFileInfo(a));
+        filesHist.push_back(readFileInfo(a));
     }
     pruneFileHistory();
 }
@@ -86,29 +86,36 @@ void Editor::storeFileHistory() {
     FILE* fp = fopen(file.c_str(), "w");
     if(fp == NULL)
         return;
-    for(const auto& fi : fileHistory)
+    for(const auto& fi : filesHist)
         fprintf(fp, "%s:%d\n", fi.first.c_str(), fi.second);
     fclose(fp);
 }
 
 void Editor::pruneFileHistory() {
-    if((int)fileHistory.size() > args.maxFileHistory) {
-        fileHistory.erase(fileHistory.begin()+args.maxFileHistory,
-                          fileHistory.end());
+    if((int)filesHist.size() > args.maxFileHistory) {
+        filesHist.erase(filesHist.begin()+args.maxFileHistory,
+                          filesHist.end());
     }
 }
 
 void Editor::addFileHistory(const std::string& file, int line) {
     FileInfo fi(file, line);
     // remove duplicates
-    for(int i=0;i<(int)fileHistory.size();++i) {
-        if(fileHistory[i].first == file) {
-            fileHistory.erase(fileHistory.begin()+i);
+    for(int i=0;i<(int)filesHist.size();++i) {
+        if(filesHist[i].first == file) {
+            filesHist.erase(filesHist.begin()+i);
             --i;
         }
     }
-    fileHistory.insert(fileHistory.begin(), fi);
+    filesHist.insert(filesHist.begin(), fi);
     pruneFileHistory();
+}
+
+std::vector<std::string> Editor::fileHistoryToString() const {
+    std::vector<std::string> vec;
+    for(const auto& fi : filesHist)
+        vec.push_back(format("%s:%d", fi.first.c_str(), fi.second));
+    return vec;
 }
 
 int Editor::cmBarHeight() const {
