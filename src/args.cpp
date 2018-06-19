@@ -6,7 +6,7 @@
 
 namespace teditor {
 
-std::string Args::wrtHomeFolder(const std::string& s) {
+std::string Args::wrtHomeFolder(const std::string& s) const {
     return homeFolder + '/' + s;
 }
 

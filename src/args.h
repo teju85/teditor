@@ -11,7 +11,8 @@ namespace teditor {
 
 struct Args {
     Args(int argc, char** argv);
-    std::string wrtHomeFolder(const std::string& s);
+    std::string wrtHomeFolder(const std::string& s) const;
+    std::string getHistFile() const { return wrtHomeFolder(histFile); }
 
     bool quitAfterLoad;
     std::string ttyFile, homeFolder;

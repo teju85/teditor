@@ -13,6 +13,7 @@
 #include "keys.h"
 #include "input.h"
 #include <unordered_map>
+#include "files_hist.h"
 
 
 namespace teditor {
@@ -96,7 +97,7 @@ private:
     bool quitEventLoop, quitPromptLoop, cancelPromptLoop, cmdMsgBarActive;
     std::vector<std::string> copiedStr;
     ColorMap defcMap;
-    std::vector<FileInfo> filesHist;
+    FilesHist fileshist;
 
     static const int OutBuffSize;
 

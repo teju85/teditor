@@ -36,7 +36,8 @@ Editor::Editor(const Args& args_):
     winchFds(), tios(), origTios(), lastfg(), lastbg(), bufferResize(false),
     args(args_), cmBar(), buffs(), buffNames(), currBuff(0),
     quitEventLoop(false), quitPromptLoop(false), cancelPromptLoop(false),
-    cmdMsgBarActive(false), copiedStr(), defcMap(), filesHist() {
+    cmdMsgBarActive(false), copiedStr(), defcMap(),
+    fileshist(args.getHistFile(), args.maxFileHistory) {
     inout = open(args.ttyFile.c_str(), O_RDWR);
     ASSERT(inout >= 0, "Failed to open tty '%s'!", args.ttyFile.c_str());
     ASSERT(pipe(winchFds) >= 0, "Failed to setup 'pipe'!");
@@ -47,7 +48,6 @@ Editor::Editor(const Args& args_):
     populateColorMap<GlobalColors>(defcMap);
     resize();
     clearBackBuff();
-    loadFileHistory();
     hideCursor();  // we'll manually handle the cursor draws
     input.reset();
 }
@@ -62,60 +62,20 @@ Editor::~Editor() {
     for(auto itr : buffs) {
         delete itr;
     }
-    storeFileHistory();
+    fileshist.prune();
+    fileshist.store();
     tcsetattr(inout, TCSAFLUSH, &origTios);
     close(winchFds[0]);
     close(winchFds[1]);
     close(inout);
 }
 
-void Editor::loadFileHistory() {
-    auto file = args.wrtHomeFolder(args.histFile);
-    if(!isFile(file.c_str()))
-        return;
-    auto arr = slurpToArr(file);
-    for(const auto& a : arr) {
-        filesHist.push_back(readFileInfo(a));
-    }
-    pruneFileHistory();
-}
-
-void Editor::storeFileHistory() {
-    auto file = args.wrtHomeFolder(args.histFile);
-    pruneFileHistory();
-    FILE* fp = fopen(file.c_str(), "w");
-    if(fp == NULL)
-        return;
-    for(const auto& fi : filesHist)
-        fprintf(fp, "%s:%d\n", fi.first.c_str(), fi.second);
-    fclose(fp);
-}
-
-void Editor::pruneFileHistory() {
-    if((int)filesHist.size() > args.maxFileHistory) {
-        filesHist.erase(filesHist.begin()+args.maxFileHistory,
-                          filesHist.end());
-    }
-}
-
-void Editor::addFileHistory(const std::string& file, int line) {
-    FileInfo fi(file, line);
-    // remove duplicates
-    for(int i=0;i<(int)filesHist.size();++i) {
-        if(filesHist[i].first == file) {
-            filesHist.erase(filesHist.begin()+i);
-            --i;
-        }
-    }
-    filesHist.insert(filesHist.begin(), fi);
-    pruneFileHistory();
+void Editor::addFileHistory(const std::string& file, int line)  {
+    fileshist.add(file, line);
 }
 
 std::vector<std::string> Editor::fileHistoryToString() const {
-    std::vector<std::string> vec;
-    for(const auto& fi : filesHist)
-        vec.push_back(format("%s:%d", fi.first.c_str(), fi.second));
-    return vec;
+    return fileshist.toString();
 }
 
 int Editor::cmBarHeight() const {
