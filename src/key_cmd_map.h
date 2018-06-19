@@ -44,6 +44,11 @@ struct PromptKeys {
 };
 
 
+struct PromptYesNoKeys {
+    static std::vector<KeyCmdPair> All;
+};
+
+
 struct DirModeKeys {
     static std::vector<KeyCmdPair> All;
 };

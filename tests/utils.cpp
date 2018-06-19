@@ -178,22 +178,6 @@ TEST(Utils, CopyFile) {
     ASSERT_EQ(ref, val);
 }
 
-TEST(Utils, DownloadUrl) {
-    std::string url("https://google.com/");
-    std::string file("google.log");
-    downloadUrl(url, file);
-    EXPECT_TRUE(isFile(file.c_str()));
-    remove(file.c_str());
-    EXPECT_FALSE(isFile(file.c_str()));
-}
-
-TEST(Utils, DownloadUrlToString) {
-    std::string url("https://google.com/");
-    auto res = downloadUrlToString(url);
-    EXPECT_TRUE(res.size() > 6);
-    EXPECT_EQ("<HTML>", res.substr(0, 6));
-}
-
 TEST(Utils, Paren) {
     ASSERT_TRUE(isOpenParen('('));
     ASSERT_TRUE(isOpenParen('{'));

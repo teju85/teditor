@@ -39,7 +39,8 @@ void KeyCmdMap::clear() {
 
 
 #include "custom/global_key_map.h"
-#include "custom/prompt_key_map.h"
 #include "custom/dirmode_key_map.h"
+#include "custom/prompt_key_map.h"
+#include "custom/prompt_yesno_key_map.h"
 
 } // end namespace teditor

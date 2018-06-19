@@ -412,16 +412,10 @@ void Editor::clearScreen() {
 
 bool Editor::promptYesNo(const std::string& msg) {
     auto msg_ = msg + " (y/n)? ";
-    do {
-        auto res = prompt(msg_);
-        if(res == "y")
-            return true;
-        else if(res == "n")
-            return false;
-        msg_ = msg + " (y/n) [enter y or n]? ";
-    } while(true);
-    // to keep compiler happy!
-    return false;
+    KeyCmdMap ynMap;
+    populateKeyMap<PromptYesNoKeys>(ynMap, true);
+    auto res = prompt(msg_, &ynMap);
+    return (res == "y");
 }
 
 std::string Editor::promptForEnum(const std::string& msg, OptionMap& opts) {

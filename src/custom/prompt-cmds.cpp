@@ -23,6 +23,15 @@ CMD_NO_UNDO(PromptInsertChar, "prompt-insert-char") {
     cmBar.insert(c);
 }
 
+CMD_NO_UNDO(PromptInsertCharQuit, "prompt-insert-char-quit") {
+    auto& ed = Editor::getInstance();
+    auto& in = ed.getInput();
+    auto& cmBar = ed.getCmBar();
+    auto c = (char)in.mk.getKey();
+    cmBar.insert(c);
+    ed.requestQuitPromptLoop();
+}
+
 CMD_NO_UNDO(PromptCursorRight, "prompt-cursor-right") {
     auto& ed = Editor::getInstance();
     auto& cmBar = ed.getCmBar();
