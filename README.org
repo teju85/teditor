@@ -39,10 +39,12 @@ then your experience with the default colors may vary!!
 9. Support for syntax highlighting
 10. Support for rectangle mode
 11. support for buffer split on the screen (vertically and horizontally)
-12. Support for file completion in the prompt
-13. Support for prompt history and traversal on it
-14. support for filename-based mode selection
-15. support for indentation
-16. Support for a mode in the buffer
-17. Ctrl-F - search for keywords and jump to the locations
-18. add a find-first-upwards util function
+12. Support for prompt history and traversal on it
+13. support for filename-based mode selection
+14. support for indentation
+15. Support for a mode in the buffer
+16. Ctrl-F - search for keywords and jump to the locations
+17. add a find-first-upwards util function
+18. Support for file completion in the prompt
+19. support for multiple lines in cmd-msg-bar
+20. support for passing custom kepmap for cmd-msg-bar
