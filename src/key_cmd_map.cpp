@@ -7,6 +7,12 @@ namespace teditor {
 KeyCmdMap::KeyCmdMap(): key2cmd(), cmd2key(), keyTree(), currNode(nullptr) {
 }
 
+void KeyCmdMap::add(char key, const std::string& cmd) {
+    std::string str;
+    str += key;
+    add(str, cmd);
+}
+
 void KeyCmdMap::add(const std::string& keySeq, const std::string& cmd) {
     keyTree.add(keySeq, cmd);
     key2cmd[keySeq] = cmd;

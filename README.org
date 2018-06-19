@@ -47,4 +47,3 @@ then your experience with the default colors may vary!!
 17. add a find-first-upwards util function
 18. Support for file completion in the prompt
 19. support for multiple lines in cmd-msg-bar
-20. implement custom key-map for enum prompt

@@ -508,7 +508,7 @@ CMD_NO_UNDO(BrowserSearch, "browser-search") {
     opts["stock"] = "https://duckduckgo.com/?q=\"%s\"&t=ffab&ia=stock";
     opts["youtube"] = "https://www.youtube.com/results?search_query=\"%s\"";
     auto& ed = Editor::getInstance();
-    auto command = ed.promptForEnum("Search:", opts);
+    auto command = ed.promptEnum("Search:", opts);
     if(command.empty())
         return;
     command = "cygstart firefox -private-window '" + command + "'";

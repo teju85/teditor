@@ -418,24 +418,23 @@ bool Editor::promptYesNo(const std::string& msg) {
     return (res == "y");
 }
 
-std::string Editor::promptForEnum(const std::string& msg, OptionMap& opts) {
+std::string Editor::promptEnum(const std::string& msg, OptionMap& opts) {
     std::string m(msg);
     std::unordered_map<char, std::string> letters;
+    KeyCmdMap eMap;
     for(const auto& itr : opts) {
         m += ' ' + itr.first;
         letters[itr.first[0]] = itr.first;
+        eMap.add(itr.first[0], "prompt-insert-char-quit");
     }
     m += ": ";
-    do {
-        const auto res = prompt(m);
-        // cancel requested
-        if(res.empty())
-            break;
-        const auto itr = letters.find(res[0]);
-        if(itr != letters.end())
-            return opts[itr->second];
-    } while(true);
-    return "";
+    eMap.add("esc", "prompt-cancel");
+    const auto res = prompt(m, &eMap);
+    // cancel requested
+    if(res.empty())
+        return "";
+    const auto itr = letters.find(res[0]);
+    return opts[itr->second];
 }
 
 std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap) {

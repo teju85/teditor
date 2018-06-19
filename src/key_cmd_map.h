@@ -20,6 +20,7 @@ struct KeyCmdPair {
 class KeyCmdMap {
 public:
     KeyCmdMap();
+    void add(char key, const std::string& cmd);
     void add(const std::string& keySeq, const std::string& cmd);
     void add(const KeyCmdPair& pair) { add(pair.keySeq, pair.cmd); }
     TrieStatus traverse(const std::string& currKey);
