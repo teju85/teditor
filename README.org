@@ -45,5 +45,7 @@ then your experience with the default colors may vary!!
 15. Support for a mode in the buffer
 16. Ctrl-F - search for keywords and jump to the locations
 17. add a find-first-upwards util function
-18. Support for file completion in the prompt
-19. support for multiple lines in cmd-msg-bar
+18. track opened files history
+19. have a custom home-folder for the editor storage
+20. Support for file completion in the prompt
+21. support for multiple lines in cmd-msg-bar
