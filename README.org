@@ -64,4 +64,3 @@ $ make -j gtests
 22. support for enabling/disabling logging during build
 23. fix the issue when cursor is in the cmBar expansion region!
 24. option to filter through this string vector, during the draw call
-25. pass options for the M-x command

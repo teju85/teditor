@@ -9,6 +9,14 @@ CmdCreatorMap& cmds() {
     return _cmds;
 }
 
+std::vector<std::string> allCmdNames() {
+    auto& cs = cmds();
+    std::vector<std::string> ret;
+    for(const auto itr : cs)
+        ret.push_back(itr.first);
+    return ret;
+}
+
 void Command::registerCmd(const std::string& cmd, CmdCreator fptr) {
     auto& c = cmds();
     ASSERT(c.find(cmd) == c.end(),

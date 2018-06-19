@@ -1,8 +1,9 @@
 #pragma once
 
 #include <string>
-#include <unordered_map>
+#include <map>
 #include <memory>
+#include <vector>
 
 
 namespace teditor {
@@ -24,7 +25,7 @@ class Command;
 
 typedef Command* (*CmdCreator)();
 typedef std::shared_ptr<Command> CmdPtr;
-typedef std::unordered_map<std::string,CmdCreator> CmdCreatorMap;
+typedef std::map<std::string,CmdCreator> CmdCreatorMap;
 
 /**
  * @brief Main class to extend functionality of the editor.
@@ -55,6 +56,9 @@ protected:
 
 /** Accessor function to the command map */
 CmdCreatorMap& cmds();
+
+/** Accessor function to the list of command names */
+std::vector<std::string> allCmdNames();
 
 
 class RegisterCmd {

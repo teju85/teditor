@@ -78,7 +78,9 @@ std::vector<std::string> Editor::fileHistoryToString() const {
 }
 
 int Editor::cmBarHeight() const {
-    return cmBar.usingOptions()? args.cmdMsgBarMultiHeight : args.cmdMsgBarHeight;
+    if(cmdMsgBarActive && cmBar.usingOptions())
+        return args.cmdMsgBarMultiHeight;
+    return args.cmdMsgBarHeight;
 }
 
 const AttrColor& Editor::getColor(const std::string& name) const {
@@ -486,10 +488,10 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
         ret.clear();
     cmBar.clear();
     cmBar.setMinLoc(0);
-    unselectCmBar();
-    mlResize(&getBuff());
     if(opts != nullptr)
         cmBar.clearOptions();
+    unselectCmBar();
+    mlResize(&getBuff());
     return ret;
 }
 

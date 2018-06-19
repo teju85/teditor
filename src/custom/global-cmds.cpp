@@ -457,7 +457,10 @@ CMD_NO_UNDO(FindFile, "find-file") {
 
 CMD_NO_UNDO(RunCommand, "run-command") {
     auto& ed = Editor::getInstance();
-    auto cmd = ed.prompt("Cmd: ");
+    auto names = allCmdNames();
+    auto cmd = ed.prompt("Cmd: ", nullptr, &names);
+    if(cmd.empty())
+        return;
     try {
         ed.runCmd(cmd);
     } catch(const std::runtime_error& e) {
