@@ -75,9 +75,6 @@ public:
     bool empty() const { return length() == 0; }
     int length() const { return (int)line.length(); }
     const std::string& get() const { return line; }
-    int draw(int y, int xStart, int wid, Editor& ed, int lineNum,
-             const Regions& regs, const Cursor& cu, const std::string& fg,
-             const std::string& bg);
     char at(int idx) const { return line[idx]; }
     void clear() { line.clear(); }
     int findFirstNotOf(const std::string& str, int pos) const;

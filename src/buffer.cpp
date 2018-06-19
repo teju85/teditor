@@ -133,33 +133,6 @@ int Line::numLinesNeeded(int wid) const {
     return (len + wid - 1) / wid;
 }
 
-int Line::draw(int y, int xStart, int wid, Editor& ed, int lineNum,
-               const Regions& regs, const Cursor& cu, const std::string& fg,
-               const std::string& bg) {
-    int start = 0;
-    int len = length();
-    // empty line
-    if(len <= 0)
-        return y + 1;
-    const char* str = line.c_str();
-    while(start < len) {
-        int diff = length() - start;
-        int count = std::min(diff, wid);
-        for(int i=0;i<count;++i) {
-            // under the highlighted region
-            auto c = str[start + i];
-            if(regs.isInside(lineNum, start+i, cu)) {
-                ed.sendChar(xStart+i, y, "highlightfg", "highlightbg", c);
-            } else {
-                ed.sendChar(xStart+i, y, fg, bg, c);
-            }
-        }
-        start += wid;
-        ++y;
-    }
-    return y;
-}
-
 
 void Regions::enable(const Positions& p) {
     for(const auto& l : p) {
