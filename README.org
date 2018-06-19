@@ -1,18 +1,19 @@
 * teditor
 While all editors support terminal capabilities, how about we try to have a
 terminal support editor capabilities!? *teditor* is a terminal based editor,
-written in C++, to explore this aspect. Teditor is inspired from [[https://github.com/tomas/eon][eon]].
+written in C++, to explore this aspect. Teditor is inspired from [[https://github.com/tomas/eon][eon]]. Besides,
+writing an editor from scratch is a real fun way to get to know a lot about
+programming, OS and terminal concepts!
 * Pre-reqs
 Very minimal set of pre-reqs are needed for this project!
 1. GNU-make (>=4.2.1)
 2. G++ (>= 5.4.0)
 3. mintty (for running the editor)
 4. doxygen (>=1.8.13) (for documentation generation)
-5. curl (for downloading from web)
-* Download and Installation
+5. curl (for downloading from web, from inside the editor)
+* Download and Build
 Currently, only been tested on cygwin with xterm-256.
 #+BEGIN_SRC bash
-```bash
 $ git clone --recursive https://github.com/teju85/teditor
 $ cd teditor
 $ make -j teditor
@@ -20,7 +21,18 @@ $ ./teditor
 #+END_SRC
 NOTE: If you have customized your minttyrc for the user configured colors,
 then your experience with the default colors may vary!!
-* Third-party stuff
+* Generating documentation
+It is expected that one has installed doxygen for this purpose. Generated
+documentation can then be found inside the folder 'html'.
+#+BEGIN_SRC bash
+$ make doc
+#+END_SRC
+* Developers
+** Unit testing
+Unit-tests are run via googletest.
+#+BEGIN_SRC bash
+$ make -j gtests
+#+END_SRC
 ** googletest
 - Location: tests/googletest
 - https://github.com/googletest/googletest
