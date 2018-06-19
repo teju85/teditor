@@ -79,8 +79,8 @@ std::vector<std::string> Editor::fileHistoryToString() const {
 
 std::vector<std::string> Editor::buffNamesToString() const {
     std::vector<std::string> ret;
-    for(const auto& bn : buffNames)
-        ret.push_back(bn);
+    for(const auto* buff : buffs)
+        ret.push_back(buff->bufferName());
     return ret;
 }
 
