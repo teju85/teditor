@@ -126,6 +126,7 @@ private:
     void mlResize(MultiLine* mlb);
     MultiLine* getBuff(const std::string& name);
     const AttrColor& getColor(const std::string& name) const;
+    int cmBarHeight() const;
 
     friend class SingletonHandler<Editor, Args>;
 };

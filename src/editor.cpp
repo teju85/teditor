@@ -71,6 +71,10 @@ Editor::~Editor() {
     DEBUG("Editor done\n");
 }
 
+int Editor::cmBarHeight() const {
+    return cmdMsgBarActive? args.cmdMsgBarActiveHeight : args.cmdMsgBarHeight;
+}
+
 const AttrColor& Editor::getColor(const std::string& name) const {
     if(buffs.empty())
         return defcMap.get(name);
@@ -442,6 +446,7 @@ std::string Editor::prompt(const std::string& msg) {
     int msgLen = (int)msg.size();
     cmBar.setMinLoc(msgLen);
     selectCmBar();
+    mlResize(&getBuff());
     quitPromptLoop = cancelPromptLoop = false;
     cmBar.insert(msg.c_str());
     std::string currKey;
@@ -473,13 +478,14 @@ std::string Editor::prompt(const std::string& msg) {
         draw();
         render();
     }
-    unselectCmBar();
     std::string ret = cmBar.at(0).get();
     ret = ret.substr(msgLen);
     if(cancelPromptLoop)
         ret.clear();
     cmBar.clear();
     cmBar.setMinLoc(0);
+    unselectCmBar();
+    mlResize(&getBuff());
     return ret;
 }
 
@@ -504,11 +510,12 @@ void Editor::draw() {
 }
 
 void Editor::mlResize(MultiLine* mlb) {
+    int ht = cmBarHeight();
     auto sz = tsize;
-    sz.y -= args.cmdMsgBarHeight;
+    sz.y -= ht;
     mlb->resize({0, 0}, sz);
-    cmBar.resize({0, sz.y}, {tsize.x, args.cmdMsgBarHeight});
-    //DEBUG("mlResize: buff-x,y=%d,%d ht=%d\n", sz.x, sz.y, args.cmdMsgBarHeight);
+    cmBar.resize({0, sz.y}, {tsize.x, ht});
+    //DEBUG("mlResize: buff-x,y=%d,%d ht=%d\n", sz.x, sz.y, ht);
 }
 
 void Editor::render() {
