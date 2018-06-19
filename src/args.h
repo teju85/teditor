@@ -17,7 +17,7 @@ struct Args {
     bool quitAfterLoad;
     std::string ttyFile, homeFolder;
     std::vector<FileInfo> files;
-    int logLevel, cmdMsgBarHeight, cmdMsgBarActiveHeight;
+    int logLevel, cmdMsgBarHeight, cmdMsgBarMultiHeight;
     float pageScrollJump;
     int maxFileHistory;
     std::string histFile;

@@ -77,8 +77,9 @@ std::vector<std::string> Editor::fileHistoryToString() const {
     return fileshist.toString();
 }
 
+///@todo: only use multi in case of using external vector for rendering
 int Editor::cmBarHeight() const {
-    return cmdMsgBarActive? args.cmdMsgBarActiveHeight : args.cmdMsgBarHeight;
+    return false? args.cmdMsgBarMultiHeight : args.cmdMsgBarHeight;
 }
 
 const AttrColor& Editor::getColor(const std::string& name) const {
@@ -478,7 +479,7 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap) {
         render();
     }
     std::string ret = cmBar.at(0).get();
-    ret = ret.substr(msgLen);
+    ret = ret.substr(msgLen);  // only keep the non-message part
     if(cancelPromptLoop)
         ret.clear();
     cmBar.clear();

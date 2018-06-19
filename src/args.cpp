@@ -13,7 +13,7 @@ std::string Args::wrtHomeFolder(const std::string& s) const {
 Args::Args(int argc, char** argv): quitAfterLoad(false), ttyFile("/dev/tty"),
                                    homeFolder("$HOME/.teditor"), files(),
                                    logLevel(-1), cmdMsgBarHeight(1),
-                                   cmdMsgBarActiveHeight(6),
+                                   cmdMsgBarMultiHeight(8),
                                    pageScrollJump(0.75f), maxFileHistory(20),
                                    histFile("history") {
     for(int i=1;i<argc;++i) {
@@ -35,10 +35,10 @@ Args::Args(int argc, char** argv): quitAfterLoad(false), ttyFile("/dev/tty"),
             ++i;
             ASSERT(i < argc, "'-cmd-msg-bar-height' expects an argument!");
             cmdMsgBarHeight = str2num(argv[i]);
-        } else if(!strcmp(argv[i], "-cmd-msg-bar-active-height")) {
+        } else if(!strcmp(argv[i], "-cmd-msg-bar-multi-height")) {
             ++i;
-            ASSERT(i < argc, "'-cmd-msg-bar-active-height' expects an argument!");
-            cmdMsgBarActiveHeight = str2num(argv[i]);
+            ASSERT(i < argc, "'-cmd-msg-bar-multi-height' expects an argument!");
+            cmdMsgBarMultiHeight = str2num(argv[i]);
         } else if(!strcmp(argv[i], "-page-scroll-jump")) {
             ++i;
             ASSERT(i < argc, "'-page-scroll-jump' option expects an argument!");
