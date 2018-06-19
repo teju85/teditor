@@ -19,6 +19,7 @@ struct Args {
     int logLevel, cmdMsgBarHeight, cmdMsgBarActiveHeight;
     float pageScrollJump;
     int maxFileHistory;
+    std::string histFile;
 };
 
 } // end namespace teditor

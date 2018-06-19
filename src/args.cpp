@@ -14,7 +14,8 @@ Args::Args(int argc, char** argv): quitAfterLoad(false), ttyFile("/dev/tty"),
                                    homeFolder("$HOME/.teditor"), files(),
                                    logLevel(-1), cmdMsgBarHeight(1),
                                    cmdMsgBarActiveHeight(6),
-                                   pageScrollJump(0.75f), maxFileHistory(20) {
+                                   pageScrollJump(0.75f), maxFileHistory(20),
+                                   histFile("history") {
     for(int i=1;i<argc;++i) {
         if(!strcmp(argv[i], "-Q")) {
             quitAfterLoad = true;

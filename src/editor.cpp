@@ -13,6 +13,7 @@
 #include "utils.h"
 #include "utf8.h"
 #include "command.h"
+#include <algorithm>
 
 namespace teditor {
 
@@ -35,8 +36,7 @@ Editor::Editor(const Args& args_):
     winchFds(), tios(), origTios(), lastfg(), lastbg(), bufferResize(false),
     args(args_), cmBar(), buffs(), buffNames(), currBuff(0),
     quitEventLoop(false), quitPromptLoop(false), cancelPromptLoop(false),
-    cmdMsgBarActive(false), copiedStr(), defcMap() {
-    DEBUG("Editor constructor\n");
+    cmdMsgBarActive(false), copiedStr(), defcMap(), fileHistory() {
     inout = open(args.ttyFile.c_str(), O_RDWR);
     ASSERT(inout >= 0, "Failed to open tty '%s'!", args.ttyFile.c_str());
     ASSERT(pipe(winchFds) >= 0, "Failed to setup 'pipe'!");
@@ -47,14 +47,12 @@ Editor::Editor(const Args& args_):
     populateColorMap<GlobalColors>(defcMap);
     resize();
     clearBackBuff();
-    // we'll manually handle the cursor draws
-    hideCursor();
+    loadFileHistory();
+    hideCursor();  // we'll manually handle the cursor draws
     input.reset();
-    DEBUG("Editor setup done\n");
 }
 
 Editor::~Editor() {
-    DEBUG("Editor destructor\n");
     showCursor();
     outbuff.puts(term.func(Func_Sgr0)); // reset attrs
     outbuff.puts(term.func(Func_ExitCA));
@@ -64,11 +62,53 @@ Editor::~Editor() {
     for(auto itr : buffs) {
         delete itr;
     }
+    storeFileHistory();
     tcsetattr(inout, TCSAFLUSH, &origTios);
     close(winchFds[0]);
     close(winchFds[1]);
     close(inout);
-    DEBUG("Editor done\n");
+}
+
+void Editor::loadFileHistory() {
+    auto file = args.wrtHomeFolder(args.histFile);
+    if(!isFile(file.c_str()))
+        return;
+    auto arr = slurpToArr(file);
+    for(const auto& a : arr) {
+        fileHistory.push_back(readFileInfo(a));
+    }
+    pruneFileHistory();
+}
+
+void Editor::storeFileHistory() {
+    auto file = args.wrtHomeFolder(args.histFile);
+    pruneFileHistory();
+    FILE* fp = fopen(file.c_str(), "w");
+    if(fp == NULL)
+        return;
+    for(const auto& fi : fileHistory)
+        fprintf(fp, "%s:%d\n", fi.first.c_str(), fi.second);
+    fclose(fp);
+}
+
+void Editor::pruneFileHistory() {
+    if((int)fileHistory.size() > args.maxFileHistory) {
+        fileHistory.erase(fileHistory.begin()+args.maxFileHistory,
+                          fileHistory.end());
+    }
+}
+
+void Editor::addFileHistory(const std::string& file, int line) {
+    FileInfo fi(file, line);
+    // remove duplicates
+    for(int i=0;i<(int)fileHistory.size();++i) {
+        if(fileHistory[i].first == file) {
+            fileHistory.erase(fileHistory.begin()+i);
+            --i;
+        }
+    }
+    fileHistory.insert(fileHistory.begin(), fi);
+    pruneFileHistory();
 }
 
 int Editor::cmBarHeight() const {

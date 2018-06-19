@@ -224,6 +224,14 @@ MultiLine::MultiLine(const std::string& name):
     kcMap.resetTraversal();
 }
 
+MultiLine::~MultiLine() {
+    if(!fileName.empty() && Editor::instanceReady()) {
+        auto& ed = Editor::getInstance();
+        int line = cursor.at(0).y;
+        ed.addFileHistory(fileName, line);
+    }
+}
+
 const AttrColor& MultiLine::getColor(const std::string& name) const {
     return cMap.get(name);
 }

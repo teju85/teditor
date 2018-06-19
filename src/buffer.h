@@ -175,7 +175,7 @@ class Editor;
 class MultiLine {
 public:
     MultiLine(const std::string& name="");
-    virtual ~MultiLine() {}
+    virtual ~MultiLine();
 
     void insertLine(int i);
     void insert(char c);

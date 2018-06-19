@@ -74,6 +74,7 @@ public:
     void selectCmBar() { cmdMsgBarActive = true; }
     void unselectCmBar() { cmdMsgBarActive = false; }
     const Args& getArgs() const { return args; }
+    void addFileHistory(const std::string& file, int line);
 
 private:
     ByteBuffer outbuff;
@@ -94,6 +95,7 @@ private:
     bool quitEventLoop, quitPromptLoop, cancelPromptLoop, cmdMsgBarActive;
     std::vector<std::string> copiedStr;
     ColorMap defcMap;
+    std::vector<FileInfo> fileHistory;
 
     static const int OutBuffSize;
 
@@ -127,6 +129,9 @@ private:
     MultiLine* getBuff(const std::string& name);
     const AttrColor& getColor(const std::string& name) const;
     int cmBarHeight() const;
+    void loadFileHistory();
+    void storeFileHistory();
+    void pruneFileHistory();
 
     friend class SingletonHandler<Editor, Args>;
 };
