@@ -835,6 +835,21 @@ int Line::findLastNotOf(const std::string& str, int pos) const {
 }
 
 
+bool strFind(const std::string& line, const std::string& str) {
+    return line.find(str) != std::string::npos;
+}
+
+
+bool Choices::match(const std::string& line, const std::string& str) const {
+    return filter(line, str);
+}
+
+
+StringChoices::StringChoices(const std::vector<std::string>& arr,
+                             ChoicesFilter cf): Choices(cf), options(arr) {
+}
+
+
 CmdMsgBar::CmdMsgBar(): MultiLine(), minLoc(0), options(), optLoc(0) {
     populateKeyMap<PromptKeys>(kcMap, true);
 }

@@ -279,6 +279,33 @@ protected:
 };
 
 
+typedef bool(*ChoicesFilter)(const std::string&, const std::string&);
+
+bool strFind(const std::string& line, const std::string& str);
+
+class Choices {
+public:
+    Choices(ChoicesFilter cf): filter(cf) {}
+    virtual ~Choices() {}
+    virtual const std::string& operator[](int idx) = 0;
+    bool match(const std::string& line, const std::string& str) const;
+
+private:
+    ChoicesFilter filter;
+};
+
+
+class StringChoices: public Choices {
+public:
+    StringChoices(const std::vector<std::string>& arr,
+                  ChoicesFilter cf=strFind);
+    const std::string& operator[](int idx) { return options[idx]; }
+
+private:
+    std::vector<std::string> options;
+};
+
+
 class CmdMsgBar: public MultiLine {
 public:
     CmdMsgBar();
