@@ -134,5 +134,6 @@ std::vector<KeyCmdPair> GlobalKeys::All = {
     {"C-V", "paste-region"},
     {"C-X", "cut-region"},
     {"M-g", "goto-line"},
-    {"C-B C-S", "buffer-switch"}
+    {"C-B C-S", "buffer-switch"},
+    {"C-F", "search"}
 };

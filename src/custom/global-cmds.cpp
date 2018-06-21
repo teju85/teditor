@@ -667,4 +667,9 @@ CMD_NO_UNDO(SwitchBuffer, "buffer-switch") {
         ed.switchToBuff(buf);
 }
 
+CMD_NO_UNDO(TextSearch, "search") {
+    auto& ed = Editor::getInstance();
+    ed.prompt("Search: ");
+}
+
 } // end namespace teditor

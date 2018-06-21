@@ -54,5 +54,5 @@ $ make -j gtests
 12. support for filename-based mode selection
 13. support for indentation
 14. Support for a mode in the buffer
-15. Ctrl-F - search for keywords and jump to the locations
-16. add a find-first-upwards util function
+15. add a find-first-upwards util function
+16. Ctrl-F - search for keywords and jump to the locations
