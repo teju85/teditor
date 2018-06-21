@@ -142,13 +142,15 @@ private:
 
     class Prompter {
     public:
-        void init();
-        void loop();
-        void deinit();
-        const std::string& getAnswer() const { return ans; }
+        Prompter();
+        void init(Editor& ed);
+        void loop(Editor& ed);
+        std::string deinit(Editor& ed);
+        std::string inferAnswer(Editor& ed);
 
-    private:
-        std::string ans;
+        std::string msg, defVal;
+        KeyCmdMap* kcMap;
+        std::vector<std::string>* opts;
     };
 };
 

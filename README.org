@@ -57,6 +57,4 @@ $ make -j gtests
 15. Ctrl-F - search for keywords and jump to the locations
 16. add a find-first-upwards util function
 17. Support for file completion in the prompt
-18. refactor prompt method into a private class
-19. have prompt method use this private class
-20. expose a new promptFile method in Editor
+18. expose a new promptFile method in Editor
