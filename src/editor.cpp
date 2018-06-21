@@ -434,6 +434,15 @@ void Editor::clearScreen() {
     render();
 }
 
+void Editor::Prompter::init() {
+}
+
+void Editor::Prompter::loop() {
+}
+
+void Editor::Prompter::deinit() {
+}
+
 bool Editor::promptYesNo(const std::string& msg) {
     auto msg_ = msg + " (y/n)? ";
     KeyCmdMap ynMap;

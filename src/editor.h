@@ -139,6 +139,17 @@ private:
     void pruneFileHistory();
 
     friend class SingletonHandler<Editor, Args>;
+
+    class Prompter {
+    public:
+        void init();
+        void loop();
+        void deinit();
+        const std::string& getAnswer() const { return ans; }
+
+    private:
+        std::string ans;
+    };
 };
 
 }; // end namespace teditor
