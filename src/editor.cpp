@@ -85,7 +85,7 @@ std::vector<std::string> Editor::buffNamesToString() const {
 }
 
 int Editor::cmBarHeight() const {
-    if(cmdMsgBarActive && cmBar.usingOptions())
+    if(cmdMsgBarActive && cmBar.usingChoices())
         return args.cmdMsgBarMultiHeight;
     return args.cmdMsgBarHeight;
 }
@@ -462,13 +462,12 @@ std::string Editor::promptEnum(const std::string& msg, OptionMap& opts) {
 }
 
 std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
-                           const std::vector<std::string>* opts,
-                           const std::string& defVal) {
+                           Choices* choices, const std::string& defVal) {
     selectCmBar();
     if(kcMap == nullptr)
         kcMap = &(cmBar.getKeyCmdMap());
-    if(opts != nullptr)
-        cmBar.setOptions(*opts);
+    if(choices != nullptr)
+        cmBar.setChoices(choices);
     cmBar.setMinLoc((int)msg.size());
     mlResize(&getBuff());
     quitPromptLoop = cancelPromptLoop = false;
@@ -503,13 +502,13 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
         draw();
         render();
     }
-    auto ret = cmBar.usingOptions()? cmBar.getOptStr() : cmBar.getStr();
+    auto ret = cmBar.usingChoices()? cmBar.getChoiceStr() : cmBar.getStr();
     if(cancelPromptLoop)
         ret.clear();
     cmBar.clear();
     cmBar.setMinLoc(0);
-    if(opts != nullptr)
-        cmBar.clearOptions();
+    if(choices != nullptr)
+        cmBar.clearChoices();
     unselectCmBar();
     mlResize(&getBuff());
     return ret;

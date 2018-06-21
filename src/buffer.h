@@ -283,12 +283,15 @@ typedef bool(*ChoicesFilter)(const std::string&, const std::string&);
 
 bool strFind(const std::string& line, const std::string& str);
 
+
 class Choices {
 public:
     Choices(ChoicesFilter cf): filter(cf) {}
     virtual ~Choices() {}
-    virtual const std::string& operator[](int idx) = 0;
+    virtual const std::string& at(int idx) const = 0;
+    virtual int size() const = 0;
     bool match(const std::string& line, const std::string& str) const;
+    bool match(int idx, const std::string& str) const;
 
 private:
     ChoicesFilter filter;
@@ -299,7 +302,8 @@ class StringChoices: public Choices {
 public:
     StringChoices(const std::vector<std::string>& arr,
                   ChoicesFilter cf=strFind);
-    const std::string& operator[](int idx) { return options[idx]; }
+    const std::string& at(int idx) const { return options[idx]; }
+    int size() const { return (int)options.size(); }
 
 private:
     std::vector<std::string> options;
@@ -320,11 +324,11 @@ public:
     void setMinLoc(int loc) { minLoc = loc; }
     int getMinStartLoc() const override { return minLoc; }
     int totalLinesNeeded() const override;
-    void setOptions(const std::vector<std::string>& opts) { options = opts; }
-    void clearOptions();
-    bool usingOptions() const { return !options.empty(); }
+    void setChoices(Choices* ch) { choices = ch; }
+    void clearChoices();
+    bool usingChoices() const { return choices != nullptr; }
     std::string getStr() const { return lines[0].get().substr(minLoc); }
-    const std::string& getOptStr() const { return options[optLoc]; }
+    const std::string& getChoiceStr() const { return choices->at(optLoc); }
     int linesNeeded(const std::string& str, int wid) const;
     void down();
     void up();
@@ -332,8 +336,8 @@ public:
 private:
     /** useful during prompts, so as to not cross into the message itself! */
     int minLoc;
-    /** external vector (usually options) that need to be rendered */
-    std::vector<std::string> options;
+    /** external choices vector (usually options) that need to be rendered */
+    Choices* choices;
     /** currently selected option */
     int optLoc;
 };

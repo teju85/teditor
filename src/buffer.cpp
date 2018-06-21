@@ -844,13 +844,17 @@ bool Choices::match(const std::string& line, const std::string& str) const {
     return filter(line, str);
 }
 
+bool Choices::match(int idx, const std::string& str) const {
+    return match(at(idx), str);
+}
+
 
 StringChoices::StringChoices(const std::vector<std::string>& arr,
                              ChoicesFilter cf): Choices(cf), options(arr) {
 }
 
 
-CmdMsgBar::CmdMsgBar(): MultiLine(), minLoc(0), options(), optLoc(0) {
+CmdMsgBar::CmdMsgBar(): MultiLine(), minLoc(0), choices(), optLoc(0) {
     populateKeyMap<PromptKeys>(kcMap, true);
 }
 
@@ -863,14 +867,14 @@ void CmdMsgBar::resize(const Pos2d<int>& start, const Pos2d<int>& dim) {
 void CmdMsgBar::drawBuffer(Editor& ed) {
     // first line is always the cmd prompt!
     int y = drawLine(screenStart.y, lines[0].get(), ed, 0, "cmbarfg", "cmbarbg");
-    if(!usingOptions())
+    if(!usingChoices())
         return;
-    int len = (int)options.size();
+    int len = choices->size();
     int h = screenStart.y + screenDim.y;
     const auto str = getStr();
     for(int idx=startLine;y<h&&idx<len;++idx) {
-        const auto& line = options[idx];
-        if(line.find(str) == std::string::npos)
+        const auto& line = choices->at(idx);
+        if(!choices->match(line, str))
             continue;
         const char* fg = (idx == optLoc)? "cmbarhighlightfg" : "cmbarfg";
         const char* bg = (idx == optLoc)? "cmbarhighlightbg" : "cmbarbg";
@@ -887,11 +891,11 @@ int CmdMsgBar::linesNeeded(const std::string& str, int wid) const {
 
 int CmdMsgBar::totalLinesNeeded() const {
     int count = MultiLine::totalLinesNeeded();
-    if(!usingOptions())
+    if(!usingChoices())
         return count;
     const auto str = getStr();
     for(int i=startLine;i<=optLoc;++i)
-        count += linesNeeded(options[i], screenDim.x);
+        count += linesNeeded(choices->at(i), screenDim.x);
     return count;
 }
 
@@ -906,14 +910,13 @@ void CmdMsgBar::insert(char c) {
     auto& culoc = cursor.at(0);
     lines[0].insert(c, culoc.x);
     ++culoc.x;
-    if(!usingOptions())
+    if(!usingChoices())
         return;
     // then jump to the first matching option at this point!
-    int len = (int)options.size();
+    int len = choices->size();
     const auto str = getStr();
     for(int idx=startLine;idx<len;++idx) {
-        const auto& line = options[idx];
-        if(line.find(str) != std::string::npos) {
+        if(choices->match(idx, str)) {
             optLoc = idx;
             startLine = idx;
             break;
@@ -929,18 +932,18 @@ void CmdMsgBar::clear() {
     lineReset();
 }
 
-void CmdMsgBar::clearOptions() {
-    options.clear();
+void CmdMsgBar::clearChoices() {
+    choices = nullptr;
     optLoc = 0;
 }
 
 void CmdMsgBar::down() {
-    if(!usingOptions())
+    if(!usingChoices())
         return;
-    int len = (int)options.size();
+    int len = choices->size();
     const auto str = getStr();
     for(int idx=optLoc+1;idx<len;++idx) {
-        if(options[idx].find(str) != std::string::npos) {
+        if(choices->match(idx, str)) {
             optLoc = idx;
             break;
         }
@@ -949,11 +952,11 @@ void CmdMsgBar::down() {
 }
 
 void CmdMsgBar::up() {
-    if(!usingOptions())
+    if(!usingChoices())
         return;
     const auto str = getStr();
     for(int idx=optLoc-1;idx>=0;--idx) {
-        if(options[idx].find(str) != std::string::npos) {
+        if(choices->match(idx, str)) {
             optLoc = idx;
             break;
         }

@@ -450,8 +450,8 @@ CMD_NO_UNDO(ScratchBuffer, "scratch-buffer") {
 
 CMD_NO_UNDO(FindFileHistory, "find-file-history") {
     auto& ed = Editor::getInstance();
-    auto hist = ed.fileHistoryToString();
-    auto file = ed.prompt("Find File History: ", nullptr, &hist);
+    StringChoices sc(ed.fileHistoryToString());
+    auto file = ed.prompt("Find File History: ", nullptr, &sc);
     if(file.empty())
         return;
     auto fi = readFileInfo(file);
@@ -462,16 +462,16 @@ CMD_NO_UNDO(FindFile, "find-file") {
     auto& ed = Editor::getInstance();
     auto& buf = ed.getBuff();
     auto pwd = buf.pwd() + '/';
-    auto files = listDirRel(pwd);
-    auto file = ed.prompt("Find File: ", nullptr, &files, pwd);
+    StringChoices sc(listDirRel(pwd));
+    auto file = ed.prompt("Find File: ", nullptr, &sc, pwd);
     if(!file.empty())
         ed.load(file, 0);
 }
 
 CMD_NO_UNDO(RunCommand, "run-command") {
     auto& ed = Editor::getInstance();
-    auto names = allCmdNames();
-    auto cmd = ed.prompt("Cmd: ", nullptr, &names);
+    StringChoices sc(allCmdNames());
+    auto cmd = ed.prompt("Cmd: ", nullptr, &sc);
     if(cmd.empty())
         return;
     try {
@@ -631,8 +631,8 @@ CMD_NO_UNDO(MakeDir, "mkdir") {
 
 CMD_NO_UNDO(SwitchBuffer, "buffer-switch") {
     auto& ed = Editor::getInstance();
-    auto names = ed.buffNamesToString();
-    auto buf = ed.prompt("Buffer: ", nullptr, &names);
+    StringChoices sc(ed.buffNamesToString());
+    auto buf = ed.prompt("Buffer: ", nullptr, &sc);
     if(!buf.empty())
         ed.switchToBuff(buf);
 }

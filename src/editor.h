@@ -33,7 +33,7 @@ public:
     MultiLine& getMessagesBuff();
     bool isRegionActive() const { return getBuff().isRegionActive(); }
     std::string prompt(const std::string& msg, KeyCmdMap* kcMap=nullptr,
-                       const std::vector<std::string>* opts=nullptr,
+                       Choices* choices=nullptr,
                        const std::string& defVal=std::string());
     bool promptYesNo(const std::string& msg);
     std::string promptEnum(const std::string& msg, OptionMap& opts);
