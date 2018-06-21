@@ -290,6 +290,8 @@ public:
     virtual ~Choices() {}
     virtual const std::string& at(int idx) const = 0;
     virtual int size() const = 0;
+    virtual bool updateChoices(const std::string& str) { return false; }
+    virtual std::string getFinalStr(int idx, const std::string& str) const = 0;
     bool match(const std::string& line, const std::string& str) const;
     bool match(int idx, const std::string& str) const;
 
@@ -303,9 +305,10 @@ public:
     StringChoices(const std::vector<std::string>& arr,
                   ChoicesFilter cf=strFind);
     const std::string& at(int idx) const { return options[idx]; }
+    std::string getFinalStr(int idx, const std::string& str) const;
     int size() const { return (int)options.size(); }
 
-private:
+protected:
     std::vector<std::string> options;
 };
 
@@ -328,7 +331,7 @@ public:
     void clearChoices();
     bool usingChoices() const { return choices != nullptr; }
     std::string getStr() const { return lines[0].get().substr(minLoc); }
-    const std::string& getChoiceStr() const { return choices->at(optLoc); }
+    std::string getFinalChoice() const;
     int linesNeeded(const std::string& str, int wid) const;
     void down();
     void up();

@@ -458,11 +458,41 @@ CMD_NO_UNDO(FindFileHistory, "find-file-history") {
     ed.load(fi.first, fi.second);
 }
 
+bool fileStrFind(const std::string& line, const std::string& str) {
+    auto loc = str.find_last_of('/');
+    if(loc == std::string::npos)
+        return strFind(line, str);
+    auto sub = str.substr(loc+1);
+    return strFind(line, sub);
+}
+
+class FileChoices: public StringChoices {
+public:
+    FileChoices(const std::vector<std::string>& arr,
+                ChoicesFilter cf=fileStrFind): StringChoices(arr, cf) {
+    }
+
+    bool updateChoices(const std::string& str) {
+        if(str.empty() || str.back() != '/')
+            return false;
+        options = listDirRel(str);
+        return true;
+    }
+
+    std::string getFinalStr(int idx, const std::string& str) const {
+        auto loc = str.find_last_of('/');
+        if(loc == std::string::npos)
+            return str;
+        auto sub = str.substr(0, loc+1) + at(idx);
+        return sub;
+    }
+};
+
 CMD_NO_UNDO(FindFile, "find-file") {
     auto& ed = Editor::getInstance();
     auto& buf = ed.getBuff();
     auto pwd = buf.pwd() + '/';
-    StringChoices sc(listDirRel(pwd));
+    FileChoices sc(listDirRel(pwd));
     auto file = ed.prompt("Find File: ", nullptr, &sc, pwd);
     if(!file.empty())
         ed.load(file, 0);

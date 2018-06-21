@@ -853,6 +853,10 @@ StringChoices::StringChoices(const std::vector<std::string>& arr,
                              ChoicesFilter cf): Choices(cf), options(arr) {
 }
 
+std::string StringChoices::getFinalStr(int idx, const std::string& str) const {
+    return at(idx);
+}
+
 
 CmdMsgBar::CmdMsgBar(): MultiLine(), minLoc(0), choices(), optLoc(0) {
     populateKeyMap<PromptKeys>(kcMap, true);
@@ -880,6 +884,12 @@ void CmdMsgBar::drawBuffer(Editor& ed) {
         const char* bg = (idx == optLoc)? "cmbarhighlightbg" : "cmbarbg";
         y = drawLine(y, line, ed, idx, fg, bg);
     }
+}
+
+std::string CmdMsgBar::getFinalChoice() const {
+    if(usingChoices())
+        return choices->getFinalStr(optLoc, getStr());
+    return getStr();
 }
 
 int CmdMsgBar::linesNeeded(const std::string& str, int wid) const {
