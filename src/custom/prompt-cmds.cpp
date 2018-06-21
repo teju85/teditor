@@ -55,11 +55,13 @@ CMD_NO_UNDO(PromptCursorLineEnd, "prompt-cursor-line-end") {
 CMD_NO_UNDO(PromptBackspaceChar, "prompt-backspace-char") {
     auto& cmBar = Editor::getInstance().getCmBar();
     cmBar.remove();
+    cmBar.updateChoices();
 }
 
 CMD_NO_UNDO(PromptDeleteChar, "prompt-delete-char") {
     auto& cmBar = Editor::getInstance().getCmBar();
     cmBar.removeCurrent();
+    cmBar.updateChoices();
 }
 
 CMD_NO_UNDO(PromptOptionsDown, "prompt-options-down") {

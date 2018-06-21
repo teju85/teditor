@@ -922,6 +922,7 @@ void CmdMsgBar::insert(char c) {
     ++culoc.x;
     if(!usingChoices())
         return;
+    updateChoices();
     // then jump to the first matching option at this point!
     int len = choices->size();
     const auto str = getStr();
@@ -932,6 +933,13 @@ void CmdMsgBar::insert(char c) {
             break;
         }
     }
+}
+
+void CmdMsgBar::updateChoices() {
+    if(!usingChoices())
+        return;
+    if(choices->updateChoices(getStr()))
+        optLoc = 0;
 }
 
 void CmdMsgBar::clear() {

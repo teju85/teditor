@@ -56,5 +56,3 @@ $ make -j gtests
 14. Support for a mode in the buffer
 15. Ctrl-F - search for keywords and jump to the locations
 16. add a find-first-upwards util function
-17. Support for file completion in the prompt
-18. expose a new promptFile method in Editor

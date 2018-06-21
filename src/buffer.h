@@ -335,6 +335,7 @@ public:
     int linesNeeded(const std::string& str, int wid) const;
     void down();
     void up();
+    void updateChoices();
 
 private:
     /** useful during prompts, so as to not cross into the message itself! */
