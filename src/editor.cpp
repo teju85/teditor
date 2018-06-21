@@ -209,8 +209,8 @@ void Editor::run() {
     while(true) {
         auto& kcMap = getBuff().getKeyCmdMap();
         int status = pollEvent();
-        // DEBUG("Editor:run: status=%d meta=%u key=%u keystr='%s'\n", status,
-        //       input.mk.getMeta(), input.mk.getKey(), input.mk.toStr().c_str());
+        DEBUG("Editor:run: status=%d meta=%u key=%u keystr='%s'\n", status,
+              input.mk.getMeta(), input.mk.getKey(), input.mk.toStr().c_str());
         if(status == Input::UndefinedSequence) {
             MESSAGE("Editor:run:: Undefined sequence: %s\n",
                     input.getOldSeq().c_str());
@@ -479,8 +479,8 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
     render();
     while(!quitPromptLoop) {
         int status = pollEvent();
-        // DEBUG("Editor:prompt: status=%d meta=%u key=%u keystr='%s'\n", status,
-        //       input.mk.getMeta(), input.mk.getKey(), input.mk.toStr().c_str());
+        DEBUG("Editor:prompt: status=%d meta=%u key=%u keystr='%s'\n", status,
+              input.mk.getMeta(), input.mk.getKey(), input.mk.toStr().c_str());
         if(status == Input::UndefinedSequence) {
             MESSAGE("Editor:prompt:: Undefined sequence: %s\n",
                     input.getOldSeq().c_str());
@@ -515,21 +515,21 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
 void Editor::draw() {
     auto& buff = getBuff();
     clearBackBuff();
-    //DEBUG("draw: drawBuffer\n");
+    DEBUG("draw: drawBuffer\n");
     buff.drawBuffer(*this);
-    //DEBUG("draw: drawStatusBar\n");
+    DEBUG("draw: drawStatusBar\n");
     buff.drawStatusBar(*this);
-    //DEBUG("draw: cmdMsgBar.drawBuffer\n");
+    DEBUG("draw: cmdMsgBar.drawBuffer\n");
     cmBar.drawBuffer(*this);
     if(cmdMsgBarActive) {
-        //DEBUG("draw: cmdMsgBar.drawCursor\n");
+        DEBUG("draw: cmdMsgBar.drawCursor\n");
         cmBar.drawCursor(*this, "cursorbg");
         buff.drawCursor(*this, "inactivecursorbg");
     } else {
-        //DEBUG("draw: drawCursor\n");
+        DEBUG("draw: drawCursor\n");
         buff.drawCursor(*this, "cursorbg");
     }
-    //DEBUG("draw: ended\n");
+    DEBUG("draw: ended\n");
 }
 
 void Editor::mlResize(MultiLine* mlb) {
@@ -538,7 +538,7 @@ void Editor::mlResize(MultiLine* mlb) {
     sz.y -= ht;
     mlb->resize({0, 0}, sz);
     cmBar.resize({0, sz.y}, {tsize.x, ht});
-    //DEBUG("mlResize: buff-x,y=%d,%d ht=%d\n", sz.x, sz.y, ht);
+    DEBUG("mlResize: buff-x,y=%d,%d ht=%d\n", sz.x, sz.y, ht);
 }
 
 void Editor::render() {
@@ -555,8 +555,9 @@ void Editor::render() {
             int wid = back.width();
             if(wid < 1)
                 wid = 1;
-            // DEBUG("render: y,x=%d,%d back=%u,%hu,%hu front=%u,%hu,%hu\n",
-            //       y, x, back.ch, back.fg, back.bg, front.ch, front.fg, front.bg);
+            ULTRA_DEBUG("render: y,x=%d,%d back=%u,%hu,%hu front=%u,%hu,%hu\n",
+                        y, x, back.ch, back.fg, back.bg, front.ch, front.fg,
+                        front.bg);
             if(front == back) {
                 x += wid;
                 continue;
@@ -566,9 +567,8 @@ void Editor::render() {
             // if character exceeds the screen width
             if(x >= w - wid + 1) {
                 ASSERT(false, "Character exceeding screen width is not supported!");
-                for (int i=x;i<w;++i) {
+                for (int i=x;i<w;++i)
                     writeChar(' ', i, y);
-                }
             } else {
                 writeChar(back.ch, x, y);
             }

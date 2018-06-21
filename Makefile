@@ -31,9 +31,11 @@ TESTEXE       := gtests
 ifeq ($(DEBUG),1)
     CXXFLAGS  += -g
     LDFLAGS   += -g
+    CXXFLAGS  += -DDEBUG_BUILD
 else
     CXXFLAGS  += -O3
     LDFLAGS   += -O3
+    CXXFLAGS  += -UDEBUG_BUILD
 endif
 
 

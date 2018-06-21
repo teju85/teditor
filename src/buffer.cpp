@@ -43,7 +43,7 @@ void ByteBuffer::puts(const char* data) {
 
 void ByteBuffer::flush(int fd) {
     write(fd, c_str(), length());
-    //DEBUG("flush: len=%d buff=%s\n", length(), c_str());
+    ULTRA_DEBUG("flush: len=%d buff=%s\n", length(), c_str());
     clear();
 }
 

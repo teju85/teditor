@@ -55,11 +55,18 @@ private:
         Logger::log(lev, fmt, ##__VA_ARGS__);                           \
     } while(0)
 
-#define ULTRA_DEBUG(fmt, ...) LOG(100000, fmt, ##__VA_ARGS__)
-#define DEBUG(fmt, ...) LOG(10000, fmt, ##__VA_ARGS__)
-#define INFO(fmt, ...) LOG(1000, fmt, ##__VA_ARGS__)
-#define WARN(fmt, ...) LOG(100, fmt, ##__VA_ARGS__)
-#define ERROR(fmt, ...) LOG(10, fmt, ##__VA_ARGS__)
 #define FATAL(fmt, ...) LOG(0, fmt, ##__VA_ARGS__)
+#define ERROR(fmt, ...) LOG(10, fmt, ##__VA_ARGS__)
+#define WARN(fmt, ...) LOG(100, fmt, ##__VA_ARGS__)
+
+#ifdef DEBUG_BUILD
+#define INFO(fmt, ...) LOG(1000, fmt, ##__VA_ARGS__)
+#define DEBUG(fmt, ...) LOG(10000, fmt, ##__VA_ARGS__)
+#define ULTRA_DEBUG(fmt, ...) LOG(100000, fmt, ##__VA_ARGS__)
+#else   // DEBUG_BUILD
+#define INFO(fmt, ...)
+#define DEBUG(fmt, ...)
+#define ULTRA_DEBUG(fmt, ...)
+#endif  // DEBUG_BUILD
 
 } // end namespace teditor
