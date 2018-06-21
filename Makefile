@@ -47,7 +47,8 @@ default:
 	@echo "  clean       - Clean the build files"
 	@echo "  clean_all   - Clean even the build files"
 	@echo "Flags to customize behavior:"
-	@echo "  DEBUG   - Get a debug build if it is 1. [0]"
+	@echo "  DEBUG   - Get a debug build if it is 1. Also enables debug"
+	@echo "            logging in Logger class. [0]"
 
 $(EXE): main.o $(CORE_OBJS) $(LIBRARIES)
 	$(LD) $(LDFLAGS) -o $@ $^
