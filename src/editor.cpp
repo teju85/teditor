@@ -448,6 +448,8 @@ void Editor::Prompter::init(Editor& ed) {
     ed.mlResize(&ed.getBuff());
     ed.quitPromptLoop = ed.cancelPromptLoop = false;
     cmBar.insert(msg.c_str());
+    if(!defVal.empty())
+        cmBar.insert(defVal.c_str());
 }
 
 void Editor::Prompter::loop(Editor& ed) {
