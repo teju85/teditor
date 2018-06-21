@@ -33,12 +33,10 @@ public:
     MultiLine& getMessagesBuff();
     bool isRegionActive() const { return getBuff().isRegionActive(); }
     std::string prompt(const std::string& msg, KeyCmdMap* kcMap=nullptr,
-                       const std::vector<std::string>* opts=nullptr);
+                       const std::vector<std::string>* opts=nullptr,
+                       const std::string& defVal=std::string());
     bool promptYesNo(const std::string& msg);
     std::string promptEnum(const std::string& msg, OptionMap& opts);
-    std::string promptFindFile(const std::string& msg, KeyCmdMap* kcMap,
-                               const std::vector<std::string>* opts,
-                               const std::string& defVal);
     void load(const std::string& file, int line);
     void runCmd(const std::string& cmd);
     void startRegion() { getBuff().enableRegions(); }
@@ -142,25 +140,6 @@ private:
     void pruneFileHistory();
 
     friend class SingletonHandler<Editor, Args>;
-
-    class Prompter {
-    public:
-        Prompter();
-        virtual ~Prompter() {}
-        void init(Editor& ed);
-        void loop(Editor& ed);
-        std::string deinit(Editor& ed);
-        virtual std::string inferAnswer(Editor& ed);
-
-        std::string msg, defVal;
-        KeyCmdMap* kcMap;
-        std::vector<std::string>* opts;
-    };
-
-    class PrompterFindFile: public Prompter {
-    public:
-        std::string inferAnswer(Editor& ed) override;
-    };
 };
 
 }; // end namespace teditor

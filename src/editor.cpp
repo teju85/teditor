@@ -434,75 +434,6 @@ void Editor::clearScreen() {
     render();
 }
 
-Editor::Prompter::Prompter(): msg(), defVal(), kcMap(nullptr), opts(nullptr) {
-}
-
-void Editor::Prompter::init(Editor& ed) {
-    auto& cmBar = ed.getCmBar();
-    ed.selectCmBar();
-    if(kcMap == nullptr)
-        kcMap = &(cmBar.getKeyCmdMap());
-    if(opts != nullptr)
-        cmBar.setOptions(*opts);
-    cmBar.setMinLoc((int)msg.size());
-    ed.mlResize(&ed.getBuff());
-    ed.quitPromptLoop = ed.cancelPromptLoop = false;
-    cmBar.insert(msg.c_str());
-    if(!defVal.empty())
-        cmBar.insert(defVal.c_str());
-}
-
-void Editor::Prompter::loop(Editor& ed) {
-    std::string currKey;
-    TrieStatus state = TS_NULL;
-    ed.draw();
-    ed.render();
-    while(!ed.quitPromptLoop) {
-        int status = ed.pollEvent();
-        DEBUG("Prompter::loop: status=%d meta=%u key=%u keystr='%s'\n", status,
-              ed.input.mk.getMeta(), ed.input.mk.getKey(),
-              ed.input.mk.toStr().c_str());
-        if(status == Input::UndefinedSequence) {
-            MESSAGE("Prompter::loop: Undefined sequence: %s\n",
-                    ed.input.getOldSeq().c_str());
-            break;
-        } else if(status < 0)
-            break;
-        if(ed.input.type == Event_Key) {
-            currKey = ed.input.mk.toStr();
-            state = kcMap->traverse(currKey);
-            if(state == TS_LEAF) {
-                std::string cmd = kcMap->getCmd();
-                ed.runCmd(cmd);
-                kcMap->resetTraversal();
-            } else if(state == TS_NULL)
-                kcMap->resetTraversal();
-        }
-        ed.draw();
-        ed.render();
-    }
-}
-
-std::string Editor::Prompter::inferAnswer(Editor& ed) {
-    auto& cmBar = ed.getCmBar();
-    auto ret = cmBar.usingOptions()? cmBar.getOptStr() : cmBar.getStr();
-    if(ed.cancelPromptLoop)
-        ret.clear();
-    return ret;
-}
-
-std::string Editor::Prompter::deinit(Editor& ed) {
-    auto& cmBar = ed.getCmBar();
-    auto ret = inferAnswer(ed);
-    cmBar.clear();
-    cmBar.setMinLoc(0);
-    if(opts != nullptr)
-        cmBar.clearOptions();
-    ed.unselectCmBar();
-    ed.mlResize(&ed.getBuff());
-    return ret;
-}
-
 bool Editor::promptYesNo(const std::string& msg) {
     auto msg_ = msg + " (y/n)? ";
     KeyCmdMap ynMap;
@@ -531,36 +462,57 @@ std::string Editor::promptEnum(const std::string& msg, OptionMap& opts) {
 }
 
 std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
-                           const std::vector<std::string>* opts) {
-    Prompter pt;
-    pt.msg = msg;
-    pt.kcMap = kcMap;
-    pt.opts = (std::vector<std::string>*)opts;
-    pt.init(*this);
-    pt.loop(*this);
-    return pt.deinit(*this);
-}
-
-std::string Editor::PrompterFindFile::inferAnswer(Editor& ed) {
-    auto& cmBar = ed.getCmBar();
+                           const std::vector<std::string>* opts,
+                           const std::string& defVal) {
+    selectCmBar();
+    if(kcMap == nullptr)
+        kcMap = &(cmBar.getKeyCmdMap());
+    if(opts != nullptr)
+        cmBar.setOptions(*opts);
+    cmBar.setMinLoc((int)msg.size());
+    mlResize(&getBuff());
+    quitPromptLoop = cancelPromptLoop = false;
+    cmBar.insert(msg.c_str());
+    if(!defVal.empty())
+        cmBar.insert(defVal.c_str());
+    std::string currKey;
+    TrieStatus state = TS_NULL;
+    draw();
+    render();
+    while(!quitPromptLoop) {
+        int status = pollEvent();
+        DEBUG("Prompter::loop: status=%d meta=%u key=%u keystr='%s'\n", status,
+              input.mk.getMeta(), input.mk.getKey(),
+              input.mk.toStr().c_str());
+        if(status == Input::UndefinedSequence) {
+            MESSAGE("Prompter::loop: Undefined sequence: %s\n",
+                    input.getOldSeq().c_str());
+            break;
+        } else if(status < 0)
+            break;
+        if(input.type == Event_Key) {
+            currKey = input.mk.toStr();
+            state = kcMap->traverse(currKey);
+            if(state == TS_LEAF) {
+                std::string cmd = kcMap->getCmd();
+                runCmd(cmd);
+                kcMap->resetTraversal();
+            } else if(state == TS_NULL)
+                kcMap->resetTraversal();
+        }
+        draw();
+        render();
+    }
     auto ret = cmBar.usingOptions()? cmBar.getOptStr() : cmBar.getStr();
-    ret = cmBar.getStr() + ret;
-    if(ed.cancelPromptLoop)
+    if(cancelPromptLoop)
         ret.clear();
+    cmBar.clear();
+    cmBar.setMinLoc(0);
+    if(opts != nullptr)
+        cmBar.clearOptions();
+    unselectCmBar();
+    mlResize(&getBuff());
     return ret;
-}
-
-std::string Editor::promptFindFile(const std::string& msg, KeyCmdMap* kcMap,
-                                   const std::vector<std::string>* opts,
-                                   const std::string& defVal) {
-    PrompterFindFile pt;
-    pt.msg = msg;
-    pt.kcMap = kcMap;
-    pt.opts = (std::vector<std::string>*)opts;
-    pt.defVal = defVal;
-    pt.init(*this);
-    pt.loop(*this);
-    return pt.deinit(*this);
 }
 
 void Editor::draw() {
