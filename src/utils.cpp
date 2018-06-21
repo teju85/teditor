@@ -297,6 +297,18 @@ Files listDir(const std::string& dir) {
     return f;
 }
 
+std::vector<std::string> listDirRel(const std::string& dir) {
+    std::vector<std::string> f;
+    DIR *dp = opendir(dir.c_str());
+    if(dp == nullptr)
+        return f;
+    for(struct dirent *ep=readdir(dp);ep!=nullptr;ep=readdir(dp))
+        f.push_back(ep->d_name);
+    closedir(dp);
+    sort(f.begin(), f.end());
+    return f;
+}
+
 void copyFile(const std::string& in, const std::string& out) {
     struct stat st;
     ASSERT(stat(in.c_str(), &st) == 0, "'stat' failed on '%s'!", in.c_str());

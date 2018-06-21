@@ -107,6 +107,7 @@ struct FilePerm {
 typedef std::vector<FilePerm> Files;
 
 Files listDir(const std::string& dir);
+std::vector<std::string> listDirRel(const std::string& dir);
 
 void copyFile(const std::string& in, const std::string& out);
 
