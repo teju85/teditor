@@ -541,6 +541,28 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
     return pt.deinit(*this);
 }
 
+std::string Editor::PrompterFindFile::inferAnswer(Editor& ed) {
+    auto& cmBar = ed.getCmBar();
+    auto ret = cmBar.usingOptions()? cmBar.getOptStr() : cmBar.getStr();
+    ret = cmBar.getStr() + ret;
+    if(ed.cancelPromptLoop)
+        ret.clear();
+    return ret;
+}
+
+std::string Editor::promptFindFile(const std::string& msg, KeyCmdMap* kcMap,
+                                   const std::vector<std::string>* opts,
+                                   const std::string& defVal) {
+    PrompterFindFile pt;
+    pt.msg = msg;
+    pt.kcMap = kcMap;
+    pt.opts = (std::vector<std::string>*)opts;
+    pt.defVal = defVal;
+    pt.init(*this);
+    pt.loop(*this);
+    return pt.deinit(*this);
+}
+
 void Editor::draw() {
     auto& buff = getBuff();
     clearBackBuff();

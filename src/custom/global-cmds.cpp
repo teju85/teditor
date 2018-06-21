@@ -461,8 +461,9 @@ CMD_NO_UNDO(FindFileHistory, "find-file-history") {
 CMD_NO_UNDO(FindFile, "find-file") {
     auto& ed = Editor::getInstance();
     auto& buf = ed.getBuff();
-    auto files = listDirRel(buf.pwd());
-    auto file = ed.prompt("Find File: ", nullptr, &files);
+    auto pwd = buf.pwd() + '/';
+    auto files = listDirRel(pwd);
+    auto file = ed.promptFindFile("Find File: ", nullptr, &files, pwd);
     if(!file.empty())
         ed.load(file, 0);
 }
