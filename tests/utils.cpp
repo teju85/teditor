@@ -32,11 +32,6 @@ TEST(Utils, isFile) {
     ASSERT_FALSE(isFile("I_dont_exist"));
 }
 
-TEST(Utils, isReadOnly) {
-    ASSERT_TRUE(isReadOnly("tests/samples/read-only.txt"));
-    ASSERT_FALSE(isReadOnly("tests/samples/hello.txt"));
-}
-
 TEST(Utils, isRemote) {
     ASSERT_TRUE(isRemote("/ssh:cluster:/path"));
     ASSERT_FALSE(isRemote("tests/samples/hello.txt"));
