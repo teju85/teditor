@@ -31,7 +31,7 @@ public:
     int numLinesNeeded(int wid) const;
 
     /** Check for empty line */
-    bool empty() const { return length() == 0; }
+    bool empty() const { return line.empty(); }
 
     /** Number of chars in the line */
     int length() const { return (int)line.length(); }
