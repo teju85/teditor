@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_map>
 #include "cmd_msg_bar.h"
+#include "logger.h"
 
 
 namespace teditor {
@@ -15,9 +16,9 @@ class Buffer;
  */
 class ISearch: public Choices {
 public:
-    ISearch(const Buffer& mlb);
+    ISearch(Buffer& mlb);
 
-    const std::string& at(int idx) const { return ml.at(idx).get(); }
+    const std::string& at(int idx) const;
     int size() const { return (int)matches.size(); }
     bool updateChoices(const std::string& str);
     std::string getFinalStr(int idx, const std::string& str) const;
@@ -33,7 +34,7 @@ public:
 
 private:
     /** buffer where to conduct searches */
-    const Buffer& ml;
+    Buffer& ml;
     /** current search string */
     std::string curr;
     /** line number v/s list of matches */

@@ -507,8 +507,10 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
         ret.clear();
     cmBar.clear();
     cmBar.setMinLoc(0);
-    if(choices != nullptr)
+    if(choices != nullptr) {
+        choices->setIdx(cmBar.getOptLoc());
         cmBar.clearChoices();
+    }
     unselectCmBar();
     mlResize(&getBuff());
     return ret;

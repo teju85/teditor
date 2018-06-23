@@ -1,6 +1,7 @@
 #include "editor.h"
 #include "command.h"
 #include <stdio.h>
+#include "isearch.h"
 
 
 namespace teditor {
@@ -702,7 +703,12 @@ CMD_NO_UNDO(SwitchBuffer, "buffer-switch") {
 
 CMD_NO_UNDO(TextSearch, "search") {
     auto& ed = Editor::getInstance();
-    ed.prompt("Search: ");
+    auto& buf = ed.getBuff();
+    ISearch is(buf);
+    is.reset();
+    auto ret = ed.prompt("Search: ", nullptr, &is);
+    if(!ret.empty())
+        buf.gotoLine(is.getIdx());
 }
 
 } // end namespace teditor
