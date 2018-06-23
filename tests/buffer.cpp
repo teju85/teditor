@@ -3,39 +3,6 @@
 
 namespace teditor {
 
-TEST(Buffer, Line) {
-    Line line;
-    // empty line still needs a line!
-    ASSERT_EQ(1, line.numLinesNeeded(5));
-    ASSERT_EQ(0, line.length());
-    ASSERT_EQ("", line.get());
-    line.append('l');
-    ASSERT_EQ(1, line.length());
-    ASSERT_EQ("l", line.get());
-    line.append("o !");
-    ASSERT_EQ(4, line.length());
-    ASSERT_EQ("lo !", line.get());
-    line.prepend('l');
-    ASSERT_EQ(5, line.length());
-    ASSERT_EQ("llo !", line.get());
-    line.prepend("He");
-    ASSERT_EQ(7, line.length());
-    ASSERT_EQ("Hello !", line.get());
-    line.insert("Worlk", 6);
-    ASSERT_EQ(12, line.length());
-    ASSERT_EQ("Hello Worlk!", line.get());
-    line.erase(10);
-    ASSERT_EQ(11, line.length());
-    ASSERT_EQ("Hello Worl!", line.get());
-    line.insert('d', 10);
-    ASSERT_EQ(12, line.length());
-    ASSERT_EQ("Hello World!", line.get());
-    ASSERT_EQ(2, line.numLinesNeeded(6));
-    ASSERT_EQ(3, line.numLinesNeeded(5));
-    line.clear();
-    ASSERT_EQ(0, line.length());
-}
-
 TEST(Buffer, MultiLineLocation) {
     MultiLine ml;
     ml.resize({0, 0}, {30, 10});
