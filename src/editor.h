@@ -14,6 +14,7 @@
 #include "input.h"
 #include <unordered_map>
 #include "files_hist.h"
+#include "byte_buffer.h"
 
 
 namespace teditor {

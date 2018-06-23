@@ -17,7 +17,7 @@ CXX           := g++
 CXXFLAGS      := -std=gnu++11 -Wall -Werror $(INCS)
 LD            := g++
 LDFLAGS       :=
-EXE           := teditor
+EXE           := $(BINDIR)/bin/teditor
 CPPSRC        := $(shell find $(SRC) -name "*.cpp")
 HEADERS       := $(shell find $(SRC) -name "*.h")
 CORE_OBJS     := $(patsubst %.cpp,%.o,$(CPPSRC))
@@ -49,6 +49,8 @@ default:
 	@echo "Flags to customize behavior:"
 	@echo "  DEBUG   - Get a debug build if it is 1. Also enables debug"
 	@echo "            logging in Logger class. [0]"
+
+teditor: $(EXE)
 
 $(EXE): main.o $(CORE_OBJS) $(LIBRARIES)
 	$(LD) $(LDFLAGS) -o $@ $^

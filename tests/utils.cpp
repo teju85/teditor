@@ -161,24 +161,26 @@ TEST(Utils, FilePerm) {
 
 TEST(Utils, ListDir) {
     auto f = listDir("tests/samples");
-    ASSERT_EQ(5U, f.size());
+    ASSERT_EQ(6U, f.size());
     ASSERT_EQ(".", f[0].name);
     ASSERT_EQ("..", f[1].name);
     ASSERT_EQ("tests/samples/hello.txt", f[2].name);
     ASSERT_EQ("tests/samples/multiline.txt", f[3].name);
     ASSERT_EQ("tests/samples/read-only.txt", f[4].name);
+    ASSERT_EQ("tests/samples/sample.cxx", f[5].name);
     auto f1 = listDir("not-exists");
     ASSERT_EQ(0U, f1.size());
 }
 
 TEST(Utils, ListDirRel) {
     auto f = listDirRel("tests/samples");
-    ASSERT_EQ(5U, f.size());
+    ASSERT_EQ(6U, f.size());
     ASSERT_EQ(".", f[0]);
     ASSERT_EQ("..", f[1]);
     ASSERT_EQ("hello.txt", f[2]);
     ASSERT_EQ("multiline.txt", f[3]);
     ASSERT_EQ("read-only.txt", f[4]);
+    ASSERT_EQ("sample.cxx", f[5]);
     auto f1 = listDirRel("not-exists");
     ASSERT_EQ(0U, f1.size());
 }

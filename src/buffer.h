@@ -12,16 +12,6 @@
 
 namespace teditor {
 
-class ByteBuffer: public std::string {
-public:
-    ByteBuffer(int cap);
-    void reserve(int cap);
-    void append(const char* data, int len);
-    void puts(const char* data);
-    void flush(int fd);
-};
-
-
 // a Unicode character
 typedef uint32_t Chr;
 
