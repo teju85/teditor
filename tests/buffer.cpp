@@ -3,18 +3,6 @@
 
 namespace teditor {
 
-TEST(Buffer, Cell) {
-    Cell c = {0, 0, 0};
-    ASSERT_EQ(0, c.width());
-    c.ch = 'c';
-    ASSERT_EQ(1, c.width());
-    Cell b;
-    b.copy(c);
-    ASSERT_EQ(c, b);
-    b.set('b', 0, 0);
-    ASSERT_FALSE(b == c);
-}
-
 TEST(Buffer, Line) {
     Line line;
     // empty line still needs a line!
