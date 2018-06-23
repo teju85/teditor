@@ -121,4 +121,20 @@ public:
     void Name::exec(CommandCallType type)
 
 
+#define CMD_UNDO4(Name, CmdStr, var1, var2, var3, var4) \
+    class Name: public Command {                        \
+    public:                                             \
+        Name(): Command() { canIundo = true;}           \
+        void exec(CommandCallType type);                \
+        static Command* create() { return new Name; }   \
+    private:                                            \
+        var1;                                           \
+        var2;                                           \
+        var3;                                           \
+        var4;                                           \
+    };                                                  \
+    RegisterCmd cmd ## Name(CmdStr, Name::create);      \
+    void Name::exec(CommandCallType type)
+
+
 }; // end namespace teditor

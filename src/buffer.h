@@ -167,6 +167,9 @@ struct RemovedLine {
 typedef std::vector<RemovedLine> RemovedLines;
 
 
+bool LineCompare(const Line& a, const Line& b);
+
+
 class Editor;
 
 class MultiLine {
@@ -192,6 +195,9 @@ public:
     std::vector<std::string> removeCurrent();
     /** kills lines at current cursor location onwards and returns them */
     std::vector<std::string> killLine();
+
+    /** sorts the lines in the regions */
+    void sortRegions();
 
     /**
      * @brief Keep/Remove lines that match the input regex.

@@ -182,6 +182,11 @@ bool Regions::isInside(int y, int x, const Cursor& cu) const {
 }
 
 
+bool LineCompare(const Line& a, const Line& b) {
+    return strcmp(a.get().c_str(), b.get().c_str());
+}
+
+
 MultiLine::MultiLine(const std::string& name):
     screenStart(), screenDim(), lines(), startLine(0), cursor(),
     modified(false), readOnly(false), buffName(name), fileName(), dirName(),
@@ -742,6 +747,20 @@ std::vector<std::string> MultiLine::killLine() {
         }
     }
     return del;
+}
+
+void MultiLine::sortRegions() {
+    modified = true;
+    int len = cursor.count();
+    for(int i=0;i<len;++i) {
+        auto& culoc = cursor.at(i);
+        int cuy = culoc.y;
+        int ry = regions.at(i).y;
+        DEBUG("sortRegions: cuy=%d ry=%d i=%d\n", cuy, ry, i);
+        sort(lines.begin()+ry, lines.begin()+cuy+1, LineCompare);
+        DEBUG("sortRegions: done i=%d\n", i);
+        culoc.x = lines[cuy].length();
+    }
 }
 
 char MultiLine::charAt(const Pos2d<int>& pos) const {
