@@ -1,4 +1,5 @@
 #include "line.h"
+#include <string.h>
 
 
 namespace teditor {
@@ -46,6 +47,11 @@ int Line::findLastNotOf(const std::string& str, int pos) const {
     if(res == std::string::npos)
         return 0;
     return (int)res;
+}
+
+
+bool LineCompare(const Line& a, const Line& b) {
+    return strcmp(a.get().c_str(), b.get().c_str()) < 0;
 }
 
 } // end namespace teditor

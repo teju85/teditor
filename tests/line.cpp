@@ -75,4 +75,13 @@ TEST(Line, FindLastNotOf) {
     ASSERT_EQ(0, line.findLastNotOf(word, 2));
 }
 
+TEST(Line, LineCompare) {
+    Line line1;
+    line1.append("Test");
+    Line line2;
+    line2.append("test");
+    ASSERT_TRUE(LineCompare(line1, line2));
+    ASSERT_FALSE(LineCompare(line2, line2));
+}
+
 } // end namespace teditor

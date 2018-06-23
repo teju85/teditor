@@ -61,11 +61,6 @@ bool Regions::isInside(int y, int x, const Cursor& cu) const {
 }
 
 
-bool LineCompare(const Line& a, const Line& b) {
-    return strcmp(a.get().c_str(), b.get().c_str());
-}
-
-
 MultiLine::MultiLine(const std::string& name):
     screenStart(), screenDim(), lines(), startLine(0), cursor(),
     modified(false), readOnly(false), buffName(name), fileName(), dirName(),
