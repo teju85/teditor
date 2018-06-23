@@ -3,7 +3,7 @@
 
 namespace teditor {
 
-TEST(Buffer, BufferLocation) {
+TEST(Buffer, Location) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
     ml.load("tests/samples/multiline.txt", 2);
@@ -14,7 +14,7 @@ TEST(Buffer, BufferLocation) {
     ASSERT_EQ(4, ml.length());
 }
 
-TEST(Buffer, BufferKillLine) {
+TEST(Buffer, KillLine) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
     ml.load("tests/samples/multiline.txt", 2);
@@ -29,7 +29,7 @@ TEST(Buffer, BufferKillLine) {
     ASSERT_EQ(3, ml.length());
 }
 
-TEST(Buffer, BufferBadFile) {
+TEST(Buffer, BadFile) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
     ml.load("tests/samples/nofile.txt", 2);
@@ -40,7 +40,7 @@ TEST(Buffer, BufferBadFile) {
     ASSERT_EQ("nofile.txt", ml.bufferName());
 }
 
-TEST(Buffer, BufferDir) {
+TEST(Buffer, DirMode) {
     Buffer ml;
     ml.resize({0, 0}, {100, 10});
     ml.load("tests/samples");
@@ -48,7 +48,7 @@ TEST(Buffer, BufferDir) {
     ASSERT_EQ("samples", ml.bufferName());
 }
 
-TEST(Buffer, Buffer) {
+TEST(Buffer, Buffer2screen) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
     ml.load("tests/samples/multiline.txt");
@@ -77,7 +77,7 @@ TEST(Buffer, Buffer) {
     ASSERT_EQ(1, ml.length());
 }
 
-TEST(Buffer, BufferInsert) {
+TEST(Buffer, Insert) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
     ml.load("tests/samples/multiline.txt");
@@ -88,11 +88,27 @@ TEST(Buffer, BufferInsert) {
     ASSERT_EQ("T* Hello", ml.at(0).get());
     ASSERT_EQ("TTesting123", ml.at(1).get());
     ASSERT_EQ(2, cu.count());
+
+    // inserting strings at multiple-cursors
+    ml.insert("AA");
+    ASSERT_EQ("TAA* Hello", ml.at(0).get());
+    ASSERT_EQ("TAATesting123", ml.at(1).get());
+
     cu.clearAllButFirst();
     ASSERT_EQ(1, cu.count());
+
+    // adding bunch of chars at the same time
+    std::vector<std::string> strs;
+    strs.push_back("line1");
+    ASSERT_NO_THROW(ml.insert(strs));
+    ASSERT_EQ("TAAline1* Hello", ml.at(0).get());
+
+    // mismatch in number of cursors
+    strs.push_back("line2");
+    ASSERT_THROW(ml.insert(strs), std::runtime_error);
 }
 
-TEST(Buffer, BufferInsertLine) {
+TEST(Buffer, InsertLine) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
     ml.load("tests/samples/multiline.txt");

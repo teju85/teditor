@@ -26,16 +26,22 @@ typedef std::vector<RemovedLine> RemovedLines;
 
 class Editor;
 
+
+/** Class for representing text files as a vector of lines (aka Buffer) */
 class Buffer {
 public:
     Buffer(const std::string& name="");
     virtual ~Buffer();
 
-    void insertLine(int i);
+    /**
+     * @defgroup Insertion Various of adding characters into the buffer
+     * @{
+     */
     virtual void insert(char c);
-    void insert(char c, int i);
     void insert(const std::vector<std::string>& strs);
     virtual void insert(const char* buf);
+    /** @} */
+
     std::vector<std::string> remove();
     /**
      * @brief removes regions between start and end
@@ -127,6 +133,8 @@ protected:
     int topCmd;
     std::string word;
 
+    void insertLine(int i);
+    void insert(char c, int i);
     void resetBufferState(int line, const std::string& file);
     void enableRegions();
     void disableRegions();
