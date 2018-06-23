@@ -133,4 +133,7 @@ TEST(Cursor, Operations) {
     ASSERT_EQ(Pos2d<int>(0, 0), cu.at(0));
 }
 
+
+///@todo: add tests for Regions
+
 } // end namespace teditor
