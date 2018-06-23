@@ -1,6 +1,7 @@
 #include "logger.h"
 #include "utils.h"
 #include "editor.h"
+#include <string.h>
 
 
 namespace teditor {

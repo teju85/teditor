@@ -16,6 +16,7 @@
 #include "files_hist.h"
 #include "byte_buffer.h"
 #include "cell_buffer.h"
+#include "cmd_msg_bar.h"
 
 
 namespace teditor {
