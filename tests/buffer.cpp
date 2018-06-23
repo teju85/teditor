@@ -112,30 +112,4 @@ TEST(Buffer, MultiLineInsertLine) {
     ASSERT_EQ("", ml.at(1).get());
 }
 
-TEST(Buffer, Cursor) {
-    MultiLine ml;
-    ml.resize({0, 0}, {30, 10});
-    Cursor c;
-    ASSERT_TRUE(c.isHidden(0));
-    ASSERT_TRUE(c.isHidden(0, Cursor::Hidden));
-    ASSERT_TRUE(c.isHidden(Cursor::Hidden, 0));
-    ASSERT_EQ(1, c.count());
-    c.reset(&ml);
-    ASSERT_FALSE(c.isHidden(0));
-    ASSERT_EQ(1, c.count());
-    c.addBack(0, 1);
-    ASSERT_FALSE(c.isHidden(1));
-    ASSERT_EQ(2, c.count());
-    c.remove(0);
-    ASSERT_EQ(1, c.count());
-    ASSERT_EQ(Pos2d<int>(0, 1), c.at(0));
-
-    c.addBack(1, 2);
-    c.addBack(2, 4);
-    ASSERT_EQ(3, c.count());
-    c.reset(&ml);
-    ASSERT_EQ(1, c.count());
-    ASSERT_EQ(Pos2d<int>(0, 0), c.at(0));
-}
-
 } // end namespace teditor

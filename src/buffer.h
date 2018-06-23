@@ -9,80 +9,10 @@
 #include "command.h"
 #include "line.h"
 #include "pcre.h"
+#include "cursor.h"
 
 
 namespace teditor {
-
-typedef std::vector<Pos2d<int> > Positions;
-
-
-class MultiLine;
-
-class Cursor {
-public:
-    Cursor();
-    void home(MultiLine* ml);
-    void lineEnd(MultiLine* ml);
-    void left(MultiLine* ml);
-    void right(MultiLine* ml);
-    void down(MultiLine* ml);
-    void up(MultiLine* ml);
-    void reset(MultiLine* ml);
-    void end(MultiLine* ml);
-    void pageDown(MultiLine* ml, float jump);
-    void pageUp(MultiLine* ml, float jump);
-    void nextPara(MultiLine* ml);
-    void previousPara(MultiLine* ml);
-    void nextWord(MultiLine* ml);
-    void previousWord(MultiLine* ml);
-    void addBack(int cx, int cy);
-    void addBack(Pos2d<int>& pos);
-    void addFront(int cx, int cy);
-    void addFront(Pos2d<int>& pos);
-    void remove(int id);
-    bool isHidden(int id) const;
-    bool isHidden(int cx, int cy) const;
-    int count() const { return locs.size(); }
-    const Pos2d<int>& at(int id) const { return locs[id]; }
-    Pos2d<int>& at(int id) { return locs[id]; }
-    Positions saveExcursion() const;
-    void restoreExcursion(const Positions& pos);
-    /** clear all cursors except the first (useful for multiple-cursors mode) */
-    void clearAllButFirst();
-
-    static const int Hidden;
-
-private:
-    Positions locs;
-
-    void removeDuplicates();
-    void moveRightCursorsOnSameLine(int i);
-    void moveDownAllNextCursors(int i);
-    void moveUpAllNextCursors(int i);
-    void moveLeftCursorsOnSameLine(int i);
-
-    bool findCursor(const Pos2d<int>& pos) const;
-    const Positions& getLocs() const { return locs; }
-
-    friend class MultiLine;
-};
-
-
-class Regions {
-public:
-    Regions(): locs() {}
-    void enable(const Positions& p);
-    void clear() { locs.clear(); }
-    bool isInside(int y, int x, const Cursor& cu) const;
-    bool isInside(int y, int x, const Cursor& cu, int i) const;
-    const Pos2d<int>& at(int idx) const { return locs[idx]; }
-    int count() const { return (int)locs.size(); }
-    const Positions& getLocs() const { return locs; }
-
-private:
-    Positions locs;
-};
-
 
 /** holder for lines removed during keep-lines */
 struct RemovedLine {
