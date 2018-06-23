@@ -85,7 +85,6 @@ public:
     ///@todo unit-test this
     Pos2d<int> matchCurrentParen(int i, bool& isOpen);
 
-    ///@todo unit-test this
     /** goto the specified line number */
     void gotoLine(int lineNum);
 

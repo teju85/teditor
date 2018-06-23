@@ -263,4 +263,17 @@ TEST(Buffer, RemoveCurrent) {
     ASSERT_EQ(47, ml.at(1).length());
 }
 
+TEST(Buffer, GotoLine) {
+    Buffer ml;
+    ml.resize({0, 0}, {30, 10});
+    ml.load("tests/samples/sample.cxx");
+    ASSERT_EQ(21, ml.length());
+    auto& cu = ml.getCursor();
+    ASSERT_EQ(Pos2d<int>(0, 0), cu.at(0));
+    ml.gotoLine(10);
+    ASSERT_EQ(Pos2d<int>(0, 10), cu.at(0));
+    ml.gotoLine(30);
+    ASSERT_EQ(Pos2d<int>(0, 20), cu.at(0));
+}
+
 } // end namespace teditor
