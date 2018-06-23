@@ -4,25 +4,34 @@
 
 namespace teditor {
 
-ISearch::ISearch(const Buffer& mlb): ml(mlb), curr(), matches() {
+ISearch::ISearch(const Buffer& mlb): Choices(strFind), ml(mlb), curr(),
+                                     matches() {
 }
 
-const std::vector<int>& ISearch::at(int i) const {
+std::string ISearch::getFinalStr(int idx, const std::string& str) const {
+    return at(idx);
+}
+
+const std::vector<int>& ISearch::matchesAt(int i) const {
     const auto itr = matches.find(i);
     ASSERT(itr != matches.end(), "No matches at line '%d'!", i);
     return itr->second;
 }
 
-void ISearch::addChar(char c) {
-    curr += c;
-    searchBuffer();
-}
-
-void ISearch::removeLast() {
-    matches.clear();
-    curr.pop_back();
+bool ISearch::updateChoices(const std::string& str) {
+    if(str == curr)
+        return false;
+    if(str.size() > curr.size() && !curr.empty() &&
+       str.substr(0, curr.size()) == curr) {
+        curr = str;
+        searchBuffer();
+        return true;
+    }
+    reset();
+    curr = str;
     if(!curr.empty())
         searchBuffer();
+    return true;
 }
 
 void ISearch::reset() {

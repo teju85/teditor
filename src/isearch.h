@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include "cmd_msg_bar.h"
 
 
 namespace teditor {
@@ -12,15 +13,15 @@ class Buffer;
 /**
  * @brief Incremental search support used by Ctrl-F command
  */
-class ISearch {
+class ISearch: public Choices {
 public:
     ISearch(const Buffer& mlb);
 
-    /** add the extra char for the search */
-    void addChar(char c);
-
-    /** remove the last char and do a fresh search */
-    void removeLast();
+    const std::string& at(int idx) const { return ml.at(idx).get(); }
+    int size() const { return (int)matches.size(); }
+    bool updateChoices(const std::string& str);
+    std::string getFinalStr(int idx, const std::string& str) const;
+    bool match(int idx, const std::string& str) const { return emptyAt(idx); }
 
     /** reset the search state */
     void reset();
@@ -29,12 +30,12 @@ public:
     bool emptyAt(int i) const { return matches.find(i) == matches.end(); }
 
     /** fetch matches for a given line num */
-    const std::vector<int>& at(int i) const;
+    const std::vector<int>& matchesAt(int i) const;
 
 private:
     /** buffer where to conduct searches */
     const Buffer& ml;
-    /** current search */
+    /** current search string */
     std::string curr;
     /** line number v/s list of matches */
     std::unordered_map<int, std::vector<int> > matches;
