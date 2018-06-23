@@ -43,8 +43,8 @@ CMD_UNDO3(RemoveRegion, "remove-region", Positions regs, Positions before,
     };
 }
 
-CMD_UNDO4(SortLines, "sort-lines", Positions before, Positions regs,
-          std::vector<std::string> del, std::vector<std::string> sort) {
+CMD_UNDO4(SortLines, "sort-lines", Positions after, Positions regs,
+          std::vector<std::string> del, Positions before) {
     auto& ed = Editor::getInstance();
     if(type == CMD_FRESH && !ed.isRegionActive()) {
         canIundo = false;
@@ -54,24 +54,24 @@ CMD_UNDO4(SortLines, "sort-lines", Positions before, Positions regs,
     auto& cu = mlbuffer.getCursor();
     switch(type) {
     case CMD_UNDO:
-        mlbuffer.remove(regs, before);
+        mlbuffer.remove(regs, after);
         cu.restoreExcursion(regs);
-        //mlbuffer.insert(del);
+        mlbuffer.insert(del);
         ed.stopRegion();
         break;
     case CMD_REDO:
         cu.restoreExcursion(regs);
         ed.startRegion();
-        mlbuffer.remove(regs, before);
-        mlbuffer.insert(sort);
+        cu.restoreExcursion(before);
+        mlbuffer.sortRegions();
         ed.stopRegion();
         break;
     default:
         regs = mlbuffer.getRegionLocs();
         del = mlbuffer.regionAsStr();
-        mlbuffer.sortRegions();
-        sort = mlbuffer.regionAsStr();
         before = cu.saveExcursion();
+        mlbuffer.sortRegions();
+        after = cu.saveExcursion();
         ed.stopRegion();
     };
 }

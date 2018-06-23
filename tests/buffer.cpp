@@ -276,4 +276,77 @@ TEST(Buffer, GotoLine) {
     ASSERT_EQ(Pos2d<int>(0, 20), cu.at(0));
 }
 
+TEST(Buffer, SortRegionsEmptyLine) {
+    Buffer ml;
+    ml.resize({0, 0}, {30, 10});
+    ml.load("tests/samples/sample.cxx");
+    ASSERT_EQ(21, ml.length());
+    auto& cu = ml.getCursor();
+    ASSERT_EQ(Pos2d<int>(0, 0), cu.at(0));
+    ml.enableRegions();
+    auto pos = ml.getRegionLocs();
+    cu.nextPara(&ml);
+    auto del = ml.regionAsStr();
+    ASSERT_EQ(1U, del.size());
+    ASSERT_EQ("#ifndef _GNU_SOURCE\n#define _GNU_SOURCE // for wcstring, strcasestr\n#endif\n",
+              del[0]);
+    ASSERT_EQ(Pos2d<int>(0, 3), cu.at(0));
+    ml.sortRegions();
+    auto after = cu.saveExcursion();
+    ml.disableRegions();
+    ASSERT_EQ(21, ml.length());
+    ASSERT_EQ(Pos2d<int>(ml.at(3).length(), 3), cu.at(0));
+    ASSERT_EQ("", ml.at(0).get());
+    ASSERT_EQ("#define _GNU_SOURCE // for wcstring, strcasestr", ml.at(1).get());
+    ASSERT_EQ("#endif", ml.at(2).get());
+    ASSERT_EQ("#ifndef _GNU_SOURCE", ml.at(3).get());
+    // undo
+    ml.remove(pos, after);
+    cu.restoreExcursion(pos);
+    ml.insert(del);
+    ASSERT_EQ(21, ml.length());
+    ASSERT_EQ(Pos2d<int>(ml.at(3).length(), 3), cu.at(0));
+    ASSERT_EQ("#ifndef _GNU_SOURCE", ml.at(0).get());
+    ASSERT_EQ("#define _GNU_SOURCE // for wcstring, strcasestr", ml.at(1).get());
+    ASSERT_EQ("#endif", ml.at(2).get());
+    ASSERT_EQ("", ml.at(3).get());
+}
+
+TEST(Buffer, SortRegions) {
+    Buffer ml;
+    ml.resize({0, 0}, {30, 10});
+    ml.load("tests/samples/sample.cxx");
+    ASSERT_EQ(21, ml.length());
+    auto& cu = ml.getCursor();
+    ASSERT_EQ(Pos2d<int>(0, 0), cu.at(0));
+    ml.enableRegions();
+    auto pos = ml.getRegionLocs();
+    cu.nextPara(&ml);
+    // don't include the empty line!
+    cu.left(&ml);
+    auto del = ml.regionAsStr();
+    ASSERT_EQ(1U, del.size());
+    ASSERT_EQ("#ifndef _GNU_SOURCE\n#define _GNU_SOURCE // for wcstring, strcasestr\n#endif",
+              del[0]);
+    ASSERT_EQ(Pos2d<int>(ml.at(2).length(), 2), cu.at(0));
+    ml.sortRegions();
+    auto after = cu.saveExcursion();
+    ml.disableRegions();
+    ASSERT_EQ(21, ml.length());
+    ASSERT_EQ(Pos2d<int>(ml.at(2).length(), 2), cu.at(0));
+    ASSERT_EQ("#define _GNU_SOURCE // for wcstring, strcasestr", ml.at(0).get());
+    ASSERT_EQ("#endif", ml.at(1).get());
+    ASSERT_EQ("#ifndef _GNU_SOURCE", ml.at(2).get());
+    // undo
+    ml.remove(pos, after);
+    cu.restoreExcursion(pos);
+    ml.insert(del);
+    ASSERT_EQ(21, ml.length());
+    ASSERT_EQ(Pos2d<int>(ml.at(2).length(), 2), cu.at(0));
+    ASSERT_EQ("#ifndef _GNU_SOURCE", ml.at(0).get());
+    ASSERT_EQ("#define _GNU_SOURCE // for wcstring, strcasestr", ml.at(1).get());
+    ASSERT_EQ("#endif", ml.at(2).get());
+    ASSERT_EQ("", ml.at(3).get());
+}
+
 } // end namespace teditor

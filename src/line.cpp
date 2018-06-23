@@ -51,6 +51,10 @@ int Line::findLastNotOf(const std::string& str, int pos) const {
 
 
 bool LineCompare(const Line& a, const Line& b) {
+    if(a.empty())
+        return true;
+    if(b.empty())
+        return false;
     return strcmp(a.get().c_str(), b.get().c_str()) < 0;
 }
 

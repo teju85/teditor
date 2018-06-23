@@ -9,6 +9,7 @@
 #include "line.h"
 #include "pcre.h"
 #include "cursor.h"
+#include "gtest/gtest.h"
 
 
 namespace teditor {
@@ -62,7 +63,6 @@ public:
     std::vector<std::string> killLine();
     /** @} */
 
-    ///@todo unit-test this
     /** sorts the lines in the regions */
     void sortRegions();
 
@@ -171,6 +171,8 @@ protected:
     std::string removeFrom(const Pos2d<int>& start, const Pos2d<int>& end);
 
     friend class Editor;
+    FRIEND_TEST(Buffer, SortRegionsEmptyLine);
+    FRIEND_TEST(Buffer, SortRegions);
 };
 
 }; // end namespace teditor
