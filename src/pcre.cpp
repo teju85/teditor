@@ -205,4 +205,43 @@ Matches Pcre::findAll(const std::string& str) {
     return ms;
 }
 
+int Pcre::replace(const std::string& in, const std::string& rep,
+                  std::string& out) {
+    return _replace(in, rep, out, 0);
+}
+
+int Pcre::replaceAll(const std::string& in, const std::string& rep,
+                     std::string& out) {
+    return _replace(in, rep, out, PCRE2_SUBSTITUTE_GLOBAL);
+}
+
+///@todo: a given pcre2_code can only be used once for substitute call!?
+int Pcre::_replace(const std::string& in, const std::string& rep,
+                   std::string& out, uint32_t options) {
+    char* subject = (char*)in.c_str();
+    char* repl = (char*)rep.c_str();
+    PCRE2_SIZE outlen, outlen1;
+    pcre2_substitute(re, (PCRE2_SPTR)subject, (PCRE2_SIZE)in.size(),
+                     0, PCRE2_SUBSTITUTE_OVERFLOW_LENGTH|options,
+                     nullptr, nullptr,
+                     (PCRE2_SPTR)repl, (PCRE2_SIZE)rep.size(),
+                     (PCRE2_UCHAR*)out.data(), &outlen);
+    char* outbuf = new char[outlen + 1];
+    int count = pcre2_substitute(re, (PCRE2_SPTR)subject, (PCRE2_SIZE)in.size(),
+                                 0, options, nullptr, nullptr,
+                                 (PCRE2_SPTR)repl, (PCRE2_SIZE)rep.size(),
+                                 (PCRE2_UCHAR*)outbuf, &outlen1);
+    out.clear();
+    out.append(outbuf, outlen);
+    delete [] outbuf;
+    if(count < 0) {
+        PCRE2_UCHAR buf[256];
+        pcre2_get_error_message(count, buf, sizeof(buf));
+        ASSERT(false,
+               "Pcre::_replace: reg='%s' str='%s' repl='%s' err='%s' outlen=%lu,%lu",
+               regex.c_str(), in.c_str(), rep.c_str(), buf, outlen, outlen1);
+    }
+    return count;
+}
+
 } // end namespace teditor

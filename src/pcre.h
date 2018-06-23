@@ -59,9 +59,7 @@ private:
 typedef std::vector<Match> Matches;
 
 
-/**
- * @brief Wrapper around the C pcre2 library
- */
+/** Wrapper around the C pcre2 library */
 class Pcre {
 public:
     /**
@@ -92,6 +90,12 @@ public:
     /** Specialized function to check for string match */
     bool isMatch(const std::string& str);
 
+    /** pcre2 substitute calls */
+    int replace(const std::string& in, const std::string& rep,
+                std::string& out);
+    int replaceAll(const std::string& in, const std::string& rep,
+                   std::string& out);
+
 private:
     /** regex as C-string */
     std::string regex;
@@ -117,6 +121,9 @@ private:
     void storeGroups(Match& m);
     void storeNumberedGroups(Match& m);
     void storeNamedGroups(Match& m);
+
+    int _replace(const std::string& in, const std::string& rep,
+                 std::string& out, uint32_t options);
 
     PCRE2_SIZE utf8Jump(char* subject, size_t subLen, PCRE2_SIZE start);
 };

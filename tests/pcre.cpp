@@ -106,4 +106,51 @@ TEST(PCRE, FindAllNoMatch) {
     ASSERT_TRUE(m.empty());
 }
 
+TEST(PCRE, Replace1) {
+    Pcre p("Hello");
+    std::string res;
+    auto cnt = p.replace("Hello world!", "Beautiful", res);
+    ASSERT_EQ(1, cnt);
+    ASSERT_EQ("Beautiful world!", res);
+}
+
+TEST(PCRE, Replace2) {
+    Pcre p("Hello");
+    std::string res;
+    auto cnt = p.replace("Hello Hello world!", "Beautiful", res);
+    ASSERT_EQ(1, cnt);
+    ASSERT_EQ("Beautiful Hello world!", res);
+}
+
+TEST(PCRE, Replace3) {
+    Pcre p("Hello");
+    std::string res;
+    auto cnt = p.replace("No matching subs!", "Beautiful", res);
+    ASSERT_EQ(0, cnt);
+    ASSERT_EQ("No matching subs!", res);
+}
+
+TEST(PCRE, ReplaceAll1) {
+    Pcre p("Hello");
+    std::string res;
+    auto cnt = p.replaceAll("Hello world!", "Beautiful", res);
+    ASSERT_EQ(1, cnt);
+    ASSERT_EQ("Beautiful world!", res);
+}
+TEST(PCRE, ReplaceAll2) {
+    Pcre p("Hello");
+    std::string res;
+    auto cnt = p.replaceAll("Hello Hello world!", "Beautiful", res);
+    ASSERT_EQ(2, cnt);
+    ASSERT_EQ("Beautiful Beautiful world!", res);
+}
+
+TEST(PCRE, ReplaceAll3) {
+    Pcre p("Hello");
+    std::string res;
+    auto cnt = p.replaceAll("No matching subs!", "Beautiful", res);
+    ASSERT_EQ(0, cnt);
+    ASSERT_EQ("No matching subs!", res);
+}
+
 } // end namespace teditor
