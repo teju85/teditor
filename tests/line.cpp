@@ -1,4 +1,5 @@
 #include "line.h"
+#include "buffer.h"
 #include "gtest/gtest.h"
 
 
@@ -46,6 +47,32 @@ TEST(Line, Line) {
     ASSERT_EQ(line.length()-1, line.findLastNotOf("abcdefghABCDEFGH", line.length()));
     ASSERT_EQ(0, line.findLastNotOf("abcdefghABCDEFGH", 0));
     ASSERT_EQ(0, line.findLastNotOf("HelorWd !", line.length()));
+}
+
+TEST(Line, FindFirstNotOf) {
+    MultiLine ml;
+    ml.resize({0, 0}, {30, 10});
+    ml.load("tests/samples/multiline.txt");
+    const auto& line = ml.at(2);
+    std::string word("abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNOPQRSTUVWXYZ0123456789_");
+    ASSERT_EQ(3, line.findFirstNotOf(word, 0));
+    ASSERT_EQ(9, line.findFirstNotOf(word, 4));
+    ASSERT_EQ(14, line.findFirstNotOf(word, 10));
+    ASSERT_EQ(21, line.findFirstNotOf(word, 15));
+    ASSERT_EQ(22, line.findFirstNotOf(word, 22));
+}
+
+TEST(Line, FindLastNotOf) {
+    MultiLine ml;
+    ml.resize({0, 0}, {30, 10});
+    ml.load("tests/samples/multiline.txt");
+    const auto& line = ml.at(2);
+    std::string word("abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNOPQRSTUVWXYZ0123456789_");
+    ASSERT_EQ(21, line.findLastNotOf(word, 22));
+    ASSERT_EQ(14, line.findLastNotOf(word, 20));
+    ASSERT_EQ(9, line.findLastNotOf(word, 13));
+    ASSERT_EQ(3, line.findLastNotOf(word, 8));
+    ASSERT_EQ(0, line.findLastNotOf(word, 2));
 }
 
 } // end namespace teditor

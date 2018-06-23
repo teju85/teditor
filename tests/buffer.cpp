@@ -112,32 +112,6 @@ TEST(Buffer, MultiLineInsertLine) {
     ASSERT_EQ("", ml.at(1).get());
 }
 
-TEST(Buffer, FindFirstNotOf) {
-    MultiLine ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/multiline.txt");
-    const auto& line = ml.at(2);
-    std::string word("abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNOPQRSTUVWXYZ0123456789_");
-    ASSERT_EQ(3, line.findFirstNotOf(word, 0));
-    ASSERT_EQ(9, line.findFirstNotOf(word, 4));
-    ASSERT_EQ(14, line.findFirstNotOf(word, 10));
-    ASSERT_EQ(21, line.findFirstNotOf(word, 15));
-    ASSERT_EQ(22, line.findFirstNotOf(word, 22));
-}
-
-TEST(Buffer, FindLastNotOf) {
-    MultiLine ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/multiline.txt");
-    const auto& line = ml.at(2);
-    std::string word("abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNOPQRSTUVWXYZ0123456789_");
-    ASSERT_EQ(21, line.findLastNotOf(word, 22));
-    ASSERT_EQ(14, line.findLastNotOf(word, 20));
-    ASSERT_EQ(9, line.findLastNotOf(word, 13));
-    ASSERT_EQ(3, line.findLastNotOf(word, 8));
-    ASSERT_EQ(0, line.findLastNotOf(word, 2));
-}
-
 TEST(Buffer, Cursor) {
     MultiLine ml;
     ml.resize({0, 0}, {30, 10});

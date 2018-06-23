@@ -95,9 +95,6 @@ struct RemovedLine {
 typedef std::vector<RemovedLine> RemovedLines;
 
 
-bool LineCompare(const Line& a, const Line& b);
-
-
 class Editor;
 
 class MultiLine {
