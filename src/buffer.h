@@ -42,6 +42,11 @@ public:
     virtual void insert(const char* buf);
     /** @} */
 
+    /**
+     * @defgroup Deletion Various ways of deleting chars from the buffer
+     * @{
+     */
+    /** for deleting a char using backspace */
     std::vector<std::string> remove();
     /**
      * @brief removes regions between start and end
@@ -55,10 +60,13 @@ public:
     std::vector<std::string> removeCurrent();
     /** kills lines at current cursor location onwards and returns them */
     std::vector<std::string> killLine();
+    /** @} */
 
+    ///@todo unit-test this
     /** sorts the lines in the regions */
     void sortRegions();
 
+    ///@todo unit-test this
     /**
      * @brief Keep/Remove lines that match the input regex.
      * @param pc the regular expression that needs to be matched
@@ -66,21 +74,41 @@ public:
      * @return Returns all those that don't match (or match)
      */
     RemovedLines keepRemoveLines(Pcre& pc, bool keep);
+
+    ///@todo unit-test this
     /** add the previously removed lines back into the buffer */
     void addLines(const RemovedLines& rlines);
 
+    ///@todo unit-test this
     /** find matching paren at the current location */
     void matchCurrentParen();
+    ///@todo unit-test this
     Pos2d<int> matchCurrentParen(int i, bool& isOpen);
 
+    ///@todo unit-test this
     /** goto the specified line number */
     void gotoLine(int lineNum);
 
+    /**
+     * @brief resize the buffer in case of window size change
+     * @param start screen start location
+     * @param dim screen dimension
+     */
     virtual void resize(const Pos2d<int>& start, const Pos2d<int>& dim);
+
+    /** Load a file/dir into the buffer and optionally jump to a line */
     virtual void load(const std::string& file, int line=0);
+
+    /** number of lines in this buffer */
     int length() const { return (int)lines.size(); }
+
+    /**
+     * @defgroup Accessor Accessing individual lines
+     * @{
+     */
     Line& at(int idx) { return lines[idx]; }
     const Line& at(int idx) const { return lines[idx]; }
+    /** @} */
 
     virtual void drawBuffer(Editor& ed);
     void drawCursor(Editor& ed, const std::string& bg);
@@ -91,7 +119,6 @@ public:
     Pos2d<int> buffer2screen(const Pos2d<int>& loc) const;
     Cursor& getCursor() { return cursor; }
     const Cursor& getCursor() const { return cursor; }
-    void addLine() { lines.push_back(Line()); }
     virtual int totalLinesNeeded() const;
     char charAt(const Pos2d<int>& pos) const;
     void lineUp();
@@ -135,6 +162,7 @@ protected:
 
     void insertLine(int i);
     void insert(char c, int i);
+    void addLine() { lines.push_back(Line()); }
     void resetBufferState(int line, const std::string& file);
     void enableRegions();
     void disableRegions();

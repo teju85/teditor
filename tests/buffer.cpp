@@ -170,4 +170,97 @@ TEST(Buffer, RemoveRegion) {
     ASSERT_EQ("", ml.at(3).get());
 }
 
+TEST(Buffer, Remove) {
+    Buffer ml;
+    ml.resize({0, 0}, {30, 10});
+    ml.load("tests/samples/sample.cxx");
+    ASSERT_EQ(21, ml.length());
+    auto& cu = ml.getCursor();
+    ASSERT_EQ(Pos2d<int>(0, 0), cu.at(0));
+
+    // remove at the beginning of buffer
+    auto del = ml.remove();
+    ASSERT_EQ(1U, del.size());
+    ASSERT_EQ("", del[0]);
+    ASSERT_EQ(21, ml.length());
+    ASSERT_EQ(19, ml.at(0).length());
+    // undo on empty remove case
+    ml.insert(del);
+    ASSERT_EQ(21, ml.length());
+    ASSERT_EQ(19, ml.at(0).length());
+
+    // remove inside a line
+    cu.at(0) = {1, 0};
+    del = ml.remove();
+    ASSERT_EQ(1U, del.size());
+    ASSERT_EQ("#", del[0]);
+    ASSERT_EQ(18, ml.at(0).length());
+    // undo
+    ml.insert(del);
+    ASSERT_EQ(19, ml.at(0).length());
+
+    // remove at line beginning
+    cu.at(0) = {0, 1};
+    del = ml.remove();
+    ASSERT_EQ(1U, del.size());
+    ASSERT_EQ("\n", del[0]);
+    ASSERT_EQ(20, ml.length());
+    ASSERT_EQ(Pos2d<int>(19, 0), cu.at(0));
+    ASSERT_EQ(66, ml.at(0).length());
+    // undo
+    ml.insert(del);
+    ASSERT_EQ(Pos2d<int>(0, 1), cu.at(0));
+    ASSERT_EQ(21, ml.length());
+    ASSERT_EQ(19, ml.at(0).length());
+    ASSERT_EQ(47, ml.at(1).length());
+}
+
+TEST(Buffer, RemoveCurrent) {
+    Buffer ml;
+    ml.resize({0, 0}, {30, 10});
+    ml.load("tests/samples/sample.cxx");
+    ASSERT_EQ(21, ml.length());
+    auto& cu = ml.getCursor();
+    ASSERT_EQ(Pos2d<int>(0, 0), cu.at(0));
+
+    // remove at the end of buffer
+    cu.end(&ml);
+    auto del = ml.removeCurrent();
+    ASSERT_EQ(1U, del.size());
+    ASSERT_EQ("", del[0]);
+    ASSERT_EQ(21, ml.length());
+    ASSERT_EQ(0, ml.at(ml.length()-1).length());
+    // undo on empty remove case
+    ml.insert(del);
+    ASSERT_EQ(21, ml.length());
+    ASSERT_EQ(0, ml.at(ml.length()-1).length());
+
+    // remove inside a line
+    cu.reset(&ml);
+    cu.right(&ml);
+    del = ml.removeCurrent();
+    ASSERT_EQ(1U, del.size());
+    ASSERT_EQ("i", del[0]);
+    ASSERT_EQ(18, ml.at(0).length());
+    // undo
+    ml.insert(del);
+    ASSERT_EQ(19, ml.at(0).length());
+
+    // remove at line end
+    cu.reset(&ml);
+    cu.lineEnd(&ml);
+    del = ml.removeCurrent();
+    ASSERT_EQ(1U, del.size());
+    ASSERT_EQ("\n", del[0]);
+    ASSERT_EQ(20, ml.length());
+    ASSERT_EQ(Pos2d<int>(19, 0), cu.at(0));
+    ASSERT_EQ(66, ml.at(0).length());
+    // undo (it would certainly make the cursor move to next position!)
+    ml.insert(del);
+    ASSERT_EQ(Pos2d<int>(0, 1), cu.at(0));
+    ASSERT_EQ(21, ml.length());
+    ASSERT_EQ(19, ml.at(0).length());
+    ASSERT_EQ(47, ml.at(1).length());
+}
+
 } // end namespace teditor
