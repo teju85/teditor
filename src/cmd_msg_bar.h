@@ -20,8 +20,8 @@ public:
     virtual int size() const = 0;
     virtual bool updateChoices(const std::string& str) { return false; }
     virtual std::string getFinalStr(int idx, const std::string& str) const = 0;
-    virtual bool match(int idx, const std::string& str) const;
     bool match(const std::string& line, const std::string& str) const;
+    bool match(int idx, const std::string& str) const;
 
 private:
     ChoicesFilter filter;

@@ -21,7 +21,6 @@ public:
     int size() const { return (int)matches.size(); }
     bool updateChoices(const std::string& str);
     std::string getFinalStr(int idx, const std::string& str) const;
-    bool match(int idx, const std::string& str) const { return emptyAt(idx); }
 
     /** reset the search state */
     void reset();
