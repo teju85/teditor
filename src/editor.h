@@ -30,10 +30,10 @@ public:
     int width() const { return tsize.x; }
     int height() const { return tsize.y; }
     void setTitle(const char* title) { sendf("%c]0;%s%c\n", '\033', title, '\007'); }
-    MultiLine& getBuff() { return *buffs[currBuff]; }
-    const MultiLine& getBuff() const { return *buffs[currBuff]; }
+    Buffer& getBuff() { return *buffs[currBuff]; }
+    const Buffer& getBuff() const { return *buffs[currBuff]; }
     CmdMsgBar& getCmBar() { return cmBar; }
-    MultiLine& getMessagesBuff();
+    Buffer& getMessagesBuff();
     bool isRegionActive() const { return getBuff().isRegionActive(); }
     std::string prompt(const std::string& msg, KeyCmdMap* kcMap=nullptr,
                        Choices* choices=nullptr,
@@ -45,7 +45,7 @@ public:
     void startRegion() { getBuff().enableRegions(); }
     void stopRegion() { getBuff().disableRegions(); }
     void checkForModifiedBuffers();
-    void checkForModifiedBuffer(MultiLine* mlb);
+    void checkForModifiedBuffer(Buffer* mlb);
     bool hasCopy() const { return !copiedStr.empty(); }
     const std::vector<std::string>& copyData() const { return copiedStr; }
     void setCopyData(const std::vector<std::string>& in) { copiedStr = in; }
@@ -98,7 +98,7 @@ private:
     Input input;
     Args args;
     CmdMsgBar cmBar;
-    std::vector<MultiLine*> buffs;
+    std::vector<Buffer*> buffs;
     std::set<std::string> buffNames;
     int currBuff;
     bool quitEventLoop, quitPromptLoop, cancelPromptLoop, cmdMsgBarActive;
@@ -134,8 +134,8 @@ private:
     int peekEvent(int timeoutMs);
     void draw();
     void loadFiles();
-    void mlResize(MultiLine* mlb);
-    MultiLine* getBuff(const std::string& name);
+    void mlResize(Buffer* mlb);
+    Buffer* getBuff(const std::string& name);
     const AttrColor& getColor(const std::string& name) const;
     int cmBarHeight() const;
     void loadFileHistory();

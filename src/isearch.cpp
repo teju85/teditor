@@ -4,7 +4,7 @@
 
 namespace teditor {
 
-ISearch::ISearch(const MultiLine& mlb): ml(mlb), curr(), matches() {
+ISearch::ISearch(const Buffer& mlb): ml(mlb), curr(), matches() {
 }
 
 const std::vector<int>& ISearch::at(int i) const {

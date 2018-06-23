@@ -10,25 +10,25 @@ namespace teditor {
 typedef std::vector<Pos2d<int> > Positions;
 
 
-class MultiLine;
+class Buffer;
 
 class Cursor {
 public:
     Cursor();
-    void home(MultiLine* ml);
-    void lineEnd(MultiLine* ml);
-    void left(MultiLine* ml);
-    void right(MultiLine* ml);
-    void down(MultiLine* ml);
-    void up(MultiLine* ml);
-    void reset(MultiLine* ml);
-    void end(MultiLine* ml);
-    void pageDown(MultiLine* ml, float jump);
-    void pageUp(MultiLine* ml, float jump);
-    void nextPara(MultiLine* ml);
-    void previousPara(MultiLine* ml);
-    void nextWord(MultiLine* ml);
-    void previousWord(MultiLine* ml);
+    void home(Buffer* ml);
+    void lineEnd(Buffer* ml);
+    void left(Buffer* ml);
+    void right(Buffer* ml);
+    void down(Buffer* ml);
+    void up(Buffer* ml);
+    void reset(Buffer* ml);
+    void end(Buffer* ml);
+    void pageDown(Buffer* ml, float jump);
+    void pageUp(Buffer* ml, float jump);
+    void nextPara(Buffer* ml);
+    void previousPara(Buffer* ml);
+    void nextWord(Buffer* ml);
+    void previousWord(Buffer* ml);
     void addBack(int cx, int cy);
     void addBack(Pos2d<int>& pos);
     void addFront(int cx, int cy);
@@ -58,7 +58,7 @@ private:
     bool findCursor(const Pos2d<int>& pos) const;
     const Positions& getLocs() const { return locs; }
 
-    friend class MultiLine;
+    friend class Buffer;
 };
 
 

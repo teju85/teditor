@@ -114,7 +114,7 @@ void Editor::runCmd(const std::string& cmd) {
 
 void Editor::createScratchBuff(bool switchToIt) {
     auto bName = uniquifyName("*scratch", buffNames);
-    auto* mlb = new MultiLine(bName);
+    auto* mlb = new Buffer(bName);
     mlResize(mlb);
     buffs.push_back(mlb);
     buffNames.insert(mlb->bufferName());
@@ -138,7 +138,7 @@ void Editor::loadFiles() {
 }
 
 void Editor::load(const std::string& file, int line) {
-    auto* mlb = new MultiLine;
+    auto* mlb = new Buffer;
     mlResize(mlb);
     mlb->load(file, line);
     buffs.push_back(mlb);
@@ -257,7 +257,7 @@ void Editor::checkForModifiedBuffers() {
         checkForModifiedBuffer(itr);
 }
 
-void Editor::checkForModifiedBuffer(MultiLine* mlb) {
+void Editor::checkForModifiedBuffer(Buffer* mlb) {
     const auto& name = mlb->bufferName();
     if(!mlb->isModified() || mlb->isRO())
         return;
@@ -368,18 +368,18 @@ void Editor::clearBackBuff() {
     backbuff.clear(defaultfg, defaultbg);
 }
 
-MultiLine& Editor::getMessagesBuff() {
-    MultiLine* mlb = getBuff("*messages");
+Buffer& Editor::getMessagesBuff() {
+    Buffer* mlb = getBuff("*messages");
     if(mlb != nullptr)
         return *mlb;
-    auto* mlb1 = new MultiLine("*messages");
+    auto* mlb1 = new Buffer("*messages");
     mlResize(mlb1);
     buffs.push_back(mlb1);
     buffNames.insert(mlb1->bufferName());
     return *mlb1;
 }
 
-MultiLine* Editor::getBuff(const std::string& name) {
+Buffer* Editor::getBuff(const std::string& name) {
     for(auto itr : buffs)
         if(itr->bufferName() == name)
             return itr;
@@ -534,7 +534,7 @@ void Editor::draw() {
     DEBUG("draw: ended\n");
 }
 
-void Editor::mlResize(MultiLine* mlb) {
+void Editor::mlResize(Buffer* mlb) {
     int ht = cmBarHeight();
     auto sz = tsize;
     sz.y -= ht;

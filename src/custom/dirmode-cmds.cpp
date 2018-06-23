@@ -5,7 +5,7 @@
 
 namespace teditor {
 
-std::string dirModeGetFileAtLine(const MultiLine& buf) {
+std::string dirModeGetFileAtLine(const Buffer& buf) {
     auto& culoc = buf.getCursor().at(0);
     if(culoc.y == 0)
         return "";

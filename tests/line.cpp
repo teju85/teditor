@@ -50,7 +50,7 @@ TEST(Line, Line) {
 }
 
 TEST(Line, FindFirstNotOf) {
-    MultiLine ml;
+    Buffer ml;
     ml.resize({0, 0}, {30, 10});
     ml.load("tests/samples/multiline.txt");
     const auto& line = ml.at(2);
@@ -63,7 +63,7 @@ TEST(Line, FindFirstNotOf) {
 }
 
 TEST(Line, FindLastNotOf) {
-    MultiLine ml;
+    Buffer ml;
     ml.resize({0, 0}, {30, 10});
     ml.load("tests/samples/multiline.txt");
     const auto& line = ml.at(2);

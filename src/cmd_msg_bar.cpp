@@ -27,7 +27,7 @@ std::string StringChoices::getFinalStr(int idx, const std::string& str) const {
 }
 
 
-CmdMsgBar::CmdMsgBar(): MultiLine(), minLoc(0), choices(), optLoc(0) {
+CmdMsgBar::CmdMsgBar(): Buffer(), minLoc(0), choices(), optLoc(0) {
     populateKeyMap<PromptKeys>(kcMap, true);
 }
 
@@ -69,7 +69,7 @@ int CmdMsgBar::linesNeeded(const std::string& str, int wid) const {
 }
 
 int CmdMsgBar::totalLinesNeeded() const {
-    int count = MultiLine::totalLinesNeeded();
+    int count = Buffer::totalLinesNeeded();
     if(!usingChoices())
         return count;
     const auto str = getStr();

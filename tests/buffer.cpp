@@ -3,8 +3,8 @@
 
 namespace teditor {
 
-TEST(Buffer, MultiLineLocation) {
-    MultiLine ml;
+TEST(Buffer, BufferLocation) {
+    Buffer ml;
     ml.resize({0, 0}, {30, 10});
     ml.load("tests/samples/multiline.txt", 2);
     const auto& pos = ml.getCursor().at(0);
@@ -14,8 +14,8 @@ TEST(Buffer, MultiLineLocation) {
     ASSERT_EQ(4, ml.length());
 }
 
-TEST(Buffer, MultiLineKillLine) {
-    MultiLine ml;
+TEST(Buffer, BufferKillLine) {
+    Buffer ml;
     ml.resize({0, 0}, {30, 10});
     ml.load("tests/samples/multiline.txt", 2);
     const auto& pos = ml.getCursor().at(0);
@@ -29,8 +29,8 @@ TEST(Buffer, MultiLineKillLine) {
     ASSERT_EQ(3, ml.length());
 }
 
-TEST(Buffer, MultiLineBadFile) {
-    MultiLine ml;
+TEST(Buffer, BufferBadFile) {
+    Buffer ml;
     ml.resize({0, 0}, {30, 10});
     ml.load("tests/samples/nofile.txt", 2);
     const auto& pos = ml.getCursor().at(0);
@@ -40,16 +40,16 @@ TEST(Buffer, MultiLineBadFile) {
     ASSERT_EQ("nofile.txt", ml.bufferName());
 }
 
-TEST(Buffer, MultiLineDir) {
-    MultiLine ml;
+TEST(Buffer, BufferDir) {
+    Buffer ml;
     ml.resize({0, 0}, {100, 10});
     ml.load("tests/samples");
     ASSERT_EQ(7, ml.length());
     ASSERT_EQ("samples", ml.bufferName());
 }
 
-TEST(Buffer, MultiLine) {
-    MultiLine ml;
+TEST(Buffer, Buffer) {
+    Buffer ml;
     ml.resize({0, 0}, {30, 10});
     ml.load("tests/samples/multiline.txt");
     ASSERT_EQ(4, ml.length());
@@ -77,8 +77,8 @@ TEST(Buffer, MultiLine) {
     ASSERT_EQ(1, ml.length());
 }
 
-TEST(Buffer, MultiLineInsert) {
-    MultiLine ml;
+TEST(Buffer, BufferInsert) {
+    Buffer ml;
     ml.resize({0, 0}, {30, 10});
     ml.load("tests/samples/multiline.txt");
     Cursor& cu = ml.getCursor();
@@ -92,8 +92,8 @@ TEST(Buffer, MultiLineInsert) {
     ASSERT_EQ(1, cu.count());
 }
 
-TEST(Buffer, MultiLineInsertLine) {
-    MultiLine ml;
+TEST(Buffer, BufferInsertLine) {
+    Buffer ml;
     ml.resize({0, 0}, {30, 10});
     ml.load("tests/samples/multiline.txt");
     ASSERT_EQ(4, ml.length());

@@ -13,7 +13,7 @@
 
 namespace teditor {
 
-MultiLine::MultiLine(const std::string& name):
+Buffer::Buffer(const std::string& name):
     screenStart(), screenDim(), lines(), startLine(0), cursor(),
     modified(false), readOnly(false), buffName(name), fileName(), dirName(),
     regions(), regionActive(false), kcMap(), cMap(), cmds(), topCmd(-1),
@@ -26,7 +26,7 @@ MultiLine::MultiLine(const std::string& name):
     kcMap.resetTraversal();
 }
 
-MultiLine::~MultiLine() {
+Buffer::~Buffer() {
     if(!fileName.empty() && Editor::instanceReady()) {
         auto& ed = Editor::getInstance();
         int line = cursor.at(0).y;
@@ -34,11 +34,11 @@ MultiLine::~MultiLine() {
     }
 }
 
-const AttrColor& MultiLine::getColor(const std::string& name) const {
+const AttrColor& Buffer::getColor(const std::string& name) const {
     return cMap.get(name);
 }
 
-void MultiLine::addCommand(CmdPtr c) {
+void Buffer::addCommand(CmdPtr c) {
     int len = (int)cmds.size();
     if(topCmd < 0) {
         cmds.clear();
@@ -52,7 +52,7 @@ void MultiLine::addCommand(CmdPtr c) {
     topCmd = (int)cmds.size() - 1;
 }
 
-void MultiLine::undo() {
+void Buffer::undo() {
     if(topCmd < 0) {
         CMBAR_MSG("No further undo!");
         return;
@@ -61,7 +61,7 @@ void MultiLine::undo() {
     --topCmd;
 }
 
-void MultiLine::redo() {
+void Buffer::redo() {
     int len = (int)cmds.size();
     if(topCmd >= len-1) {
         CMBAR_MSG("No further redo!");
@@ -71,7 +71,7 @@ void MultiLine::redo() {
     cmds[topCmd]->exec(CMD_REDO);
 }
 
-std::vector<std::string> MultiLine::regionAsStr() const {
+std::vector<std::string> Buffer::regionAsStr() const {
     std::vector<std::string> out;
     if(!isRegionActive())
         return out;
@@ -114,17 +114,17 @@ std::vector<std::string> MultiLine::regionAsStr() const {
     return out;
 }
 
-void MultiLine::enableRegions() {
+void Buffer::enableRegions() {
     regionActive = true;
     regions.enable(cursor.getLocs());
 }
 
-void MultiLine::disableRegions() {
+void Buffer::disableRegions() {
     regionActive = false;
     regions.clear();
 }
 
-void MultiLine::resize(const Pos2d<int>& start, const Pos2d<int>& dim) {
+void Buffer::resize(const Pos2d<int>& start, const Pos2d<int>& dim) {
     screenStart = start;
     screenDim = dim;
     // last line is kept for status bar for this buffer
@@ -132,7 +132,7 @@ void MultiLine::resize(const Pos2d<int>& start, const Pos2d<int>& dim) {
     lineUp();
 }
 
-void MultiLine::load(const std::string& file, int line) {
+void Buffer::load(const std::string& file, int line) {
     if(isDir(file.c_str())) {
         loadDir(file);
         return;
@@ -140,12 +140,12 @@ void MultiLine::load(const std::string& file, int line) {
     loadFile(file, line);
 }
 
-void MultiLine::reload() {
+void Buffer::reload() {
     clear();
     load(fileName, 0);
 }
 
-void MultiLine::loadDir(const std::string& dir) {
+void Buffer::loadDir(const std::string& dir) {
     Files fs = listDir(dir);
     auto first = rel2abs(pwd(), dir);
     lines.at(length()-1).append(first.c_str());
@@ -162,7 +162,7 @@ void MultiLine::loadDir(const std::string& dir) {
     populateKeyMap<DirModeKeys>(kcMap);
 }
 
-void MultiLine::loadFile(const std::string& file, int line) {
+void Buffer::loadFile(const std::string& file, int line) {
     auto absFile = rel2abs(pwd(), file);
     std::fstream fp;
     fp.open(absFile.c_str(), std::fstream::in);
@@ -180,7 +180,7 @@ void MultiLine::loadFile(const std::string& file, int line) {
     cursor.at(0) = {0, line};
 }
 
-void MultiLine::resetBufferState(int line, const std::string& file) {
+void Buffer::resetBufferState(int line, const std::string& file) {
     startLine = line;
     cursor.reset(this);
     modified = false;
@@ -193,7 +193,7 @@ void MultiLine::resetBufferState(int line, const std::string& file) {
     topCmd = -1;
 }
 
-void MultiLine::drawBuffer(Editor& ed) {
+void Buffer::drawBuffer(Editor& ed) {
     // draw current buffer
     int h = screenStart.y + screenDim.y;
     int len = length();
@@ -201,7 +201,7 @@ void MultiLine::drawBuffer(Editor& ed) {
         y = drawLine(y, lines[idx].get(), ed, idx, "defaultfg", "defaultbg");
 }
 
-void MultiLine::drawCursor(Editor& ed, const std::string& bg) {
+void Buffer::drawCursor(Editor& ed, const std::string& bg) {
     int n = cursor.count();
     for(int i=0;i<n;++i) {
         auto& culoc = cursor.at(i);
@@ -211,7 +211,7 @@ void MultiLine::drawCursor(Editor& ed, const std::string& bg) {
     }
 }
 
-void MultiLine::drawStatusBar(Editor& ed) {
+void Buffer::drawStatusBar(Editor& ed) {
     std::string line(screenDim.x, ' ');
     int x = screenStart.x;
     int y = screenStart.x + screenDim.y;
@@ -235,7 +235,7 @@ void MultiLine::drawStatusBar(Editor& ed) {
     }
 }
 
-int MultiLine::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
+int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
                         const std::string& fg, const std::string& bg) {
     int xStart = screenStart.x;
     int wid = screenDim.x;
@@ -263,7 +263,7 @@ int MultiLine::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
     return y;
 }
 
-Pos2d<int> MultiLine::buffer2screen(const Pos2d<int>& loc) const {
+Pos2d<int> Buffer::buffer2screen(const Pos2d<int>& loc) const {
     int w = screenDim.x;
     Pos2d<int> ret = screenStart;
     int relY = loc.y - startLine;
@@ -275,7 +275,7 @@ Pos2d<int> MultiLine::buffer2screen(const Pos2d<int>& loc) const {
     return ret;
 }
 
-void MultiLine::insertLine(int i) {
+void Buffer::insertLine(int i) {
     const auto& pos = cursor.at(i);
     lines.insert(lines.begin()+pos.y+1, Line());
     auto& oldline = lines[pos.y];
@@ -291,7 +291,7 @@ void MultiLine::insertLine(int i) {
     cursor.at(i).x = 0;
 }
 
-void MultiLine::insert(char c) {
+void Buffer::insert(char c) {
     modified = true;
     int len = cursor.count();
     for(int i=0;i<len;++i) {
@@ -302,7 +302,7 @@ void MultiLine::insert(char c) {
 }
 
 ///@todo: what if a single line crosses the whole screen!?
-void MultiLine::insert(char c, int i) {
+void Buffer::insert(char c, int i) {
     if(c == '\n' || c == (char)Key_Enter) {
         insertLine(i);
         return;
@@ -314,7 +314,7 @@ void MultiLine::insert(char c, int i) {
     cursor.moveRightCursorsOnSameLine(i);
 }
 
-void MultiLine::insert(const std::vector<std::string>& strs) {
+void Buffer::insert(const std::vector<std::string>& strs) {
     ASSERT((int)strs.size() == cursor.count(),
            "insert: lines passed not the same as number of cursors! [%d,%d]",
            (int)strs.size(), cursor.count());
@@ -326,14 +326,14 @@ void MultiLine::insert(const std::vector<std::string>& strs) {
     }
 }
 
-void MultiLine::insert(const char* buf) {
+void Buffer::insert(const char* buf) {
     int len = strlen(buf);
     for(int i=0;i<len;++i) {
         insert(buf[i]);
     }
 }
 
-RemovedLines MultiLine::keepRemoveLines(Pcre& pc, bool keep) {
+RemovedLines Buffer::keepRemoveLines(Pcre& pc, bool keep) {
     RemovedLines res;
     bool isRegion = isRegionActive();
     for(int i=0;i<(int)lines.size();++i) {
@@ -356,7 +356,7 @@ RemovedLines MultiLine::keepRemoveLines(Pcre& pc, bool keep) {
     return res;
 }
 
-void MultiLine::addLines(const RemovedLines& rlines) {
+void Buffer::addLines(const RemovedLines& rlines) {
     // insert from back of the vector to restore the original state!
     for(int i=(int)rlines.size()-1;i>=0;--i) {
         const auto& rl = rlines[i];
@@ -367,7 +367,7 @@ void MultiLine::addLines(const RemovedLines& rlines) {
     cursor.reset(this);
 }
 
-void MultiLine::gotoLine(int lineNum) {
+void Buffer::gotoLine(int lineNum) {
     int len = cursor.count();
     for(int i=0;i<len;++i) {
         auto& culoc = cursor.at(i);
@@ -376,7 +376,7 @@ void MultiLine::gotoLine(int lineNum) {
     cursor.removeDuplicates();
 }
 
-void MultiLine::matchCurrentParen() {
+void Buffer::matchCurrentParen() {
     int len = cursor.count();
     bool isOpen;
     for(int i=0;i<len;++i) {
@@ -391,7 +391,7 @@ void MultiLine::matchCurrentParen() {
     cursor.removeDuplicates();
 }
 
-Pos2d<int> MultiLine::matchCurrentParen(int i, bool& isOpen) {
+Pos2d<int> Buffer::matchCurrentParen(int i, bool& isOpen) {
     const auto& culoc = cursor.at(i);
     const auto& line = at(culoc.y).get();
     char c = line[culoc.x];
@@ -433,7 +433,7 @@ Pos2d<int> MultiLine::matchCurrentParen(int i, bool& isOpen) {
     return culoc;
 }
 
-std::vector<std::string> MultiLine::remove() {
+std::vector<std::string> Buffer::remove() {
     std::vector<std::string> del;
     modified = true;
     int len = cursor.count();
@@ -463,7 +463,7 @@ std::vector<std::string> MultiLine::remove() {
     return del;
 }
 
-std::vector<std::string> MultiLine::remove(const Positions& start,
+std::vector<std::string> Buffer::remove(const Positions& start,
                                            const Positions& end) {
     modified = true;
     ASSERT(start.size() == end.size(),
@@ -476,7 +476,7 @@ std::vector<std::string> MultiLine::remove(const Positions& start,
     return del;
 }
 
-std::string MultiLine::removeFrom(const Pos2d<int>& start,
+std::string Buffer::removeFrom(const Pos2d<int>& start,
                                   const Pos2d<int>& end) {
     std::string del;
     int yStart, yEnd, xStart, xEnd;
@@ -525,7 +525,7 @@ std::string MultiLine::removeFrom(const Pos2d<int>& start,
     return del;
 }
 
-std::vector<std::string> MultiLine::removeCurrent() {
+std::vector<std::string> Buffer::removeCurrent() {
     std::vector<std::string> del;
     modified = true;
     int len = cursor.count();
@@ -551,7 +551,7 @@ std::vector<std::string> MultiLine::removeCurrent() {
     return del;
 }
 
-std::vector<std::string> MultiLine::killLine() {
+std::vector<std::string> Buffer::killLine() {
     std::vector<std::string> del;
     modified = true;
     int len = cursor.count();
@@ -575,7 +575,7 @@ std::vector<std::string> MultiLine::killLine() {
     return del;
 }
 
-void MultiLine::sortRegions() {
+void Buffer::sortRegions() {
     modified = true;
     int len = cursor.count();
     for(int i=0;i<len;++i) {
@@ -589,7 +589,7 @@ void MultiLine::sortRegions() {
     }
 }
 
-char MultiLine::charAt(const Pos2d<int>& pos) const {
+char Buffer::charAt(const Pos2d<int>& pos) const {
     if(pos.y >= length())
         return ' ';
     const auto& line = at(pos.y);
@@ -598,7 +598,7 @@ char MultiLine::charAt(const Pos2d<int>& pos) const {
     return line.at(pos.x);
 }
 
-int MultiLine::totalLinesNeeded() const {
+int Buffer::totalLinesNeeded() const {
     int end = cursor.at(0).y;
     int len = 0;
     for(int i=startLine;i<=end;++i)
@@ -606,16 +606,16 @@ int MultiLine::totalLinesNeeded() const {
     return len;
 }
 
-void MultiLine::lineUp() {
+void Buffer::lineUp() {
     while(totalLinesNeeded() > screenDim.y)
         ++startLine;
 }
 
-void MultiLine::lineDown() {
+void Buffer::lineDown() {
     startLine = std::min(startLine, cursor.at(0).y);
 }
 
-void MultiLine::lineEnd() {
+void Buffer::lineEnd() {
     auto screen = buffer2screen(cursor.at(0));
     int relY = screen.y - startLine;
     if(relY < screenDim.y)
@@ -624,7 +624,7 @@ void MultiLine::lineEnd() {
     startLine += diff;
 }
 
-void MultiLine::save() {
+void Buffer::save() {
     if(!modified) {
         CMBAR_MSG("Nothing to save");
         return;
@@ -655,7 +655,7 @@ void MultiLine::save() {
     CMBAR_MSG("Wrote to '%s'\n", fileName.c_str());
 }
 
-void MultiLine::clear() {
+void Buffer::clear() {
     for(auto& line : lines)
         line.clear();
     lines.clear();

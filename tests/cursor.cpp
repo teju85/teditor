@@ -6,7 +6,7 @@
 namespace teditor {
 
 TEST(Cursor, Basics) {
-    MultiLine ml;
+    Buffer ml;
     ml.resize({0, 0}, {30, 10});
     Cursor c;
     ASSERT_TRUE(c.isHidden(0));
@@ -32,7 +32,7 @@ TEST(Cursor, Basics) {
 }
 
 TEST(Cursor, Movements) {
-    MultiLine ml;
+    Buffer ml;
     ml.resize({0, 0}, {30, 10});
     ml.load("tests/samples/sample.cxx", 0);
     auto& cu = ml.getCursor();
@@ -99,7 +99,7 @@ TEST(Cursor, Movements) {
 }
 
 TEST(Cursor, Operations) {
-    MultiLine ml;
+    Buffer ml;
     ml.resize({0, 0}, {30, 10});
     ml.load("tests/samples/sample.cxx", 0);
     auto& cu = ml.getCursor();

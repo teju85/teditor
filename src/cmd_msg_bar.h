@@ -41,7 +41,7 @@ protected:
 };
 
 
-class CmdMsgBar: public MultiLine {
+class CmdMsgBar: public Buffer {
 public:
     CmdMsgBar();
     void resize(const Pos2d<int>& start, const Pos2d<int>& dim) override;

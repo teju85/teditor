@@ -26,10 +26,10 @@ typedef std::vector<RemovedLine> RemovedLines;
 
 class Editor;
 
-class MultiLine {
+class Buffer {
 public:
-    MultiLine(const std::string& name="");
-    virtual ~MultiLine();
+    Buffer(const std::string& name="");
+    virtual ~Buffer();
 
     void insertLine(int i);
     virtual void insert(char c);

@@ -7,14 +7,14 @@
 
 namespace teditor {
 
-class MultiLine;
+class Buffer;
 
 /**
  * @brief Incremental search support used by Ctrl-F command
  */
 class ISearch {
 public:
-    ISearch(const MultiLine& mlb);
+    ISearch(const Buffer& mlb);
 
     /** add the extra char for the search */
     void addChar(char c);
@@ -33,7 +33,7 @@ public:
 
 private:
     /** buffer where to conduct searches */
-    const MultiLine& ml;
+    const Buffer& ml;
     /** current search */
     std::string curr;
     /** line number v/s list of matches */

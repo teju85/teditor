@@ -22,21 +22,21 @@ void Cursor::restoreExcursion(const Positions& pos) {
     std::copy(pos.begin(), pos.end(), locs.begin());
 }
 
-void Cursor::home(MultiLine* ml) {
+void Cursor::home(Buffer* ml) {
     for(auto& cu : locs) {
         cu.x = ml->getMinStartLoc();
     }
     removeDuplicates();
 }
 
-void Cursor::lineEnd(MultiLine* ml) {
+void Cursor::lineEnd(Buffer* ml) {
     for(auto& cu : locs) {
         cu.x = ml->at(cu.y).length();
     }
     removeDuplicates();
 }
 
-void Cursor::left(MultiLine* ml) {
+void Cursor::left(Buffer* ml) {
     int minLoc = ml->getMinStartLoc();
     for(auto& cu : locs) {
         --cu.x;
@@ -54,7 +54,7 @@ void Cursor::left(MultiLine* ml) {
     removeDuplicates();
 }
 
-void Cursor::right(MultiLine* ml) {
+void Cursor::right(Buffer* ml) {
     for(auto& cu : locs) {
         ++cu.x;
         if(cu.x > ml->at(cu.y).length()) {
@@ -70,7 +70,7 @@ void Cursor::right(MultiLine* ml) {
     removeDuplicates();
 }
 
-void Cursor::down(MultiLine* ml) {
+void Cursor::down(Buffer* ml) {
     for(auto& cu : locs) {
         if(cu.y < ml->length()-1) {
             ++cu.y;
@@ -81,7 +81,7 @@ void Cursor::down(MultiLine* ml) {
     removeDuplicates();
 }
 
-void Cursor::up(MultiLine* ml) {
+void Cursor::up(Buffer* ml) {
     for(auto& cu : locs) {
         if(cu.y >= 1) {
             --cu.y;
@@ -92,7 +92,7 @@ void Cursor::up(MultiLine* ml) {
     removeDuplicates();
 }
 
-void Cursor::reset(MultiLine* ml) {
+void Cursor::reset(Buffer* ml) {
     for(auto& cu : locs) {
         cu.x = 0;
         cu.y = 0;
@@ -101,7 +101,7 @@ void Cursor::reset(MultiLine* ml) {
     removeDuplicates();
 }
 
-void Cursor::end(MultiLine* ml) {
+void Cursor::end(Buffer* ml) {
     for(auto& cu : locs) {
         cu.y = std::max(0, ml->length() - 1);
         cu.x = ml->at(cu.y).length();
@@ -110,7 +110,7 @@ void Cursor::end(MultiLine* ml) {
     removeDuplicates();
 }
 
-void Cursor::pageDown(MultiLine* ml, float jump) {
+void Cursor::pageDown(Buffer* ml, float jump) {
     int ijump = ml->verticalJump(jump);
     for(auto& cu : locs) {
         cu.y = std::min(ml->length()-1, cu.y+ijump);
@@ -120,7 +120,7 @@ void Cursor::pageDown(MultiLine* ml, float jump) {
     removeDuplicates();
 }
 
-void Cursor::pageUp(MultiLine* ml, float jump) {
+void Cursor::pageUp(Buffer* ml, float jump) {
     int ijump = ml->verticalJump(jump);
     for(auto& cu : locs) {
         cu.y = std::max(0, cu.y-ijump);
@@ -130,7 +130,7 @@ void Cursor::pageUp(MultiLine* ml, float jump) {
     removeDuplicates();
 }
 
-void Cursor::nextPara(MultiLine* ml) {
+void Cursor::nextPara(Buffer* ml) {
     int len = ml->length();
     for(auto& cu : locs) {
         int prevLen = ml->at(cu.y).length();
@@ -146,7 +146,7 @@ void Cursor::nextPara(MultiLine* ml) {
     removeDuplicates();
 }
 
-void Cursor::previousPara(MultiLine* ml) {
+void Cursor::previousPara(Buffer* ml) {
     for(auto& cu : locs) {
         int prevLen = ml->at(cu.y).length();
         for(--cu.y;cu.y>=0;--cu.y) {
@@ -161,7 +161,7 @@ void Cursor::previousPara(MultiLine* ml) {
     removeDuplicates();
 }
 
-void Cursor::nextWord(MultiLine* ml) {
+void Cursor::nextWord(Buffer* ml) {
     const auto& word = ml->getWord();
     for(auto& cu : locs) {
         const auto& line = ml->at(cu.y);
@@ -178,7 +178,7 @@ void Cursor::nextWord(MultiLine* ml) {
     removeDuplicates();
 }
 
-void Cursor::previousWord(MultiLine* ml) {
+void Cursor::previousWord(Buffer* ml) {
     const auto& word = ml->getWord();
     for(auto& cu : locs) {
         if(cu.x <= 0) {
