@@ -19,14 +19,17 @@ TEST(Buffer, KillLine) {
     ml.resize({0, 0}, {30, 10});
     ml.load("tests/samples/multiline.txt", 2);
     const auto& pos = ml.getCursor().at(0);
-    ASSERT_EQ(0, pos.x);
-    ASSERT_EQ(2, pos.y);
+    ASSERT_EQ(Pos2d<int>(0, 2), pos);
     ASSERT_EQ("multiline.txt", ml.bufferName());
     ASSERT_EQ(4, ml.length());
-    ml.killLine();
+    auto del = ml.killLine();
     ASSERT_EQ(4, ml.length());
-    ml.killLine();
+    ASSERT_EQ(1U, del.size());
+    ASSERT_EQ("for multi-line buffer!", del[0]);
+    del = ml.killLine();
     ASSERT_EQ(3, ml.length());
+    ASSERT_EQ(1U, del.size());
+    ASSERT_EQ("\n", del[0]);
 }
 
 TEST(Buffer, BadFile) {
