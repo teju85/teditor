@@ -128,4 +128,43 @@ TEST(Buffer, InsertLine) {
     ASSERT_EQ("", ml.at(1).get());
 }
 
+TEST(Buffer, RemoveRegion) {
+    Buffer ml;
+    ml.resize({0, 0}, {30, 10});
+    ml.load("tests/samples/sample.cxx");
+    ASSERT_EQ(21, ml.length());
+    auto& cu = ml.getCursor();
+    ASSERT_EQ(Pos2d<int>(0, 0), cu.at(0));
+
+    Positions start, end;
+    start.push_back({0, 0});
+    end.push_back({0, 3});
+    // end includes a newline
+    auto del = ml.remove(start, end);
+    ASSERT_EQ(1U, del.size());
+    ASSERT_EQ("#ifndef _GNU_SOURCE\n#define _GNU_SOURCE // for wcstring, strcasestr\n#endif\n",
+              del[0]);
+    ASSERT_EQ(18, ml.length());
+    // undo should now just work!
+    cu.at(0) = {0, 0};
+    ml.insert(del);
+    ASSERT_EQ(21, ml.length());
+    ASSERT_EQ("#ifndef _GNU_SOURCE", ml.at(0).get());
+    ASSERT_EQ("", ml.at(3).get());
+
+    // end doesn't include a newline
+    end[0] = {ml.at(2).length(), 2};
+    del = ml.remove(start, end);
+    ASSERT_EQ(1U, del.size());
+    ASSERT_EQ("#ifndef _GNU_SOURCE\n#define _GNU_SOURCE // for wcstring, strcasestr\n#endif",
+              del[0]);
+    ASSERT_EQ(19, ml.length());
+    // undo should now just work!
+    cu.at(0) = {0, 0};
+    ml.insert(del);
+    ASSERT_EQ(21, ml.length());
+    ASSERT_EQ("#ifndef _GNU_SOURCE", ml.at(0).get());
+    ASSERT_EQ("", ml.at(3).get());
+}
+
 } // end namespace teditor

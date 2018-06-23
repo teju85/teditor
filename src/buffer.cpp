@@ -464,7 +464,7 @@ std::vector<std::string> Buffer::remove() {
 }
 
 std::vector<std::string> Buffer::remove(const Positions& start,
-                                           const Positions& end) {
+                                        const Positions& end) {
     modified = true;
     ASSERT(start.size() == end.size(),
            "remove: start length not same as end's [%lu,%lu]\n",
@@ -515,12 +515,7 @@ std::string Buffer::removeFrom(const Pos2d<int>& start,
     del += '\n';
     if(xEnd > 0) {
         auto& last = at(actualIdx);
-        isFullLine = xEnd >= last.length();
         del += last.erase(0, xEnd);
-        if(isFullLine) {
-            lines.erase(lines.begin()+actualIdx);
-            del += '\n';
-        }
     }
     return del;
 }
