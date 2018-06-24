@@ -4,11 +4,6 @@
 
 namespace teditor {
 
-bool strFind(const std::string& line, const std::string& str) {
-    return line.find(str) != std::string::npos;
-}
-
-
 bool Choices::match(const std::string& line, const std::string& str) const {
     return filter(line, str);
 }
@@ -107,8 +102,10 @@ void CmdMsgBar::insert(char c) {
 void CmdMsgBar::updateChoices() {
     if(!usingChoices())
         return;
-    if(choices->updateChoices(getStr()))
+    if(choices->updateChoices(getStr())) {
+        startLine = 0;
         optLoc = 0;
+    }
 }
 
 void CmdMsgBar::clear() {

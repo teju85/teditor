@@ -1,15 +1,13 @@
 #pragma once
 
 #include "buffer.h"
+#include "utils.h"
 
 
 namespace teditor {
 
 /** Functor to filter input string against a list of choices */
 typedef bool(*ChoicesFilter)(const std::string&, const std::string&);
-
-/** Default ChoicesFilter which just performs std::string::find */
-bool strFind(const std::string& line, const std::string& str);
 
 
 class Choices {

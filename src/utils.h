@@ -128,4 +128,10 @@ typedef std::pair<std::string, int> FileInfo;
 
 FileInfo readFileInfo(const std::string& arg);
 
+/** Filter function that just performs std::string::find */
+bool strFind(const std::string& line, const std::string& str);
+
+/** Filter function while working with files */
+bool fileStrFind(const std::string& line, const std::string& str);
+
 } // end namespace teditor

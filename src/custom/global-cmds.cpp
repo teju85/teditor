@@ -491,14 +491,6 @@ CMD_NO_UNDO(FindFileHistory, "find-file-history") {
     ed.load(fi.first, fi.second);
 }
 
-bool fileStrFind(const std::string& line, const std::string& str) {
-    auto loc = str.find_last_of('/');
-    if(loc == std::string::npos)
-        return strFind(line, str);
-    auto sub = str.substr(loc+1);
-    return strFind(line, sub);
-}
-
 class FileChoices: public StringChoices {
 public:
     FileChoices(const Strings& arr, ChoicesFilter cf=fileStrFind):

@@ -391,4 +391,20 @@ FileInfo readFileInfo(const std::string& arg) {
     return FileInfo(file, line);
 }
 
+bool strFind(const std::string& line, const std::string& str) {
+    return line.find(str) != std::string::npos;
+}
+
+bool fileStrFind(const std::string& line, const std::string& str) {
+    auto loc = str.find_last_of('/');
+    // this shouldn't happen in reality, though!
+    if(loc == std::string::npos)
+        return strFind(line, str);
+    // pick the basename
+    auto sub = str.substr(loc+1);
+    if(sub.empty())
+        return true;
+    return strFind(line, sub);
+}
+
 } // end namespace teditor

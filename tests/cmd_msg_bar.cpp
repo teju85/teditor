@@ -4,12 +4,6 @@
 
 namespace teditor {
 
-TEST(ChoicesFilter, StrFind) {
-    ASSERT_TRUE(strFind("there is abc in this line", "abc"));
-    ASSERT_FALSE(strFind("there is no", "abc"));
-    ASSERT_FALSE(strFind("abc", "no matching"));
-}
-
 TEST(StringChoices, Test) {
     std::vector<std::string> opts = {
         "list",

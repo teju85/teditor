@@ -222,4 +222,18 @@ TEST(Utils, ReadFileInfo) {
     ASSERT_THROW(readFileInfo("README.org:10:10"), std::runtime_error);
 }
 
+TEST(Utils, StrFind) {
+    ASSERT_TRUE(strFind("there is abc in this line", "abc"));
+    ASSERT_FALSE(strFind("there is no", "abc"));
+    ASSERT_FALSE(strFind("abc", "no matching"));
+}
+
+TEST(Utils, FileStrFind) {
+    ASSERT_TRUE(fileStrFind("files", "file"));
+    ASSERT_FALSE(fileStrFind("files", "tile"));
+    ASSERT_TRUE(fileStrFind("file", "/home/user/"));
+    ASSERT_FALSE(fileStrFind("file", "/home/user/check"));
+    ASSERT_TRUE(fileStrFind("file", "/home/user/fil"));
+}
+
 } // end namespace teditor
