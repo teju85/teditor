@@ -3,20 +3,23 @@
 
 namespace teditor {
 
-Mode textMode() {
-    Mode m;
+void textMode(Mode& m) {
     populateKeyMap<GlobalKeys>(m.kcMap);
-    populateColorMap<GlobalColors>(cMap);
+    populateColorMap<GlobalColors>(m.cMap);
     m.word = "abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNOPQRSTUVWXYZ0123456789_";
     m.kcMap.resetTraversal();
-    return m;
 }
 
-Mode dirMode() {
-    auto m = textMode();
+void dirMode(Mode& m) {
+    textMode(m);
     populateKeyMap<DirModeKeys>(m.kcMap);
     m.kcMap.resetTraversal();
-    return m;
+}
+
+void cmBarMode(Mode& m) {
+    populateKeyMap<PromptKeys>(m.kcMap, true);
+    populateColorMap<GlobalColors>(m.cMap);
+    m.word = "abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNOPQRSTUVWXYZ0123456789_-";
 }
 
 } // end namespace teditor

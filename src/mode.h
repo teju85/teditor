@@ -16,9 +16,12 @@ struct Mode {
 
 
 /** the default (catch-all) mode */
-Mode textMode();
+void textMode(Mode& m);
 
 /** mode while loading and working with dirs */
-Mode dirMode();
+void dirMode(Mode& m);
+
+/** mode for the cmd-msg-bar */
+void cmBarMode(Mode& m);
 
 }; // end namespace teditor

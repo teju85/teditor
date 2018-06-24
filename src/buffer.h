@@ -10,6 +10,7 @@
 #include "pcre.h"
 #include "cursor.h"
 #include "gtest/gtest.h"
+#include "mode.h"
 
 
 namespace teditor {
@@ -141,7 +142,7 @@ public:
     const Positions& getRegionLocs() const { return regions.getLocs(); }
     const AttrColor& getColor(const std::string& name) const;
     int verticalJump(float jump) const { return (int)(jump * screenDim.y); }
-    const std::string& getWord() const { return word; }
+    const std::string& getWord() const { return mode.word; }
 
 protected:
     Pos2d<int> screenStart, screenDim;
@@ -152,11 +153,9 @@ protected:
     std::string buffName, fileName, dirName;
     Regions regions;
     bool regionActive;
-    KeyCmdMap kcMap;
-    ColorMap cMap;
     std::vector<CmdPtr> cmds;
     int topCmd;
-    std::string word;
+    Mode mode;
 
     void insertLine(int i);
     void insert(char c, int i);
@@ -164,7 +163,7 @@ protected:
     void resetBufferState(int line, const std::string& file);
     void enableRegions();
     void disableRegions();
-    KeyCmdMap& getKeyCmdMap() { return kcMap; }
+    KeyCmdMap& getKeyCmdMap() { return mode.kcMap; }
     void loadFile(const std::string& file, int line);
     void loadDir(const std::string& dir);
     std::string removeFrom(const Pos2d<int>& start, const Pos2d<int>& end);

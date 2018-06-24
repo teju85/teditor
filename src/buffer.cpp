@@ -16,14 +16,11 @@ namespace teditor {
 Buffer::Buffer(const std::string& name):
     screenStart(), screenDim(), lines(), startLine(0), cursor(),
     modified(false), readOnly(false), buffName(name), fileName(), dirName(),
-    regions(), regionActive(false), kcMap(), cMap(), cmds(), topCmd(-1),
-    word("abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNOPQRSTUVWXYZ0123456789_") {
+    regions(), regionActive(false), cmds(), topCmd(-1), mode() {
     addLine();
     cursor.reset(this);
     dirName = getpwd();
-    populateKeyMap<GlobalKeys>(kcMap);
-    populateColorMap<GlobalColors>(cMap);
-    kcMap.resetTraversal();
+    textMode(mode);
 }
 
 Buffer::~Buffer() {
@@ -35,7 +32,7 @@ Buffer::~Buffer() {
 }
 
 const AttrColor& Buffer::getColor(const std::string& name) const {
-    return cMap.get(name);
+    return mode.cMap.get(name);
 }
 
 void Buffer::addCommand(CmdPtr c) {
@@ -133,11 +130,10 @@ void Buffer::resize(const Pos2d<int>& start, const Pos2d<int>& dim) {
 }
 
 void Buffer::load(const std::string& file, int line) {
-    if(isDir(file.c_str())) {
+    if(isDir(file.c_str()))
         loadDir(file);
-        return;
-    }
-    loadFile(file, line);
+    else
+        loadFile(file, line);
 }
 
 void Buffer::reload() {
@@ -159,7 +155,7 @@ void Buffer::loadDir(const std::string& dir) {
     resetBufferState(0, first);
     cursor.reset(this);
     readOnly = true;
-    populateKeyMap<DirModeKeys>(kcMap);
+    dirMode(mode);
 }
 
 void Buffer::loadFile(const std::string& file, int line) {
@@ -178,6 +174,7 @@ void Buffer::loadFile(const std::string& file, int line) {
     fp.close();
     resetBufferState(line, absFile);
     cursor.at(0) = {0, line};
+    textMode(mode);
 }
 
 void Buffer::resetBufferState(int line, const std::string& file) {

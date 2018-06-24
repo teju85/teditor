@@ -23,7 +23,7 @@ std::string StringChoices::getFinalStr(int idx, const std::string& str) const {
 
 
 CmdMsgBar::CmdMsgBar(): Buffer(), minLoc(0), choices(), optLoc(0) {
-    populateKeyMap<PromptKeys>(kcMap, true);
+    cmBarMode(mode);
 }
 
 void CmdMsgBar::resize(const Pos2d<int>& start, const Pos2d<int>& dim) {
