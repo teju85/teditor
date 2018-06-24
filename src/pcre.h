@@ -126,6 +126,9 @@ private:
                  std::string& out, uint32_t options);
 
     PCRE2_SIZE utf8Jump(char* subject, size_t subLen, PCRE2_SIZE start);
+
+    bool smallOvector(const Match& m) const;
+    bool kAssertion(const char* subject) const;
 };
 
 
