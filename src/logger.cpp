@@ -47,9 +47,7 @@ bool Logger::removeNewLine(char* buf, int& len) {
 }
 
 void Logger::log(int lev, const char* fmt, ...) {
-    if(lev > inst->level)
-        return;
-    if(inst == nullptr)
+    if(inst == nullptr || lev > inst->level)
         return;
     inst->open();
     va_list vl;
