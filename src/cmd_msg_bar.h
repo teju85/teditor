@@ -67,6 +67,7 @@ public:
     void up();
     void updateChoices();
     int getOptLoc() const { return optLoc; }
+    void lineDown();
 
 private:
     /** useful during prompts, so as to not cross into the message itself! */

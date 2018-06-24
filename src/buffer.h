@@ -121,7 +121,7 @@ public:
     virtual int totalLinesNeeded() const;
     char charAt(const Pos2d<int>& pos) const;
     void lineUp();
-    void lineDown();
+    virtual void lineDown();
     void lineReset() { startLine = 0; }
     void lineEnd();
     virtual void save();

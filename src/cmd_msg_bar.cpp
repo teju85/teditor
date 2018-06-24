@@ -151,5 +151,9 @@ void CmdMsgBar::up() {
     lineDown();
 }
 
+void CmdMsgBar::lineDown() {
+    startLine = std::min(startLine, optLoc);
+}
+
 } // end namespace teditor
 
