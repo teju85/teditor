@@ -32,9 +32,9 @@ void sigwinch_handler(int xxx) {
 }
 
 Editor::Editor(const Args& args_):
-    outbuff(OutBuffSize), backbuff(), frontbuff(), tsize(), inout(-1), term(),
-    winchFds(), tios(), origTios(), lastfg(), lastbg(), bufferResize(false),
-    args(args_), cmBar(), buffs(), buffNames(), currBuff(0),
+    outbuff(OutBuffSize), backbuff(), frontbuff(), tsize(), inout(-1),
+    currBuff(0), winchFds(), term(), tios(), origTios(), lastfg(), lastbg(),
+    bufferResize(false), args(args_), cmBar(), buffs(), buffNames(),
     quitEventLoop(false), quitPromptLoop(false), cancelPromptLoop(false),
     cmdMsgBarActive(false), copiedStr(), defcMap(),
     fileshist(args.getHistFile(), args.maxFileHistory) {

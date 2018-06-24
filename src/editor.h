@@ -87,9 +87,8 @@ private:
     ByteBuffer outbuff;
     CellBuffer backbuff, frontbuff;
     Pos2d<int> tsize;
-    int inout;
+    int inout, currBuff, winchFds[2];
     Terminal term;
-    int winchFds[2];
     struct termios tios, origTios;
     AttrColor lastfg, lastbg;
     bool bufferResize;
@@ -98,7 +97,6 @@ private:
     CmdMsgBar cmBar;
     std::vector<Buffer*> buffs;
     std::set<std::string> buffNames;
-    int currBuff;
     bool quitEventLoop, quitPromptLoop, cancelPromptLoop, cmdMsgBarActive;
     Strings copiedStr;
     ColorMap defcMap;
