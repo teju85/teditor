@@ -333,14 +333,6 @@ int Editor::sendChar(int x, int y, const std::string& fg, const std::string& bg,
     return 1;
 }
 
-int Editor::sendCharNtimes(int x, int y, const std::string& fg,
-                           const std::string& bg, char c, int n) {
-    Cell ce = {(Chr)c, getColor(fg), getColor(bg)};
-    for(int i=0;i<n;++i)
-        sendCell(x+i, y, ce);
-    return n;
-}
-
 int Editor::sendStringf(int x, int y, const std::string& fg,
                         const std::string& bg, const char* fmt, ...) {
     va_list vl;

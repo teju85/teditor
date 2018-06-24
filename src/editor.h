@@ -56,8 +56,6 @@ public:
     int getWinchFd(int id) const { return winchFds[id]; }
     int sendChar(int x, int y, const std::string& fg, const std::string& bg,
                  char c);
-    int sendCharNtimes(int x, int y, const std::string& fg,
-                       const std::string& bg, char c, int n);
     int sendString(int x, int y, const std::string& fg, const std::string& bg,
                    const char* str, int len);
     int sendStringf(int x, int y, const std::string& fg, const std::string& bg,
