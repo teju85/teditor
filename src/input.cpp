@@ -28,9 +28,8 @@ std::unordered_map<std::string, MetaKey> AllCombos::allKeys;
 const AllCombos AllCombos::test;
 
 AllCombos::AllCombos() {
-    for(auto& c : KeyCombo::Combos) {
+    for(auto& c : KeyCombo::Combos)
         allKeys[c.escSeq] = c.mk;
-    }
 }
 
 
@@ -56,7 +55,6 @@ int Input::decodeChar(key_t ch) {
         mk.updateMeta(Meta_Ctrl);
     return 1;
 }
-
 
 int Input::decodeEscSeq() {
     int len = (int)seq.length();

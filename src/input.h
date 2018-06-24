@@ -35,8 +35,7 @@ struct Input {
     static const int UndefinedSequence;
 
 private:
-    std::string seq;
-    std::string oldSeq;
+    std::string seq, oldSeq;
 
     int decodeChar(key_t ch);
     int decodeEscSeq();
