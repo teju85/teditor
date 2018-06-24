@@ -207,6 +207,8 @@ void Buffer::drawCursor(Editor& ed, const std::string& bg) {
         auto& culoc = cursor.at(i);
         char c = charAt(culoc);
         auto screenloc = buffer2screen(culoc);
+        DEBUG("drawCursor: i=%d x,y=%d,%d sloc=%d,%d start=%d\n",
+              i, culoc.x, culoc.y, screenloc.x, screenloc.y, startLine);
         ed.sendChar(screenloc.x, screenloc.y, "cursorfg", bg, c);
     }
 }
@@ -374,6 +376,7 @@ void Buffer::gotoLine(int lineNum) {
         culoc.y = std::min((int)lines.size()-1, std::max(0, lineNum));
     }
     cursor.removeDuplicates();
+    startLine = std::max(0, lineNum - 1);
 }
 
 void Buffer::matchCurrentParen() {

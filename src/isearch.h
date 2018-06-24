@@ -19,7 +19,7 @@ public:
     ISearch(Buffer& mlb);
 
     const std::string& at(int idx) const;
-    int size() const { return (int)matches.size(); }
+    int size() const { return ml.length(); }
     bool updateChoices(const std::string& str);
     std::string getFinalStr(int idx, const std::string& str) const;
 
