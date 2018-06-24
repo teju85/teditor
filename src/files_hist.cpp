@@ -50,4 +50,3 @@ Strings FilesHist::toString() const {
 
 
 } // end namespace teditor
-
