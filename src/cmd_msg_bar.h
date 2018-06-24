@@ -63,7 +63,6 @@ public:
     bool usingChoices() const { return choices != nullptr; }
     std::string getStr() const { return lines[0].get().substr(minLoc); }
     std::string getFinalChoice() const;
-    int linesNeeded(const std::string& str, int wid) const;
     void down();
     void up();
     void updateChoices();
@@ -76,6 +75,8 @@ private:
     Choices* choices;
     /** currently selected option */
     int optLoc;
+
+    int linesNeeded(const std::string& str, int wid) const;
 };
 
 } // end namespace teditor
