@@ -69,7 +69,7 @@ int CmdMsgBar::linesNeeded(const std::string& str, int wid) const {
 }
 
 int CmdMsgBar::totalLinesNeeded() const {
-    int count = Buffer::totalLinesNeeded();
+    int count = at(0).numLinesNeeded(screenDim.x);
     if(!usingChoices())
         return count;
     const auto str = getStr();
