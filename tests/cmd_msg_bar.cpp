@@ -38,6 +38,7 @@ TEST(CmdMsgBar, Default) {
     ASSERT_EQ(8, cmBar.at(0).length());
     ASSERT_EQ("Test: Hi", cmBar.at(0).get());
     ASSERT_EQ("Hi", cmBar.getStr());
+    ASSERT_EQ("Hi", cmBar.getFinalChoice());
     cmBar.setMinLoc(0);
     ASSERT_EQ("Test: Hi", cmBar.at(0).get());
     cmBar.clear();
