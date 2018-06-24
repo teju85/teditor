@@ -22,7 +22,7 @@ public:
     void add(const std::string& file, int line);
 
     /** generate string version of the history */
-    std::vector<std::string> toString() const;
+    Strings toString() const;
 
 private:
     /** file which is used to load/store the history */

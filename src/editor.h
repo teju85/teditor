@@ -47,8 +47,8 @@ public:
     void checkForModifiedBuffers();
     void checkForModifiedBuffer(Buffer* mlb);
     bool hasCopy() const { return !copiedStr.empty(); }
-    const std::vector<std::string>& copyData() const { return copiedStr; }
-    void setCopyData(const std::vector<std::string>& in) { copiedStr = in; }
+    const Strings& copyData() const { return copiedStr; }
+    void setCopyData(const Strings& in) { copiedStr = in; }
 
     int getFd() { return inout; }
     void requestResize() { bufferResize = true; }
@@ -80,8 +80,8 @@ public:
     void unselectCmBar() { cmdMsgBarActive = false; }
     const Args& getArgs() const { return args; }
     void addFileHistory(const std::string& file, int line);
-    std::vector<std::string> fileHistoryToString() const;
-    std::vector<std::string> buffNamesToString() const;
+    Strings fileHistoryToString() const;
+    Strings buffNamesToString() const;
 
 private:
     ByteBuffer outbuff;
@@ -100,7 +100,7 @@ private:
     std::set<std::string> buffNames;
     int currBuff;
     bool quitEventLoop, quitPromptLoop, cancelPromptLoop, cmdMsgBarActive;
-    std::vector<std::string> copiedStr;
+    Strings copiedStr;
     ColorMap defcMap;
     FilesHist fileshist;
 

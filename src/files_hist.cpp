@@ -41,8 +41,8 @@ void FilesHist::add(const std::string& file, int line) {
     prune();
 }
 
-std::vector<std::string> FilesHist::toString() const {
-    std::vector<std::string> vec;
+Strings FilesHist::toString() const {
+    Strings vec;
     for(const auto& fi : *this)
         vec.push_back(format("%s:%d", fi.first.c_str(), fi.second));
     return vec;

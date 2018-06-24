@@ -47,7 +47,7 @@ void Trie::add(const std::string& keys, const std::string& str) {
         auto* n = root.addNode(keys);
         n->makeLeaf(str);
     }
-    std::vector<std::string> keySeq = split(keys, ' ');
+    Strings keySeq = split(keys, ' ');
     if(keySeq.size() <= 0)
         return;
     Node* n = &root;

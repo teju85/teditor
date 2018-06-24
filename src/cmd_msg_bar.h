@@ -33,14 +33,13 @@ private:
 
 class StringChoices: public Choices {
 public:
-    StringChoices(const std::vector<std::string>& arr,
-                  ChoicesFilter cf=strFind);
+    StringChoices(const Strings& arr, ChoicesFilter cf=strFind);
     const std::string& at(int idx) const { return options[idx]; }
     std::string getFinalStr(int idx, const std::string& str) const;
     int size() const { return (int)options.size(); }
 
 protected:
-    std::vector<std::string> options;
+    Strings options;
 };
 
 

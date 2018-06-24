@@ -16,7 +16,7 @@ CMD_NO_UNDO(Quit, "quit") {
 ///@todo: there's still a newline issue when selection spans the whole last line
 /// v/s selection ends at the beginning of the last line!
 CMD_UNDO3(RemoveRegion, "remove-region", Positions regs, Positions before,
-          std::vector<std::string> del) {
+          Strings del) {
     auto& ed = Editor::getInstance();
     if(type == CMD_FRESH && !ed.isRegionActive()) {
         canIundo = false;
@@ -45,7 +45,7 @@ CMD_UNDO3(RemoveRegion, "remove-region", Positions regs, Positions before,
 }
 
 CMD_UNDO4(SortLines, "sort-lines", Positions after, Positions regs,
-          std::vector<std::string> del, Positions before) {
+          Strings del, Positions before) {
     auto& ed = Editor::getInstance();
     if(type == CMD_FRESH && !ed.isRegionActive()) {
         canIundo = false;
@@ -100,8 +100,8 @@ CMD_UNDO2(InsertChar, "insert-char", char c, Positions before) {
     };
 }
 
-CMD_UNDO3(BackspaceChar, "backspace-char", std::vector<std::string> del,
-          Positions before, Positions after) {
+CMD_UNDO3(BackspaceChar, "backspace-char", Strings del, Positions before,
+          Positions after) {
     auto& ed = Editor::getInstance();
     if(type == CMD_FRESH && ed.isRegionActive()) {
         canIundo = false;
@@ -126,7 +126,7 @@ CMD_UNDO3(BackspaceChar, "backspace-char", std::vector<std::string> del,
     };
 }
 
-CMD_UNDO2(DeleteChar, "delete-char", std::vector<std::string> del,
+CMD_UNDO2(DeleteChar, "delete-char", Strings del,
           Positions locs) {
     auto& ed = Editor::getInstance();
     if(type == CMD_FRESH && ed.isRegionActive()) {
@@ -152,8 +152,7 @@ CMD_UNDO2(DeleteChar, "delete-char", std::vector<std::string> del,
     };
 }
 
-CMD_UNDO2(KillLine, "kill-line", std::vector<std::string> del,
-          Positions locs) {
+CMD_UNDO2(KillLine, "kill-line", Strings del, Positions locs) {
     auto& ed = Editor::getInstance();
     auto& buf = ed.getBuff();
     auto& cu = buf.getCursor();
@@ -257,8 +256,8 @@ CMD_UNDO3(ShellToBuffer, "shell-to-buffer", Positions before, Positions after,
     };
 }
 
-CMD_UNDO3(PasteRegion, "paste-region", std::vector<std::string> del,
-          Positions before, Positions after) {
+CMD_UNDO3(PasteRegion, "paste-region", Strings del, Positions before,
+          Positions after) {
     auto& ed = Editor::getInstance();
     auto& mlbuffer = ed.getBuff();
     auto& cu = mlbuffer.getCursor();
@@ -289,8 +288,8 @@ CMD_UNDO3(PasteRegion, "paste-region", std::vector<std::string> del,
 }
 
 ///@todo: what if before is before regs!?
-CMD_UNDO3(CutRegion, "cut-region", std::vector<std::string> del,
-          Positions before, Positions regs) {
+CMD_UNDO3(CutRegion, "cut-region", Strings del, Positions before,
+          Positions regs) {
     auto& ed = Editor::getInstance();
     auto& mlbuffer = ed.getBuff();
     auto& cu = mlbuffer.getCursor();
@@ -502,8 +501,8 @@ bool fileStrFind(const std::string& line, const std::string& str) {
 
 class FileChoices: public StringChoices {
 public:
-    FileChoices(const std::vector<std::string>& arr,
-                ChoicesFilter cf=fileStrFind): StringChoices(arr, cf) {
+    FileChoices(const Strings& arr, ChoicesFilter cf=fileStrFind):
+        StringChoices(arr, cf) {
     }
 
     bool updateChoices(const std::string& str) {

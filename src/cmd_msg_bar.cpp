@@ -18,8 +18,8 @@ bool Choices::match(int idx, const std::string& str) const {
 }
 
 
-StringChoices::StringChoices(const std::vector<std::string>& arr,
-                             ChoicesFilter cf): Choices(cf), options(arr) {
+StringChoices::StringChoices(const Strings& arr, ChoicesFilter cf):
+    Choices(cf), options(arr) {
 }
 
 std::string StringChoices::getFinalStr(int idx, const std::string& str) const {

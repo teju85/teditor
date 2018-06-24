@@ -103,8 +103,8 @@ std::string slurp(const std::string& file) {
     return slurp(file.c_str());
 }
 
-std::vector<std::string> slurpToArr(const char* file) {
-    std::vector<std::string> ret;
+Strings slurpToArr(const char* file) {
+    Strings ret;
     std::fstream fp;
     fp.open(file, std::fstream::in);
     ASSERT(fp.is_open(), "Failed to open file '%s'!", file);
@@ -115,7 +115,7 @@ std::vector<std::string> slurpToArr(const char* file) {
     return ret;
 }
 
-std::vector<std::string> slurpToArr(const std::string& file) {
+Strings slurpToArr(const std::string& file) {
     return slurpToArr(file.c_str());
 }
 
@@ -127,13 +127,12 @@ bool startsWith(const char* s1, int len1, const char* s2) {
     return *s2 == 0;
 }
 
-std::vector<std::string> split(const std::string &str, char delim) {
+Strings split(const std::string &str, char delim) {
     std::stringstream ss(str);
     std::string item;
-    std::vector<std::string> res;
-    while(std::getline(ss, item, delim)) {
+    Strings res;
+    while(std::getline(ss, item, delim))
         res.push_back(item);
-    }
     return res;
 }
 
@@ -297,8 +296,8 @@ Files listDir(const std::string& dir) {
     return f;
 }
 
-std::vector<std::string> listDirRel(const std::string& dir) {
-    std::vector<std::string> f;
+Strings listDirRel(const std::string& dir) {
+    Strings f;
     DIR *dp = opendir(dir.c_str());
     if(dp == nullptr)
         return f;
@@ -359,8 +358,7 @@ char getMatchingParen(char c) {
     };
 }
 
-std::string expandEnvVars(const std::string& str,
-                          const std::vector<std::string>& vars) {
+std::string expandEnvVars(const std::string& str, const Strings& vars) {
     std::string ret(str);
     for(const auto& var : vars) {
         auto val = env(var);

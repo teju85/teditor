@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include "utils.h"
 
 // [0m sgr0   Reset all attributes
 // [1m bold   Set "bright" attribute
@@ -55,7 +56,7 @@ public:
     static const int TiNKeys;
 
 private:
-    std::vector<std::string> keys, funcs;
+    Strings keys, funcs;
     std::string termName;
 
     static const std::string EnterMouseSeq;

@@ -9,9 +9,9 @@ CmdCreatorMap& cmds() {
     return _cmds;
 }
 
-std::vector<std::string> allCmdNames() {
+Strings allCmdNames() {
     auto& cs = cmds();
-    std::vector<std::string> ret;
+    Strings ret;
     for(const auto itr : cs)
         ret.push_back(itr.first);
     return ret;

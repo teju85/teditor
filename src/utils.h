@@ -39,6 +39,9 @@ std::string format(const char* fmt, va_list& vl);
         if(!(check))  THROW(fmt, ##__VA_ARGS__); \
     } while(0)
 
+/** short-form for vector of strings */
+typedef std::vector<std::string> Strings;
+
 bool operator>(const struct timeval& ta, const struct timeval& tb);
 
 bool isDir(const char* f);
@@ -51,16 +54,15 @@ bool isRemote(const char* f);
 
 std::string env(const char* s);
 std::string env(const std::string& s);
-std::string expandEnvVars(const std::string& str,
-                          const std::vector<std::string>& vars);
+std::string expandEnvVars(const std::string& str, const Strings& vars);
 
 std::string slurp(const char* file);
 std::string slurp(const std::string& file);
-std::vector<std::string> slurpToArr(const char* file);
-std::vector<std::string> slurpToArr(const std::string& file);
+Strings slurpToArr(const char* file);
+Strings slurpToArr(const std::string& file);
 
 bool startsWith(const char* s1, int len, const char* s2);
-std::vector<std::string> split(const std::string &s, char delim);
+Strings split(const std::string &s, char delim);
 
 std::string num2str(int num);
 int str2num(const std::string& str);
@@ -107,7 +109,7 @@ struct FilePerm {
 typedef std::vector<FilePerm> Files;
 
 Files listDir(const std::string& dir);
-std::vector<std::string> listDirRel(const std::string& dir);
+Strings listDirRel(const std::string& dir);
 
 void copyFile(const std::string& in, const std::string& out);
 

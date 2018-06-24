@@ -71,8 +71,8 @@ void Buffer::redo() {
     cmds[topCmd]->exec(CMD_REDO);
 }
 
-std::vector<std::string> Buffer::regionAsStr() const {
-    std::vector<std::string> out;
+Strings Buffer::regionAsStr() const {
+    Strings out;
     if(!isRegionActive())
         return out;
     int count = regions.count();
@@ -314,7 +314,7 @@ void Buffer::insert(char c, int i) {
     cursor.moveRightCursorsOnSameLine(i);
 }
 
-void Buffer::insert(const std::vector<std::string>& strs) {
+void Buffer::insert(const Strings& strs) {
     ASSERT((int)strs.size() == cursor.count(),
            "insert: lines passed not the same as number of cursors! [%d,%d]",
            (int)strs.size(), cursor.count());
@@ -433,8 +433,8 @@ Pos2d<int> Buffer::matchCurrentParen(int i, bool& isOpen) {
     return culoc;
 }
 
-std::vector<std::string> Buffer::remove() {
-    std::vector<std::string> del;
+Strings Buffer::remove() {
+    Strings del;
     modified = true;
     int len = cursor.count();
     int minLoc = getMinStartLoc();
@@ -463,13 +463,12 @@ std::vector<std::string> Buffer::remove() {
     return del;
 }
 
-std::vector<std::string> Buffer::remove(const Positions& start,
-                                        const Positions& end) {
+Strings Buffer::remove(const Positions& start, const Positions& end) {
     modified = true;
     ASSERT(start.size() == end.size(),
            "remove: start length not same as end's [%lu,%lu]\n",
            start.size(), end.size());
-    std::vector<std::string> del;
+    Strings del;
     int len = (int)start.size();
     for(int i=0;i<len;++i)
         del.push_back(removeFrom(start[i], end[i]));
@@ -477,7 +476,7 @@ std::vector<std::string> Buffer::remove(const Positions& start,
 }
 
 std::string Buffer::removeFrom(const Pos2d<int>& start,
-                                  const Pos2d<int>& end) {
+                               const Pos2d<int>& end) {
     std::string del;
     int yStart, yEnd, xStart, xEnd;
     if(start.y < end.y) {
@@ -520,8 +519,8 @@ std::string Buffer::removeFrom(const Pos2d<int>& start,
     return del;
 }
 
-std::vector<std::string> Buffer::removeCurrent() {
-    std::vector<std::string> del;
+Strings Buffer::removeCurrent() {
+    Strings del;
     modified = true;
     int len = cursor.count();
     for(int i=0;i<len;++i) {
@@ -546,8 +545,8 @@ std::vector<std::string> Buffer::removeCurrent() {
     return del;
 }
 
-std::vector<std::string> Buffer::killLine() {
-    std::vector<std::string> del;
+Strings Buffer::killLine() {
+    Strings del;
     modified = true;
     int len = cursor.count();
     for(int i=0;i<len;++i) {

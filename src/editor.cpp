@@ -73,12 +73,12 @@ void Editor::addFileHistory(const std::string& file, int line)  {
     fileshist.add(file, line);
 }
 
-std::vector<std::string> Editor::fileHistoryToString() const {
+Strings Editor::fileHistoryToString() const {
     return fileshist.toString();
 }
 
-std::vector<std::string> Editor::buffNamesToString() const {
-    std::vector<std::string> ret;
+Strings Editor::buffNamesToString() const {
+    Strings ret;
     for(const auto* buff : buffs)
         ret.push_back(buff->bufferName());
     return ret;

@@ -4,6 +4,7 @@
 #include <map>
 #include <memory>
 #include <vector>
+#include "utils.h"
 
 
 namespace teditor {
@@ -58,7 +59,7 @@ protected:
 CmdCreatorMap& cmds();
 
 /** Accessor function to the list of command names */
-std::vector<std::string> allCmdNames();
+Strings allCmdNames();
 
 
 class RegisterCmd {

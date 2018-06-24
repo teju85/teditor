@@ -39,7 +39,7 @@ public:
      * @{
      */
     virtual void insert(char c);
-    void insert(const std::vector<std::string>& strs);
+    void insert(const Strings& strs);
     virtual void insert(const char* buf);
     /** @} */
 
@@ -48,19 +48,18 @@ public:
      * @{
      */
     /** for deleting a char using backspace */
-    std::vector<std::string> remove();
+    Strings remove();
     /**
      * @brief removes regions between start and end
      * @param start list of region starts
      * @param end list of region ends
      * @return list of deleted regions
      */
-    std::vector<std::string> remove(const Positions& start,
-                                    const Positions& end);
+    Strings remove(const Positions& start, const Positions& end);
     /** removes chars at current cursor locations and returns them */
-    std::vector<std::string> removeCurrent();
+    Strings removeCurrent();
     /** kills lines at current cursor location onwards and returns them */
-    std::vector<std::string> killLine();
+    Strings killLine();
     /** @} */
 
     /** sorts the lines in the regions */
@@ -133,7 +132,7 @@ public:
     bool isRegionActive() const { return regionActive; }
     virtual int getMinStartLoc() const { return 0; }
     int dirModeFileOffset() const { return 24; }
-    std::vector<std::string> regionAsStr() const;
+    Strings regionAsStr() const;
     virtual void clear();
     void reload();
     void addCommand(CmdPtr c);
