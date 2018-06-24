@@ -561,22 +561,14 @@ CMD_NO_UNDO(LaunchExplorer, "open-explorer") {
     check_output("cygstart " + mlbuffer.pwd());
 }
 
-CMD_NO_UNDO(LaunchFirefox, "firefox") {
+CMD_NO_UNDO(LaunchBrowser, "browser") {
     auto& ed = Editor::getInstance();
     auto& buf = ed.getBuff();
+    auto& args = ed.getArgs();
     std::string url;
     if(ed.isRegionActive())
         url = buf.regionAsStr()[0];
-    check_output("cygstart firefox '" + url + "'");
-}
-
-CMD_NO_UNDO(LaunchFirefoxPrivate, "fir") {
-    auto& ed = Editor::getInstance();
-    auto& buf = ed.getBuff();
-    std::string url;
-    if(ed.isRegionActive())
-        url = buf.regionAsStr()[0];
-    check_output("cygstart firefox -private-window '" + url + "'");
+    check_output(args.browserCmd + " '" + url + "'");
 }
 
 CMD_NO_UNDO(BrowserSearch, "browser-search") {
@@ -588,10 +580,11 @@ CMD_NO_UNDO(BrowserSearch, "browser-search") {
     opts["stock"] = "https://duckduckgo.com/?q=\"%s\"&t=ffab&ia=stock";
     opts["youtube"] = "https://www.youtube.com/results?search_query=\"%s\"";
     auto& ed = Editor::getInstance();
+    auto& args = ed.getArgs();
     auto command = ed.promptEnum("Search:", opts);
     if(command.empty())
         return;
-    command = "cygstart firefox -private-window '" + command + "'";
+    command = args.browserCmd + " '" + command + "'";
     // we'll only look at first cursor!
     auto query = ed.getBuff().regionAsStr();
     std::string queryStr;

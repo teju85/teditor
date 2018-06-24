@@ -10,12 +10,11 @@ std::string Args::wrtHomeFolder(const std::string& s) const {
     return homeFolder + '/' + s;
 }
 
-Args::Args(int argc, char** argv): quitAfterLoad(false), ttyFile("/dev/tty"),
-                                   homeFolder("$HOME/.teditor"), files(),
-                                   logLevel(-1), cmdMsgBarHeight(1),
-                                   cmdMsgBarMultiHeight(8),
-                                   pageScrollJump(0.75f), maxFileHistory(20),
-                                   histFile("history") {
+Args::Args(int argc, char** argv):
+    quitAfterLoad(false), ttyFile("/dev/tty"), homeFolder("$HOME/.teditor"),
+    files(), logLevel(-1), cmdMsgBarHeight(1), cmdMsgBarMultiHeight(8),
+    pageScrollJump(0.75f), maxFileHistory(20), histFile("history"),
+    browserCmd("cygstart firefox -private-window") {
     for(int i=1;i<argc;++i) {
         if(!strcmp(argv[i], "-Q")) {
             quitAfterLoad = true;
@@ -47,6 +46,10 @@ Args::Args(int argc, char** argv): quitAfterLoad(false), ttyFile("/dev/tty"),
             ++i;
             ASSERT(i < argc, "-max-file-history' option expects an argument!");
             maxFileHistory = str2num(argv[i]);
+        } else if(!strcmp(argv[i], "-browser-cmd")) {
+            ++i;
+            ASSERT(i < argc, "-browser-cmd' option expects an argument!");
+            browserCmd = argv[i];
         } else {
             if(argv[i][0] == '-')
                 ASSERT(false, "Invalid arg passed! '%s'", argv[i]);
