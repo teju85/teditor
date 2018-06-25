@@ -9,9 +9,13 @@ namespace teditor {
 
 /** Mode attached with a buffer */
 struct Mode {
+    /** key map to be used for the buffer this mode applies to */
     KeyCmdMap kcMap;
+    /** color map to be used for the buffer this mode applies to */
     ColorMap cMap;
+    /** list a characters that define a word */
     std::string word;
+    /** mode name */
     std::string name;
 };
 
