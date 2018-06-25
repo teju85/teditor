@@ -229,9 +229,11 @@ void Buffer::drawStatusBar(Editor& ed) {
                             readOnly? "r-" : "rw");
     // multiple cursor counts
     if(cursor.count() > 1) {
-        ed.sendStringf(x+count, y, "statusfg", "statusbg",
-                       " mc:%d", cursor.count());
+        count += ed.sendStringf(x+count, y, "statusfg", "statusbg",
+                                " mc:%d", cursor.count());
     }
+    ed.sendStringf(x+count, y, "statusfg", "statusbg",
+                   " [mode=%s]", mode.name.c_str());
 }
 
 int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,

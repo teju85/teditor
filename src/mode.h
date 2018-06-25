@@ -12,6 +12,7 @@ struct Mode {
     KeyCmdMap kcMap;
     ColorMap cMap;
     std::string word;
+    std::string name;
 };
 
 
