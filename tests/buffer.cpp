@@ -349,4 +349,95 @@ TEST(Buffer, SortRegions) {
     ASSERT_EQ("", ml.at(3).get());
 }
 
+TEST(Buffer, KeepLinesNoMatches) {
+    Buffer ml;
+    ml.resize({0, 0}, {30, 10});
+    ml.load("tests/samples/sample.cxx");
+    ASSERT_EQ(21, ml.length());
+    auto& cu = ml.getCursor();
+    ASSERT_EQ(Pos2d<int>(0, 0), cu.at(0));
+    Pcre pc("not there");
+    auto res = ml.keepRemoveLines(pc, true);
+    ASSERT_EQ(21U, res.size());
+    ASSERT_EQ("#ifndef _GNU_SOURCE", res[0].str);
+    ASSERT_EQ(Pos2d<int>(0, 0), res[0].pos);
+    ASSERT_EQ("", res[20].str);
+    // pos is 0,0 because of sequential removal of lines!
+    ASSERT_EQ(Pos2d<int>(0, 0), res[20].pos);
+    ASSERT_EQ(1, ml.length());
+
+    // undo
+    ml.addLines(res);
+    // yea, in case of full removal, undo causes an extra line at the end!
+    ASSERT_EQ(22, ml.length());
+    ASSERT_EQ("#ifndef _GNU_SOURCE", ml.at(0).get());
+    ASSERT_EQ("", ml.at(21).get());
+}
+
+TEST(Buffer, KeepLinesSomeMatches) {
+    Buffer ml;
+    ml.resize({0, 0}, {30, 10});
+    ml.load("tests/samples/sample.cxx");
+    ASSERT_EQ(21, ml.length());
+    auto& cu = ml.getCursor();
+    ASSERT_EQ(Pos2d<int>(0, 0), cu.at(0));
+    Pcre pc("include");
+    auto res = ml.keepRemoveLines(pc, true);
+    ASSERT_EQ(9U, res.size());
+    ASSERT_EQ("#ifndef _GNU_SOURCE", res[0].str);
+    ASSERT_EQ(Pos2d<int>(0, 0), res[0].pos);
+    ASSERT_EQ("", res[8].str);
+    ASSERT_EQ(Pos2d<int>(0, 12), res[8].pos);
+    ASSERT_EQ(12, ml.length());
+
+    // undo
+    ml.addLines(res);
+    ASSERT_EQ(21, ml.length());
+    ASSERT_EQ("#ifndef _GNU_SOURCE", ml.at(0).get());
+    ASSERT_EQ("", ml.at(20).get());
+}
+
+TEST(Buffer, RemoveLinesNoMatches) {
+    Buffer ml;
+    ml.resize({0, 0}, {30, 10});
+    ml.load("tests/samples/sample.cxx");
+    ASSERT_EQ(21, ml.length());
+    auto& cu = ml.getCursor();
+    ASSERT_EQ(Pos2d<int>(0, 0), cu.at(0));
+    Pcre pc("not there");
+    auto res = ml.keepRemoveLines(pc, false);
+    ASSERT_EQ(0U, res.size());
+    ASSERT_TRUE(res.empty());
+    ASSERT_EQ(21, ml.length());
+
+    // undo
+    ml.addLines(res);
+    ASSERT_EQ(21, ml.length());
+    ASSERT_EQ("#ifndef _GNU_SOURCE", ml.at(0).get());
+    ASSERT_EQ("", ml.at(20).get());
+}
+
+TEST(Buffer, RemoveLinesSomeMatches) {
+    Buffer ml;
+    ml.resize({0, 0}, {30, 10});
+    ml.load("tests/samples/sample.cxx");
+    ASSERT_EQ(21, ml.length());
+    auto& cu = ml.getCursor();
+    ASSERT_EQ(Pos2d<int>(0, 0), cu.at(0));
+    Pcre pc("include");
+    auto res = ml.keepRemoveLines(pc, false);
+    ASSERT_EQ(12U, res.size());
+    ASSERT_EQ("#include <stdint.h>", res[0].str);
+    ASSERT_EQ(Pos2d<int>(0, 4), res[0].pos);
+    ASSERT_EQ("#include <algorithm>", res[11].str);
+    ASSERT_EQ(Pos2d<int>(0, 4), res[11].pos);
+    ASSERT_EQ(9, ml.length());
+
+    // undo
+    ml.addLines(res);
+    ASSERT_EQ(21, ml.length());
+    ASSERT_EQ("#ifndef _GNU_SOURCE", ml.at(0).get());
+    ASSERT_EQ("", ml.at(20).get());
+}
+
 } // end namespace teditor

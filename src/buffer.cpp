@@ -342,9 +342,7 @@ RemovedLines Buffer::keepRemoveLines(Pcre& pc, bool keep) {
             continue;
         const std::string str = lines[i].get();
         bool match = pc.isMatch(str);
-        if(match && keep)
-            continue;
-        if(!match && !keep)
+        if((match && keep) || (!match && !keep))
             continue;
         lines.erase(lines.begin()+i);
         res.push_back({str, {0, i}});
@@ -354,6 +352,9 @@ RemovedLines Buffer::keepRemoveLines(Pcre& pc, bool keep) {
         cursor.reset(this);
         modified = true;
     }
+    // ensure that you don't segfault on full buffer removal!
+    if(length() <= 0)
+        addLine();
     return res;
 }
 

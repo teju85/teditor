@@ -66,7 +66,6 @@ public:
     /** sorts the lines in the regions */
     void sortRegions();
 
-    ///@todo unit-test this
     /**
      * @brief Keep/Remove lines that match the input regex.
      * @param pc the regular expression that needs to be matched
@@ -75,7 +74,6 @@ public:
      */
     RemovedLines keepRemoveLines(Pcre& pc, bool keep);
 
-    ///@todo unit-test this
     /** add the previously removed lines back into the buffer */
     void addLines(const RemovedLines& rlines);
 
