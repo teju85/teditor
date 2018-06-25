@@ -75,6 +75,10 @@ std::string dirname(const std::string& file);
 std::string tempFileName();
 std::string uniquifyName(const std::string& name,
                          const std::set<std::string>& list);
+/** Tries to find the file starting from dir all the way uptill root */
+std::string findFirstUpwards(const std::string& dir, const std::string& file);
+/** get file's extension from its name */
+std::string extension(const std::string& name);
 
 
 template <typename T>
@@ -133,8 +137,5 @@ bool strFind(const std::string& line, const std::string& str);
 
 /** Filter function while working with files */
 bool fileStrFind(const std::string& line, const std::string& str);
-
-/** Tries to find the file starting from dir all the way uptill root */
-std::string findFirstUpwards(const std::string& dir, const std::string& file);
 
 } // end namespace teditor

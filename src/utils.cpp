@@ -216,6 +216,31 @@ std::string uniquifyName(const std::string& name,
     return out;
 }
 
+std::string findFirstUpwards(const std::string& dir, const std::string& file) {
+    if(dir.empty() || file.empty())
+        return "";
+    auto d = dir;
+    if(d.back() == '/')
+        d.pop_back();
+    auto f = d + '/' + file;
+    if(isFile(f.c_str()) || isDir(f.c_str()))
+        return f;
+    while(!d.empty() && d != "/") {
+        d = dirname(d);
+        f = d + '/' + file;
+        if(isFile(f.c_str()) || isDir(f.c_str()))
+            return f;
+    }
+    return "";
+}
+
+std::string extension(const std::string& name) {
+    auto loc = name.find_last_of('.');
+    if(loc == std::string::npos)
+        return "";
+    return name.substr(loc+1);
+}
+
 CmdStatus check_output(const std::string& cmd) {
     CmdStatus ret;
     if(cmd.back() == '&') {
@@ -405,24 +430,6 @@ bool fileStrFind(const std::string& line, const std::string& str) {
     if(sub.empty())
         return true;
     return strFind(line, sub);
-}
-
-std::string findFirstUpwards(const std::string& dir, const std::string& file) {
-    if(dir.empty() || file.empty())
-        return "";
-    auto d = dir;
-    if(d.back() == '/')
-        d.pop_back();
-    auto f = d + '/' + file;
-    if(isFile(f.c_str()) || isDir(f.c_str()))
-        return f;
-    while(!d.empty() && d != "/") {
-        d = dirname(d);
-        f = d + '/' + file;
-        if(isFile(f.c_str()) || isDir(f.c_str()))
-            return f;
-    }
-    return "";
 }
 
 } // end namespace teditor

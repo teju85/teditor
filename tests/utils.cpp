@@ -102,9 +102,7 @@ TEST(Utils, Split) {
 }
 
 TEST(Utils, Rel2Abs) {
-    char buf[2048];
-    getcwd(buf, 2048);
-    std::string pwd(buf);
+    std::string pwd = getpwd();
     ASSERT_EQ(pwd+"/README.org", rel2abs(".", "README.org"));
     ASSERT_EQ(pwd+"/tests/utils.cpp", rel2abs("tests/", "utils.cpp"));
     ASSERT_EQ(pwd+"/main.cpp", rel2abs("tests/", "../main.cpp"));
@@ -133,15 +131,21 @@ TEST(Utils, Dirname) {
 }
 
 TEST(Utils, FindFirstUpwards) {
-    char buff[1024];
-    getcwd(buff, sizeof(buff));
-    std::string pwd(buff);
+    std::string pwd = getpwd();
     ASSERT_EQ("", findFirstUpwards("", ""));
     ASSERT_EQ("", findFirstUpwards("/", ""));
     ASSERT_EQ(pwd + "/.git", findFirstUpwards(pwd, ".git"));
     ASSERT_EQ(pwd + "/README.org", findFirstUpwards(pwd, "README.org"));
     ASSERT_EQ(pwd + "/tests/samples", findFirstUpwards(pwd, "tests/samples"));
     ASSERT_EQ("", findFirstUpwards(pwd, "non-existent"));
+}
+
+TEST(Utils, Extension) {
+    ASSERT_EQ("cpp", extension("file.cpp"));
+    ASSERT_EQ("cpp", extension("file.a.cpp"));
+    ASSERT_EQ("", extension("file."));
+    ASSERT_EQ("", extension("file"));
+    ASSERT_EQ("", extension(""));
 }
 
 TEST(Utils, UniquifyName) {
