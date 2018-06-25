@@ -1,9 +1,6 @@
 * teditor
-While all editors support terminal capabilities, how about we try to have a
-terminal support editor capabilities!? *teditor* is a terminal based editor,
-written in C++, to explore this aspect. Teditor is inspired from [[https://github.com/tomas/eon][eon]]. Besides,
-writing an editor from scratch is a real fun way to get to know a lot about
-programming, OS and terminal concepts!
+*teditor* is a terminal based editor, written from scratch in C++. More details
+about this editor can be found [[https://teju85.github.io/blog/tags.html#teditor][here]].
 * Pre-reqs
 Very minimal set of pre-reqs are needed for this project!
 1. GNU-make (>=4.2.1)
