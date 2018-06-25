@@ -77,11 +77,8 @@ public:
     /** add the previously removed lines back into the buffer */
     void addLines(const RemovedLines& rlines);
 
-    ///@todo unit-test this
     /** find matching paren at the current location */
     void matchCurrentParen();
-    ///@todo unit-test this
-    Pos2d<int> matchCurrentParen(int i, bool& isOpen);
 
     /** goto the specified line number */
     void gotoLine(int lineNum);
@@ -165,6 +162,7 @@ protected:
     void loadFile(const std::string& file, int line);
     void loadDir(const std::string& dir);
     std::string removeFrom(const Pos2d<int>& start, const Pos2d<int>& end);
+    Pos2d<int> matchCurrentParen(int i, bool& isOpen);
 
     friend class Editor;
     FRIEND_TEST(Buffer, SortRegionsEmptyLine);

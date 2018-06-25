@@ -440,4 +440,18 @@ TEST(Buffer, RemoveLinesSomeMatches) {
     ASSERT_EQ("", ml.at(20).get());
 }
 
+TEST(Buffer, MatchCurrentParen) {
+    Buffer ml;
+    ml.resize({0, 0}, {30, 10});
+    ml.load("tests/samples/sample.cxx");
+    ASSERT_EQ(21, ml.length());
+    auto& cu = ml.getCursor();
+    ASSERT_EQ(Pos2d<int>(0, 0), cu.at(0));
+    cu.at(0) = {9, 4}; // '<'
+    ml.matchCurrentParen();
+    ASSERT_EQ(Pos2d<int>(18, 4), cu.at(0));
+    ml.matchCurrentParen();
+    ASSERT_EQ(Pos2d<int>(9, 4), cu.at(0));
+}
+
 } // end namespace teditor
