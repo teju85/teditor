@@ -120,6 +120,7 @@ TEST(Utils, Basename) {
     ASSERT_EQ("file.txt", basename("fds/file.txt"));
     ASSERT_EQ("testdir", basename("fds/testdir/"));
     ASSERT_EQ("test", basename("test"));
+    ASSERT_EQ("", basename(""));
 }
 
 TEST(Utils, Dirname) {
@@ -128,6 +129,19 @@ TEST(Utils, Dirname) {
     ASSERT_EQ("fds/testdir", dirname("fds/testdir/test/"));
     ASSERT_EQ("", dirname("fds"));
     ASSERT_EQ("/", dirname("/"));
+    ASSERT_EQ("", dirname(""));
+}
+
+TEST(Utils, FindFirstUpwards) {
+    char buff[1024];
+    getcwd(buff, sizeof(buff));
+    std::string pwd(buff);
+    ASSERT_EQ("", findFirstUpwards("", ""));
+    ASSERT_EQ("", findFirstUpwards("/", ""));
+    ASSERT_EQ(pwd + "/.git", findFirstUpwards(pwd, ".git"));
+    ASSERT_EQ(pwd + "/README.org", findFirstUpwards(pwd, "README.org"));
+    ASSERT_EQ(pwd + "/tests/samples", findFirstUpwards(pwd, "tests/samples"));
+    ASSERT_EQ("", findFirstUpwards(pwd, "non-existent"));
 }
 
 TEST(Utils, UniquifyName) {

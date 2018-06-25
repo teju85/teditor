@@ -134,4 +134,7 @@ bool strFind(const std::string& line, const std::string& str);
 /** Filter function while working with files */
 bool fileStrFind(const std::string& line, const std::string& str);
 
+/** Tries to find the file starting from dir all the way uptill root */
+std::string findFirstUpwards(const std::string& dir, const std::string& file);
+
 } // end namespace teditor

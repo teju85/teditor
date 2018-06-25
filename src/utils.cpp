@@ -183,10 +183,10 @@ std::string basename(const std::string& file) {
 }
 
 std::string dirname(const std::string& file) {
-    std::string tmp(file);
+    auto tmp = file;
     if(file == "/")
         return "/";
-    if(tmp.back() == '/' && tmp.size() > 1)
+    if(!tmp.empty() && tmp.back() == '/')
         tmp.pop_back();
     auto loc = tmp.find_last_of("/\\");
     if(loc == std::string::npos)
@@ -405,6 +405,24 @@ bool fileStrFind(const std::string& line, const std::string& str) {
     if(sub.empty())
         return true;
     return strFind(line, sub);
+}
+
+std::string findFirstUpwards(const std::string& dir, const std::string& file) {
+    if(dir.empty() || file.empty())
+        return "";
+    auto d = dir;
+    if(d.back() == '/')
+        d.pop_back();
+    auto f = d + '/' + file;
+    if(isFile(f.c_str()) || isDir(f.c_str()))
+        return f;
+    while(!d.empty() && d != "/") {
+        d = dirname(d);
+        f = d + '/' + file;
+        if(isFile(f.c_str()) || isDir(f.c_str()))
+            return f;
+    }
+    return "";
 }
 
 } // end namespace teditor
