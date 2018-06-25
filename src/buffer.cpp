@@ -140,17 +140,15 @@ void Buffer::reload() {
     clear();
     load(fileName, 0);
 }
-
 void Buffer::loadDir(const std::string& dir) {
     Files fs = listDir(dir);
     auto first = rel2abs(pwd(), dir);
     lines.at(length()-1).append(first.c_str());
     for(const auto& f : fs) {
         auto fname = (f.name == "." || f.name == "..")? f.name : basename(f.name);
-        char buff[1024];
-        sprintf(buff, "  %10.10s  %8lu  %s", f.perms, f.size, fname.c_str());
+        auto buff = format("  %10.10s  %8lu  %s", f.perms, f.size, fname.c_str());
         addLine();
-        lines.at(length()-1).append(buff);
+        lines.at(length()-1).append(buff.c_str());
     }
     resetBufferState(0, first);
     cursor.reset(this);
@@ -236,8 +234,15 @@ void Buffer::drawStatusBar(Editor& ed) {
                    " [mode=%s]", mode.name.c_str());
 }
 
+std::string Buffer::dirModeGetFileAtLine(int line) {
+    if(line == 0)
+        return "";
+    auto& str = at(line).get();
+    return str.substr(dirModeFileOffset());
+}
+
 int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
-                        const std::string& fg, const std::string& bg) {
+                     const std::string& fg, const std::string& bg) {
     int xStart = screenStart.x;
     int wid = screenDim.x;
     int start = 0;
@@ -246,17 +251,24 @@ int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
     if(len <= 0)
         return y + 1;
     const auto* str = line.c_str();
+    bool isD = mode.name == "dir";
+    if(isD) {
+        auto file = dirModeGetFileAtLine(lineNum);
+        file =  getFileName() + '/' + file;
+        isD = isDir(file.c_str());
+    }
     while(start < len) {
         int diff = len - start;
         int count = std::min(diff, wid);
         for(int i=0;i<count;++i) {
             // under the highlighted region
             auto c = str[start + i];
-            if(regions.isInside(lineNum, start+i, cursor)) {
+            if(regions.isInside(lineNum, start+i, cursor))
                 ed.sendChar(xStart+i, y, "highlightfg", "highlightbg", c);
-            } else {
+            else if(isD)
+                ed.sendChar(xStart+i, y, "dirfg", bg, c);
+            else
                 ed.sendChar(xStart+i, y, fg, bg, c);
-            }
         }
         start += wid;
         ++y;

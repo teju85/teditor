@@ -127,7 +127,7 @@ public:
     bool isModified() const { return modified; }
     bool isRegionActive() const { return regionActive; }
     virtual int getMinStartLoc() const { return 0; }
-    int dirModeFileOffset() const { return 24; }
+    std::string dirModeGetFileAtLine(int line);
     Strings regionAsStr() const;
     virtual void clear();
     void reload();
@@ -163,6 +163,7 @@ protected:
     void loadDir(const std::string& dir);
     std::string removeFrom(const Pos2d<int>& start, const Pos2d<int>& end);
     Pos2d<int> matchCurrentParen(int i, bool& isOpen);
+    int dirModeFileOffset() const { return 24; }
 
     friend class Editor;
     FRIEND_TEST(Buffer, SortRegionsEmptyLine);

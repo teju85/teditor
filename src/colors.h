@@ -101,6 +101,11 @@ struct GlobalColors {
 };
 
 
+struct DirColors {
+    static std::vector<NameColorPair> All;
+};
+
+
 template <typename Colors>
 void populateColorMap(ColorMap& cm, bool clear=false) {
     if(clear)

@@ -360,5 +360,6 @@ AttrColor ColorMap::readColor(const std::string& str) {
 
 
 #include "custom/global_color_map.h"
+#include "custom/dir_color_map.h"
 
 } // end namespace teditor

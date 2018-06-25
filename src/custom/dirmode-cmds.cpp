@@ -5,18 +5,10 @@
 
 namespace teditor {
 
-std::string dirModeGetFileAtLine(const Buffer& buf) {
-    auto& culoc = buf.getCursor().at(0);
-    if(culoc.y == 0)
-        return "";
-    auto& line = buf.at(culoc.y).get();
-    return line.substr(buf.dirModeFileOffset());
-}
-
 CMD_NO_UNDO(DirModeOpenFile, "dirmode-open-file") {
     auto& ed = Editor::getInstance();
     auto& buf = ed.getBuff();
-    auto file = dirModeGetFileAtLine(buf);
+    auto file = buf.dirModeGetFileAtLine(buf.getCursor().at(0).y);
     auto& dir = buf.getFileName();
     if(file == "." || file.empty())
         return;
@@ -30,7 +22,7 @@ CMD_NO_UNDO(DirModeOpenFile, "dirmode-open-file") {
 CMD_NO_UNDO(DirModeCopyFile, "dirmode-copy-file") {
     auto& ed = Editor::getInstance();
     auto& buf = ed.getBuff();
-    auto file = dirModeGetFileAtLine(buf);
+    auto file = buf.dirModeGetFileAtLine(buf.getCursor().at(0).y);
     auto& dir = buf.getFileName();
     if(file == "." || file == ".." || file.empty())
         return;
@@ -55,7 +47,7 @@ CMD_NO_UNDO(DirModeRefresh, "dirmode-refresh") {
 CMD_NO_UNDO(DirModeRenameFile, "dirmode-rename-file") {
     auto& ed = Editor::getInstance();
     auto& buf = ed.getBuff();
-    auto file = dirModeGetFileAtLine(buf);
+    auto file = buf.dirModeGetFileAtLine(buf.getCursor().at(0).y);
     auto& dir = buf.getFileName();
     if(file == "." || file == ".." || file.empty())
         return;
@@ -72,7 +64,7 @@ CMD_NO_UNDO(DirModeDeleteFile, "dirmode-delete-file") {
     auto& ed = Editor::getInstance();
     auto& buf = ed.getBuff();
     auto& dir = buf.getFileName();
-    auto file = dirModeGetFileAtLine(buf);
+    auto file = buf.dirModeGetFileAtLine(buf.getCursor().at(0).y);
     if(file == "." || file == ".." || file.empty())
         return;
     auto delFile = rel2abs(dir, file);

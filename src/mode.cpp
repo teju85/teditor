@@ -14,6 +14,7 @@ void textMode(Mode& m) {
 void dirMode(Mode& m) {
     textMode(m);
     populateKeyMap<DirModeKeys>(m.kcMap);
+    populateColorMap<DirColors>(m.cMap);
     m.kcMap.resetTraversal();
     m.name = "dir";
 }
