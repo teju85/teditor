@@ -129,6 +129,8 @@ public:
     /** clear buffer contents */
     virtual void clear();
 
+    std::string indent(int line);
+
     Cursor& getCursor() { return cursor; }
     const Cursor& getCursor() const { return cursor; }
     virtual int totalLinesNeeded() const;

@@ -7,6 +7,12 @@
 
 namespace teditor {
 
+class Buffer;
+
+/** Functor to apply indentation on a given line in the buffer */
+typedef std::string(*Indentor)(int, Buffer&);
+
+
 /** Mode attached with a buffer */
 struct Mode {
     /** key map to be used for the buffer this mode applies to */
@@ -17,6 +23,8 @@ struct Mode {
     std::string word;
     /** mode name */
     std::string name;
+    /** the indentation function */
+    Indentor indent;
 };
 
 

@@ -1,4 +1,5 @@
 #include "mode.h"
+#include "buffer.h"
 
 
 namespace teditor {
@@ -9,6 +10,7 @@ void textMode(Mode& m) {
     m.word = "abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNOPQRSTUVWXYZ0123456789_";
     m.kcMap.resetTraversal();
     m.name = "text";
+    m.indent = nullptr;
 }
 
 void dirMode(Mode& m) {
@@ -24,6 +26,7 @@ void cmBarMode(Mode& m) {
     populateColorMap<GlobalColors>(m.cMap);
     m.word = "abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNOPQRSTUVWXYZ0123456789_-";
     m.name = "cmbar";
+    m.indent = nullptr;
 }
 
 } // end namespace teditor
