@@ -401,7 +401,7 @@ void Buffer::gotoLine(int lineNum) {
         culoc.y = std::min((int)lines.size()-1, std::max(0, lineNum));
     }
     cursor.removeDuplicates();
-    startLine = std::max(0, lineNum - 1);
+    startLine = std::max(0, lineNum - screenDim.y/2);
 }
 
 void Buffer::matchCurrentParen() {
