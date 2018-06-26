@@ -104,17 +104,34 @@ public:
     const Line& at(int idx) const { return lines[idx]; }
     /** @} */
 
+    /**
+     * @defgroup Coordinates convert buffer co-ords to screen and vice versa
+     * @{
+     */
+    Pos2d<int> buffer2screen(const Pos2d<int>& loc) const;
+    Pos2d<int> screen2buffer(const Pos2d<int>& loc) const;
+    /** @} */
+
+    /** returns character at a given buffer location */
+    char charAt(const Pos2d<int>& pos) const;
+
+    /**
+     * @defgroup Draw Functions to draw parts of the buffer
+     * @{
+     */
     virtual void drawBuffer(Editor& ed);
     void drawCursor(Editor& ed, const std::string& bg);
     virtual void drawStatusBar(Editor& ed);
     int drawLine(int y, const std::string& line, Editor& ed, int lineNum,
                  const std::string& fg, const std::string& bg);
+    /** @} */
 
-    Pos2d<int> buffer2screen(const Pos2d<int>& loc) const;
+    /** clear buffer contents */
+    virtual void clear();
+
     Cursor& getCursor() { return cursor; }
     const Cursor& getCursor() const { return cursor; }
     virtual int totalLinesNeeded() const;
-    char charAt(const Pos2d<int>& pos) const;
     void lineUp();
     virtual void lineDown();
     void lineReset() { startLine = 0; }
@@ -129,7 +146,6 @@ public:
     virtual int getMinStartLoc() const { return 0; }
     std::string dirModeGetFileAtLine(int line);
     Strings regionAsStr() const;
-    virtual void clear();
     void reload();
     void addCommand(CmdPtr c);
     void undo();

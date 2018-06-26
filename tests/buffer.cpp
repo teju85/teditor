@@ -51,6 +51,22 @@ TEST(Buffer, DirMode) {
     ASSERT_EQ("samples", ml.bufferName());
 }
 
+TEST(Buffer, Clear) {
+    Buffer ml;
+    ml.resize({0, 0}, {30, 10});
+    ml.load("tests/samples/multiline.txt");
+    ASSERT_EQ(4, ml.length());
+    ml.clear();
+    ASSERT_EQ(1, ml.length());
+}
+
+TEST(Buffer, CharAt) {
+    Buffer ml;
+    ml.resize({0, 0}, {30, 10});
+    ml.load("tests/samples/multiline.txt");
+    ASSERT_EQ('*', ml.charAt({0,0}));
+}
+
 TEST(Buffer, Buffer2screen) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
@@ -76,8 +92,27 @@ TEST(Buffer, Buffer2screen) {
     bloc = ml.buffer2screen(loc);
     ASSERT_EQ(4, bloc.x);
     ASSERT_EQ(5, bloc.y);
-    ml.clear();
-    ASSERT_EQ(1, ml.length());
+}
+
+TEST(Buffer, Screen2buffer) {
+    Buffer ml;
+    ml.resize({0, 0}, {30, 10});
+    ml.load("tests/samples/multiline.txt");
+    ASSERT_EQ(4, ml.length());
+    ASSERT_EQ(1, ml.totalLinesNeeded());
+    Pos2d<int> loc = {0, 0};
+    auto loc1 = ml.screen2buffer(ml.buffer2screen(loc));
+    EXPECT_EQ(loc1, loc);
+    loc = {4, 1};
+    ml.resize({0, 0}, {5, 10});
+    loc1 = ml.screen2buffer(ml.buffer2screen(loc));
+    EXPECT_EQ(loc1, loc);
+    loc = {5, 1};
+    loc1 = ml.screen2buffer(ml.buffer2screen(loc));
+    EXPECT_EQ(loc1, loc);
+    loc = {9, 2};
+    loc1 = ml.screen2buffer(ml.buffer2screen(loc));
+    EXPECT_EQ(loc1, loc);
 }
 
 TEST(Buffer, Insert) {
