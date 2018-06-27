@@ -75,6 +75,15 @@ TEST(Line, FindLastNotOf) {
     ASSERT_EQ(0, line.findLastNotOf(word, 2));
 }
 
+TEST(Line, IndentSize) {
+    Buffer ml;
+    ml.resize({0, 0}, {30, 10});
+    ml.load("tests/samples/sample.cxx");
+    ASSERT_EQ(0, ml.at(0).indentSize());
+    ASSERT_EQ(0, ml.at(3).indentSize());
+    ASSERT_EQ(4, ml.at(18).indentSize());
+}
+
 TEST(Line, LineCompare) {
     Line line1;
     line1.append("Test");

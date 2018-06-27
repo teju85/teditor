@@ -57,6 +57,9 @@ public:
      */
     int findLastNotOf(const std::string& str, int pos) const;
 
+    /** measures the indentation at the beginning of this line */
+    int indentSize() const;
+
 private:
     /** string to be present on this line */
     std::string line;

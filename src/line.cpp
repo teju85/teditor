@@ -49,6 +49,13 @@ int Line::findLastNotOf(const std::string& str, int pos) const {
     return (int)res;
 }
 
+int Line::indentSize() const {
+    auto pos = line.find_first_not_of(' ');
+    if(pos == std::string::npos)
+        return 0;
+    return (int)pos;
+}
+
 
 bool LineCompare(const Line& a, const Line& b) {
     if(a.empty())
