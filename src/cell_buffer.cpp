@@ -47,16 +47,7 @@ void CellBuffer::clear(AttrColor fg, AttrColor bg) {
 void CellBuffer::resize(int w, int h) {
     if((width == w) && (height == h))
         return;
-    int oldw=width, oldh=height;
-    std::vector<Cell> newCells(w*h);
-    int minw = (w < oldw) ? w : oldw;
-    int minh = (h < oldh) ? h : oldh;
-    for(int i=0;i<minh;++i) {
-        for(int j=0;j<minw;++j) {
-            newCells[i*width+j] = cells[i*oldw+j];
-        }
-    }
-    cells = newCells;
+    cells.resize(w*h);
     width = w;
     height = h;
 }

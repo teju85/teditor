@@ -348,6 +348,7 @@ void Editor::resize() {
     frontbuff.resize(tsize.x, tsize.y);
     const auto& defaultfg = getColor("defaultfg");
     const auto& defaultbg = getColor("defaultbg");
+    backbuff.clear(defaultfg, defaultbg);
     frontbuff.clear(defaultfg, defaultbg);
     for(auto itr : buffs)
         mlResize(itr);
