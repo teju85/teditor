@@ -234,6 +234,23 @@ std::string findFirstUpwards(const std::string& dir, const std::string& file) {
     return "";
 }
 
+bool isUnderGit(const std::string& dir) {
+    auto root = findFirstUpwards(dir, ".git");
+    return !root.empty();
+}
+
+std::string gitBranchName(const std::string& dir) {
+    if(!isUnderGit(dir))
+        return "";
+    auto cmd = check_output("git rev-parse --abbrev-ref HEAD");
+    if(cmd.status != 0)
+        return "";
+    auto ret = cmd.output;
+    if(ret.back() == '\n')
+        ret = ret.substr(0, ret.size()-1);
+    return ret;
+}
+
 std::string extension(const std::string& name) {
     auto loc = name.find_last_of('.');
     if(loc == std::string::npos)

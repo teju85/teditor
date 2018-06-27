@@ -79,6 +79,10 @@ std::string uniquifyName(const std::string& name,
 std::string findFirstUpwards(const std::string& dir, const std::string& file);
 /** get file's extension from its name */
 std::string extension(const std::string& name);
+/** checks if the given dir is part of a git repo */
+bool isUnderGit(const std::string& dir);
+/** returns the current branch name of the dir */
+std::string gitBranchName(const std::string& dir);
 
 
 template <typename T>

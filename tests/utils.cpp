@@ -140,6 +140,11 @@ TEST(Utils, FindFirstUpwards) {
     ASSERT_EQ("", findFirstUpwards(pwd, "non-existent"));
 }
 
+TEST(Utils, IsUnderGit) {
+    ASSERT_TRUE(isUnderGit(getpwd()));
+    ASSERT_FALSE(isUnderGit("/"));
+}
+
 TEST(Utils, Extension) {
     ASSERT_EQ("cpp", extension("file.cpp"));
     ASSERT_EQ("cpp", extension("file.a.cpp"));
