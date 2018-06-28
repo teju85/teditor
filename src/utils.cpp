@@ -242,6 +242,7 @@ bool isUnderGit(const std::string& dir) {
 std::string gitBranchName(const std::string& dir) {
     if(!isUnderGit(dir))
         return "";
+    // Note: this line consumes non-trivial amount of time!
     auto cmd = check_output("git rev-parse --abbrev-ref HEAD");
     if(cmd.status != 0)
         return "";
