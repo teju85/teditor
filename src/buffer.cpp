@@ -193,12 +193,8 @@ void Buffer::drawBuffer(Editor& ed) {
     // draw current buffer
     int h = screenStart.y + screenDim.y;
     int len = length();
-    const std::string dbg = "defaultbg";
-    const std::string cbg = "currentlinebg";
-    for(int y=screenStart.y,idx=startLine;y<h&&idx<len;++idx) {
-        y = drawLine(y, lines[idx].get(), ed, idx, "defaultfg",
-                     cursor.hasCursor(idx)? cbg : dbg);
-    }
+    for(int y=screenStart.y,idx=startLine;y<h&&idx<len;++idx)
+        y = drawLine(y, lines[idx].get(), ed, idx, "defaultfg", "defaultbg");
 }
 
 void Buffer::drawCursor(Editor& ed, const std::string& bg) {
@@ -698,8 +694,14 @@ void Buffer::clear() {
 }
 
 void Buffer::indent(int line) {
-    if(line < length() && mode.indent->indent(*this, line))
-        modified = true;
+    if(line < length()) {
+        int count = mode.indent->indent(*this, line);
+        if(count > 0) {
+            std::string in(count, ' ');
+            lines[line].prepend(in.c_str());
+            modified = true;
+        }
+    }
 }
 
 } // end namespace teditor

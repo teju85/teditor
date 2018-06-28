@@ -1,5 +1,6 @@
 #include "mode.h"
 #include "buffer.h"
+#include "custom/cpp_indent.h"
 
 
 namespace teditor {
@@ -11,6 +12,7 @@ void textMode(Mode& m) {
     m.kcMap.resetTraversal();
     m.name = "text";
     m.indent = std::shared_ptr<Indentor>(new Indentor);
+    m.indentSize = 0;
 }
 
 void dirMode(Mode& m) {
@@ -27,6 +29,14 @@ void cmBarMode(Mode& m) {
     m.word = "abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNOPQRSTUVWXYZ0123456789_-";
     m.name = "cmbar";
     m.indent = std::shared_ptr<Indentor>(new Indentor);
+    m.indentSize = 0;
+}
+
+void cppMode(Mode& m) {
+    textMode(m);
+    m.name = "cpp";
+    m.indent = std::shared_ptr<Indentor>(new CppIndentor);
+    m.indentSize = 4;
 }
 
 } // end namespace teditor

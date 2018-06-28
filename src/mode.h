@@ -15,7 +15,7 @@ class Buffer;
 class Indentor {
 public:
     virtual ~Indentor() {}
-    virtual bool indent(Buffer& buf, int line) { return false; }
+    virtual int indent(Buffer& buf, int line) { return 0; }
 };
 
 
@@ -31,6 +31,8 @@ struct Mode {
     std::string name;
     /** the indentation function */
     std::shared_ptr<Indentor> indent;
+    /** indentation size (in spaces) */
+    int indentSize;
 };
 
 
@@ -42,5 +44,8 @@ void dirMode(Mode& m);
 
 /** mode for the cmd-msg-bar */
 void cmBarMode(Mode& m);
+
+/** mode for the c/cpp/cuda files */
+void cppMode(Mode& m);
 
 }; // end namespace teditor
