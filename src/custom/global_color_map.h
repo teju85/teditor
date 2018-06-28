@@ -3,6 +3,7 @@ std::vector<NameColorPair> GlobalColors::All = {
     {"defaultbg",         "DarkerGray"},
     {"highlightfg",       "defaultfg"},
     {"highlightbg",       "DarkGray"},
+    {"currentlinebg",     "DarkestGray"},
     {"cursorfg",          "Black"},
     {"cursorbg",          "White"},
     {"inactivecursorbg",  "DarkGray"},

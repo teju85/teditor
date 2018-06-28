@@ -131,6 +131,10 @@ TEST(Cursor, Operations) {
     cu.clearAllButFirst();
     ASSERT_EQ(1, cu.count());
     ASSERT_EQ(Pos2d<int>(0, 0), cu.at(0));
+
+    cu.reset(&ml);
+    ASSERT_TRUE(cu.hasCursor(0));
+    ASSERT_FALSE(cu.hasCursor(1));
 }
 
 

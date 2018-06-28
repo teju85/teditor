@@ -292,6 +292,13 @@ void Cursor::moveLeftCursorsOnSameLine(int i) {
     }
 }
 
+bool Cursor::hasCursor(int line) const {
+    for(const auto& cu : locs)
+        if(line == cu.y)
+            return true;
+    return false;
+}
+
 
 void Regions::enable(const Positions& p) {
     for(const auto& l : p)

@@ -43,6 +43,8 @@ public:
     void restoreExcursion(const Positions& pos);
     /** clear all cursors except the first (useful for multiple-cursors mode) */
     void clearAllButFirst();
+    /** checks if the given line has any cursor in it */
+    bool hasCursor(int line) const;
 
     static const int Hidden;
 

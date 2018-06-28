@@ -193,8 +193,12 @@ void Buffer::drawBuffer(Editor& ed) {
     // draw current buffer
     int h = screenStart.y + screenDim.y;
     int len = length();
-    for(int y=screenStart.y,idx=startLine;y<h&&idx<len;++idx)
-        y = drawLine(y, lines[idx].get(), ed, idx, "defaultfg", "defaultbg");
+    const std::string dbg = "defaultbg";
+    const std::string cbg = "currentlinebg";
+    for(int y=screenStart.y,idx=startLine;y<h&&idx<len;++idx) {
+        y = drawLine(y, lines[idx].get(), ed, idx, "defaultfg",
+                     cursor.hasCursor(idx)? cbg : dbg);
+    }
 }
 
 void Buffer::drawCursor(Editor& ed, const std::string& bg) {
