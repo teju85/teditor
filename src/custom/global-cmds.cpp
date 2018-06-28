@@ -688,11 +688,19 @@ CMD_NO_UNDO(SwitchBuffer, "buffer-switch") {
 CMD_NO_UNDO(TextSearch, "search") {
     auto& ed = Editor::getInstance();
     auto& buf = ed.getBuff();
+    auto& cu = buf.getCursor();
+    if(cu.count() > 1) {
+        CMBAR_MSG("search works only with single cursor!\n");
+        return;
+    }
+    auto pos = cu.saveExcursion();
     ISearch is(buf);
     is.reset();
     auto ret = ed.prompt("Search: ", nullptr, &is);
     if(!ret.empty())
         buf.gotoLine(is.getIdx());
+    else
+        buf.gotoLine(pos[0].y);
 }
 
 } // end namespace teditor

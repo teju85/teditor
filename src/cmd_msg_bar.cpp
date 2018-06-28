@@ -97,6 +97,7 @@ void CmdMsgBar::insert(char c) {
             break;
         }
     }
+    choices->updateMainBuffer(*this);
 }
 
 void CmdMsgBar::updateChoices() {
@@ -106,6 +107,7 @@ void CmdMsgBar::updateChoices() {
         startLine = 0;
         optLoc = 0;
     }
+    choices->updateMainBuffer(*this);
 }
 
 void CmdMsgBar::clear() {
@@ -133,6 +135,7 @@ void CmdMsgBar::down() {
         }
     }
     lineUp();
+    choices->updateMainBuffer(*this);
 }
 
 void CmdMsgBar::up() {
@@ -146,6 +149,7 @@ void CmdMsgBar::up() {
         }
     }
     lineDown();
+    choices->updateMainBuffer(*this);
 }
 
 void CmdMsgBar::lineDown() {

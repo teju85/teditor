@@ -10,6 +10,7 @@
 namespace teditor {
 
 class Buffer;
+class CmdMsgBar;
 
 /**
  * @brief Incremental search support used by Ctrl-F command
@@ -22,6 +23,7 @@ public:
     int size() const { return ml.length(); }
     bool updateChoices(const std::string& str);
     std::string getFinalStr(int idx, const std::string& str) const;
+    void updateMainBuffer(CmdMsgBar& cmBar);
 
     /** reset the search state */
     void reset();

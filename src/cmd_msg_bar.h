@@ -10,6 +10,8 @@ namespace teditor {
 typedef bool(*ChoicesFilter)(const std::string&, const std::string&);
 
 
+class CmdMsgBar;
+
 class Choices {
 public:
     Choices(ChoicesFilter cf): filter(cf), optLoc(-1) {}
@@ -18,6 +20,7 @@ public:
     virtual int size() const = 0;
     virtual bool updateChoices(const std::string& str) { return false; }
     virtual std::string getFinalStr(int idx, const std::string& str) const = 0;
+    virtual void updateMainBuffer(CmdMsgBar& cmBar) {}
     bool match(const std::string& line, const std::string& str) const;
     bool match(int idx, const std::string& str) const;
     void setIdx(int idx) { optLoc = idx; }

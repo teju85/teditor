@@ -1,5 +1,7 @@
 #include "isearch.h"
 #include "buffer.h"
+#include "logger.h"
+#include "cmd_msg_bar.h"
 
 
 namespace teditor {
@@ -53,6 +55,11 @@ void ISearch::searchBuffer() {
         if(!res.empty())
             matches[i] = res;
     }
+}
+
+void ISearch::updateMainBuffer(CmdMsgBar& cmBar) {
+    int loc = cmBar.getOptLoc();
+    ml.gotoLine(loc);
 }
 
 void ISearch::searchLine(const std::string& str, std::vector<int>& res) {
