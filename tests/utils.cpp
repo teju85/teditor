@@ -174,36 +174,31 @@ TEST(Utils, CheckOutput) {
 TEST(Utils, FilePerm) {
     FilePerm fp("tests/samples/hello.txt");
     ASSERT_EQ(0, strncmp(fp.perms, "-rw-r--r--", 10));
-    FilePerm fp1("tests/samples/read-only.txt");
-    ASSERT_EQ(0, strncmp(fp1.perms, "-r--r--r--", 10));
-    ASSERT_EQ(13U, fp1.size);
-    FilePerm fp2("tests/samples");
-    ASSERT_EQ(0, strncmp(fp2.perms, "drwxr-xr-x", 10));
-    ASSERT_EQ(0U, fp2.size);
+    FilePerm fp1("tests/samples");
+    ASSERT_EQ(0, strncmp(fp1.perms, "drwxr-xr-x", 10));
+    ASSERT_EQ(0U, fp1.size);
 }
 
 TEST(Utils, ListDir) {
     auto f = listDir("tests/samples");
-    ASSERT_EQ(6U, f.size());
+    ASSERT_EQ(5U, f.size());
     ASSERT_EQ(".", f[0].name);
     ASSERT_EQ("..", f[1].name);
     ASSERT_EQ("tests/samples/hello.txt", f[2].name);
     ASSERT_EQ("tests/samples/multiline.txt", f[3].name);
-    ASSERT_EQ("tests/samples/read-only.txt", f[4].name);
-    ASSERT_EQ("tests/samples/sample.cxx", f[5].name);
+    ASSERT_EQ("tests/samples/sample.cxx", f[4].name);
     auto f1 = listDir("not-exists");
     ASSERT_EQ(0U, f1.size());
 }
 
 TEST(Utils, ListDirRel) {
     auto f = listDirRel("tests/samples");
-    ASSERT_EQ(6U, f.size());
+    ASSERT_EQ(5U, f.size());
     ASSERT_EQ(".", f[0]);
     ASSERT_EQ("..", f[1]);
     ASSERT_EQ("hello.txt", f[2]);
     ASSERT_EQ("multiline.txt", f[3]);
-    ASSERT_EQ("read-only.txt", f[4]);
-    ASSERT_EQ("sample.cxx", f[5]);
+    ASSERT_EQ("sample.cxx", f[4]);
     auto f1 = listDirRel("not-exists");
     ASSERT_EQ(0U, f1.size());
 }

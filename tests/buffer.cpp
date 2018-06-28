@@ -47,7 +47,7 @@ TEST(Buffer, DirMode) {
     Buffer ml;
     ml.resize({0, 0}, {100, 10});
     ml.load("tests/samples");
-    ASSERT_EQ(7, ml.length());
+    ASSERT_EQ(6, ml.length());
     ASSERT_EQ("samples", ml.bufferName());
 }
 
