@@ -697,10 +697,9 @@ void Buffer::clear() {
     disableRegions();
 }
 
-std::string Buffer::indent(int line) {
-    if(mode.indent == nullptr || line >= length())
-        return "";
-    return mode.indent(line, *this);
+void Buffer::indent(int line) {
+    if(line < length() && mode.indent->indent(*this, line))
+        modified = true;
 }
 
 } // end namespace teditor

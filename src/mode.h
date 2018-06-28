@@ -3,14 +3,20 @@
 #include "key_cmd_map.h"
 #include "colors.h"
 #include <string>
+#include <memory>
 
 
 namespace teditor {
 
 class Buffer;
 
-/** Functor to apply indentation on a given line in the buffer */
-typedef std::string(*Indentor)(int, Buffer&);
+
+/** Apply indentation on a given line in the buffer */
+class Indentor {
+public:
+    virtual ~Indentor() {}
+    virtual bool indent(Buffer& buf, int line) { return false; }
+};
 
 
 /** Mode attached with a buffer */
@@ -24,7 +30,7 @@ struct Mode {
     /** mode name */
     std::string name;
     /** the indentation function */
-    Indentor indent;
+    std::shared_ptr<Indentor> indent;
 };
 
 

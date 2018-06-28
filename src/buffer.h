@@ -129,7 +129,7 @@ public:
     /** clear buffer contents */
     virtual void clear();
 
-    std::string indent(int line);
+    void indent(int line);
 
     Cursor& getCursor() { return cursor; }
     const Cursor& getCursor() const { return cursor; }
