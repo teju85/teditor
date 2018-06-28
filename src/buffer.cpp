@@ -693,8 +693,10 @@ void Buffer::clear() {
     disableRegions();
 }
 
-void Buffer::indent(int line) {
-    if(line < length()) {
+void Buffer::indent() {
+    int len = cursor.count();
+    for(int i=0;i<len;++i) {
+        int line = cursor.at(i).y;
         int count = mode.indent->indent(*this, line);
         if(count > 0) {
             std::string in(count, ' ');

@@ -129,7 +129,7 @@ public:
     /** clear buffer contents */
     virtual void clear();
 
-    void indent(int line);
+    void indent();
 
     Cursor& getCursor() { return cursor; }
     const Cursor& getCursor() const { return cursor; }
