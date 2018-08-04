@@ -11,8 +11,7 @@ void textMode(Mode& m) {
     m.word = "abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNOPQRSTUVWXYZ0123456789_";
     m.kcMap.resetTraversal();
     m.name = "text";
-    m.indent = std::shared_ptr<Indentor>(new Indentor);
-    m.indentSize = 0;
+    m.indent = std::shared_ptr<Indentor>(new Indentor(0));
 }
 
 void dirMode(Mode& m) {
@@ -28,15 +27,13 @@ void cmBarMode(Mode& m) {
     populateColorMap<GlobalColors>(m.cMap);
     m.word = "abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNOPQRSTUVWXYZ0123456789_-";
     m.name = "cmbar";
-    m.indent = std::shared_ptr<Indentor>(new Indentor);
-    m.indentSize = 0;
+    m.indent = std::shared_ptr<Indentor>(new Indentor(0));
 }
 
 void cppMode(Mode& m) {
     textMode(m);
     m.name = "cpp";
-    m.indent = std::shared_ptr<Indentor>(new CppIndentor);
-    m.indentSize = 4;
+    m.indent = std::shared_ptr<Indentor>(new CppIndentor(4));
 }
 
 } // end namespace teditor

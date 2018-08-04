@@ -14,8 +14,13 @@ class Buffer;
 /** Apply indentation on a given line in the buffer */
 class Indentor {
 public:
+    Indentor(int i): indentSize(i) {}
     virtual ~Indentor() {}
     virtual int indent(Buffer& buf, int line) { return 0; }
+
+protected:
+    /** indentation length (in spaces) */
+    int indentSize;
 };
 
 
@@ -31,8 +36,6 @@ struct Mode {
     std::string name;
     /** the indentation function */
     std::shared_ptr<Indentor> indent;
-    /** indentation size (in spaces) */
-    int indentSize;
 };
 
 
