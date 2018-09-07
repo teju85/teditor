@@ -13,8 +13,8 @@ std::string Args::wrtHomeFolder(const std::string& s) const {
 Args::Args(int argc, char** argv):
     quitAfterLoad(false), ttyFile("/dev/tty"), homeFolder("$HOME/.teditor"),
     files(), logLevel(-1), cmdMsgBarHeight(1), cmdMsgBarMultiHeight(8),
-    pageScrollJump(0.75f), maxFileHistory(20), histFile("history"),
-    browserCmd("cygstart firefox -private-window") {
+    pageScrollJump(0.75f), maxFileHistory(20), tabSpaces(4),
+    histFile("history"), browserCmd("cygstart firefox -private-window") {
     for(int i=1;i<argc;++i) {
         if(!strcmp(argv[i], "-Q")) {
             quitAfterLoad = true;
@@ -44,12 +44,16 @@ Args::Args(int argc, char** argv):
             pageScrollJump = str2real(argv[i]);
         } else if(!strcmp(argv[i], "-max-file-history")) {
             ++i;
-            ASSERT(i < argc, "-max-file-history' option expects an argument!");
+            ASSERT(i < argc, "'-max-file-history' option expects an argument!");
             maxFileHistory = str2num(argv[i]);
         } else if(!strcmp(argv[i], "-browser-cmd")) {
             ++i;
-            ASSERT(i < argc, "-browser-cmd' option expects an argument!");
+            ASSERT(i < argc, "'-browser-cmd' option expects an argument!");
             browserCmd = argv[i];
+        } else if(!strcmp(argv[i], "-tab-spaces")) {
+            ++i;
+            ASSERT(i < argc, "'-tab-spaces' option expects an argument!");
+            tabSpaces = str2num(argv[i]);
         } else {
             if(argv[i][0] == '-')
                 ASSERT(false, "Invalid arg passed! '%s'", argv[i]);

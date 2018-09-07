@@ -19,7 +19,7 @@ struct Args {
     std::vector<FileInfo> files;
     int logLevel, cmdMsgBarHeight, cmdMsgBarMultiHeight;
     float pageScrollJump;
-    int maxFileHistory;
+    int maxFileHistory, tabSpaces;
     std::string histFile, browserCmd;
 };
 

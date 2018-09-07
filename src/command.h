@@ -45,12 +45,31 @@ public:
      * findings! See: BackspaceChar as an example of how this is used.
      */
     bool canUndo() const { return canIundo; }
+
+    /**
+     * @brief Actual execution of this command
+     * @param type tells whether this command is being invoked as a fresh one
+     * or as part of undo sequence or redo
+     * @note this function needs to be implemented by sub-classes
+     */
     virtual void exec(CommandCallType type) = 0;
 
+    /**
+     * @brief helper to register a named command
+     * @param cmd name of the command (useful for later queries)
+     * @param fptr functor that helps create the command object
+     */
     static void registerCmd(const std::string& cmd, CmdCreator fptr);
+
+    /**
+     * @brief Helper to create command object of the named command
+     * @param cmd name of the command
+     * @return the command object pointer
+     */
     static CmdPtr createCmd(const std::string& cmd);
 
 protected:
+    /** flag to tell whether this command object supports undo operation */
     bool canIundo;
 };
 
