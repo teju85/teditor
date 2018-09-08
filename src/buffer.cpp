@@ -693,14 +693,18 @@ void Buffer::clear() {
     disableRegions();
 }
 
+///@todo: support undo
 void Buffer::indent() {
     int len = cursor.count();
     for(int i=0;i<len;++i) {
-        int line = cursor.at(i).y;
+        auto& cu = cursor.at(i);
+        int line = cu.y;
         int count = mode.indent->indent(*this, line);
+        DEBUG("Indent: count=%d line=%d\n", count, line);
         if(count > 0) {
             std::string in(count, ' ');
             lines[line].prepend(in.c_str());
+            cu += count;
             modified = true;
         }
     }

@@ -16,9 +16,13 @@ class Indentor {
 public:
     Indentor(int i): indentSize(i) {}
     virtual ~Indentor() {}
-    virtual int indent(Buffer& buf, int line) { return 0; }
+    virtual int indent(Buffer& buf, int line);
 
 protected:
+    /** return indent size */
+    int getIndentSize() const { return indentSize; }
+
+private:
     /** indentation length (in spaces) */
     int indentSize;
 };

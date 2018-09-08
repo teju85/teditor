@@ -11,7 +11,7 @@ int CppIndentor::indent(Buffer& buf, int line) {
     auto& curr = buf.at(line);
     int prevInd = prev.indentSize();
     int currInd = curr.indentSize();
-    return std::min(0, prevInd-currInd);
+    return std::max(0, prevInd-currInd);
 }
 
 } // end namespace teditor

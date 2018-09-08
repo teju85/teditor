@@ -5,6 +5,17 @@
 
 namespace teditor {
 
+int Indentor::indent(Buffer& buf, int line) {
+    if(!(0 < line && line < buf.length()))
+        return 0;
+    const auto& prev = buf.at(line-1);
+    auto& curr = buf.at(line);
+    int prevInd = prev.indentSize();
+    int currInd = curr.indentSize();
+    return std::max(0, prevInd-currInd);
+}
+
+
 void textMode(Mode& m) {
     populateKeyMap<GlobalKeys>(m.kcMap);
     populateColorMap<GlobalColors>(m.cMap);

@@ -703,4 +703,10 @@ CMD_NO_UNDO(TextSearch, "search") {
         buf.gotoLine(pos[0].y);
 }
 
+///@todo: support undo
+CMD_NO_UNDO(IndentLine, "indent") {
+    auto& ed = Editor::getInstance();
+    ed.getBuff().indent();
+}
+
 } // end namespace teditor
