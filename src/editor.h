@@ -21,6 +21,8 @@
 
 namespace teditor {
 
+class KeyCmdMap;
+
 typedef std::unordered_map<std::string, std::string> OptionMap;
 
 class Editor {
@@ -100,6 +102,7 @@ private:
     bool quitEventLoop, quitPromptLoop, cancelPromptLoop, cmdMsgBarActive;
     Strings copiedStr;
     ColorMap defcMap;
+    KeyCmdMap ynMap;
     FilesHist fileshist;
 
     static const int OutBuffSize;

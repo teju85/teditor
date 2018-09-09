@@ -35,11 +35,6 @@ private:
 };
 
 
-struct PromptYesNoKeys {
-    static std::vector<KeyCmdPair> All;
-};
-
-
 template <typename Keys>
 void populateKeyMap(KeyCmdMap& kcm, bool clear=false) {
     if(clear)

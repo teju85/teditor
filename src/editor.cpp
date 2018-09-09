@@ -15,6 +15,8 @@
 #include "command.h"
 #include <algorithm>
 #include "mode.h"
+#include "key_cmd_map.h"
+
 
 namespace teditor {
 
@@ -32,12 +34,23 @@ void sigwinch_handler(int xxx) {
     write(Editor::getInstance().getWinchFd(1), &zzz, sizeof(int));
 }
 
+
+struct PromptYesNoKeys {
+    static std::vector<KeyCmdPair> All;
+};
+
+std::vector<KeyCmdPair> PromptYesNoKeys::All = {
+    {"n", "prompt-insert-char-quit"},
+    {"y", "prompt-insert-char-quit"}
+};
+
+
 Editor::Editor(const Args& args_):
     outbuff(OutBuffSize), backbuff(), frontbuff(), tsize(), inout(-1),
     currBuff(0), winchFds(), term(), tios(), origTios(), lastfg(), lastbg(),
     bufferResize(false), args(args_), cmBar(), buffs(), buffNames(),
     quitEventLoop(false), quitPromptLoop(false), cancelPromptLoop(false),
-    cmdMsgBarActive(false), copiedStr(), defcMap(),
+    cmdMsgBarActive(false), copiedStr(), defcMap(), ynMap(),
     fileshist(args.getHistFile(), args.maxFileHistory) {
     inout = open(args.ttyFile.c_str(), O_RDWR);
     ASSERT(inout >= 0, "Failed to open tty '%s'!", args.ttyFile.c_str());
@@ -48,6 +61,7 @@ Editor::Editor(const Args& args_):
     outbuff.puts(term.func(Func_EnterCA));
     auto m = Mode::createMode("text");
     defcMap = m->getColorMap();
+    populateKeyMap<PromptYesNoKeys>(ynMap, true);
     resize();
     clearBackBuff();
     hideCursor();  // we'll manually handle the cursor draws
@@ -431,8 +445,6 @@ void Editor::clearScreen() {
 
 bool Editor::promptYesNo(const std::string& msg) {
     auto msg_ = msg + " (y/n)? ";
-    KeyCmdMap ynMap;
-    populateKeyMap<PromptYesNoKeys>(ynMap, true);
     auto res = prompt(msg_, &ynMap);
     return (res == "y");
 }

@@ -44,6 +44,4 @@ void KeyCmdMap::clear() {
 }
 
 
-#include "custom/prompt_yesno_key_map.h"
-
 } // end namespace teditor
