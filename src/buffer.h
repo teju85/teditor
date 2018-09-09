@@ -163,7 +163,7 @@ protected:
     int startLine;
     Cursor cursor;
     bool modified, readOnly;
-    std::string buffName, fileName, dirName, gitBranch;
+    std::string buffName, fileName, dirName;
     Regions regions;
     bool regionActive;
     std::vector<CmdPtr> cmds;

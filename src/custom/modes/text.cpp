@@ -167,6 +167,7 @@ std::vector<KeyCmdPair> TextMode::Keys::All = {
     {"M-g", "goto-line"},
     {"C-B C-S", "buffer-switch"},
     {"C-F", "search"},
+    {"C-G C-B", "git-branch"},
     {"tab", "indent"}
 };
 

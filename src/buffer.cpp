@@ -16,7 +16,7 @@ namespace teditor {
 Buffer::Buffer(const std::string& name):
     screenStart(), screenDim(), lines(), startLine(0), cursor(),
     modified(false), readOnly(false), buffName(name), fileName(), dirName(),
-    gitBranch(), regions(), regionActive(false), cmds(), topCmd(-1),
+    regions(), regionActive(false), cmds(), topCmd(-1),
     mode(Mode::createMode("text")) {
     addLine();
     cursor.reset(this);
@@ -134,7 +134,6 @@ void Buffer::load(const std::string& file, int line) {
         loadDir(file);
     else
         loadFile(file, line);
-    gitBranch = gitBranchName(dirName);
 }
 
 void Buffer::reload() {
@@ -235,10 +234,6 @@ void Buffer::drawStatusBar(Editor& ed) {
     // mode
     count += ed.sendStringf(x+count, y, "statusfg", "statusbg",
                             " [mode=%s]", mode->name().c_str());
-    // git branch
-    if(!gitBranch.empty())
-        count += ed.sendStringf(x+count, y, "statusfg", "statusbg",
-                                " Git-%s", gitBranch.c_str());
 }
 
 std::string Buffer::dirModeGetFileAtLine(int line) {

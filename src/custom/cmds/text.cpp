@@ -703,6 +703,15 @@ CMD_NO_UNDO(TextSearch, "search") {
         buf.gotoLine(pos[0].y);
 }
 
+CMD_NO_UNDO(GitBranch, "git-branch") {
+    auto& buf = Editor::getInstance().getBuff();
+    auto br = gitBranchName(buf.pwd());
+    if(br.empty())
+        CMBAR("Not a git-repo!\n");
+    else
+        CMBAR("git-branch=%s\n", br.c_str());
+}
+
 ///@todo: support undo
 CMD_NO_UNDO(IndentLine, "indent") {
     auto& ed = Editor::getInstance();
