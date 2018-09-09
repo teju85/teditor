@@ -718,4 +718,10 @@ CMD_NO_UNDO(IndentLine, "indent") {
     ed.getBuff().indent();
 }
 
+CMD_NO_UNDO(OrgNotesDir, "org-notes-dir") {
+    auto& ed = Editor::getInstance();
+    const auto& args = ed.getArgs();
+    ed.load(args.orgNotesDir, 0);
+}
+
 } // end namespace teditor

@@ -15,7 +15,7 @@ struct Args {
     std::string getHistFile() const { return wrtHomeFolder(histFile); }
 
     bool quitAfterLoad;
-    std::string ttyFile, homeFolder;
+    std::string ttyFile, homeFolder, orgNotesDir;
     std::vector<FileInfo> files;
     int logLevel, cmdMsgBarHeight, cmdMsgBarMultiHeight;
     float pageScrollJump;

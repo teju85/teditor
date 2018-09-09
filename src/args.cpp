@@ -12,9 +12,10 @@ std::string Args::wrtHomeFolder(const std::string& s) const {
 
 Args::Args(int argc, char** argv):
     quitAfterLoad(false), ttyFile("/dev/tty"), homeFolder("$HOME/.teditor"),
-    files(), logLevel(-1), cmdMsgBarHeight(1), cmdMsgBarMultiHeight(8),
-    pageScrollJump(0.75f), maxFileHistory(20), tabSpaces(4),
-    histFile("history"), browserCmd("cygstart firefox -private-window") {
+    orgNotesDir("/cygdrive/c/Devtech/notes"), files(), logLevel(-1),
+    cmdMsgBarHeight(1), cmdMsgBarMultiHeight(8), pageScrollJump(0.75f),
+    maxFileHistory(20), tabSpaces(4), histFile("history"),
+    browserCmd("cygstart firefox -private-window") {
     for(int i=1;i<argc;++i) {
         if(!strcmp(argv[i], "-Q")) {
             quitAfterLoad = true;
@@ -30,6 +31,10 @@ Args::Args(int argc, char** argv):
             ++i;
             ASSERT(i < argc, "'-home' option expects an argument!");
             homeFolder = argv[i];
+        } else if(!strcmp(argv[i], "-org-notes-dir")) {
+            ++i;
+            ASSERT(i < argc, "'-org-notes-dir' option expects an argument!");
+            orgNotesDir = argv[i];
         } else if(!strcmp(argv[i], "-cmd-msg-bar-height")) {
             ++i;
             ASSERT(i < argc, "'-cmd-msg-bar-height' expects an argument!");
