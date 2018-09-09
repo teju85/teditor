@@ -14,6 +14,7 @@
 #include "utf8.h"
 #include "command.h"
 #include <algorithm>
+#include "mode.h"
 
 namespace teditor {
 
@@ -45,7 +46,8 @@ Editor::Editor(const Args& args_):
     setupTios();
     outbuff.puts(term.func(Func_EnterKeypad));
     outbuff.puts(term.func(Func_EnterCA));
-    populateColorMap<GlobalColors>(defcMap);
+    auto m = Mode::createMode("text");
+    defcMap = m->getColorMap();
     resize();
     clearBackBuff();
     hideCursor();  // we'll manually handle the cursor draws

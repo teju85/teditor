@@ -1,4 +1,44 @@
-std::vector<KeyCmdPair> PromptKeys::All = {
+#include "mode.h"
+#include "buffer.h"
+#include "key_cmd_map.h"
+#include "colors.h"
+
+
+namespace teditor {
+
+
+/** cmbar mode */
+class CmBarMode: public Mode {
+public:
+    CmBarMode();
+    int indent(Buffer& buf, int line) { return 0; }
+    KeyCmdMap& getKeyCmdMap() { return kcMap; }
+    ColorMap& getColorMap() { return cMap; }
+
+    static Mode* create() { return new CmBarMode; }
+
+private:
+    KeyCmdMap kcMap;
+    ColorMap cMap;
+
+    struct Keys { static std::vector<KeyCmdPair> All; };
+    struct Colors { static std::vector<NameColorPair> All; };
+};
+
+REGISTER_MODE(CmBarMode, "cmbar");
+
+
+CmBarMode::CmBarMode():
+    Mode("cmbar",
+         "abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNOPQRSTUVWXYZ0123456789_-"),
+    kcMap(), cMap() {
+    populateKeyMap<CmBarMode::Keys>(kcMap);
+    kcMap.resetTraversal();
+    populateColorMap<CmBarMode::Colors>(cMap);
+}
+
+
+std::vector<KeyCmdPair> CmBarMode::Keys::All = {
     {" ", "prompt-insert-char"},
     {"!", "prompt-insert-char"},
     {"\"", "prompt-insert-char"},
@@ -103,3 +143,23 @@ std::vector<KeyCmdPair> PromptKeys::All = {
     {"down", "prompt-options-down"},
     {"up", "prompt-options-up"}
 };
+
+std::vector<NameColorPair> CmBarMode::Colors::All = {
+    {"defaultfg",         "White"},
+    {"defaultbg",         "DarkerGray"},
+    {"highlightfg",       "defaultfg"},
+    {"highlightbg",       "DarkestGray"},
+    {"cursorfg",          "Black"},
+    {"cursorbg",          "White"},
+    {"inactivecursorbg",  "DarkGray"},
+    {"statusfg",          "DarkGreen"},
+    {"statusbg",          "DarkestGray"},
+    {"statusnamefg",      "Underline:Yellow"},
+    {"cmbarfg",           "defaultfg"},
+    {"cmbarbg",           "defaultbg"},
+    {"cmbarhighlightfg",  "highlightfg"},
+    {"cmbarhighlightbg",  "highlightbg"}
+};
+
+
+} // end namespace teditor

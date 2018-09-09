@@ -155,7 +155,7 @@ public:
     const Positions& getRegionLocs() const { return regions.getLocs(); }
     const AttrColor& getColor(const std::string& name) const;
     int verticalJump(float jump) const { return (int)(jump * screenDim.y); }
-    const std::string& getWord() const { return mode.word; }
+    const std::string& getWord() const { return mode->word(); }
 
 protected:
     Pos2d<int> screenStart, screenDim;
@@ -168,7 +168,7 @@ protected:
     bool regionActive;
     std::vector<CmdPtr> cmds;
     int topCmd;
-    Mode mode;
+    ModePtr mode;
 
     void insertLine(int i);
     void insert(char c, int i);
@@ -176,7 +176,7 @@ protected:
     void resetBufferState(int line, const std::string& file);
     void enableRegions();
     void disableRegions();
-    KeyCmdMap& getKeyCmdMap() { return mode.kcMap; }
+    KeyCmdMap& getKeyCmdMap() { return mode->getKeyCmdMap(); }
     void loadFile(const std::string& file, int line);
     void loadDir(const std::string& dir);
     std::string removeFrom(const Pos2d<int>& start, const Pos2d<int>& end);

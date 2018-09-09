@@ -35,22 +35,7 @@ private:
 };
 
 
-struct GlobalKeys {
-    static std::vector<KeyCmdPair> All;
-};
-
-
-struct PromptKeys {
-    static std::vector<KeyCmdPair> All;
-};
-
-
 struct PromptYesNoKeys {
-    static std::vector<KeyCmdPair> All;
-};
-
-
-struct DirModeKeys {
     static std::vector<KeyCmdPair> All;
 };
 

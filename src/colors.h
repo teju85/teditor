@@ -96,16 +96,6 @@ private:
 };
 
 
-struct GlobalColors {
-    static std::vector<NameColorPair> All;
-};
-
-
-struct DirColors {
-    static std::vector<NameColorPair> All;
-};
-
-
 template <typename Colors>
 void populateColorMap(ColorMap& cm, bool clear=false) {
     if(clear)

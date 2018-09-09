@@ -1,58 +1,90 @@
 #pragma once
 
-#include "key_cmd_map.h"
-#include "colors.h"
 #include <string>
+#include <unordered_map>
 #include <memory>
+#include "utils.h"
 
 
 namespace teditor {
 
 class Buffer;
+class KeyCmdMap;
+class ColorMap;
+class Mode;
 
 
-/** Apply indentation on a given line in the buffer */
-class Indentor {
-public:
-    Indentor(int i): indentSize(i) {}
-    virtual ~Indentor() {}
-    virtual int indent(Buffer& buf, int line);
-
-protected:
-    /** return indent size */
-    int getIndentSize() const { return indentSize; }
-
-private:
-    /** indentation length (in spaces) */
-    int indentSize;
-};
+typedef Mode* (*ModeCreator)();
+typedef std::shared_ptr<Mode> ModePtr;
+typedef std::unordered_map<std::string,ModeCreator> ModeCreatorMap;
 
 
 /** Mode attached with a buffer */
-struct Mode {
-    /** key map to be used for the buffer this mode applies to */
-    KeyCmdMap kcMap;
-    /** color map to be used for the buffer this mode applies to */
-    ColorMap cMap;
-    /** list a characters that define a word */
-    std::string word;
+class Mode {
+public:
+    /**
+     * @brief ctor
+     * @param n name of the mode
+     * @param w list of chars that define a word in this mode
+     */
+    Mode(const std::string& n, const std::string& w): name_(n), word_(w) {}
+
+    /** dtor */
+    virtual ~Mode() {}
+
+    /** mode's name */
+    virtual const std::string& name() const { return name_; }
+
+    /** list of chars that define a word */
+    virtual const std::string& word() const { return word_; }
+
+    /** function to compute indentation of the line in the input buffer */
+    virtual int indent(Buffer& buf, int line) = 0;
+
+    /** get key-cmd map for the buffer this mode applies to */
+    virtual KeyCmdMap& getKeyCmdMap() = 0;
+
+    /** get color map for the buffer this mode applies to */
+    virtual ColorMap& getColorMap() = 0;
+
+    /**
+     * @brief helper to register a named mode
+     * @param mode name of the mode (useful for later queries)
+     * @param fptr functor that helps create the mode object
+     */
+    static void registerMode(const std::string& mode, ModeCreator fptr);
+
+    /**
+     * @brief Helper to create mode object of the named mode
+     * @param mode name of the mode
+     * @return the mode object pointer
+     */
+    static ModePtr createMode(const std::string& mode);
+
+private:
     /** mode name */
-    std::string name;
-    /** the indentation function */
-    std::shared_ptr<Indentor> indent;
+    std::string name_;
+    /** list of chars that define a word */
+    std::string word_;
 };
 
 
-/** the default (catch-all) mode */
-void textMode(Mode& m);
+/** Accessor function to the mode map */
+ModeCreatorMap& modes();
 
-/** mode while loading and working with dirs */
-void dirMode(Mode& m);
+/** Accessor function to the list of mode names */
+Strings allModeNames();
 
-/** mode for the cmd-msg-bar */
-void cmBarMode(Mode& m);
 
-/** mode for the c/cpp/cuda files */
-void cppMode(Mode& m);
+class RegisterMode {
+public:
+    RegisterMode(const std::string& mode, ModeCreator fptr) {
+        Mode::registerMode(mode, fptr);
+    }
+};
+
+
+#define REGISTER_MODE(Name, NameStr)  \
+    RegisterMode mode ## Name(NameStr, Name::create)
 
 }; // end namespace teditor

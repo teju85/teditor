@@ -16,11 +16,11 @@ namespace teditor {
 Buffer::Buffer(const std::string& name):
     screenStart(), screenDim(), lines(), startLine(0), cursor(),
     modified(false), readOnly(false), buffName(name), fileName(), dirName(),
-    gitBranch(), regions(), regionActive(false), cmds(), topCmd(-1), mode() {
+    gitBranch(), regions(), regionActive(false), cmds(), topCmd(-1),
+    mode(Mode::createMode("text")) {
     addLine();
     cursor.reset(this);
     dirName = getpwd();
-    textMode(mode);
 }
 
 Buffer::~Buffer() {
@@ -32,7 +32,7 @@ Buffer::~Buffer() {
 }
 
 const AttrColor& Buffer::getColor(const std::string& name) const {
-    return mode.cMap.get(name);
+    return mode->getColorMap().get(name);
 }
 
 void Buffer::addCommand(CmdPtr c) {
@@ -154,7 +154,7 @@ void Buffer::loadDir(const std::string& dir) {
     resetBufferState(0, first);
     cursor.reset(this);
     readOnly = true;
-    dirMode(mode);
+    mode = Mode::createMode("dir");
 }
 
 void Buffer::loadFile(const std::string& file, int line) {
@@ -173,7 +173,8 @@ void Buffer::loadFile(const std::string& file, int line) {
     fp.close();
     resetBufferState(line, absFile);
     cursor.at(0) = {0, line};
-    textMode(mode);
+    ///@todo: support loading different modes
+    mode = Mode::createMode("text");
 }
 
 void Buffer::resetBufferState(int line, const std::string& file) {
@@ -233,7 +234,7 @@ void Buffer::drawStatusBar(Editor& ed) {
     }
     // mode
     count += ed.sendStringf(x+count, y, "statusfg", "statusbg",
-                            " [mode=%s]", mode.name.c_str());
+                            " [mode=%s]", mode->name().c_str());
     // git branch
     if(!gitBranch.empty())
         count += ed.sendStringf(x+count, y, "statusfg", "statusbg",
@@ -257,7 +258,7 @@ int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
     if(len <= 0)
         return y + 1;
     const auto* str = line.c_str();
-    bool isD = mode.name == "dir";
+    bool isD = mode->name() == "dir";
     if(isD) {
         auto file = dirModeGetFileAtLine(lineNum);
         file =  getFileName() + '/' + file;
@@ -699,7 +700,7 @@ void Buffer::indent() {
     for(int i=0;i<len;++i) {
         auto& cu = cursor.at(i);
         int line = cu.y;
-        int count = mode.indent->indent(*this, line);
+        int count = mode->indent(*this, line);
         DEBUG("Indent: count=%d line=%d\n", count, line);
         if(count > 0) {
             std::string in(count, ' ');

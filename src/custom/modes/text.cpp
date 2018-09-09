@@ -1,4 +1,33 @@
-std::vector<KeyCmdPair> GlobalKeys::All = {
+#include "text.h"
+#include "buffer.h"
+
+
+namespace teditor {
+
+REGISTER_MODE(TextMode, "text");
+
+
+TextMode::TextMode():
+    Mode("text",
+         "abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNOPQRSTUVWXYZ0123456789_"),
+    kcMap(), cMap() {
+    populateKeyMap<TextMode::Keys>(kcMap);
+    kcMap.resetTraversal();
+    populateColorMap<TextMode::Colors>(cMap);
+}
+
+int TextMode::indent(Buffer& buf, int line) {
+    if(!(0 < line && line < buf.length()))
+        return 0;
+    const auto& prev = buf.at(line-1);
+    auto& curr = buf.at(line);
+    int prevInd = prev.indentSize();
+    int currInd = curr.indentSize();
+    return std::max(0, prevInd-currInd);
+}
+
+
+std::vector<KeyCmdPair> TextMode::Keys::All = {
     {" ", "insert-char"},
     {"!", "insert-char"},
     {"\"", "insert-char"},
@@ -140,3 +169,23 @@ std::vector<KeyCmdPair> GlobalKeys::All = {
     {"C-F", "search"},
     {"tab", "indent"}
 };
+
+std::vector<NameColorPair> TextMode::Colors::All = {
+    {"defaultfg",         "White"},
+    {"defaultbg",         "DarkerGray"},
+    {"highlightfg",       "defaultfg"},
+    {"highlightbg",       "DarkestGray"},
+    {"cursorfg",          "Black"},
+    {"cursorbg",          "White"},
+    {"inactivecursorbg",  "DarkGray"},
+    {"statusfg",          "DarkGreen"},
+    {"statusbg",          "DarkestGray"},
+    {"statusnamefg",      "Underline:Yellow"},
+    {"cmbarfg",           "defaultfg"},
+    {"cmbarbg",           "defaultbg"},
+    {"cmbarhighlightfg",  "highlightfg"},
+    {"cmbarhighlightbg",  "highlightbg"}
+};
+
+
+} // end namespace teditor

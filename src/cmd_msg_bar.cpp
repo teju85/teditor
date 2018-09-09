@@ -1,5 +1,6 @@
 #include "cmd_msg_bar.h"
 #include <string.h>
+#include "mode.h"
 
 
 namespace teditor {
@@ -23,7 +24,7 @@ std::string StringChoices::getFinalStr(int idx, const std::string& str) const {
 
 
 CmdMsgBar::CmdMsgBar(): Buffer(), minLoc(0), choices(), optLoc(0) {
-    cmBarMode(mode);
+    mode = Mode::createMode("cmbar");
 }
 
 void CmdMsgBar::resize(const Pos2d<int>& start, const Pos2d<int>& dim) {

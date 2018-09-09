@@ -1,50 +1,36 @@
 #include "mode.h"
-#include "buffer.h"
-#include "custom/cpp_indent.h"
 
 
 namespace teditor {
 
-int Indentor::indent(Buffer& buf, int line) {
-    if(!(0 < line && line < buf.length()))
-        return 0;
-    const auto& prev = buf.at(line-1);
-    auto& curr = buf.at(line);
-    int prevInd = prev.indentSize();
-    int currInd = curr.indentSize();
-    return std::max(0, prevInd-currInd);
+
+ModeCreatorMap& modes() {
+    static ModeCreatorMap _modes;
+    return _modes;
 }
 
-
-void textMode(Mode& m) {
-    populateKeyMap<GlobalKeys>(m.kcMap);
-    populateColorMap<GlobalColors>(m.cMap);
-    m.word = "abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNOPQRSTUVWXYZ0123456789_";
-    m.kcMap.resetTraversal();
-    m.name = "text";
-    m.indent = std::shared_ptr<Indentor>(new Indentor(0));
+Strings allModeNames() {
+    auto& m = modes();
+    Strings ret;
+    for(const auto itr : m)
+        ret.push_back(itr.first);
+    return ret;
 }
 
-void dirMode(Mode& m) {
-    textMode(m);
-    populateKeyMap<DirModeKeys>(m.kcMap);
-    populateColorMap<DirColors>(m.cMap);
-    m.kcMap.resetTraversal();
-    m.name = "dir";
+void Mode::registerMode(const std::string& mode, ModeCreator fptr) {
+    auto& m = modes();
+    ASSERT(m.find(mode) == m.end(),
+           "Mode '%s' already registered!", mode.c_str());
+    m[mode] = fptr;
 }
 
-void cmBarMode(Mode& m) {
-    populateKeyMap<PromptKeys>(m.kcMap, true);
-    populateColorMap<GlobalColors>(m.cMap);
-    m.word = "abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNOPQRSTUVWXYZ0123456789_-";
-    m.name = "cmbar";
-    m.indent = std::shared_ptr<Indentor>(new Indentor(0));
+ModePtr Mode::createMode(const std::string& mode) {
+    auto& m = modes();
+    auto itr = m.find(mode);
+    ASSERT(itr != m.end(), "Mode '%s' not registered!", mode.c_str());
+    ModePtr ptr(itr->second());
+    return ptr;
 }
 
-void cppMode(Mode& m) {
-    textMode(m);
-    m.name = "cpp";
-    m.indent = std::shared_ptr<Indentor>(new CppIndentor(4));
-}
 
 } // end namespace teditor
