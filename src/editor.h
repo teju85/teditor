@@ -31,7 +31,7 @@ public:
     static Editor& getInstance() { return *inst; }
     int width() const { return tsize.x; }
     int height() const { return tsize.y; }
-    void setTitle(const char* title) { sendf("%c]0;%s%c\n", '\033', title, '\007'); }
+    void setTitle(const char* ti) { writef("%c]0;%s%c\n", '\033', ti, '\007'); }
     Buffer& getBuff() { return *buffs[currBuff]; }
     const Buffer& getBuff() const { return *buffs[currBuff]; }
     CmdMsgBar& getCmBar() { return cmBar; }
@@ -123,8 +123,7 @@ private:
     void clearBackBuff();
     void sendCell(int x, int y, const Cell& c) { backbuff.at(x, y) = c; }
     void flush() { outbuff.flush(inout); }
-    void send(const char* str) { outbuff.puts(str); }
-    void sendf(const char* fmt, ...);
+    void writef(const char* fmt, ...);
     void hideCursor() { outbuff.puts(term.func(Func_HideCursor)); }
     void showCursor() { outbuff.puts(term.func(Func_ShowCursor)); }
     void enableMouse() { outbuff.puts(term.func(Func_EnterMouse)); }

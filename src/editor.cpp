@@ -284,12 +284,12 @@ void Editor::checkForModifiedBuffer(Buffer* mlb) {
         mlb->save();
 }
 
-void Editor::sendf(const char* fmt, ...) {
+void Editor::writef(const char* fmt, ...) {
     va_list vl;
     va_start(vl, fmt);
     std::string buf = format(fmt, vl);
     va_end(vl);
-    return send(buf.c_str());
+    outbuff.puts(buf.c_str());
 }
 
 void Editor::updateTermSize() {
@@ -444,8 +444,7 @@ void Editor::clearScreen() {
 }
 
 bool Editor::promptYesNo(const std::string& msg) {
-    auto msg_ = msg + " (y/n)? ";
-    auto res = prompt(msg_, &ynMap);
+    auto res = prompt(msg+" (y/n)? ", &ynMap);
     return (res == "y");
 }
 
@@ -488,8 +487,7 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
     while(!quitPromptLoop) {
         int status = pollEvent();
         DEBUG("Prompter::loop: status=%d meta=%u key=%u keystr='%s'\n", status,
-              input.mk.getMeta(), input.mk.getKey(),
-              input.mk.toStr().c_str());
+              input.mk.getMeta(), input.mk.getKey(), input.mk.toStr().c_str());
         if(status == Input::UndefinedSequence) {
             MESSAGE("Prompter::loop: Undefined sequence: %s\n",
                     input.getOldSeq().c_str());

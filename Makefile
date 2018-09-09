@@ -46,6 +46,7 @@ default:
 	@echo "  doc         - Build doxygen documentation"
 	@echo "  clean       - Clean the build files"
 	@echo "  clean_all   - Clean even the build files"
+	@echo "  stats       - Source code statistics"
 	@echo "Flags to customize behavior:"
 	@echo "  DEBUG   - Get a debug build if it is 1. Also enables debug"
 	@echo "            logging in Logger class. [0]"
@@ -78,6 +79,10 @@ clean:
 
 clean_all: clean
 	rm -rf $(BINDIR) pcre2 apt-cyg curl
+
+stats:
+	@echo -n "Line/Word/Char counts: "
+	@find main.cpp $(SRC) -name "*.cpp" -o -name "*.h" | xargs wc -lwc | tail -n1
 
 $(PCRE2_LIB):
 	git clone https://github.com/teju85/pcre2 && \
