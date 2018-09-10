@@ -143,12 +143,12 @@ void Buffer::reload() {
 void Buffer::loadDir(const std::string& dir) {
     Files fs = listDir(dir);
     auto first = rel2abs(pwd(), dir);
-    lines.at(length()-1).append(first.c_str());
+    lines.back().append(first.c_str());
     for(const auto& f : fs) {
-        auto fname = (f.name == "." || f.name == "..")? f.name : basename(f.name);
+        auto fname = isCurrentOrParentDir(f.name)? f.name : basename(f.name);
         auto buff = format("  %10.10s  %8lu  %s", f.perms, f.size, fname.c_str());
         addLine();
-        lines.at(length()-1).append(buff.c_str());
+        lines.back().append(buff.c_str());
     }
     resetBufferState(0, first);
     cursor.reset(this);
@@ -166,7 +166,7 @@ void Buffer::loadFile(const std::string& file, int line) {
     }
     std::string currLine;
     while(std::getline(fp, currLine, '\n')) {
-        lines.at(length()-1).append(currLine.c_str());
+        lines.back().append(currLine.c_str());
         addLine();
     }
     fp.close();

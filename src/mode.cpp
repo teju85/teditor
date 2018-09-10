@@ -12,8 +12,10 @@ ModeCreatorMap& modes() {
 Strings allModeNames() {
     auto& m = modes();
     Strings ret;
+    // 'cmbar' is not really a mode per-se!
     for(const auto itr : m)
-        ret.push_back(itr.first);
+        if(itr.first != "cmbar")
+            ret.push_back(itr.first);
     return ret;
 }
 

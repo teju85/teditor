@@ -331,7 +331,7 @@ Files listDir(const std::string& dir) {
             file += '/';
         file += relFile;
         FilePerm fp(file);
-        if(relFile == "." || relFile == "..")
+        if(isCurrentOrParentDir(relFile))
             fp.name = relFile;
         f.push_back(fp);
     }
@@ -449,6 +449,10 @@ bool fileStrFind(const std::string& line, const std::string& str) {
     if(sub.empty())
         return true;
     return strFind(line, sub);
+}
+
+bool isCurrentOrParentDir(const std::string& dir) {
+    return dir == "." || dir == "..";
 }
 
 } // end namespace teditor

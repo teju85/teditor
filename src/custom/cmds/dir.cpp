@@ -24,7 +24,7 @@ CMD_NO_UNDO(DirModeCopyFile, "dirmode-copy-file") {
     auto& buf = ed.getBuff();
     auto file = buf.dirModeGetFileAtLine(buf.getCursor().at(0).y);
     auto& dir = buf.getFileName();
-    if(file == "." || file == ".." || file.empty())
+    if(isCurrentOrParentDir(file) || file.empty())
         return;
     file = rel2abs(dir, file);
     ///@todo: support copying directories
@@ -49,7 +49,7 @@ CMD_NO_UNDO(DirModeRenameFile, "dirmode-rename-file") {
     auto& buf = ed.getBuff();
     auto file = buf.dirModeGetFileAtLine(buf.getCursor().at(0).y);
     auto& dir = buf.getFileName();
-    if(file == "." || file == ".." || file.empty())
+    if(isCurrentOrParentDir(file) || file.empty())
         return;
     file = rel2abs(dir, file);
     auto dst = ed.prompt("Dst file: ");
@@ -65,7 +65,7 @@ CMD_NO_UNDO(DirModeDeleteFile, "dirmode-delete-file") {
     auto& buf = ed.getBuff();
     auto& dir = buf.getFileName();
     auto file = buf.dirModeGetFileAtLine(buf.getCursor().at(0).y);
-    if(file == "." || file == ".." || file.empty())
+    if(isCurrentOrParentDir(file) || file.empty())
         return;
     auto delFile = rel2abs(dir, file);
     ///@todo: support deleting directories

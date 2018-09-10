@@ -254,4 +254,10 @@ TEST(Utils, FileStrFind) {
     ASSERT_TRUE(fileStrFind("file", "/home/user/fil"));
 }
 
+TEST(Utils, IsCurrentOrParentDir) {
+    ASSERT_TRUE(isCurrentOrParentDir("."));
+    ASSERT_TRUE(isCurrentOrParentDir(".."));
+    ASSERT_FALSE(isCurrentOrParentDir("other"));
+}
+
 } // end namespace teditor

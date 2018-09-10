@@ -457,7 +457,7 @@ std::string Editor::promptEnum(const std::string& msg, OptionMap& opts) {
         letters[itr.first[0]] = itr.first;
         eMap.add(itr.first[0], "prompt-insert-char-quit");
     }
-    m += ": ";
+    m += "? ";
     eMap.add("esc", "prompt-cancel");
     const auto res = prompt(m, &eMap);
     // cancel requested

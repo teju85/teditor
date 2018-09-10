@@ -147,4 +147,7 @@ bool strFind(const std::string& line, const std::string& str);
 /** Filter function while working with files */
 bool fileStrFind(const std::string& line, const std::string& str);
 
+/** check if the file represents current dir or parent dir */
+bool isCurrentOrParentDir(const std::string& dir);
+
 } // end namespace teditor
