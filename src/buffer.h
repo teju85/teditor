@@ -186,6 +186,7 @@ protected:
     friend class Editor;
     FRIEND_TEST(Buffer, SortRegionsEmptyLine);
     FRIEND_TEST(Buffer, SortRegions);
+    FRIEND_TEST(Buffer, Mode);
 };
 
 }; // end namespace teditor

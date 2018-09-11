@@ -134,12 +134,14 @@ void Buffer::load(const std::string& file, int line) {
         loadDir(file);
     else
         loadFile(file, line);
+    mode = Mode::createMode(Mode::inferMode(file));
 }
 
 void Buffer::reload() {
     clear();
     load(fileName, 0);
 }
+
 void Buffer::loadDir(const std::string& dir) {
     Files fs = listDir(dir);
     auto first = rel2abs(pwd(), dir);
@@ -153,7 +155,6 @@ void Buffer::loadDir(const std::string& dir) {
     resetBufferState(0, first);
     cursor.reset(this);
     readOnly = true;
-    mode = Mode::createMode("dir");
 }
 
 void Buffer::loadFile(const std::string& file, int line) {
@@ -172,8 +173,6 @@ void Buffer::loadFile(const std::string& file, int line) {
     fp.close();
     resetBufferState(line, absFile);
     cursor.at(0) = {0, line};
-    ///@todo: support loading different modes
-    mode = Mode::createMode("text");
 }
 
 void Buffer::resetBufferState(int line, const std::string& file) {

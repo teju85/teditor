@@ -489,4 +489,11 @@ TEST(Buffer, MatchCurrentParen) {
     ASSERT_EQ(Pos2d<int>(9, 4), cu.at(0));
 }
 
+TEST(Buffer, Mode) {
+    Buffer ml;
+    ml.resize({0, 0}, {30, 10});
+    ml.load("tests/samples/multiline.txt", 2);
+    ASSERT_EQ("text", ml.mode->name());
+}
+
 } // end namespace teditor
