@@ -4,7 +4,7 @@
 
 namespace teditor {
 
-TEST_CASE("Args Test") {
+TEST_CASE("Args::Test") {
     Args ar(0, nullptr);
     auto home = env("HOME");
     REQUIRE(home + "/.teditor/test" == ar.wrtHomeFolder("test"));

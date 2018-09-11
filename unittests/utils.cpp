@@ -114,8 +114,8 @@ TEST_CASE("Utils::Split") {
 TEST_CASE("Utils::Rel2Abs") {
     std::string pwd = getpwd();
     REQUIRE(pwd+"/README.org" == rel2abs(".", "README.org"));
-    REQUIRE(pwd+"/tests/utils.cpp" == rel2abs("tests/", "utils.cpp"));
-    REQUIRE(pwd+"/main.cpp" == rel2abs("tests/", "../main.cpp"));
+    REQUIRE(pwd+"/unittests/utils.cpp" == rel2abs("unittests/", "utils.cpp"));
+    REQUIRE(pwd+"/main.cpp" == rel2abs("unittests/", "../main.cpp"));
     REQUIRE("./nofile" == rel2abs(".", "nofile"));
     REQUIRE("/some/non/existent/path/../nofile" ==
             rel2abs("/some/non/existent/path", "../nofile"));
