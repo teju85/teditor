@@ -90,11 +90,6 @@ struct Pos2d {
     T x, y;
 
     Pos2d(T x_=0, T y_=0): x(x_), y(y_) {}
-
-    Pos2d<T>& operator+=(int delta) {
-        x += delta;
-        return *this;
-    }
 };
 
 template <typename T>

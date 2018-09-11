@@ -48,7 +48,7 @@ TEST_CASE("Buffer::DirMode") {
     Buffer ml;
     ml.resize({0, 0}, {100, 10});
     ml.load("samples");
-    REQUIRE(6 == ml.length());
+    REQUIRE(7 == ml.length());
     REQUIRE("samples" == ml.bufferName());
 }
 
@@ -495,6 +495,23 @@ TEST_CASE("Buffer::Mode") {
     ml.resize({0, 0}, {30, 10});
     ml.load("samples/multiline.txt", 2);
     REQUIRE("text" == ml.modeName());
+}
+
+TEST_CASE("Buffer::TextModeIndent") {
+    SECTION("indent") {
+        Buffer ml;
+        ml.resize({0, 0}, {30, 10});
+        ml.load("samples/indent.txt", 2);
+        ml.indent();
+        REQUIRE("  This should indent" == ml.at(2).get());
+    }
+    SECTION("deindent") {
+        Buffer ml;
+        ml.resize({0, 0}, {30, 10});
+        ml.load("samples/indent.txt", 4);
+        ml.indent();
+        REQUIRE("This should deindent" == ml.at(4).get());
+    }
 }
 
 } // end namespace teditor

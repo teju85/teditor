@@ -24,7 +24,7 @@ int TextMode::indent(Buffer& buf, int line) {
     auto& curr = buf.at(line);
     int prevInd = prev.indentSize();
     int currInd = curr.indentSize();
-    return std::max(0, prevInd-currInd);
+    return prevInd - currInd;
 }
 
 bool TextMode::modeCheck(const std::string& file) {
