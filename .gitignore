@@ -3,6 +3,8 @@ teditor
 teditor.exe
 gtests
 gtests.exe
+ctests
+ctests.exe
 *.stackdump
 *.log
 *.tar.gz
