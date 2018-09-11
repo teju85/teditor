@@ -156,6 +156,9 @@ public:
     const AttrColor& getColor(const std::string& name) const;
     int verticalJump(float jump) const { return (int)(jump * screenDim.y); }
     const std::string& getWord() const { return mode->word(); }
+    void enableRegions();
+    void disableRegions();
+    const std::string& modeName() const { return mode->name(); }
 
 protected:
     Pos2d<int> screenStart, screenDim;
@@ -174,8 +177,6 @@ protected:
     void insert(char c, int i);
     void addLine() { lines.push_back(Line()); }
     void resetBufferState(int line, const std::string& file);
-    void enableRegions();
-    void disableRegions();
     KeyCmdMap& getKeyCmdMap() { return mode->getKeyCmdMap(); }
     void loadFile(const std::string& file, int line);
     void loadDir(const std::string& dir);
