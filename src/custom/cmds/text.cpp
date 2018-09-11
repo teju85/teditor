@@ -724,4 +724,11 @@ CMD_NO_UNDO(OrgNotesDir, "org-notes-dir") {
     ed.load(args.orgNotesDir, 0);
 }
 
+CMD_NO_UNDO(TaskManager, "task-manager") {
+    std::string cmd = "cygstart Taskmgr.exe";
+    auto res = check_output(cmd);
+    MESSAGE("Shell Command: %s (exit-status=%d)\nOutput: %s",
+            cmd.c_str(), res.status, res.output.c_str());
+}
+
 } // end namespace teditor
