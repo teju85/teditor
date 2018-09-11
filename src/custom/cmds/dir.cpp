@@ -58,6 +58,7 @@ CMD_NO_UNDO(DirModeRenameFile, "dirmode-rename-file") {
         MESSAGE("Renamed '%s' to '%s'\n", file.c_str(), dst.c_str());
         rename(file.c_str(), dst.c_str());
     }
+    ed.runCmd("dirmode-refresh");
 }
 
 CMD_NO_UNDO(DirModeDeleteFile, "dirmode-delete-file") {
@@ -75,6 +76,7 @@ CMD_NO_UNDO(DirModeDeleteFile, "dirmode-delete-file") {
         remove(delFile.c_str());
     buf.clear();
     buf.load(buf.getFileName(), 0);
+    ed.runCmd("dirmode-refresh");
 }
 
 } // end namespace teditor
