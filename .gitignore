@@ -1,6 +1,7 @@
 *.o
 teditor
 teditor.exe
+tests
 tests.exe
 *.stackdump
 *.log
