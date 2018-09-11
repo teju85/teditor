@@ -5,10 +5,10 @@ about this editor can be found [[https://teju85.github.io/blog/tags.html#teditor
 Very minimal set of pre-reqs are needed for this project!
 1. GNU-make (>= 4.2.1)
 2. G++ (>= 5.4.0)
-3. mintty - for running the editor
-4. doxygen (>= 1.8.13) - for documentation generation
-5. curl - for downloading from web, from inside the editor
-6. git - to show git related info in the status bar
+3. curl - for downloading from web
+4. mintty - for running the editor
+5. doxygen (>= 1.8.13) - for documentation generation
+6. git - to run git commands from inside the editor
 * Download and Build
 Currently, only been tested on cygwin with xterm-256.
 #+BEGIN_SRC bash
