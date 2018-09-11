@@ -43,7 +43,7 @@ void Mode::registerMode(const std::string& mode, ModeCreator fptr,
     ASSERT(m.find(mode) == m.end(),
            "Mode '%s' already registered!", mode.c_str());
     m[mode] = fptr;
-    
+    infers()[mode] = iptr;
 }
 
 ModePtr Mode::createMode(const std::string& mode) {
