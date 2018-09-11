@@ -7,7 +7,7 @@ namespace teditor {
 TEST(ISearch, Usage) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/multiline.txt");
+    ml.load("samples/multiline.txt");
     ASSERT_EQ(4, ml.length());
     ISearch is(ml);
     is.reset();

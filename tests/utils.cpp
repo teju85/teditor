@@ -34,7 +34,7 @@ TEST(Utils, isFile) {
 
 TEST(Utils, isRemote) {
     ASSERT_TRUE(isRemote("/ssh:cluster:/path"));
-    ASSERT_FALSE(isRemote("tests/samples/hello.txt"));
+    ASSERT_FALSE(isRemote("samples/hello.txt"));
 }
 
 TEST(Utils, Assert) {
@@ -47,12 +47,12 @@ TEST(Utils, Env) {
 }
 
 TEST(Utils, Slurp) {
-    ASSERT_EQ("Hello World!\n", slurp("tests/samples/hello.txt"));
+    ASSERT_EQ("Hello World!\n", slurp("samples/hello.txt"));
     ASSERT_THROW(slurp("i_dont_exist"), std::runtime_error);
 }
 
 TEST(Utils, SlurpToArr) {
-    auto arr = slurpToArr("tests/samples/multiline.txt");
+    auto arr = slurpToArr("samples/multiline.txt");
     ASSERT_EQ(3U, arr.size());
     ASSERT_EQ("* Hello", arr[0]);
     ASSERT_EQ("Testing123", arr[1]);
@@ -136,7 +136,7 @@ TEST(Utils, FindFirstUpwards) {
     ASSERT_EQ("", findFirstUpwards("/", ""));
     ASSERT_EQ(pwd + "/.git", findFirstUpwards(pwd, ".git"));
     ASSERT_EQ(pwd + "/README.org", findFirstUpwards(pwd, "README.org"));
-    ASSERT_EQ(pwd + "/tests/samples", findFirstUpwards(pwd, "tests/samples"));
+    ASSERT_EQ(pwd + "/samples", findFirstUpwards(pwd, "samples"));
     ASSERT_EQ("", findFirstUpwards(pwd, "non-existent"));
 }
 
@@ -163,7 +163,7 @@ TEST(Utils, UniquifyName) {
 }
 
 TEST(Utils, CheckOutput) {
-    auto out = check_output("cat tests/samples/hello.txt");
+    auto out = check_output("cat samples/hello.txt");
     ASSERT_EQ("Hello World!\n", out.output);
     ASSERT_EQ(0, out.status);
     out = check_output("something");
@@ -172,27 +172,27 @@ TEST(Utils, CheckOutput) {
 }
 
 TEST(Utils, FilePerm) {
-    FilePerm fp("tests/samples/hello.txt");
+    FilePerm fp("samples/hello.txt");
     ASSERT_EQ(0, strncmp(fp.perms, "-rw-r--r--", 10));
-    FilePerm fp1("tests/samples");
+    FilePerm fp1("samples");
     ASSERT_EQ(0, strncmp(fp1.perms, "drwxr-xr-x", 10));
     ASSERT_EQ(0U, fp1.size);
 }
 
 TEST(Utils, ListDir) {
-    auto f = listDir("tests/samples");
+    auto f = listDir("samples");
     ASSERT_EQ(5U, f.size());
     ASSERT_EQ(".", f[0].name);
     ASSERT_EQ("..", f[1].name);
-    ASSERT_EQ("tests/samples/hello.txt", f[2].name);
-    ASSERT_EQ("tests/samples/multiline.txt", f[3].name);
-    ASSERT_EQ("tests/samples/sample.cxx", f[4].name);
+    ASSERT_EQ("samples/hello.txt", f[2].name);
+    ASSERT_EQ("samples/multiline.txt", f[3].name);
+    ASSERT_EQ("samples/sample.cxx", f[4].name);
     auto f1 = listDir("not-exists");
     ASSERT_EQ(0U, f1.size());
 }
 
 TEST(Utils, ListDirRel) {
-    auto f = listDirRel("tests/samples");
+    auto f = listDirRel("samples");
     ASSERT_EQ(5U, f.size());
     ASSERT_EQ(".", f[0]);
     ASSERT_EQ("..", f[1]);
@@ -204,7 +204,7 @@ TEST(Utils, ListDirRel) {
 }
 
 TEST(Utils, CopyFile) {
-    const char* file = "tests/samples/hello.txt";
+    const char* file = "samples/hello.txt";
     const char* copy = "tmp.txt";
     auto ref = slurp(file);
     copyFile(file, copy);

@@ -6,7 +6,7 @@ namespace teditor {
 TEST(Buffer, Location) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/multiline.txt", 2);
+    ml.load("samples/multiline.txt", 2);
     const auto& pos = ml.getCursor().at(0);
     ASSERT_EQ(0, pos.x);
     ASSERT_EQ(2, pos.y);
@@ -17,7 +17,7 @@ TEST(Buffer, Location) {
 TEST(Buffer, KillLine) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/multiline.txt", 2);
+    ml.load("samples/multiline.txt", 2);
     const auto& pos = ml.getCursor().at(0);
     ASSERT_EQ(Pos2d<int>(0, 2), pos);
     ASSERT_EQ("multiline.txt", ml.bufferName());
@@ -35,7 +35,7 @@ TEST(Buffer, KillLine) {
 TEST(Buffer, BadFile) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/nofile.txt", 2);
+    ml.load("samples/nofile.txt", 2);
     const auto& pos = ml.getCursor().at(0);
     ASSERT_EQ(1, ml.length());
     ASSERT_EQ(0, pos.x);
@@ -46,7 +46,7 @@ TEST(Buffer, BadFile) {
 TEST(Buffer, DirMode) {
     Buffer ml;
     ml.resize({0, 0}, {100, 10});
-    ml.load("tests/samples");
+    ml.load("samples");
     ASSERT_EQ(6, ml.length());
     ASSERT_EQ("samples", ml.bufferName());
 }
@@ -54,7 +54,7 @@ TEST(Buffer, DirMode) {
 TEST(Buffer, Clear) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/multiline.txt");
+    ml.load("samples/multiline.txt");
     ASSERT_EQ(4, ml.length());
     ml.clear();
     ASSERT_EQ(1, ml.length());
@@ -63,14 +63,14 @@ TEST(Buffer, Clear) {
 TEST(Buffer, CharAt) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/multiline.txt");
+    ml.load("samples/multiline.txt");
     ASSERT_EQ('*', ml.charAt({0,0}));
 }
 
 TEST(Buffer, Buffer2screen) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/multiline.txt");
+    ml.load("samples/multiline.txt");
     ASSERT_EQ(4, ml.length());
     ASSERT_EQ(1, ml.totalLinesNeeded());
     ASSERT_EQ('*', ml.charAt({0,0}));
@@ -97,7 +97,7 @@ TEST(Buffer, Buffer2screen) {
 TEST(Buffer, Screen2buffer) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/multiline.txt");
+    ml.load("samples/multiline.txt");
     ASSERT_EQ(4, ml.length());
     ASSERT_EQ(1, ml.totalLinesNeeded());
     Pos2d<int> loc = {0, 0};
@@ -118,7 +118,7 @@ TEST(Buffer, Screen2buffer) {
 TEST(Buffer, Insert) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/multiline.txt");
+    ml.load("samples/multiline.txt");
     Cursor& cu = ml.getCursor();
     cu.reset(&ml);
     cu.addBack(0, 1);
@@ -149,7 +149,7 @@ TEST(Buffer, Insert) {
 TEST(Buffer, InsertLine) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/multiline.txt");
+    ml.load("samples/multiline.txt");
     ASSERT_EQ(4, ml.length());
     auto& cu = ml.getCursor();
     // enter somewhere inside the line
@@ -169,7 +169,7 @@ TEST(Buffer, InsertLine) {
 TEST(Buffer, RemoveRegion) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/sample.cxx");
+    ml.load("samples/sample.cxx");
     ASSERT_EQ(21, ml.length());
     auto& cu = ml.getCursor();
     ASSERT_EQ(Pos2d<int>(0, 0), cu.at(0));
@@ -208,7 +208,7 @@ TEST(Buffer, RemoveRegion) {
 TEST(Buffer, Remove) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/sample.cxx");
+    ml.load("samples/sample.cxx");
     ASSERT_EQ(21, ml.length());
     auto& cu = ml.getCursor();
     ASSERT_EQ(Pos2d<int>(0, 0), cu.at(0));
@@ -253,7 +253,7 @@ TEST(Buffer, Remove) {
 TEST(Buffer, RemoveCurrent) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/sample.cxx");
+    ml.load("samples/sample.cxx");
     ASSERT_EQ(21, ml.length());
     auto& cu = ml.getCursor();
     ASSERT_EQ(Pos2d<int>(0, 0), cu.at(0));
@@ -301,7 +301,7 @@ TEST(Buffer, RemoveCurrent) {
 TEST(Buffer, GotoLine) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/sample.cxx");
+    ml.load("samples/sample.cxx");
     ASSERT_EQ(21, ml.length());
     auto& cu = ml.getCursor();
     ASSERT_EQ(Pos2d<int>(0, 0), cu.at(0));
@@ -314,7 +314,7 @@ TEST(Buffer, GotoLine) {
 TEST(Buffer, SortRegionsEmptyLine) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/sample.cxx");
+    ml.load("samples/sample.cxx");
     ASSERT_EQ(21, ml.length());
     auto& cu = ml.getCursor();
     ASSERT_EQ(Pos2d<int>(0, 0), cu.at(0));
@@ -350,7 +350,7 @@ TEST(Buffer, SortRegionsEmptyLine) {
 TEST(Buffer, SortRegions) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/sample.cxx");
+    ml.load("samples/sample.cxx");
     ASSERT_EQ(21, ml.length());
     auto& cu = ml.getCursor();
     ASSERT_EQ(Pos2d<int>(0, 0), cu.at(0));
@@ -387,7 +387,7 @@ TEST(Buffer, SortRegions) {
 TEST(Buffer, KeepLinesNoMatches) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/sample.cxx");
+    ml.load("samples/sample.cxx");
     ASSERT_EQ(21, ml.length());
     auto& cu = ml.getCursor();
     ASSERT_EQ(Pos2d<int>(0, 0), cu.at(0));
@@ -412,7 +412,7 @@ TEST(Buffer, KeepLinesNoMatches) {
 TEST(Buffer, KeepLinesSomeMatches) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/sample.cxx");
+    ml.load("samples/sample.cxx");
     ASSERT_EQ(21, ml.length());
     auto& cu = ml.getCursor();
     ASSERT_EQ(Pos2d<int>(0, 0), cu.at(0));
@@ -435,7 +435,7 @@ TEST(Buffer, KeepLinesSomeMatches) {
 TEST(Buffer, RemoveLinesNoMatches) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/sample.cxx");
+    ml.load("samples/sample.cxx");
     ASSERT_EQ(21, ml.length());
     auto& cu = ml.getCursor();
     ASSERT_EQ(Pos2d<int>(0, 0), cu.at(0));
@@ -455,7 +455,7 @@ TEST(Buffer, RemoveLinesNoMatches) {
 TEST(Buffer, RemoveLinesSomeMatches) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/sample.cxx");
+    ml.load("samples/sample.cxx");
     ASSERT_EQ(21, ml.length());
     auto& cu = ml.getCursor();
     ASSERT_EQ(Pos2d<int>(0, 0), cu.at(0));
@@ -478,7 +478,7 @@ TEST(Buffer, RemoveLinesSomeMatches) {
 TEST(Buffer, MatchCurrentParen) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/sample.cxx");
+    ml.load("samples/sample.cxx");
     ASSERT_EQ(21, ml.length());
     auto& cu = ml.getCursor();
     ASSERT_EQ(Pos2d<int>(0, 0), cu.at(0));
@@ -492,7 +492,7 @@ TEST(Buffer, MatchCurrentParen) {
 TEST(Buffer, Mode) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/multiline.txt", 2);
+    ml.load("samples/multiline.txt", 2);
     ASSERT_EQ("text", ml.mode->name());
 }
 

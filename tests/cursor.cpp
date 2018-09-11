@@ -34,7 +34,7 @@ TEST(Cursor, Basics) {
 TEST(Cursor, Movements) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/sample.cxx", 0);
+    ml.load("samples/sample.cxx", 0);
     auto& cu = ml.getCursor();
 
     ASSERT_EQ(1, cu.count());
@@ -101,7 +101,7 @@ TEST(Cursor, Movements) {
 TEST(Cursor, Operations) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/sample.cxx", 0);
+    ml.load("samples/sample.cxx", 0);
     auto& cu = ml.getCursor();
 
     cu.remove(0);

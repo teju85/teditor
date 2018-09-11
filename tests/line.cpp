@@ -52,7 +52,7 @@ TEST(Line, Line) {
 TEST(Line, FindFirstNotOf) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/multiline.txt");
+    ml.load("samples/multiline.txt");
     const auto& line = ml.at(2);
     std::string word("abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNOPQRSTUVWXYZ0123456789_");
     ASSERT_EQ(3, line.findFirstNotOf(word, 0));
@@ -65,7 +65,7 @@ TEST(Line, FindFirstNotOf) {
 TEST(Line, FindLastNotOf) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/multiline.txt");
+    ml.load("samples/multiline.txt");
     const auto& line = ml.at(2);
     std::string word("abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNOPQRSTUVWXYZ0123456789_");
     ASSERT_EQ(21, line.findLastNotOf(word, 22));
@@ -78,7 +78,7 @@ TEST(Line, FindLastNotOf) {
 TEST(Line, IndentSize) {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
-    ml.load("tests/samples/sample.cxx");
+    ml.load("samples/sample.cxx");
     ASSERT_EQ(0, ml.at(0).indentSize());
     ASSERT_EQ(0, ml.at(3).indentSize());
     ASSERT_EQ(4, ml.at(18).indentSize());
