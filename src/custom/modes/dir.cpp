@@ -14,6 +14,8 @@ public:
 
     static Mode* create() { return new DirMode; }
 
+    static bool modeCheck(const std::string& file);
+
 private:
     std::string name__;
 
@@ -27,6 +29,10 @@ REGISTER_MODE(DirMode, "dir");
 DirMode::DirMode(): TextMode(), name__("dir") {
     populateKeyMap<DirMode::Keys>(getKeyCmdMap());
     populateColorMap<DirMode::Colors>(getColorMap());
+}
+
+bool DirMode::modeCheck(const std::string& file) {
+    return isDir(file.c_str());
 }
 
 

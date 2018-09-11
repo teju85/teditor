@@ -1,5 +1,6 @@
 #include "text.h"
 #include "buffer.h"
+#include "pcre.h"
 
 
 namespace teditor {
@@ -24,6 +25,11 @@ int TextMode::indent(Buffer& buf, int line) {
     int prevInd = prev.indentSize();
     int currInd = curr.indentSize();
     return std::max(0, prevInd-currInd);
+}
+
+bool TextMode::modeCheck(const std::string& file) {
+    static Pcre reg("[.]txt$");
+    return reg.isMatch(file);
 }
 
 

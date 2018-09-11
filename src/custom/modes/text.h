@@ -18,6 +18,8 @@ public:
 
     static Mode* create() { return new TextMode; }
 
+    static bool modeCheck(const std::string& file);
+
 private:
     KeyCmdMap kcMap;
     ColorMap cMap;

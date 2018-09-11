@@ -1,4 +1,5 @@
 #include "mode.h"
+#include "utils.h"
 
 
 namespace teditor {
@@ -7,6 +8,11 @@ namespace teditor {
 ModeCreatorMap& modes() {
     static ModeCreatorMap _modes;
     return _modes;
+}
+
+ModeInferMap& infers() {
+    static ModeInferMap _infers;
+    return _infers;
 }
 
 Strings allModeNames() {
@@ -19,11 +25,25 @@ Strings allModeNames() {
     return ret;
 }
 
-void Mode::registerMode(const std::string& mode, ModeCreator fptr) {
+std::string Mode::inferMode(const std::string& file) {
+    auto& i = infers();
+    // special case for directories
+    if(isDir(file.c_str()))
+        return "dir";
+    for(const auto itr : i)
+        if(itr.second(file))
+            return itr.first;
+    // default mode
+    return "text";
+}
+
+void Mode::registerMode(const std::string& mode, ModeCreator fptr,
+                        InferMode iptr) {
     auto& m = modes();
     ASSERT(m.find(mode) == m.end(),
            "Mode '%s' already registered!", mode.c_str());
     m[mode] = fptr;
+    
 }
 
 ModePtr Mode::createMode(const std::string& mode) {

@@ -12,11 +12,15 @@ class Buffer;
 class KeyCmdMap;
 class ColorMap;
 class Mode;
+class Pcre;
 
 
 typedef Mode* (*ModeCreator)();
 typedef std::shared_ptr<Mode> ModePtr;
 typedef std::unordered_map<std::string,ModeCreator> ModeCreatorMap;
+
+typedef bool (*InferMode)(const std::string&);
+typedef std::unordered_map<std::string,InferMode> ModeInferMap;
 
 
 /** Mode attached with a buffer */
@@ -51,8 +55,10 @@ public:
      * @brief helper to register a named mode
      * @param mode name of the mode (useful for later queries)
      * @param fptr functor that helps create the mode object
+     * @param iptr functor to check if this mode applies to the input file
      */
-    static void registerMode(const std::string& mode, ModeCreator fptr);
+    static void registerMode(const std::string& mode, ModeCreator fptr,
+                             InferMode iptr);
 
     /**
      * @brief Helper to create mode object of the named mode
@@ -60,6 +66,13 @@ public:
      * @return the mode object pointer
      */
     static ModePtr createMode(const std::string& mode);
+
+    /**
+     * @brief Helper to infer mode name from the file
+     * @param file the file
+     * @return the mode name
+     */
+    static std::string inferMode(const std::string& file);
 
 private:
     /** mode name */
@@ -69,22 +82,23 @@ private:
 };
 
 
-/** Accessor function to the mode map */
-ModeCreatorMap& modes();
-
 /** Accessor function to the list of mode names */
 Strings allModeNames();
+
+/** infers mode from it's filename */
+std::string inferMode(const std::string& file);
 
 
 class RegisterMode {
 public:
-    RegisterMode(const std::string& mode, ModeCreator fptr) {
-        Mode::registerMode(mode, fptr);
+    RegisterMode(const std::string& mode, ModeCreator fptr,
+                 InferMode iptr) {
+        Mode::registerMode(mode, fptr, iptr);
     }
 };
 
 
 #define REGISTER_MODE(Name, NameStr)  \
-    RegisterMode mode ## Name(NameStr, Name::create)
+    RegisterMode mode ## Name(NameStr, Name::create, Name::modeCheck)
 
 }; // end namespace teditor

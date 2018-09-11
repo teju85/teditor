@@ -17,6 +17,8 @@ public:
 
     static Mode* create() { return new CmBarMode; }
 
+    static bool modeCheck(const std::string& file) { return false; }
+
 private:
     KeyCmdMap kcMap;
     ColorMap cMap;
