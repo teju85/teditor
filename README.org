@@ -27,13 +27,7 @@ $ make doc
 #+END_SRC
 * Developers
 ** Unit testing
-Unit-tests are run via googletest.
+Unit-tests are run via catch2.
 #+BEGIN_SRC bash
-$ make -j gtests
+$ make -j tests
 #+END_SRC
-** googletest
-- Location: tests/googletest
-- https://github.com/googletest/googletest
-- CommitId: 278aba369c41e90e9e77a6f51443beb3692919cf
-- Changes:
-  - only kept googletest/src and googletest/include subdirs

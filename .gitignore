@@ -1,10 +1,7 @@
 *.o
 teditor
 teditor.exe
-gtests
-gtests.exe
-ctests
-ctests.exe
+tests.exe
 *.stackdump
 *.log
 *.tar.gz

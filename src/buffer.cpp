@@ -5,7 +5,6 @@
 #include "logger.h"
 #include <iostream>
 #include <fstream>
-#include "gtest/gtest_prod.h"
 #include <unistd.h>
 #include <algorithm>
 #include <stack>

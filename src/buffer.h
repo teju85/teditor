@@ -9,7 +9,6 @@
 #include "line.h"
 #include "pcre.h"
 #include "cursor.h"
-#include "gtest/gtest.h"
 #include "mode.h"
 
 
@@ -185,9 +184,6 @@ protected:
     int dirModeFileOffset() const { return 24; }
 
     friend class Editor;
-    FRIEND_TEST(Buffer, SortRegionsEmptyLine);
-    FRIEND_TEST(Buffer, SortRegions);
-    FRIEND_TEST(Buffer, Mode);
 };
 
 }; // end namespace teditor
