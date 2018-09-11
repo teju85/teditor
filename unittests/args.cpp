@@ -1,13 +1,13 @@
 #include "args.h"
 #include "utils.h"
-#include "gtest/gtest.h"
+#include "catch.hpp"
 
 namespace teditor {
 
-TEST(Args, Test) {
+TEST_CASE("Args Test") {
     Args ar(0, nullptr);
     auto home = env("HOME");
-    ASSERT_EQ(home + "/.teditor/test", ar.wrtHomeFolder("test"));
+    REQUIRE(home + "/.teditor/test" == ar.wrtHomeFolder("test"));
 }
 
 } // end namespace teditor
