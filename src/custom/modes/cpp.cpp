@@ -37,7 +37,12 @@ int CppMode::indent(Buffer& buf, int line) {
         return 0;
     const auto& prev = buf.at(line-1);
     auto& curr = buf.at(line);
-    int prevInd = prev.indentSize();
+    Pcre nspace("namespace .*?{");
+    int prevInd;
+    if(nspace.isMatch(prev.get()))
+        prevInd = 0;
+    else
+        prevInd = prev.indentSize();
     int currInd = curr.indentSize();
     return prevInd - currInd;
 }

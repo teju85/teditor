@@ -48,7 +48,7 @@ TEST_CASE("Buffer::DirMode") {
     Buffer ml;
     ml.resize({0, 0}, {100, 10});
     ml.load("samples");
-    REQUIRE(7 == ml.length());
+    REQUIRE(8 == ml.length());
     REQUIRE("samples" == ml.bufferName());
 }
 

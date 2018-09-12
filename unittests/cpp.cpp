@@ -47,4 +47,16 @@ TEST_CASE("CppMode") {
     }
 }
 
+TEST_CASE("CppModeIndent") {
+    Buffer ml;
+    ml.resize({0, 0}, {30, 10});
+    ml.load("samples/cpp-mode.cpp");
+    auto& culoc = ml.getCursor().at(0);
+    SECTION("post-namespace indentation") {
+        culoc.y = 7;
+        ml.indent();
+        REQUIRE("static int thisLineNoIndent = 0;" == ml.at(7).get());
+    }
+}
+
 } // end namespace teditor
