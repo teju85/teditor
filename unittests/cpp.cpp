@@ -57,6 +57,11 @@ TEST_CASE("CppModeIndent") {
         ml.indent();
         REQUIRE("static int thisLineNoIndent = 0;" == ml.at(7).get());
     }
+    SECTION("#include and other directives") {
+        culoc.y = 4;
+        ml.indent();
+        REQUIRE("#include <stdint.h>" == ml.at(4).get());
+    }
 }
 
 } // end namespace teditor
