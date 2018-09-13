@@ -1,3 +1,4 @@
+#include "testutils.h"
 #include "cursor.h"
 #include "buffer.h"
 #include "catch.hpp"
@@ -33,8 +34,7 @@ TEST_CASE("Cursor::Basics") {
 
 TEST_CASE("Cursor::Movements") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/sample.cxx", 0);
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
     auto& cu = ml.getCursor();
 
     REQUIRE(1 == cu.count());
@@ -100,8 +100,7 @@ TEST_CASE("Cursor::Movements") {
 
 TEST_CASE("Cursor::Operations") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/sample.cxx", 0);
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
     auto& cu = ml.getCursor();
 
     cu.remove(0);

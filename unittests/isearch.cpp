@@ -1,13 +1,14 @@
+#include "testutils.h"
 #include "isearch.h"
 #include "buffer.h"
 #include "catch.hpp"
+
 
 namespace teditor {
 
 TEST_CASE("ISearch::Usage") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/multiline.txt");
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
     REQUIRE(4 == ml.length());
     ISearch is(ml);
     is.reset();

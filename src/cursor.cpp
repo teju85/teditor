@@ -23,16 +23,15 @@ void Cursor::restoreExcursion(const Positions& pos) {
 }
 
 void Cursor::home(Buffer* ml) {
-    for(auto& cu : locs) {
-        cu.x = ml->getMinStartLoc();
-    }
+    int minLoc = ml->getMinStartLoc();
+    for(auto& cu : locs)
+        cu.x = minLoc;
     removeDuplicates();
 }
 
 void Cursor::lineEnd(Buffer* ml) {
-    for(auto& cu : locs) {
+    for(auto& cu : locs)
         cu.x = ml->at(cu.y).length();
-    }
     removeDuplicates();
 }
 
@@ -61,9 +60,8 @@ void Cursor::right(Buffer* ml) {
             if(cu.y < ml->length()-1) {
                 ++cu.y;
                 cu.x = 0;
-            } else {
+            } else
                 --cu.x;
-            }
         }
     }
     ml->lineUp();
@@ -196,10 +194,9 @@ void Cursor::previousWord(Buffer* ml) {
 }
 
 bool Cursor::findCursor(const Pos2d<int>& pos) const {
-    for(auto& cu : locs) {
+    for(auto& cu : locs)
         if(cu == pos)
             return true;
-    }
     return false;
 }
 

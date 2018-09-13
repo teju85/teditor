@@ -1,3 +1,4 @@
+#include "testutils.h"
 #include "line.h"
 #include "buffer.h"
 #include "catch.hpp"
@@ -51,8 +52,7 @@ TEST_CASE("Line::Line") {
 
 TEST_CASE("Line::FindFirstNotOf") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/multiline.txt");
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
     const auto& line = ml.at(2);
     std::string word("abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNOPQRSTUVWXYZ0123456789_");
     REQUIRE(3 == line.findFirstNotOf(word, 0));
@@ -64,8 +64,7 @@ TEST_CASE("Line::FindFirstNotOf") {
 
 TEST_CASE("Line::FindLastNotOf") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/multiline.txt");
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
     const auto& line = ml.at(2);
     std::string word("abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNOPQRSTUVWXYZ0123456789_");
     REQUIRE(21 == line.findLastNotOf(word, 22));
@@ -77,8 +76,7 @@ TEST_CASE("Line::FindLastNotOf") {
 
 TEST_CASE("Line::IndentSize") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/sample.cxx");
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
     REQUIRE(0 == ml.at(0).indentSize());
     REQUIRE(0 == ml.at(3).indentSize());
     REQUIRE(4 == ml.at(18).indentSize());

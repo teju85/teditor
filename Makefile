@@ -79,8 +79,10 @@ clean_all: clean
 	rm -rf $(BINDIR) pcre2 apt-cyg $(CATCH2)
 
 stats:
-	@echo -n "Line/Word/Char counts: "
+	@echo -n "SRC:   Line/Word/Char counts: "
 	@find main.cpp $(SRC) -name "*.cpp" -o -name "*.h" | xargs wc -lwc | tail -n1
+	@echo -n "TESTS: Line/Word/Char counts: "
+	@find $(TESTS) -name "*.cpp" -o -name "*.h" | xargs wc -lwc | tail -n1
 
 $(PCRE2_LIB):
 	git clone https://github.com/teju85/pcre2 && \

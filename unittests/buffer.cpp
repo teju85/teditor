@@ -1,3 +1,4 @@
+#include "testutils.h"
 #include "buffer.h"
 #include "catch.hpp"
 
@@ -6,8 +7,7 @@ namespace teditor {
 
 TEST_CASE("Buffer::Location") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/multiline.txt", 2);
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt", 2);
     const auto& pos = ml.getCursor().at(0);
     REQUIRE(0 == pos.x);
     REQUIRE(2 == pos.y);
@@ -17,8 +17,7 @@ TEST_CASE("Buffer::Location") {
 
 TEST_CASE("Buffer::KillLine") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/multiline.txt", 2);
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt", 2);
     const auto& pos = ml.getCursor().at(0);
     REQUIRE(Pos2d<int>(0, 2) == pos);
     REQUIRE("multiline.txt" == ml.bufferName());
@@ -35,8 +34,7 @@ TEST_CASE("Buffer::KillLine") {
 
 TEST_CASE("Buffer::BadFile") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/nofile.txt", 2);
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/nofile.txt", 2);
     const auto& pos = ml.getCursor().at(0);
     REQUIRE(1 == ml.length());
     REQUIRE(0 == pos.x);
@@ -46,16 +44,14 @@ TEST_CASE("Buffer::BadFile") {
 
 TEST_CASE("Buffer::DirMode") {
     Buffer ml;
-    ml.resize({0, 0}, {100, 10});
-    ml.load("samples");
+    setupBuff(ml, {0, 0}, {100, 10}, "samples");
     REQUIRE(8 == ml.length());
     REQUIRE("samples" == ml.bufferName());
 }
 
 TEST_CASE("Buffer::Clear") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/multiline.txt");
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
     REQUIRE(4 == ml.length());
     ml.clear();
     REQUIRE(1 == ml.length());
@@ -63,15 +59,13 @@ TEST_CASE("Buffer::Clear") {
 
 TEST_CASE("Buffer::CharAt") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/multiline.txt");
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
     REQUIRE('*' == ml.charAt({0,0}));
 }
 
 TEST_CASE("Buffer::Buffer2screen") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/multiline.txt");
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
     REQUIRE(4 == ml.length());
     REQUIRE(1 == ml.totalLinesNeeded());
     REQUIRE('*' == ml.charAt({0,0}));
@@ -97,8 +91,7 @@ TEST_CASE("Buffer::Buffer2screen") {
 
 TEST_CASE("Buffer::Screen2buffer") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/multiline.txt");
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
     REQUIRE(4 == ml.length());
     REQUIRE(1 == ml.totalLinesNeeded());
     Pos2d<int> loc = {0, 0};
@@ -118,8 +111,7 @@ TEST_CASE("Buffer::Screen2buffer") {
 
 TEST_CASE("Buffer::Insert") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/multiline.txt");
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
     Cursor& cu = ml.getCursor();
     cu.reset(&ml);
     cu.addBack(0, 1);
@@ -149,8 +141,7 @@ TEST_CASE("Buffer::Insert") {
 
 TEST_CASE("Buffer::InsertLine") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/multiline.txt");
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
     REQUIRE(4 == ml.length());
     auto& cu = ml.getCursor();
     // enter somewhere inside the line
@@ -169,8 +160,7 @@ TEST_CASE("Buffer::InsertLine") {
 
 TEST_CASE("Buffer::RemoveRegion") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/sample.cxx");
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
     REQUIRE(21 == ml.length());
     auto& cu = ml.getCursor();
     REQUIRE(Pos2d<int>(0, 0) == cu.at(0));
@@ -208,8 +198,7 @@ TEST_CASE("Buffer::RemoveRegion") {
 
 TEST_CASE("Buffer::Remove") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/sample.cxx");
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
     REQUIRE(21 == ml.length());
     auto& cu = ml.getCursor();
     REQUIRE(Pos2d<int>(0, 0) == cu.at(0));
@@ -253,8 +242,7 @@ TEST_CASE("Buffer::Remove") {
 
 TEST_CASE("Buffer::RemoveCurrent") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/sample.cxx");
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
     REQUIRE(21 == ml.length());
     auto& cu = ml.getCursor();
     REQUIRE(Pos2d<int>(0, 0) == cu.at(0));
@@ -301,8 +289,7 @@ TEST_CASE("Buffer::RemoveCurrent") {
 
 TEST_CASE("Buffer::GotoLine") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/sample.cxx");
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
     REQUIRE(21 == ml.length());
     auto& cu = ml.getCursor();
     REQUIRE(Pos2d<int>(0, 0) == cu.at(0));
@@ -314,8 +301,7 @@ TEST_CASE("Buffer::GotoLine") {
 
 TEST_CASE("Buffer::SortRegionsEmptyLine") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/sample.cxx");
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
     REQUIRE(21 == ml.length());
     auto& cu = ml.getCursor();
     REQUIRE(Pos2d<int>(0, 0) == cu.at(0));
@@ -350,8 +336,7 @@ TEST_CASE("Buffer::SortRegionsEmptyLine") {
 
 TEST_CASE("Buffer::SortRegions") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/sample.cxx");
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
     REQUIRE(21 == ml.length());
     auto& cu = ml.getCursor();
     REQUIRE(Pos2d<int>(0, 0) == cu.at(0));
@@ -387,8 +372,7 @@ TEST_CASE("Buffer::SortRegions") {
 
 TEST_CASE("Buffer::KeepLinesNoMatches") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/sample.cxx");
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
     REQUIRE(21 == ml.length());
     auto& cu = ml.getCursor();
     REQUIRE(Pos2d<int>(0, 0) == cu.at(0));
@@ -412,8 +396,7 @@ TEST_CASE("Buffer::KeepLinesNoMatches") {
 
 TEST_CASE("Buffer::KeepLinesSomeMatches") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/sample.cxx");
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
     REQUIRE(21 == ml.length());
     auto& cu = ml.getCursor();
     REQUIRE(Pos2d<int>(0, 0) == cu.at(0));
@@ -435,8 +418,7 @@ TEST_CASE("Buffer::KeepLinesSomeMatches") {
 
 TEST_CASE("Buffer::RemoveLinesNoMatches") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/sample.cxx");
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
     REQUIRE(21 == ml.length());
     auto& cu = ml.getCursor();
     REQUIRE(Pos2d<int>(0, 0) == cu.at(0));
@@ -455,8 +437,7 @@ TEST_CASE("Buffer::RemoveLinesNoMatches") {
 
 TEST_CASE("Buffer::RemoveLinesSomeMatches") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/sample.cxx");
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
     REQUIRE(21 == ml.length());
     auto& cu = ml.getCursor();
     REQUIRE(Pos2d<int>(0, 0) == cu.at(0));
@@ -478,8 +459,7 @@ TEST_CASE("Buffer::RemoveLinesSomeMatches") {
 
 TEST_CASE("Buffer::MatchCurrentParen") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/sample.cxx");
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
     REQUIRE(21 == ml.length());
     auto& cu = ml.getCursor();
     REQUIRE(Pos2d<int>(0, 0) == cu.at(0));
@@ -492,23 +472,20 @@ TEST_CASE("Buffer::MatchCurrentParen") {
 
 TEST_CASE("Buffer::Mode") {
     Buffer ml;
-    ml.resize({0, 0}, {30, 10});
-    ml.load("samples/multiline.txt", 2);
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt", 2);
     REQUIRE("text" == ml.modeName());
 }
 
 TEST_CASE("Buffer::TextModeIndent") {
     SECTION("indent") {
         Buffer ml;
-        ml.resize({0, 0}, {30, 10});
-        ml.load("samples/indent.txt", 2);
+        setupBuff(ml, {0, 0}, {30, 10}, "samples/indent.txt", 2);
         ml.indent();
         REQUIRE("  This should indent" == ml.at(2).get());
     }
     SECTION("deindent") {
         Buffer ml;
-        ml.resize({0, 0}, {30, 10});
-        ml.load("samples/indent.txt", 4);
+        setupBuff(ml, {0, 0}, {30, 10}, "samples/indent.txt", 4);
         ml.indent();
         REQUIRE("This should deindent" == ml.at(4).get());
     }
