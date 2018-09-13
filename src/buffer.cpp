@@ -697,8 +697,7 @@ void Buffer::indent() {
         DEBUG("Indent: count=%d line=%d\n", count, line);
         cu.x += count;
         if(count > 0) {
-            std::string in(count, ' ');
-            lines[line].prepend(in.c_str());
+            lines[line].prepend(' ', count);
             if(cu.x <= lines[line].length())
                 cu.x = lines[line].length();
             modified = true;

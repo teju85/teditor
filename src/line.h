@@ -19,6 +19,7 @@ public:
     void append(const std::string& str) { line += str; }
     void prepend(char c) { insert(c, 0); }
     void prepend(const char* c) { insert(c, 0); }
+    void prepend(char c, int count);
     void insert(char c, int idx);
     void insert(const char* c, int idx);
     void insert(const std::string& str, int idx) { insert(str.c_str(), idx); }

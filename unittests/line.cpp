@@ -50,6 +50,14 @@ TEST_CASE("Line::Line") {
     REQUIRE(0 == line.findLastNotOf("HelorWd !", line.length()));
 }
 
+TEST_CASE("Line::prepend") {
+    Line line;
+    REQUIRE(line.empty());
+    line.prepend(' ', 4);
+    REQUIRE("    " == line.get());
+    REQUIRE(4 == line.length());
+}
+
 TEST_CASE("Line::FindFirstNotOf") {
     Buffer ml;
     setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");

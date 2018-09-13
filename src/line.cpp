@@ -13,6 +13,11 @@ std::string Line::erase(int idx, int count) {
     return ret;
 }
 
+void Line::prepend(char c, int count) {
+    std::string tmp(count, c);
+    prepend(tmp.c_str());
+}
+
 void Line::insert(char c, int idx) {
     if(idx >= length())
         append(c);
