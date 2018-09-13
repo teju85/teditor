@@ -69,13 +69,13 @@ CMD_NO_UNDO(DirModeDeleteFile, "dirmode-delete-file") {
     if(isCurrentOrParentDir(file) || file.empty())
         return;
     auto delFile = rel2abs(dir, file);
-    ///@todo: support deleting directories
-    if(!isFile(delFile.c_str()))
+    if(delFile.empty())
         return;
-    if(ed.promptYesNo("Delete " + delFile + "?"))
-        remove(delFile.c_str());
-    buf.clear();
-    buf.load(buf.getFileName(), 0);
+    if(ed.promptYesNo("Delete " + delFile + "?")) {
+        std::string cmd = "rm -rf " + delFile;
+        auto res = check_output(cmd);
+        MESSAGE("Deleted file='%s'\n", delFile.c_str());
+    }
     ed.runCmd("dirmode-refresh");
 }
 
