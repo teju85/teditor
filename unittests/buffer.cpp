@@ -491,4 +491,38 @@ TEST_CASE("Buffer::TextModeIndent") {
     }
 }
 
+TEST_CASE("Buffer::RegionAsStr") {
+    Buffer ml;
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt", 0);
+    REQUIRE(4 == ml.length());
+    auto& cu = ml.getCursor();
+    cu.lineEnd(&ml);
+    ml.enableRegions();
+    cu.down(&ml);
+    cu.lineEnd(&ml);
+    auto strs = ml.regionAsStr();
+    REQUIRE(1U == strs.size());
+    REQUIRE("\nTesting123" == strs[0]);
+}
+
+TEST_CASE("Buffer::Cut") {
+    SECTION("Preceeding newline") {
+        Buffer ml;
+        setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt", 0);
+        REQUIRE(4 == ml.length());
+        auto& cu = ml.getCursor();
+        cu.lineEnd(&ml);
+        ml.enableRegions();
+        cu.down(&ml);
+        cu.lineEnd(&ml);
+        auto before = cu.saveExcursion();
+        auto regs = ml.getRegionLocs();
+        auto del = ml.remove(regs, before);
+        REQUIRE(1U == del.size());
+        REQUIRE("\nTesting123" == del[0]);
+        /// @todo: this must be 3!
+        REQUIRE(4 == ml.length());
+    }
+}
+
 } // end namespace teditor
