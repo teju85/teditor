@@ -520,8 +520,40 @@ TEST_CASE("Buffer::Cut") {
         auto del = ml.remove(regs, before);
         REQUIRE(1U == del.size());
         REQUIRE("\nTesting123" == del[0]);
-        /// @todo: this must be 3!
+        REQUIRE(3 == ml.length());
+    }
+    SECTION("Succeeding newline") {
+        Buffer ml;
+        setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt", 0);
         REQUIRE(4 == ml.length());
+        auto& cu = ml.getCursor();
+        cu.home(&ml);
+        ml.enableRegions();
+        cu.down(&ml);
+        auto before = cu.saveExcursion();
+        auto regs = ml.getRegionLocs();
+        auto del = ml.remove(regs, before);
+        REQUIRE(1U == del.size());
+        REQUIRE("* Hello\n" == del[0]);
+        REQUIRE(3 == ml.length());
+    }
+    SECTION("Preceeding & Succeeding newline") {
+        Buffer ml;
+        setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt", 0);
+        REQUIRE(4 == ml.length());
+        auto& cu = ml.getCursor();
+        cu.lineEnd(&ml);
+        ml.enableRegions();
+        cu.down(&ml);
+        cu.down(&ml);
+        cu.home(&ml);
+        auto before = cu.saveExcursion();
+        auto regs = ml.getRegionLocs();
+        auto del = ml.remove(regs, before);
+        REQUIRE(1U == del.size());
+        REQUIRE("\nTesting123\n" == del[0]);
+        ///@todo: issue with trailing newline now!!
+        REQUIRE(3 == ml.length());
     }
 }
 

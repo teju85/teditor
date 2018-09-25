@@ -513,9 +513,19 @@ std::string Buffer::removeFrom(const Pos2d<int>& start,
         return del;
     }
     auto& curr = at(yStart);
+    if(xStart == curr.length()) {
+        curr.insert(lines[yStart+1].get(), xStart);
+        lines.erase(lines.begin()+yStart+1);
+        --yEnd;
+        del += '\n';
+        if(yEnd == yStart) {
+            del += at(yStart).erase(xStart, xEnd);
+            return del;
+        }
+    }
     bool isFullLine = xStart == 0;
-    del = curr.erase(xStart, curr.length());
     int actualIdx = yStart;
+    del += curr.erase(xStart, curr.length()-xStart);
     if(isFullLine)
         lines.erase(lines.begin()+yStart);
     else
