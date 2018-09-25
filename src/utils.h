@@ -90,12 +90,35 @@ struct Pos2d {
     T x, y;
 
     Pos2d(T x_=0, T y_=0): x(x_), y(y_) {}
-};
 
-template <typename T>
-bool operator==(const Pos2d<T>& a, const Pos2d<T>& b) {
-    return (a.x == b.x) && (a.y == b.y);
-}
+    bool operator>(const Pos2d<T>& b) const {
+        if(y > b.y) return true;
+        if(y == b.y && x > b.x) return true;
+        return false;
+    }
+
+    bool operator>=(const Pos2d<T>& b) const {
+        if(y > b.y) return true;
+        if(y == b.y && x >= b.x) return true;
+        return false;
+    }
+
+    bool operator==(const Pos2d<T>& b) const {
+        return (x == b.x) && (y == b.y);
+    }
+
+    bool operator<=(const Pos2d<T>& b) const {
+        if(y < b.y) return true;
+        if(y == b.y && x <= b.x) return true;
+        return false;
+    }
+
+    bool operator<(const Pos2d<T>& b) const {
+        if(y < b.y) return true;
+        if(y == b.y && x < b.x) return true;
+        return false;
+    }
+};
 
 
 struct CmdStatus {

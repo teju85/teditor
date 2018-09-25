@@ -274,4 +274,32 @@ TEST_CASE("Utils::IsCurrentOrParentDir") {
     REQUIRE_FALSE(isCurrentOrParentDir("other"));
 }
 
+TEST_CASE("Utils::Pos2d") {
+    Pos2d<int> a = {10, 10};
+    Pos2d<int> b = {0, 0};
+    REQUIRE(a > b);
+    REQUIRE(a >= b);
+    REQUIRE_FALSE(a == b);
+    REQUIRE_FALSE(a <= b);
+    REQUIRE_FALSE(a < b);
+    b = {10, 10};
+    REQUIRE_FALSE(a > b);
+    REQUIRE(a >= b);
+    REQUIRE(a == b);
+    REQUIRE(a <= b);
+    REQUIRE_FALSE(a < b);
+    b = {11, 10};
+    REQUIRE_FALSE(a > b);
+    REQUIRE_FALSE(a >= b);
+    REQUIRE_FALSE(a == b);
+    REQUIRE(a <= b);
+    REQUIRE(a < b);
+    b = {9, 11};
+    REQUIRE_FALSE(a > b);
+    REQUIRE_FALSE(a >= b);
+    REQUIRE_FALSE(a == b);
+    REQUIRE(a <= b);
+    REQUIRE(a < b);
+}
+
 } // end namespace teditor
