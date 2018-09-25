@@ -4,10 +4,8 @@
 
 namespace teditor {
 
-const int Cursor::Hidden = 0xFFFFFFFF;
-
 Cursor::Cursor(): locs() {
-    locs.push_back(Pos2d<int>(Hidden, Hidden));
+    locs.push_back(Pos2d<int>(0, 0));
 }
 
 Positions Cursor::saveExcursion() const {
@@ -133,8 +131,7 @@ void Cursor::nextPara(Buffer* ml) {
     for(auto& cu : locs) {
         int prevLen = ml->at(cu.y).length();
         for(++cu.y;cu.y<len;++cu.y) {
-            if(ml->at(cu.y).length() == 0 && prevLen != 0)
-                break;
+            if(ml->at(cu.y).length() == 0 && prevLen != 0) break;
             prevLen = ml->at(cu.y).length();
         }
         cu.y = std::min(cu.y, len-1);
@@ -148,8 +145,7 @@ void Cursor::previousPara(Buffer* ml) {
     for(auto& cu : locs) {
         int prevLen = ml->at(cu.y).length();
         for(--cu.y;cu.y>=0;--cu.y) {
-            if(ml->at(cu.y).length() == 0 && prevLen != 0)
-                break;
+            if(ml->at(cu.y).length() == 0 && prevLen != 0) break;
             prevLen = ml->at(cu.y).length();
         }
         cu.y = std::max(cu.y, 0);
@@ -164,8 +160,7 @@ void Cursor::nextWord(Buffer* ml) {
     for(auto& cu : locs) {
         const auto& line = ml->at(cu.y);
         if(cu.x >= line.length()) {
-            if(cu.y >= ml->length()-1)
-                continue;
+            if(cu.y >= ml->length()-1) continue;
             ++cu.y;
             cu.x = 0;
         } else {
@@ -180,8 +175,7 @@ void Cursor::previousWord(Buffer* ml) {
     const auto& word = ml->getWord();
     for(auto& cu : locs) {
         if(cu.x <= 0) {
-            if(cu.y <= 0)
-                continue;
+            if(cu.y <= 0) continue;
             --cu.y;
             cu.x = ml->at(cu.y).length();
         } else {
@@ -195,8 +189,7 @@ void Cursor::previousWord(Buffer* ml) {
 
 bool Cursor::findCursor(const Pos2d<int>& pos) const {
     for(auto& cu : locs)
-        if(cu == pos)
-            return true;
+        if(cu == pos) return true;
     return false;
 }
 
@@ -216,30 +209,18 @@ void Cursor::addFront(int cx, int cy) {
 }
 
 void Cursor::addFront(Pos2d<int>& pos) {
-    if(!findCursor(pos))
-        locs.insert(locs.begin(), pos);
+    if(!findCursor(pos)) locs.insert(locs.begin(), pos);
 }
 
 void Cursor::remove(int id) {
-    if(count() >= 2)
-        locs.erase(locs.begin()+id);
+    if(count() >= 2) locs.erase(locs.begin()+id);
 }
 
 void Cursor::clearAllButFirst() {
-    if(count() == 1)
-        return;
+    if(count() == 1) return;
     auto first = locs[0];
     locs.clear();
     locs.push_back(first);
-}
-
-bool Cursor::isHidden(int id) const {
-    const Pos2d<int>& p = locs[id];
-    return ((p.x == Hidden) || (p.y == Hidden));
-}
-
-bool Cursor::isHidden(int cx, int cy) const {
-    return ((cx == Hidden) || (cy == Hidden));
 }
 
 void Cursor::removeDuplicates() {

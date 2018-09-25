@@ -63,7 +63,7 @@ public:
     int sendStringf(int x, int y, const std::string& fg, const std::string& bg,
                     const char* fmt, ...);
     void setColors(AttrColor fg, AttrColor bg);
-    void writeCursor(Pos2d<int>& pos) { writeCursor(pos.x, pos.y); }
+    void writeCursor(int x, int y);
     void writeChar(uint32_t c, int x, int y);
     void run();
     void requestQuitEventLoop() { quitEventLoop = true; }
@@ -117,7 +117,6 @@ private:
     void setSignalHandler();
     void setupTios();
     void writeLiteral(const char* fmt, ...);
-    void writeCursor(int x, int y);
     void clearScreen();
     void resize();
     void clearBackBuff();

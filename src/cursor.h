@@ -34,8 +34,6 @@ public:
     void addFront(int cx, int cy);
     void addFront(Pos2d<int>& pos);
     void remove(int id);
-    bool isHidden(int id) const;
-    bool isHidden(int cx, int cy) const;
     int count() const { return locs.size(); }
     const Pos2d<int>& at(int id) const { return locs[id]; }
     Pos2d<int>& at(int id) { return locs[id]; }
@@ -45,8 +43,6 @@ public:
     void clearAllButFirst();
     /** checks if the given line has any cursor in it */
     bool hasCursor(int line) const;
-
-    static const int Hidden;
 
 private:
     Positions locs;

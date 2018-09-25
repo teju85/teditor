@@ -10,15 +10,10 @@ TEST_CASE("Cursor::Basics") {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
     Cursor c;
-    REQUIRE(c.isHidden(0));
-    REQUIRE(c.isHidden(0, Cursor::Hidden));
-    REQUIRE(c.isHidden(Cursor::Hidden, 0));
     REQUIRE(1 == c.count());
     c.reset(&ml);
-    REQUIRE_FALSE(c.isHidden(0));
     REQUIRE(1 == c.count());
     c.addBack(0, 1);
-    REQUIRE_FALSE(c.isHidden(1));
     REQUIRE(2 == c.count());
     c.remove(0);
     REQUIRE(1 == c.count());
@@ -38,7 +33,6 @@ TEST_CASE("Cursor::Movements") {
     auto& cu = ml.getCursor();
 
     REQUIRE(1 == cu.count());
-    REQUIRE_FALSE(cu.isHidden(0));
     REQUIRE(Pos2d<int>(0, 0) == cu.at(0));
 
     cu.lineEnd(&ml);

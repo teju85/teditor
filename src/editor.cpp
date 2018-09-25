@@ -263,8 +263,7 @@ void Editor::run() {
         }
         draw();
         render();
-        if(quitEventLoop)
-            break;
+        if(quitEventLoop) break;
     }
 }
 
@@ -275,13 +274,10 @@ void Editor::checkForModifiedBuffers() {
 
 void Editor::checkForModifiedBuffer(Buffer* mlb) {
     const auto& name = mlb->bufferName();
-    if(!mlb->isModified() || mlb->isRO())
-        return;
+    if(!mlb->isModified() || mlb->isRO()) return;
     // temp buffers need no saving
-    if(name[0] == '*')
-        return;
-    if(promptYesNo("Buffer " + name + " modified. Save?"))
-        mlb->save();
+    if(name[0] == '*') return;
+    if(promptYesNo("Buffer " + name + " modified. Save?")) mlb->save();
 }
 
 void Editor::writef(const char* fmt, ...) {
@@ -404,9 +400,6 @@ void Editor::writeLiteral(const char* fmt, ...) {
 }
 
 void Editor::writeCursor(int x, int y) {
-    const auto& cursor = getBuff().getCursor();
-    if(cursor.isHidden(x, y))
-        return;
     writeLiteral("\033[%d;%dH", y+1, x+1);
 }
 
@@ -420,8 +413,7 @@ void Editor::writeChar(uint32_t c, int x, int y) {
 }
 
 void Editor::setColors(AttrColor fg, AttrColor bg) {
-    if((fg == lastfg) && (bg == lastbg))
-        return;
+    if((fg == lastfg) && (bg == lastbg)) return;
     lastfg = fg;
     lastbg = bg;
     outbuff.puts(term.func(Func_Sgr0)); // reset attrs
