@@ -284,15 +284,13 @@ void Cursor::moveLeftCursorsOnSameLine(int i) {
     const auto& culoc = at(i);
     for(int j=i;j<len;++j) {
         auto& cu = at(j);
-        if(cu.y == culoc.y)
-            --cu.x;
+        if(cu.y == culoc.y) --cu.x;
     }
 }
 
 bool Cursor::hasCursor(int line) const {
     for(const auto& cu : locs)
-        if(line == cu.y)
-            return true;
+        if(line == cu.y) return true;
     return false;
 }
 
@@ -308,25 +306,19 @@ bool Regions::isInside(int y, int x, const Cursor& cu, int i) const {
     const auto& culoc = cu.at(i);
     Pos2d<int> start, end;
     p.find(start, end, culoc);
-    if(start.y < y && y < end.y)
-        return true;
+    if(start.y < y && y < end.y) return true;
     else if(start.y == end.y && start.y == y) {
-        if(start.x <= x && x <= end.x)
-            return true;
-    } else if(start.y == y && x >= start.x)
-        return true;
-    else if(end.y == y && x <= end.x)
-        return true;
+        if(start.x <= x && x <= end.x) return true;
+    } else if(start.y == y && x >= start.x) return true;
+    else if(end.y == y && x <= end.x) return true;
     return false;
 }
 
 bool Regions::isInside(int y, int x, const Cursor& cu) const {
-    if(empty())
-        return false;
+    if(empty()) return false;
     int len = cu.count();
     for(int i=0;i<len;++i)
-        if(isInside(y, x, cu, i))
-            return true;
+        if(isInside(y, x, cu, i)) return true;
     return false;
 }
 
