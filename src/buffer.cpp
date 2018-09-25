@@ -71,7 +71,7 @@ Strings Buffer::regionAsStr() const {
     Strings out;
     if(!isRegionActive())
         return out;
-    int count = regions.count();
+    int count = (int)regions.size();
     for(int j=0;j<count;++j) {
         std::string rs;
         const auto& p = regions.at(j);

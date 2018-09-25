@@ -298,12 +298,13 @@ bool Cursor::hasCursor(int line) const {
 
 
 void Regions::enable(const Positions& p) {
-    for(const auto& l : p)
-        locs.push_back(l);
+    clear();
+    resize(p.size());
+    std::copy(p.begin(), p.end(), begin());
 }
 
 bool Regions::isInside(int y, int x, const Cursor& cu, int i) const {
-    const auto& p = locs[i];
+    const auto& p = at(i);
     const auto& culoc = cu.at(i);
     int yStart, yEnd, xStart, xEnd;
     if(p.y < culoc.y) {
@@ -335,7 +336,7 @@ bool Regions::isInside(int y, int x, const Cursor& cu, int i) const {
 }
 
 bool Regions::isInside(int y, int x, const Cursor& cu) const {
-    if(locs.empty())
+    if(empty())
         return false;
     int len = cu.count();
     for(int i=0;i<len;++i)

@@ -65,15 +65,10 @@ private:
 
 
 /** Represents start/end of regions in a buffer */
-class Regions {
+class Regions: public Positions {
 public:
-    Regions(): locs() {}
-
     /** mark region start/end locations as specified in the input */
     void enable(const Positions& p);
-
-    /** remove all region marks */
-    void clear() { locs.clear(); }
 
     /**
      * @defgroup InsideCheck Check if the given location is in the regions
@@ -83,17 +78,8 @@ public:
     bool isInside(int y, int x, const Cursor& cu, int i) const;
     /** @} */
 
-    /** returns the idx'th element */
-    const Pos2d<int>& at(int idx) const { return locs[idx]; }
-
-    /** number of regions (aka number of cursors) */
-    int count() const { return (int)locs.size(); }
-
     /** get all region start/end markers */
-    const Positions& getLocs() const { return locs; }
-
-private:
-    Positions locs;
+    const Positions& getLocs() const { return *this; }
 };
 
 }; // end namespace teditor
