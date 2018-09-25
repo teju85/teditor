@@ -28,20 +28,18 @@ CMD_UNDO3(RemoveRegion, "remove-region", Positions regs, Positions before,
     case CMD_UNDO:
         cu.restoreExcursion(regs);
         mlbuffer.insert(del);
-        ed.stopRegion();
         break;
     case CMD_REDO:
         del = mlbuffer.remove(regs, before);
         cu.restoreExcursion(regs);
-        ed.stopRegion();
         break;
     default:
         before = cu.saveExcursion();
         regs = mlbuffer.getRegionLocs();
         del = mlbuffer.remove(regs, before);
         cu.restoreExcursion(regs);
-        ed.stopRegion();
     };
+    ed.stopRegion();
 }
 
 CMD_UNDO4(SortLines, "sort-lines", Positions after, Positions regs,
@@ -58,14 +56,12 @@ CMD_UNDO4(SortLines, "sort-lines", Positions after, Positions regs,
         mlbuffer.remove(regs, after);
         cu.restoreExcursion(regs);
         mlbuffer.insert(del);
-        ed.stopRegion();
         break;
     case CMD_REDO:
         cu.restoreExcursion(regs);
         ed.startRegion();
         cu.restoreExcursion(before);
         mlbuffer.sortRegions();
-        ed.stopRegion();
         break;
     default:
         regs = mlbuffer.getRegionLocs();
@@ -73,8 +69,8 @@ CMD_UNDO4(SortLines, "sort-lines", Positions after, Positions regs,
         before = cu.saveExcursion();
         mlbuffer.sortRegions();
         after = cu.saveExcursion();
-        ed.stopRegion();
     };
+    ed.stopRegion();
 }
 
 CMD_UNDO2(InsertChar, "insert-char", char c, Positions before) {
