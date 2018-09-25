@@ -74,37 +74,23 @@ Strings Buffer::regionAsStr() const {
     int count = (int)regions.size();
     for(int j=0;j<count;++j) {
         std::string rs;
-        const auto& p = regions.at(j);
+        const auto& p = regions[j];
         const auto& culoc = cursor.at(j);
-        int yStart, yEnd, xStart, xEnd;
-        if(p.y < culoc.y) {
-            yStart = p.y;
-            yEnd = culoc.y;
-            xStart = p.x;
-            xEnd = culoc.x;
-        } else if(p.y > culoc.y) {
-            yStart = culoc.y;
-            yEnd = p.y;
-            xStart = culoc.x;
-            xEnd = p.x;
-        } else {
-            yStart = p.y;
-            yEnd = culoc.y;
-            xStart = std::min(p.x, culoc.x);
-            xEnd = std::max(p.x, culoc.x);
-            int len = xEnd - xStart;
-            const auto& str = at(yStart).get();
-            rs = str.substr(xStart, len);
+        Pos2d<int> start, end;
+        if(0 == p.find(start, end, culoc)) {
+            int len = end.x - start.x;
+            const auto& str = at(start.y).get();
+            rs = str.substr(start.x, len);
             out.push_back(rs);
             continue;
         }
-        rs = at(yStart).get().substr(xStart);
-        for(int i=yStart+1;i<yEnd;++i) {
+        rs = at(start.y).get().substr(start.x);
+        for(int i=start.y+1;i<end.y;++i) {
             rs += '\n';
             rs += at(i).get();
         }
         rs += '\n';
-        rs += at(yEnd).get().substr(0, xEnd);
+        rs += at(end.y).get().substr(0, end.x);
         out.push_back(rs);
     }
     return out;

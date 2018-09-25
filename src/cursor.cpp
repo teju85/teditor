@@ -306,31 +306,16 @@ void Regions::enable(const Positions& p) {
 bool Regions::isInside(int y, int x, const Cursor& cu, int i) const {
     const auto& p = at(i);
     const auto& culoc = cu.at(i);
-    int yStart, yEnd, xStart, xEnd;
-    if(p.y < culoc.y) {
-        yStart = p.y;
-        yEnd = culoc.y;
-        xStart = p.x;
-        xEnd = culoc.x;
-    } else if(p.y > culoc.y) {
-        yStart = culoc.y;
-        yEnd = p.y;
-        xStart = culoc.x;
-        xEnd = p.x;
-    } else {
-        yStart = p.y;
-        yEnd = culoc.y;
-        xStart = std::min(p.x, culoc.x);
-        xEnd = std::max(p.x, culoc.x);
-    }
-    if(yStart < y && y < yEnd)
+    Pos2d<int> start, end;
+    p.find(start, end, culoc);
+    if(start.y < y && y < end.y)
         return true;
-    else if(yStart == yEnd && yStart == y) {
-        if(xStart <= x && x <= xEnd)
+    else if(start.y == end.y && start.y == y) {
+        if(start.x <= x && x <= end.x)
             return true;
-    } else if(yStart == y && x >= xStart)
+    } else if(start.y == y && x >= start.x)
         return true;
-    else if(yEnd == y && x <= xEnd)
+    else if(end.y == y && x <= end.x)
         return true;
     return false;
 }

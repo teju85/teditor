@@ -118,6 +118,31 @@ struct Pos2d {
         if(y == b.y && x < b.x) return true;
         return false;
     }
+
+    /**
+     * @brief Finds the start/end points for the range defined by this and
+     * the other position.
+     * @param start the start location
+     * @param end the end location
+     * @param other the other position
+     * @return -1 if the vertical location is earlier, 0 if equal and +1 if
+     * earlier than the other
+     */
+    int find(Pos2d<T>& start, Pos2d<T>& end, const Pos2d<T>& other) const {
+        if(y < other.y) {
+            start = *this;
+            end = other;
+            return -1;
+        } else if(y > other.y) {
+            start = other;
+            end = *this;
+            return 1;
+        } else {
+            start = {std::min(x, other.x), y};
+            end = {std::max(x, other.x), y};
+            return 0;
+        }
+    }
 };
 
 

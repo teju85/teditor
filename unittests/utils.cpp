@@ -302,4 +302,29 @@ TEST_CASE("Utils::Pos2d") {
     REQUIRE(a < b);
 }
 
+TEST_CASE("Utils::Pos2d::find") {
+    Pos2d<int> a = {10, 10};
+    Pos2d<int> b = {0, 0};
+    Pos2d<int> start, end;
+    REQUIRE(1 == a.find(start, end, b));
+    REQUIRE(start == b);
+    REQUIRE(end == a);
+    b = {10, 10};
+    REQUIRE(0 == a.find(start, end, b));
+    REQUIRE(start == b);
+    REQUIRE(end == a);
+    b = {8, 10};
+    REQUIRE(0 == a.find(start, end, b));
+    REQUIRE(start == b);
+    REQUIRE(end == a);
+    b = {11, 10};
+    REQUIRE(0 == a.find(start, end, b));
+    REQUIRE(start == a);
+    REQUIRE(end == b);
+    b = {9, 11};
+    REQUIRE(-1 == a.find(start, end, b));
+    REQUIRE(start == a);
+    REQUIRE(end == b);
+}
+
 } // end namespace teditor
