@@ -598,11 +598,9 @@ void Buffer::sortRegions() {
 }
 
 char Buffer::charAt(const Pos2d<int>& pos) const {
-    if(pos.y >= length())
-        return ' ';
+    if(pos.y >= length()) return ' ';
     const auto& line = at(pos.y);
-    if(pos.x >= line.length())
-        return ' ';
+    if(pos.x >= line.length()) return ' ';
     return line.at(pos.x);
 }
 
