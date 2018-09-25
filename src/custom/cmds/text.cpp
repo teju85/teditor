@@ -298,12 +298,10 @@ CMD_UNDO3(CutRegion, "cut-region", Strings del, Positions before,
     case CMD_UNDO:
         cu.restoreExcursion(regs);
         mlbuffer.insert(del);
-        ed.stopRegion();
         break;
     case CMD_REDO:
         del = mlbuffer.remove(regs, before);
         cu.restoreExcursion(regs);
-        ed.stopRegion();
         break;
     default:
         before = cu.saveExcursion();
@@ -311,8 +309,8 @@ CMD_UNDO3(CutRegion, "cut-region", Strings del, Positions before,
         del = mlbuffer.remove(regs, before);
         ed.setCopyData(del);
         cu.restoreExcursion(regs);
-        ed.stopRegion();
     };
+    ed.stopRegion();
 }
 
 CMD_NO_UNDO(CopyRegion, "copy-region") {
