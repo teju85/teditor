@@ -15,7 +15,7 @@ Currently, only been tested on cygwin with xterm-256.
 $ git clone --recursive https://github.com/teju85/teditor
 $ cd teditor
 $ make -j teditor
-$ ./bin/bin/teditor
+$ ./bin/teditor
 #+END_SRC
 NOTE: If you have customized your minttyrc for the user configured colors,
 then your experience with the default colors may vary!!
