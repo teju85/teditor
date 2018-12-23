@@ -2,15 +2,17 @@
 DEBUG         ?= 0
 
 BINDIR        := $(shell pwd)/bin
-PCRE2_COMMIT  := 7fdebc1bc1c5fd87a2427bae98e9729c89e62aef
-PCRE2_LIB     := $(BINDIR)/lib/libpcre2-8.a
-PCRE2_INCLUDE := $(BINDIR)/include
+
+PCRE2_BINDIR  := $(BINDIR)/pcre2
+PCRE2_LIB     := $(PCRE2_BINDIR)/lib/libpcre2-8.a
+PCRE2_INCLUDE := $(PCRE2_BINDIR)/include
+
+CATCH2        := $(TESTS)/catch.hpp
+CATCH2_URL    := https://raw.githubusercontent.com/catchorg/Catch2/master/single_include/catch2/catch.hpp
 
 DOCDIR        := html
 SRC           := src
 TESTS         := unittests
-CATCH2        := $(TESTS)/catch.hpp
-CATCH2_URL    := https://raw.githubusercontent.com/catchorg/Catch2/master/single_include/catch2/catch.hpp
 INCLUDES      := $(SRC) $(PCRE2_INCLUDE)
 LIBRARIES     := $(PCRE2_LIB)
 INCS          := $(foreach inc,$(INCLUDES),-I$(inc))
@@ -76,7 +78,7 @@ clean:
 	rm -rf $(TEST_OBJS) $(TESTEXE)
 
 clean_all: clean
-	rm -rf $(BINDIR) pcre2 apt-cyg $(CATCH2)
+	rm -rf $(BINDIR) $(CATCH2)
 
 stats:
 	@echo -n "SRC:   Line/Word/Char counts: "
@@ -85,11 +87,8 @@ stats:
 	@find $(TESTS) -name "*.cpp" -o -name "*.h" | xargs wc -lwc | tail -n1
 
 $(PCRE2_LIB):
-	git clone https://github.com/teju85/pcre2 && \
-	    cd pcre2 && \
-	    git reset --hard $(PCRE2_COMMIT) && \
+	cd external/pcre2 && \
+	    git update-index --assume-unchanged Makefile.in aclocal.m4 configure && \
 	    ./configure --prefix=$(BINDIR) && \
 	    make -j && \
-	    make install && \
-	    cd .. && \
-	    rm -rf pcre2
+	    make install

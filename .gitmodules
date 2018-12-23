@@ -1,0 +1,3 @@
+[submodule "external/pcre2"]
+	path = external/pcre2
+	url = https://github.com/teju85/pcre2
