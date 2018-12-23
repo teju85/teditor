@@ -9,4 +9,3 @@ tests.exe
 bin/
 test_hist.txt
 html/
-unittests/catch.hpp

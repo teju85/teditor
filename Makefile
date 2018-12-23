@@ -7,20 +7,19 @@ PCRE2_BINDIR  := $(BINDIR)/pcre2
 PCRE2_LIB     := $(PCRE2_BINDIR)/lib/libpcre2-8.a
 PCRE2_INCLUDE := $(PCRE2_BINDIR)/include
 
-CATCH2        := $(TESTS)/catch.hpp
-CATCH2_URL    := https://raw.githubusercontent.com/catchorg/Catch2/master/single_include/catch2/catch.hpp
+CATCH2_DIR    := external/Catch2
 
 DOCDIR        := html
 SRC           := src
 TESTS         := unittests
-INCLUDES      := $(SRC) $(PCRE2_INCLUDE)
+INCLUDES      := $(SRC) $(PCRE2_INCLUDE) $(CATCH2_DIR)/single_include/catch2
 LIBRARIES     := $(PCRE2_LIB)
 INCS          := $(foreach inc,$(INCLUDES),-I$(inc))
 CXX           := g++
 CXXFLAGS      := -std=gnu++11 -Wall -Werror $(INCS)
 LD            := g++
 LDFLAGS       :=
-EXE           := $(BINDIR)/bin/teditor
+EXE           := $(BINDIR)/teditor
 CPPSRC        := $(shell find $(SRC) -name "*.cpp")
 HEADERS       := $(shell find $(SRC) -name "*.h")
 CORE_OBJS     := $(patsubst %.cpp,%.o,$(CPPSRC))
@@ -60,11 +59,8 @@ $(TESTEXE): $(TEST_OBJS) $(LIBRARIES)
 	$(LD) $(LDFLAGS) -o $@ $^
 	$(TESTEXE)
 
-$(TESTS)/%.o: $(TESTS)/%.cpp $(HEADERS) $(CATCH2)
+$(TESTS)/%.o: $(TESTS)/%.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
-
-$(CATCH2):
-	curl -o $(CATCH2) $(CATCH2_URL)
 
 %.o: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
@@ -78,7 +74,7 @@ clean:
 	rm -rf $(TEST_OBJS) $(TESTEXE)
 
 clean_all: clean
-	rm -rf $(BINDIR) $(CATCH2)
+	rm -rf $(BINDIR)
 
 stats:
 	@echo -n "SRC:   Line/Word/Char counts: "
@@ -86,9 +82,11 @@ stats:
 	@echo -n "TESTS: Line/Word/Char counts: "
 	@find $(TESTS) -name "*.cpp" -o -name "*.h" | xargs wc -lwc | tail -n1
 
+pcre2: $(PCRE2_LIB)
+
 $(PCRE2_LIB):
 	cd external/pcre2 && \
 	    git update-index --assume-unchanged Makefile.in aclocal.m4 configure && \
-	    ./configure --prefix=$(BINDIR) && \
+	    ./configure --prefix=$(PCRE2_BINDIR) && \
 	    make -j && \
 	    make install

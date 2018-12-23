@@ -1,3 +1,6 @@
 [submodule "external/pcre2"]
 	path = external/pcre2
 	url = https://github.com/teju85/pcre2
+[submodule "external/Catch2"]
+	path = external/Catch2
+	url = https://github.com/catchorg/Catch2
