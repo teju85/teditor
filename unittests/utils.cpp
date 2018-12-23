@@ -191,28 +191,32 @@ TEST_CASE("Utils::FilePerm") {
 
 TEST_CASE("Utils::ListDir") {
     auto f = listDir("samples");
-    REQUIRE(7U == f.size());
+    REQUIRE(9U == f.size());
     REQUIRE("." == f[0].name);
     REQUIRE(".." == f[1].name);
-    REQUIRE("samples/cpp-mode.cpp" == f[2].name);
-    REQUIRE("samples/hello.txt" == f[3].name);
-    REQUIRE("samples/indent.txt" == f[4].name);
-    REQUIRE("samples/multiline.txt" == f[5].name);
-    REQUIRE("samples/sample.cxx" == f[6].name);
+    REQUIRE("samples/correct.cpp" == f[2].name);
+    REQUIRE("samples/cpp-mode.cpp" == f[3].name);
+    REQUIRE("samples/hello.txt" == f[4].name);
+    REQUIRE("samples/incorrect.cpp" == f[5].name);
+    REQUIRE("samples/indent.txt" == f[6].name);
+    REQUIRE("samples/multiline.txt" == f[7].name);
+    REQUIRE("samples/sample.cxx" == f[8].name);
     auto f1 = listDir("not-exists");
     REQUIRE(0U == f1.size());
 }
 
 TEST_CASE("Utils::ListDirRel") {
     auto f = listDirRel("samples");
-    REQUIRE(7U == f.size());
+    REQUIRE(9U == f.size());
     REQUIRE("." == f[0]);
     REQUIRE(".." == f[1]);
-    REQUIRE("cpp-mode.cpp" == f[2]);
-    REQUIRE("hello.txt" == f[3]);
-    REQUIRE("indent.txt" == f[4]);
-    REQUIRE("multiline.txt" == f[5]);
-    REQUIRE("sample.cxx" == f[6]);
+    REQUIRE("correct.cpp" == f[2]);
+    REQUIRE("cpp-mode.cpp" == f[3]);
+    REQUIRE("hello.txt" == f[4]);
+    REQUIRE("incorrect.cpp" == f[5]);
+    REQUIRE("indent.txt" == f[6]);
+    REQUIRE("multiline.txt" == f[7]);
+    REQUIRE("sample.cxx" == f[8]);
     auto f1 = listDirRel("not-exists");
     REQUIRE(0U == f1.size());
 }

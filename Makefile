@@ -115,6 +115,7 @@ TS_RT_OBJ      := $(BINDIR)/runtime.o
 TS_ALL_OBJS    := $(TS_RT_OBJ) \
                   $(BINDIR)/parser-c.o \
                   $(BINDIR)/parser-cpp.o \
+                  $(BINDIR)/scanner-cpp.o \
                   $(BINDIR)/parser-javascript.o \
                   $(BINDIR)/parser-json.o
 
@@ -129,6 +130,9 @@ $(TS_RT_OBJ): $(TS_DIR)/src/runtime/runtime.c
 
 $(BINDIR)/parser-%.o: $(TS_DIR)-%/src/parser.c
 	$(CC) -c $(CCFLAGS) -o $@ $<
+
+$(BINDIR)/scanner-%.o: $(TS_DIR)-%/src/scanner.cc
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 tree-sitter-clean:
 	rm -rf $(TS_ALL_OBJS) $(TS_LIB)
