@@ -13,6 +13,15 @@ std::string Line::erase(int idx, int count) {
     return ret;
 }
 
+Line Line::splitAt(int idx) {
+    Line other;
+    if(idx >= length() || idx < 0)
+        return other;
+    auto del = erase(idx, length()-idx);
+    other.append(del);
+    return other;
+}
+
 void Line::prepend(char c, int count) {
     std::string tmp(count, c);
     prepend(tmp.c_str());

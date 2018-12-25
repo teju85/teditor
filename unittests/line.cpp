@@ -50,6 +50,20 @@ TEST_CASE("Line::Line") {
     REQUIRE(0 == line.findLastNotOf("HelorWd !", line.length()));
 }
 
+TEST_CASE("Line - split-n-join") {
+    Line line;
+    line.append("Testing the line split");
+    auto other = line.splitAt(17);
+    REQUIRE(other.get() == "split");
+    REQUIRE(line.get() == "Testing the line ");
+    line.join(other);
+    REQUIRE(line.get() == "Testing the line split");
+    // bad split
+    other = line.splitAt(100);
+    REQUIRE(other.get() == "");
+    REQUIRE(line.get() == "Testing the line split");
+}
+
 TEST_CASE("Line::prepend") {
     Line line;
     REQUIRE(line.empty());

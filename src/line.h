@@ -28,6 +28,14 @@ public:
     /** erases from the given index and returns the erased chars */
     std::string erase(int idx, int len=1);
 
+    /**
+     * @defgroup SplitJoin Functions to split and join the line back
+     * @{
+     */
+    Line splitAt(int idx);
+    void join(const Line& other) { append(other.get()); }
+    /** @} */
+
     /** number of lines needed on the screen to render this line */
     int numLinesNeeded(int wid) const;
 
