@@ -32,7 +32,7 @@ public:
      * @defgroup SplitJoin Functions to split and join the line back
      * @{
      */
-    Line splitAt(int idx);
+    Line split(int idx);
     void join(const Line& other) { append(other.get()); }
     /** @} */
 

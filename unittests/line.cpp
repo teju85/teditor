@@ -53,13 +53,13 @@ TEST_CASE("Line::Line") {
 TEST_CASE("Line - split-n-join") {
     Line line;
     line.append("Testing the line split");
-    auto other = line.splitAt(17);
+    auto other = line.split(17);
     REQUIRE(other.get() == "split");
     REQUIRE(line.get() == "Testing the line ");
     line.join(other);
     REQUIRE(line.get() == "Testing the line split");
     // bad split
-    other = line.splitAt(100);
+    other = line.split(100);
     REQUIRE(other.get() == "");
     REQUIRE(line.get() == "Testing the line split");
 }

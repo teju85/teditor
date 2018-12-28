@@ -13,7 +13,7 @@ std::string Line::erase(int idx, int count) {
     return ret;
 }
 
-Line Line::splitAt(int idx) {
+Line Line::split(int idx) {
     Line other;
     if(idx >= length() || idx < 0)
         return other;
