@@ -82,6 +82,8 @@ TEST_CASE("Positions::==") {
     REQUIRE_FALSE(b == a);
     b.push_back({1, 2});
     REQUIRE_FALSE(b == a);
+    Positions c(a);
+    REQUIRE(c == a);
 }
 
 TEST_CASE("Positions::added1") {

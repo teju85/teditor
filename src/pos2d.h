@@ -97,6 +97,7 @@ public:
     Positions(size_t s): std::vector<Pos2di>(s) {}
     Positions(const std::initializer_list<Pos2di>& pos):
         std::vector<Pos2di>(pos) {}
+    Positions(const Positions& other): std::vector<Pos2di>(other) {}
     /** @} */
 
     /**
