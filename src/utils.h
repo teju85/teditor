@@ -92,15 +92,11 @@ struct Pos2d {
     Pos2d(T x_=0, T y_=0): x(x_), y(y_) {}
 
     bool operator>(const Pos2d<T>& b) const {
-        if(y > b.y) return true;
-        if(y == b.y && x > b.x) return true;
-        return false;
+        return (y > b.y) || (y == b.y && x > b.x);
     }
 
     bool operator>=(const Pos2d<T>& b) const {
-        if(y > b.y) return true;
-        if(y == b.y && x >= b.x) return true;
-        return false;
+        return (y > b.y) || (y == b.y && x >= b.x);
     }
 
     bool operator==(const Pos2d<T>& b) const {
@@ -108,15 +104,11 @@ struct Pos2d {
     }
 
     bool operator<=(const Pos2d<T>& b) const {
-        if(y < b.y) return true;
-        if(y == b.y && x <= b.x) return true;
-        return false;
+        return (y < b.y) || (y == b.y && x <= b.x);
     }
 
     bool operator<(const Pos2d<T>& b) const {
-        if(y < b.y) return true;
-        if(y == b.y && x < b.x) return true;
-        return false;
+        return (y < b.y) || (y == b.y && x < b.x);
     }
 
     /**
@@ -142,6 +134,19 @@ struct Pos2d {
             end = {std::max(x, other.x), y};
             return 0;
         }
+    }
+
+    /** move the pointer ahead based on the characters in the input */
+    Pos2d& operator+=(const std::string& chars) {
+        for(const auto& c : chars) {
+            if(c == '\n') {
+                ++y;
+                x = 0;
+            } else {
+                ++x;
+            }
+        }
+        return *this;
     }
 };
 

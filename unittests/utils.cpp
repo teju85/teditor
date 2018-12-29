@@ -304,6 +304,12 @@ TEST_CASE("Utils::Pos2d") {
     REQUIRE_FALSE(a == b);
     REQUIRE(a <= b);
     REQUIRE(a < b);
+
+    a = {0, 0};
+    a += "testing";
+    REQUIRE(a.x == 7);  REQUIRE(a.y == 0);
+    a += "\ntesting";
+    REQUIRE(a.x == 7);  REQUIRE(a.y == 1);
 }
 
 TEST_CASE("Utils::Pos2d::find") {
