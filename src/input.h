@@ -3,6 +3,7 @@
 #include "keys.h"
 #include <vector>
 #include <string>
+#include "pos2d.h"
 
 
 namespace teditor {

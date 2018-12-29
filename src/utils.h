@@ -7,6 +7,7 @@
 #include <vector>
 #include <set>
 #include <stdarg.h>
+#include <initializer_list>
 
 
 namespace teditor {
@@ -83,84 +84,6 @@ std::string extension(const std::string& name);
 bool isUnderGit(const std::string& dir);
 /** returns the current branch name of the dir */
 std::string gitBranchName(const std::string& dir);
-
-
-template <typename T>
-struct Pos2d {
-    T x, y;
-
-    Pos2d(T x_=0, T y_=0): x(x_), y(y_) {}
-
-    bool operator>(const Pos2d<T>& b) const {
-        return (y > b.y) || (y == b.y && x > b.x);
-    }
-
-    bool operator>=(const Pos2d<T>& b) const {
-        return (y > b.y) || (y == b.y && x >= b.x);
-    }
-
-    bool operator==(const Pos2d<T>& b) const {
-        return (x == b.x) && (y == b.y);
-    }
-
-    bool operator!=(const Pos2d<T>& b) const {
-        return (x != b.x) || (y != b.y);
-    }
-
-    bool operator<=(const Pos2d<T>& b) const {
-        return (y < b.y) || (y == b.y && x <= b.x);
-    }
-
-    bool operator<(const Pos2d<T>& b) const {
-        return (y < b.y) || (y == b.y && x < b.x);
-    }
-
-    /**
-     * @brief Finds the start/end points for the range defined by this and
-     * the other position.
-     * @param start the start location
-     * @param end the end location
-     * @param other the other position
-     * @return -1 if the vertical location is earlier, 0 if equal and +1 if
-     * earlier than the other
-     */
-    int find(Pos2d<T>& start, Pos2d<T>& end, const Pos2d<T>& other) const {
-        if(y < other.y) {
-            start = *this;
-            end = other;
-            return -1;
-        } else if(y > other.y) {
-            start = other;
-            end = *this;
-            return 1;
-        } else {
-            start = {std::min(x, other.x), y};
-            end = {std::max(x, other.x), y};
-            return 0;
-        }
-    }
-
-    /** move the pointer ahead based on the characters in the input */
-    Pos2d& operator+=(const std::string& chars) {
-        for(const auto& c : chars) {
-            if(c == '\n') {
-                ++y;
-                x = 0;
-            } else {
-                ++x;
-            }
-        }
-        return *this;
-    }
-};
-
-
-/** anything that's a collection of 2d locations */
-typedef std::vector<Pos2d<int> > Positions;
-
-
-/** check whether the two position lists are the same or not */
-bool operator==(const Positions& a, const Positions& b);
 
 
 struct CmdStatus {

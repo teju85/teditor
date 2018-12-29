@@ -10,6 +10,7 @@
 #include "pcre.h"
 #include "cursor.h"
 #include "mode.h"
+#include "pos2d.h"
 
 
 namespace teditor {

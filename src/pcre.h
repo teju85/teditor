@@ -6,6 +6,7 @@
 #include <vector>
 #include <unordered_map>
 #include "utils.h"
+#include "pos2d.h"
 
 
 namespace teditor {

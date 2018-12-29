@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "utils.h"
+#include "pos2d.h"
 
 
 namespace teditor {

@@ -260,15 +260,6 @@ std::string extension(const std::string& name) {
     return name.substr(loc+1);
 }
 
-
-bool operator==(const Positions& a, const Positions& b) {
-    if(a.size() != b.size()) return false;
-    for(size_t i=0;i<a.size();++i) {
-        if(a[i] != b[i]) return false;
-    }
-    return true;
-}
-
 CmdStatus check_output(const std::string& cmd) {
     CmdStatus ret;
     if(cmd.back() == '&') {
