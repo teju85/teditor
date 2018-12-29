@@ -6,10 +6,6 @@
 
 namespace teditor {
 
-/** anything that's a collection of 2d locations */
-typedef std::vector<Pos2d<int> > Positions;
-
-
 class Buffer;
 
 class Cursor {

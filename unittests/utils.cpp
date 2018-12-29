@@ -284,24 +284,28 @@ TEST_CASE("Utils::Pos2d") {
     REQUIRE(a > b);
     REQUIRE(a >= b);
     REQUIRE_FALSE(a == b);
+    REQUIRE(a != b);
     REQUIRE_FALSE(a <= b);
     REQUIRE_FALSE(a < b);
     b = {10, 10};
     REQUIRE_FALSE(a > b);
     REQUIRE(a >= b);
     REQUIRE(a == b);
+    REQUIRE_FALSE(a != b);
     REQUIRE(a <= b);
     REQUIRE_FALSE(a < b);
     b = {11, 10};
     REQUIRE_FALSE(a > b);
     REQUIRE_FALSE(a >= b);
     REQUIRE_FALSE(a == b);
+    REQUIRE(a != b);
     REQUIRE(a <= b);
     REQUIRE(a < b);
     b = {9, 11};
     REQUIRE_FALSE(a > b);
     REQUIRE_FALSE(a >= b);
     REQUIRE_FALSE(a == b);
+    REQUIRE(a != b);
     REQUIRE(a <= b);
     REQUIRE(a < b);
 
@@ -335,6 +339,23 @@ TEST_CASE("Utils::Pos2d::find") {
     REQUIRE(-1 == a.find(start, end, b));
     REQUIRE(start == a);
     REQUIRE(end == b);
+}
+
+TEST_CASE("Utils::Positions::==") {
+    Positions a = {
+        {10, 10},
+        {3, 2}
+    };
+    Positions b;
+    REQUIRE(a == a);
+    REQUIRE_FALSE(a == b);
+    REQUIRE_FALSE(b == a);
+    b = {
+        {2, 3}
+    };
+    REQUIRE_FALSE(b == a);
+    b.push_back({1, 2});
+    REQUIRE_FALSE(b == a);
 }
 
 } // end namespace teditor

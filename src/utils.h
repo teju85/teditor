@@ -103,6 +103,10 @@ struct Pos2d {
         return (x == b.x) && (y == b.y);
     }
 
+    bool operator!=(const Pos2d<T>& b) const {
+        return (x != b.x) || (y != b.y);
+    }
+
     bool operator<=(const Pos2d<T>& b) const {
         return (y < b.y) || (y == b.y && x <= b.x);
     }
@@ -149,6 +153,14 @@ struct Pos2d {
         return *this;
     }
 };
+
+
+/** anything that's a collection of 2d locations */
+typedef std::vector<Pos2d<int> > Positions;
+
+
+/** check whether the two position lists are the same or not */
+bool operator==(const Positions& a, const Positions& b);
 
 
 struct CmdStatus {
