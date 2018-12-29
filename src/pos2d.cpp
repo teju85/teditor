@@ -27,6 +27,21 @@ void Positions::added(const Strings& chars) {
     }
 }
 
+void Positions::added(const std::string& chars) {
+    auto len = size();
+    for(size_t i=0;i<len;++i) {
+        auto& pos = at(i);
+        for(const auto& c : chars) {
+            if(c == '\n') {
+                moveLinesForAll(i, 1);
+                moveAllOnSameLine(i, -pos.x);
+            } else {
+                moveAllOnSameLine(i, 1);
+            }
+        }
+    }
+}
+
 void Positions::moveAllOnSameLine(size_t i, int delta) {
     auto& ref = at(i);
     for(size_t j=i;j<size();++j) {

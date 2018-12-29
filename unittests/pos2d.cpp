@@ -84,7 +84,7 @@ TEST_CASE("Positions::==") {
     REQUIRE_FALSE(b == a);
 }
 
-TEST_CASE("Positions::added") {
+TEST_CASE("Positions::added1") {
     Positions a = {
         {2, 3},
         {8, 3},
@@ -96,6 +96,22 @@ TEST_CASE("Positions::added") {
         {3, 4},
         {2, 5},
         {9, 6}
+    };
+    REQUIRE(a == expected);
+}
+
+TEST_CASE("Positions::added2") {
+    Positions a = {
+        {2, 3},
+        {8, 3},
+        {6, 4}
+    };
+    std::string chars = "abc\ndef";
+    a.added(chars);
+    Positions expected = {
+        {3, 4},
+        {3, 5},
+        {3, 7}
     };
     REQUIRE(a == expected);
 }

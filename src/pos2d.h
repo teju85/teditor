@@ -100,11 +100,15 @@ public:
     /** @} */
 
     /**
+     * @defgroup Insert Update positions based on insertion
+     * @{
      * @brief Update all the positions based on the characters inserted
      * @param a the positions
      * @param chars the characters
      */
     void added(const Strings& chars);
+    void added(const std::string& chars);
+    /** @} */
 
     /** check whether the two position lists are the same or not */
     bool operator==(const Positions& a) const;
