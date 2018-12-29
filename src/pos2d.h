@@ -85,11 +85,7 @@ typedef Pos2d<int> Pos2di;
 
 /**
  * @brief anything that's a collection of 2d locations. This is specifically
- * used for tracking locations of multiple cursors. The first location is always
- * the absolute position of the cursor and all others are always the delta from
- * *below* it. Meaning, in case you want to add a new cursor above the first
- * location, it'll then be made the first cursor and all others following it
- * will be relative to this new one!
+ * used for tracking locations of multiple cursors.
  */
 class Positions: public std::vector<Pos2di> {
 public:
@@ -104,14 +100,28 @@ public:
     /** @} */
 
     /**
-     * @brief Update all the positions based on the characters
+     * @brief Update all the positions based on the characters inserted
      * @param a the positions
      * @param chars the characters
      */
-    void update(const Strings& chars);
+    void added(const Strings& chars);
 
     /** check whether the two position lists are the same or not */
     bool operator==(const Positions& a) const;
+
+    /**
+     * @brief move all positions on the same line by 'delta' chars
+     * @param i reference position
+     * @param delta amount of movement
+     */
+    void moveAllOnSameLine(size_t i, int delta);
+
+    /**
+     * @brief move all positions by 'delta' lines
+     * @param i reference position
+     * @param delta amount of movement
+     */
+    void moveLinesForAll(size_t i, int delta);
 };
 
 } // end namespace teditor

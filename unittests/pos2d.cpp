@@ -84,4 +84,20 @@ TEST_CASE("Positions::==") {
     REQUIRE_FALSE(b == a);
 }
 
+TEST_CASE("Positions::added") {
+    Positions a = {
+        {2, 3},
+        {8, 3},
+        {6, 4}
+    };
+    Strings chars = {"abc\ndef", "ghij\nkl", "mno"};
+    a.added(chars);
+    Positions expected = {
+        {3, 4},
+        {2, 5},
+        {9, 6}
+    };
+    REQUIRE(a == expected);
+}
+
 } // end namespace teditor
