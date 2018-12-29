@@ -12,33 +12,29 @@ bool Positions::operator==(const Positions& a) const {
     return true;
 }
 
+void Positions::addedImpl(size_t i, const std::string& chars) {
+    auto& pos = at(i);
+    for(const auto& c : chars) {
+        if(c == '\n') {
+            moveLinesForAll(i, 1);
+            moveAllOnSameLine(i, -pos.x);
+        } else {
+            moveAllOnSameLine(i, 1);
+        }
+    }
+}
+
 void Positions::added(const Strings& chars) {
     auto len = size();
     for(size_t i=0;i<len;++i) {
-        auto& pos = at(i);
-        for(const auto& c : chars[i]) {
-            if(c == '\n') {
-                moveLinesForAll(i, 1);
-                moveAllOnSameLine(i, -pos.x);
-            } else {
-                moveAllOnSameLine(i, 1);
-            }
-        }
+        addedImpl(i, chars[i]);
     }
 }
 
 void Positions::added(const std::string& chars) {
     auto len = size();
     for(size_t i=0;i<len;++i) {
-        auto& pos = at(i);
-        for(const auto& c : chars) {
-            if(c == '\n') {
-                moveLinesForAll(i, 1);
-                moveAllOnSameLine(i, -pos.x);
-            } else {
-                moveAllOnSameLine(i, 1);
-            }
-        }
+        addedImpl(i, chars);
     }
 }
 

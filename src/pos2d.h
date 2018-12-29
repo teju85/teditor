@@ -127,6 +127,9 @@ public:
      * @param delta amount of movement
      */
     void moveLinesForAll(size_t i, int delta);
+
+private:
+    void addedImpl(size_t i, const std::string& chars);
 };
 
 } // end namespace teditor
