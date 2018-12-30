@@ -64,21 +64,7 @@ private:
      * @brief The state before/after applying insertion/deletion operations on the
      * Lines object (aka Buffer)
      */
-    class OpData {
-    public:
-        /**
-         * @defgroup Ctors Different constructors for each operation
-         * @{
-         */
-        /** insertion operation */
-        OpData(const Pos2di& b, const std::string& c): before(b), after(-1, -1),
-                                                       chars(c), type(OpInsert) {}
-        /** delete operation */
-        OpData(const Pos2di& b, const Pos2di& a, const std::string& c):
-            before(b), after(a), chars(c), type(OpDelete) {}
-        /** @} */
-
-    private:
+    struct OpData {
         /** from where the operation started */
         Pos2di before;
         /** till where the operation was performed */
@@ -87,16 +73,13 @@ private:
         std::string chars;
         /** type of operation */
         OpType type;
-
-        friend class Lines;
     }; // end class OpData
 
 
     typedef std::stack<OpData> OpStack;
 
-    void applyOp(const OpData& op);
     Pos2di applyInsertOp(const OpData& op);
-    void applyDeleteOp(const OpData& op);
+    std::string applyDeleteOp(const OpData& op);
 
     void clearStack(OpStack& st);
 

@@ -5,8 +5,8 @@
 namespace teditor {
 
 TEST_CASE("Pos2d") {
-    Pos2d<int> a = {10, 10};
-    Pos2d<int> b = {0, 0};
+    Pos2di a = {10, 10};
+    Pos2di b = {0, 0};
     REQUIRE(a > b);
     REQUIRE(a >= b);
     REQUIRE_FALSE(a == b);
@@ -43,9 +43,9 @@ TEST_CASE("Pos2d") {
 }
 
 TEST_CASE("Pos2d::find") {
-    Pos2d<int> a = {10, 10};
-    Pos2d<int> b = {0, 0};
-    Pos2d<int> start, end;
+    Pos2di a = {10, 10};
+    Pos2di b = {0, 0};
+    Pos2di start, end;
     REQUIRE(1 == a.find(start, end, b));
     REQUIRE(start == b);
     REQUIRE(end == a);

@@ -1,6 +1,7 @@
 #include "testutils.h"
 #include "lines.h"
 #include "catch.hpp"
+#include <string.h>
 
 
 namespace teditor {
@@ -26,15 +27,43 @@ TEST_CASE("Lines::insert") {
     lines.insert({0, 0}, 'H');
     REQUIRE_FALSE(lines.redo());
     REQUIRE_FALSE(lines.undo());
-    REQUIRE(lines[0].get() == "Hi Hello World!");
-    lines.insert({15, 0}, '\n');
+    const char* expected = "Hi Hello World!";
+    REQUIRE(lines[0].get() == expected);
+    lines.insert({(int)strlen(expected), 0}, '\n');
     REQUIRE(2 == lines.size());
-    REQUIRE(lines[0].get() == "Hi Hello World!");
+    REQUIRE(lines[0].get() == expected);
     REQUIRE(lines[1].get() == "");
     lines.insert({0, 1}, "Testing\nTest");
     REQUIRE(3 == lines.size());
     REQUIRE(lines[1].get() == "Testing");
     REQUIRE(lines[2].get() == "Test");
+}
+
+TEST_CASE("Lines::remove") {
+    Lines lines;
+    lines.stopCapture();
+    lines.insert({0, 0}, "Hi Hello World!\nTesting\nTest1\nTest2");
+    REQUIRE(4 == lines.size());
+    SECTION("part of a line") {
+        lines.remove({3, 0}, {8, 0});
+        REQUIRE(4 == lines.size());
+        REQUIRE(lines[0].get() == "Hi World!");
+    }
+    SECTION("one full line") {
+        lines.remove({0, 0}, {14, 0});
+        REQUIRE(4 == lines.size());
+        REQUIRE(lines[0].get() == "");
+    }
+    SECTION("one full line + newline") {
+        lines.remove({0, 0}, {0, 1});
+        REQUIRE(3 == lines.size());
+        REQUIRE(lines[0].get() == "Testing");
+    }
+    SECTION("one char") {
+        lines.remove({0, 0});
+        REQUIRE(4 == lines.size());
+        REQUIRE(lines[0].get() == "i Hello World!");
+    }
 }
 
 } // end namespace teditor
