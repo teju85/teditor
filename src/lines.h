@@ -95,7 +95,7 @@ private:
     typedef std::stack<OpData> OpStack;
 
     void applyOp(const OpData& op);
-    void applyInsertOp(const OpData& op);
+    Pos2di applyInsertOp(const OpData& op);
     void applyDeleteOp(const OpData& op);
 
     void clearStack(OpStack& st);

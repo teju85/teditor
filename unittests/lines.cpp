@@ -27,6 +27,14 @@ TEST_CASE("Lines::insert") {
     REQUIRE_FALSE(lines.redo());
     REQUIRE_FALSE(lines.undo());
     REQUIRE(lines[0].get() == "Hi Hello World!");
+    lines.insert({15, 0}, '\n');
+    REQUIRE(2 == lines.size());
+    REQUIRE(lines[0].get() == "Hi Hello World!");
+    REQUIRE(lines[1].get() == "");
+    lines.insert({0, 1}, "Testing\nTest");
+    REQUIRE(3 == lines.size());
+    REQUIRE(lines[1].get() == "Testing");
+    REQUIRE(lines[2].get() == "Test");
 }
 
 } // end namespace teditor

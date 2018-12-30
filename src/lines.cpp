@@ -26,7 +26,7 @@ void Lines::insert(const Pos2di& pos, char c) {
 
 void Lines::insert(const Pos2di& pos, const std::string& c) {
     OpData op(pos, c);
-    applyOp(op);
+    op.after = applyInsertOp(op);
     if(capture) {
         undoStack.push(op);
         clearStack(redoStack);
@@ -42,7 +42,7 @@ void Lines::applyOp(const OpData& op) {
         ASSERT(false, "Lines::applyOp: Incorrect op '%d'!", op.type);
 }
 
-void Lines::applyInsertOp(const OpData& op) {
+Pos2di Lines::applyInsertOp(const OpData& op) {
     Pos2di pos = op.before;
     for(const auto& c : op.chars) {
         if(c == '\n') {
@@ -62,6 +62,7 @@ void Lines::applyInsertOp(const OpData& op) {
             ++pos.x;
         }
     }
+    return pos;
 }
 
 void Lines::applyDeleteOp(const OpData& op) {
