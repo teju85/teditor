@@ -11,13 +11,27 @@ Lines::Lines(): std::vector<Line>(), capture(true), undoStack(), redoStack() {
 
 bool Lines::undo() {
     if(undoStack.empty()) return false;
-    ///@todo: implement!
+    auto top = undoStack.top();
+    undoStack.pop();
+    redoStack.push(top);
+    if(top.type == OpInsert) {
+        applyDeleteOp(top);
+    } else if(top.type == OpDelete) {
+        applyInsertOp(top);
+    }
     return true;
 }
 
 bool Lines::redo() {
     if(redoStack.empty()) return false;
-    ///@todo: implement!
+    auto top = redoStack.top();
+    redoStack.pop();
+    undoStack.push(top);
+    if(top.type == OpInsert) {
+        applyInsertOp(top);
+    } else if(top.type == OpDelete) {
+        applyDeleteOp(top);
+    }
     return true;
 }
 
@@ -82,15 +96,23 @@ std::string Lines::applyDeleteOp(const OpData& op) {
     Pos2di start = op.before;
     Pos2di end = op.after;
     while(end > start) {
-        if(end.x == 0) {
+        auto& curr = at(end.y);
+        if(end.x == 0) { // first char in line
+            del += curr.erase(end.x, 1);
+            // if not the first line itself!
             if(end.y > 0) {
-                auto& prev = at(end.y - 1);
-                end.x = prev.length() - 1;
-                prev.join(at(end.y));
-                erase(begin() + end.y);
-                del += '\n';
                 --end.y;
+                end.x = at(end.y).length();
             }
+        } else if(end.x == curr.length()) { // last char in line
+            // if not the last line itself!
+            if(end.y < (int)size() - 1) {
+                auto& prev = at(end.y + 1);
+                curr.join(prev);
+                erase(begin() + end.y + 1);
+                del += '\n';
+            }
+            --end.x;
         } else {
             auto& curr = at(end.y);
             del += curr.erase(end.x, 1);

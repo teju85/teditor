@@ -55,15 +55,34 @@ TEST_CASE("Lines::remove") {
         REQUIRE(lines[0].get() == "");
     }
     SECTION("one full line + newline") {
-        lines.remove({0, 0}, {0, 1});
+        lines.remove({0, 0}, {15, 0});
         REQUIRE(3 == lines.size());
         REQUIRE(lines[0].get() == "Testing");
+    }
+    SECTION("one full line + partial next line") {
+        lines.remove({0, 0}, {0, 1});
+        REQUIRE(3 == lines.size());
+        REQUIRE(lines[0].get() == "esting");
     }
     SECTION("one char") {
         lines.remove({0, 0});
         REQUIRE(4 == lines.size());
         REQUIRE(lines[0].get() == "i Hello World!");
     }
+}
+
+TEST_CASE("Lines::undo-redo") {
+    Lines lines;
+    lines.insert({0, 0}, "Hi Hello World!\nTesting\nTest1\nTest2");
+    REQUIRE(4 == lines.size());
+    REQUIRE(lines.undo());
+    REQUIRE_FALSE(lines.undo());
+    REQUIRE(1 == lines.size());
+    REQUIRE(lines[0].get() == "");
+    REQUIRE(lines.redo());
+    REQUIRE_FALSE(lines.redo());
+    REQUIRE(4 == lines.size());
+    REQUIRE(lines[1].get() == "Testing");
 }
 
 } // end namespace teditor
