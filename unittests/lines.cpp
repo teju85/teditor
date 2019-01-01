@@ -71,7 +71,7 @@ TEST_CASE("Lines::remove") {
     }
 }
 
-TEST_CASE("Lines::undo-redo") {
+TEST_CASE("Lines::undo-redo::full") {
     Lines lines;
     lines.insert({0, 0}, "Hi Hello World!\nTesting\nTest1\nTest2");
     REQUIRE(4 == lines.size());
@@ -83,6 +83,70 @@ TEST_CASE("Lines::undo-redo") {
     REQUIRE_FALSE(lines.redo());
     REQUIRE(4 == lines.size());
     REQUIRE(lines[1].get() == "Testing");
+}
+
+TEST_CASE("Lines::undo-redo::remove") {
+    Lines lines;
+    lines.stopCapture();
+    lines.insert({0, 0}, "Hi Hello World!\nTesting\nTest1\nTest2");
+    lines.startCapture();
+    REQUIRE(4 == lines.size());
+    SECTION("Undo for remove - single char") {
+        lines.remove({0, 3});
+        REQUIRE(4 == lines.size());
+        REQUIRE(lines[3].get() == "est2");
+        REQUIRE(lines.undo());
+        REQUIRE(4 == lines.size());
+        REQUIRE(lines[3].get() == "Test2");
+        REQUIRE(lines.redo());
+        REQUIRE(4 == lines.size());
+        REQUIRE(lines[3].get() == "est2");
+    }
+    SECTION("Undo for remove - part of a line") {
+        lines.remove({1, 2}, {4, 2});
+        REQUIRE(4 == lines.size());
+        REQUIRE(lines[2].get() == "T");
+        REQUIRE(lines.undo());
+        REQUIRE(4 == lines.size());
+        REQUIRE(lines[2].get() == "Test1");
+        REQUIRE(lines.redo());
+        REQUIRE(4 == lines.size());
+        REQUIRE(lines[2].get() == "T");
+    }
+    SECTION("Undo for remove - one full line") {
+        lines.remove({0, 0}, {14, 0});
+        REQUIRE(4 == lines.size());
+        REQUIRE(lines[0].get() == "");
+        REQUIRE(lines.undo());
+        REQUIRE(4 == lines.size());
+        REQUIRE(lines[0].get() == "Hi Hello World!");
+        REQUIRE(lines.redo());
+        REQUIRE(4 == lines.size());
+        REQUIRE(lines[0].get() == "");
+    }
+    SECTION("Undo for remove - one full line + newline") {
+        lines.remove({0, 0}, {15, 0});
+        REQUIRE(3 == lines.size());
+        REQUIRE(lines[0].get() == "Testing");
+        REQUIRE(lines.undo());
+        REQUIRE(4 == lines.size());
+        REQUIRE(lines[0].get() == "Hi Hello World!");
+        REQUIRE(lines.redo());
+        REQUIRE(3 == lines.size());
+        REQUIRE(lines[0].get() == "Testing");
+    }
+    SECTION("Undo for remove - one full line + partial next line") {
+        lines.remove({0, 0}, {0, 1});
+        REQUIRE(3 == lines.size());
+        REQUIRE(lines[0].get() == "esting");
+        REQUIRE(lines.undo());
+        REQUIRE(4 == lines.size());
+        REQUIRE(lines[0].get() == "Hi Hello World!");
+        REQUIRE(lines[1].get() == "Testing");
+        REQUIRE(lines.redo());
+        REQUIRE(3 == lines.size());
+        REQUIRE(lines[0].get() == "esting");
+    }
 }
 
 } // end namespace teditor
