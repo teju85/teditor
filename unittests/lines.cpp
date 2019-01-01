@@ -149,4 +149,27 @@ TEST_CASE("Lines::undo-redo::remove") {
     }
 }
 
+TEST_CASE("Lines::regionAsStr") {
+    Lines lines;
+    lines.stopCapture();
+    lines.insert({0, 0}, "Hi Hello World!\nTesting\nTest1\nTest2\nTest3");
+    REQUIRE(5 == lines.size());
+    SECTION("part of a line") {
+        REQUIRE("estin" == lines.regionAsStr({1, 1}, {5, 1}));
+    }
+    SECTION("full line") {
+        REQUIRE("Hi Hello World!" == lines.regionAsStr({0, 0}, {14, 0}));
+    }
+    SECTION("full line + newline") {
+        REQUIRE("Hi Hello World!\n" == lines.regionAsStr({0, 0}, {15, 0}));
+    }
+    SECTION("full line + partial next") {
+        REQUIRE("Hi Hello World!\nTest" == lines.regionAsStr({0, 0}, {3, 1}));
+    }
+    SECTION("full line + full next") {
+        REQUIRE("Hi Hello World!\nTesting\n" ==
+                lines.regionAsStr({0, 0}, {7, 1}));
+    }
+}
+
 } // end namespace teditor

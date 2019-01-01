@@ -69,6 +69,34 @@ void Lines::remove(const Pos2di& start, const Pos2di& end) {
     }
 }
 
+std::string Lines::regionAsStr(const Pos2di& start, const Pos2di& end) const {
+    Pos2di small, big;
+    if(0 == start.find(small, big, end)) {
+        int len = big.x - small.x + 1;
+        const auto& line = at(small.y);
+        if(big.x == line.length())
+            --len;
+        auto out = line.get().substr(small.x, len);
+        if(big.x == line.length())
+            out += '\n';
+        return out;
+    }
+    std::string out = at(small.y).get().substr(small.x);
+    for(int i=small.y+1;i<big.y;++i) {
+        out += '\n';
+        out += at(i).get();
+    }
+    out += '\n';
+    const auto& line = at(big.y);
+    int len = big.x + 1;
+    if(big.x == line.length())
+        --len;
+    out += line.get().substr(0, len);
+    if(big.x == line.length())
+        out += '\n';
+    return out;
+}
+
 Pos2di Lines::applyInsertOp(const OpData& op) {
     Pos2di pos = op.before;
     for(const auto& c : op.chars) {

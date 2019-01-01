@@ -50,6 +50,9 @@ public:
     void remove(const Pos2di& start, const Pos2di& end);
     /** @} */
 
+    /** Returns the given region in a string */
+    std::string regionAsStr(const Pos2di& start, const Pos2di& end) const;
+
 private:
     /** the operation type */
     enum OpType {
