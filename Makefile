@@ -18,6 +18,7 @@ TS_LIB         := $(TS_BINDIR)/libts.a
 SRC            := src
 TESTS          := unittests
 INCLUDES       := $(SRC) \
+                  $(TESTS) \
                   $(PCRE2_INCLUDE) \
                   $(CATCH2_DIR)/single_include/catch2 \
                   $(TS_DIR)/src \
