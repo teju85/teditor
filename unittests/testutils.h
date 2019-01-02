@@ -1,7 +1,7 @@
 #pragma once
 
-#include "utils.h"
-#include "buffer.h"
+#include "core/utils.h"
+#include "core/buffer.h"
 
 
 namespace teditor {

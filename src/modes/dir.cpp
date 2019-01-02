@@ -1,5 +1,5 @@
 #include "text.h"
-#include "buffer.h"
+#include "core/buffer.h"
 
 
 namespace teditor {

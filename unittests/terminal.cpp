@@ -1,5 +1,5 @@
-#include "terminal.h"
-#include "utils.h"
+#include "core/terminal.h"
+#include "core/utils.h"
 #include "catch.hpp"
 
 namespace teditor {

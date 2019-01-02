@@ -1,6 +1,6 @@
 #include "testutils.h"
-#include "cursor.h"
-#include "buffer.h"
+#include "core/cursor.h"
+#include "core/buffer.h"
 #include "catch.hpp"
 
 

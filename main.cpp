@@ -1,7 +1,7 @@
-#include "utils.h"
+#include "core/utils.h"
 #include <cstdio>
-#include "args.h"
-#include "editor.h"
+#include "core/args.h"
+#include "core/editor.h"
 
 
 int main(int argc, char** argv) {

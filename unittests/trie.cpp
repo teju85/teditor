@@ -1,4 +1,4 @@
-#include "trie.h"
+#include "core/trie.h"
 #include "catch.hpp"
 
 namespace teditor {

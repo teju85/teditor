@@ -1,4 +1,4 @@
-#include "mode.h"
+#include "core/mode.h"
 #include "catch.hpp"
 
 namespace teditor {

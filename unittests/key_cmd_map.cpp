@@ -1,4 +1,4 @@
-#include "key_cmd_map.h"
+#include "core/key_cmd_map.h"
 #include "catch.hpp"
 
 namespace teditor {

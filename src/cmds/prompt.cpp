@@ -1,5 +1,5 @@
-#include "editor.h"
-#include "command.h"
+#include "core/editor.h"
+#include "core/command.h"
 #include <stdio.h>
 
 

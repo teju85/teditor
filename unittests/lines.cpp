@@ -1,5 +1,5 @@
 #include "testutils.h"
-#include "lines.h"
+#include "core/lines.h"
 #include "catch.hpp"
 #include <string.h>
 

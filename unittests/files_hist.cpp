@@ -1,4 +1,4 @@
-#include "files_hist.h"
+#include "core/files_hist.h"
 #include "catch.hpp"
 
 

@@ -1,7 +1,7 @@
-#include "mode.h"
-#include "buffer.h"
-#include "key_cmd_map.h"
-#include "colors.h"
+#include "core/mode.h"
+#include "core/buffer.h"
+#include "core/key_cmd_map.h"
+#include "core/colors.h"
 
 
 namespace teditor {

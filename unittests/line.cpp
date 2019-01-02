@@ -1,6 +1,6 @@
 #include "testutils.h"
-#include "line.h"
-#include "buffer.h"
+#include "core/line.h"
+#include "core/buffer.h"
 #include "catch.hpp"
 
 

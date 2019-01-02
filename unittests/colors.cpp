@@ -1,4 +1,4 @@
-#include "colors.h"
+#include "core/colors.h"
 #include "catch.hpp"
 
 namespace teditor {

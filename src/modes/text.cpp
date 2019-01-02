@@ -1,6 +1,6 @@
 #include "text.h"
-#include "buffer.h"
-#include "pcre.h"
+#include "core/buffer.h"
+#include "core/pcre.h"
 
 
 namespace teditor {

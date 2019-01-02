@@ -1,4 +1,4 @@
-#include "cmd_msg_bar.h"
+#include "core/cmd_msg_bar.h"
 #include "catch.hpp"
 
 

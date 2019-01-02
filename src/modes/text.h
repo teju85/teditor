@@ -1,8 +1,8 @@
 #pragma once
 
-#include "mode.h"
-#include "key_cmd_map.h"
-#include "colors.h"
+#include "core/mode.h"
+#include "core/key_cmd_map.h"
+#include "core/colors.h"
 
 
 namespace teditor {

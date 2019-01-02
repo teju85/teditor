@@ -1,6 +1,6 @@
 #include "testutils.h"
-#include "isearch.h"
-#include "buffer.h"
+#include "core/isearch.h"
+#include "core/buffer.h"
 #include "catch.hpp"
 
 

@@ -1,7 +1,7 @@
-#include "editor.h"
-#include "command.h"
+#include "core/editor.h"
+#include "core/command.h"
 #include <stdio.h>
-#include "isearch.h"
+#include "core/isearch.h"
 
 
 namespace teditor {

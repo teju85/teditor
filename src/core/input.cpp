@@ -21,7 +21,7 @@ struct AllCombos {
 };
 
 
-#include "custom/xterm_strokes.h"
+#include "xterm_strokes.h"
 
 
 std::unordered_map<std::string, MetaKey> AllCombos::allKeys;

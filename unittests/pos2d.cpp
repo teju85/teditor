@@ -1,4 +1,4 @@
-#include "pos2d.h"
+#include "core/pos2d.h"
 #include "catch.hpp"
 
 
