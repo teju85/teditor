@@ -16,7 +16,7 @@ Buffer::Buffer(const std::string& name):
     screenStart(), screenDim(), lines(), startLine(0), cursor(),
     modified(false), readOnly(false), buffName(name), fileName(), dirName(),
     regions(), regionActive(false), cmds(), topCmd(-1),
-    mode(Mode::createMode("text")) {
+    mode(Mode::createMode("text")), undoStack(), redoStack() {
     addLine();
     cursor.reset(this);
     dirName = getpwd();
@@ -28,6 +28,11 @@ Buffer::~Buffer() {
         int line = cursor.at(0).y;
         ed.addFileHistory(fileName, line);
     }
+}
+
+void Buffer::clearStack(OpStack& st) {
+    while(!st.empty())
+        st.pop();
 }
 
 const AttrColor& Buffer::getColor(const std::string& name) const {
@@ -48,7 +53,7 @@ void Buffer::addCommand(CmdPtr c) {
     topCmd = (int)cmds.size() - 1;
 }
 
-void Buffer::undo() {
+void Buffer::undoCmd() {
     if(topCmd < 0) {
         CMBAR_MSG("No further undo!");
         return;
@@ -57,7 +62,7 @@ void Buffer::undo() {
     --topCmd;
 }
 
-void Buffer::redo() {
+void Buffer::redoCmd() {
     int len = (int)cmds.size();
     if(topCmd >= len-1) {
         CMBAR_MSG("No further redo!");
@@ -73,26 +78,28 @@ Strings Buffer::regionAsStr() const {
         return out;
     int count = (int)regions.size();
     for(int j=0;j<count;++j) {
-        std::string rs;
-        const auto& p = regions[j];
-        const auto& culoc = cursor.at(j);
-        Pos2d<int> start, end;
-        if(0 == p.find(start, end, culoc)) {
-            int len = end.x - start.x;
-            const auto& str = at(start.y).get();
-            rs = str.substr(start.x, len);
-            out.push_back(rs);
-            continue;
-        }
-        rs = at(start.y).get().substr(start.x);
-        for(int i=start.y+1;i<end.y;++i) {
-            rs += '\n';
-            rs += at(i).get();
-        }
-        rs += '\n';
-        rs += at(end.y).get().substr(0, end.x);
+        auto rs = regionAsStr(regions[j], cursor.at(j));
         out.push_back(rs);
     }
+    return out;
+}
+
+std::string Buffer::regionAsStr(const Pos2di& start, const Pos2di& end) const {
+    Pos2di small, big;
+    if(0 == start.find(small, big, end)) {
+        int len = big.x - small.x;
+        const auto& line = at(small.y);
+        auto out = line.get().substr(small.x, len);
+        return out;
+    }
+    std::string out = at(small.y).get().substr(small.x);
+    for(int i=small.y+1;i<big.y;++i) {
+        out += '\n';
+        out += at(i).get();
+    }
+    out += '\n';
+    const auto& line = at(big.y);
+    out += line.get().substr(0, big.x);
     return out;
 }
 

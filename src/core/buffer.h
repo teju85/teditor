@@ -11,6 +11,7 @@
 #include "cursor.h"
 #include "mode.h"
 #include "pos2d.h"
+#include <stack>
 
 
 namespace teditor {
@@ -147,11 +148,18 @@ public:
     bool isRegionActive() const { return regionActive; }
     virtual int getMinStartLoc() const { return 0; }
     std::string dirModeGetFileAtLine(int line);
+
+    /**
+     * Return the string that represents the currently highlighted region. In
+     * case of multiple-cursors, this will return one such string for each
+     * region
+     */
     Strings regionAsStr() const;
+
     void reload();
     void addCommand(CmdPtr c);
-    void undo();
-    void redo();
+    void undoCmd();
+    void redoCmd();
     const Positions& getRegionLocs() const { return regions.getLocs(); }
     const AttrColor& getColor(const std::string& name) const;
     int verticalJump(float jump) const { return (int)(jump * screenDim.y); }
@@ -161,6 +169,35 @@ public:
     const std::string& modeName() const { return mode->name(); }
 
 protected:
+    /** the operation type */
+    enum OpType {
+        /** insertion operation */
+        OpInsert = 0,
+        /** backspace operation */
+        OpDelete
+    };
+
+
+    /**
+     * @brief The state before/after applying insertion/deletion operations on the
+     * Buffer object
+     */
+    struct OpData {
+        /** from where the operation started */
+        Positions before;
+        /** till where the operation was performed */
+        Positions after;
+        /** characters that were inserted/deleted in the above range */
+        Strings chars;
+        /** type of operation */
+        OpType type;
+    }; // end class OpData
+
+
+    /** the stack for undo/redo operations */
+    typedef std::stack<OpData> OpStack;
+
+
     Pos2d<int> screenStart, screenDim;
     std::vector<Line> lines;
     int startLine;
@@ -171,7 +208,12 @@ protected:
     bool regionActive;
     std::vector<CmdPtr> cmds;
     int topCmd;
+    ///@todo: support applying multiple modes
     ModePtr mode;
+    /** stack of operations for undo */
+    OpStack undoStack;
+    /** stack of operations for redo */
+    OpStack redoStack;
 
     void insertLine(int i);
     void insert(char c, int i);
@@ -183,6 +225,12 @@ protected:
     std::string removeFrom(const Pos2d<int>& start, const Pos2d<int>& end);
     Pos2d<int> matchCurrentParen(int i, bool& isOpen);
     int dirModeFileOffset() const { return 24; }
+
+    /** clear the input stack (esp useful while clearing redo stack) */
+    void clearStack(OpStack& st);
+
+    /** helper method to return the string in the given region */
+    std::string regionAsStr(const Pos2di& start, const Pos2di& end) const;
 
     friend class Editor;
 };

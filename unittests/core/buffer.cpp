@@ -496,13 +496,45 @@ TEST_CASE("Buffer::RegionAsStr") {
     setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt", 0);
     REQUIRE(4 == ml.length());
     auto& cu = ml.getCursor();
-    cu.lineEnd(&ml);
-    ml.enableRegions();
-    cu.down(&ml);
-    cu.lineEnd(&ml);
-    auto strs = ml.regionAsStr();
-    REQUIRE(1U == strs.size());
-    REQUIRE("\nTesting123" == strs[0]);
+    SECTION("newline at the beginning") {
+        cu.lineEnd(&ml);
+        ml.enableRegions();
+        cu.down(&ml);
+        cu.lineEnd(&ml);
+        auto strs = ml.regionAsStr();
+        REQUIRE(1U == strs.size());
+        REQUIRE("\nTesting123" == strs[0]);
+        ml.disableRegions();
+    }
+    SECTION("full line") {
+        ml.enableRegions();
+        cu.lineEnd(&ml);
+        auto strs = ml.regionAsStr();
+        REQUIRE(1U == strs.size());
+        REQUIRE("* Hello" == strs[0]);
+        ml.disableRegions();
+    }
+    SECTION("newline at the end") {
+        ml.enableRegions();
+        cu.lineEnd(&ml);
+        cu.right(&ml);
+        auto strs = ml.regionAsStr();
+        REQUIRE(1U == strs.size());
+        REQUIRE("* Hello\n" == strs[0]);
+        ml.disableRegions();
+    }
+    SECTION("partial lines") {
+        cu.right(&ml);
+        cu.right(&ml);
+        ml.enableRegions();
+        cu.down(&ml);
+        cu.lineEnd(&ml);
+        cu.left(&ml);
+        auto strs = ml.regionAsStr();
+        REQUIRE(1U == strs.size());
+        REQUIRE("Hello\nTesting12" == strs[0]);
+        ml.disableRegions();
+    }
 }
 
 TEST_CASE("Buffer::Cut") {

@@ -585,12 +585,12 @@ CMD_NO_UNDO(BrowserSearch, "browser-search") {
 
 CMD_NO_UNDO(CommandUndo, "command-undo") {
     auto& buf = Editor::getInstance().getBuff();
-    buf.undo();
+    buf.undoCmd();
 }
 
 CMD_NO_UNDO(CommandRedo, "command-redo") {
     auto& buf = Editor::getInstance().getBuff();
-    buf.redo();
+    buf.redoCmd();
 }
 
 CMD_NO_UNDO(AddCursorDown, "add-cursor-down") {
