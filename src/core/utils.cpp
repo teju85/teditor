@@ -159,16 +159,16 @@ float str2real(const std::string& str) {
 
 std::string getpwd() {
     char cwd[2048];
-    getcwd(cwd, 2048);
+    (void)getcwd(cwd, 2048);
     return std::string(cwd);
 }
 
 std::string rel2abs(const std::string& pwd, const std::string& rel) {
     char abs[2048];
     auto currCwd = getpwd();
-    chdir(pwd.c_str());
-    realpath(rel.c_str(), abs);
-    chdir(currCwd.c_str());
+    (void)chdir(pwd.c_str());
+    (void)realpath(rel.c_str(), abs);
+    (void)chdir(currCwd.c_str());
     std::string res(abs);
     if(res.empty())
         res = pwd + '/' + rel;
@@ -264,7 +264,7 @@ CmdStatus check_output(const std::string& cmd) {
     CmdStatus ret;
     if(cmd.back() == '&') {
         ret.status = 0;
-        system(cmd.c_str());
+        (void)system(cmd.c_str());
         return ret;
     }
     const int MaxBuff = 8192;
@@ -360,7 +360,7 @@ void copyFile(const std::string& in, const std::string& out) {
     size_t size;
     char buf[BUFSIZ];
     while((size = read(ifp, buf, BUFSIZ)) > 0)
-        write(ofp, buf, size);
+        (void)write(ofp, buf, size);
     close(ifp);
     close(ofp);
 }

@@ -16,6 +16,7 @@
 #include <algorithm>
 #include "mode.h"
 #include "key_cmd_map.h"
+#include <signal.h>
 
 
 namespace teditor {
@@ -31,7 +32,7 @@ Editor* Editor::inst = nullptr;
 void sigwinch_handler(int xxx) {
     (void) xxx;
     const int zzz = 1;
-    write(Editor::getInstance().getWinchFd(1), &zzz, sizeof(int));
+    (void)write(Editor::getInstance().getWinchFd(1), &zzz, sizeof(int));
 }
 
 

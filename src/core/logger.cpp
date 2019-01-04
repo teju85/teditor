@@ -54,7 +54,7 @@ void Logger::log(int lev, const char* fmt, ...) {
     va_start(vl, fmt);
     auto buf = format(fmt, vl);
     va_end(vl);
-    fprintf(inst->logfp, buf.c_str());
+    fprintf(inst->logfp, "%s", buf.c_str());
     fflush(inst->logfp);
 }
 

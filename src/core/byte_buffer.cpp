@@ -30,7 +30,7 @@ void ByteBuffer::puts(const char* data) {
 }
 
 void ByteBuffer::flush(int fd) {
-    write(fd, c_str(), length());
+    (void)write(fd, c_str(), length());
     ULTRA_DEBUG("flush: len=%d buff=%s\n", length(), c_str());
     clear();
 }
