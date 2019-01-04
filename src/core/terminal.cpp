@@ -39,13 +39,11 @@ Terminal::Terminal(): keys(), funcs(), termName() {
 }
 
 ColorSupport Terminal::colorSupported() const {
-#ifdef WITH_TRUECOLOR
     std::string colorterm = env("COLORTERM");
     if((colorterm.find("truecolor") != std::string::npos) ||
        (colorterm.find("24bit") != std::string::npos)) {
         return ColorSupport_True;
     }
-#endif
     if((termName.find("-256") != std::string::npos) ||
        termName == "xterm") {
         return ColorSupport_256;
