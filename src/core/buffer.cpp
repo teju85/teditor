@@ -330,17 +330,14 @@ void Buffer::insert(const Strings& strs) {
                   });
 }
 
-void Buffer::insert(const char* buf) {
-    int len = strlen(buf);
-    for(int i=0;i<len;++i) {
-        insert(buf[i]);
-    }
+void Buffer::insert(const std::string& buf) {
+    for(auto c : buf) insert(c);
 }
 
 RemovedLines Buffer::keepRemoveLines(Pcre& pc, bool keep) {
     RemovedLines res;
     bool isRegion = isRegionActive();
-    for(int i=0;i<(int)lines.size();++i) {
+    for(int i=0;i<length();++i) {
         if(isRegion && !regions.isInside(i, 0, locs)) continue;
         const std::string str = lines[i].get();
         bool match = pc.isMatch(str);

@@ -1,5 +1,6 @@
 
 DEBUG          ?= 0
+VERBOSE        ?= 0
 
 BINDIR         := $(shell pwd)/bin
 DOCDIR         := html
@@ -51,6 +52,11 @@ else
     LDFLAGS    += -O3
     CXXFLAGS   += -UDEBUG_BUILD
 endif
+ifeq ($(VERBOSE),1)
+    PREFIX     :=
+else
+    PREFIX     := @
+endif
 
 
 default:
@@ -64,21 +70,34 @@ default:
 	@echo "Flags to customize behavior:"
 	@echo "  DEBUG   - Get a debug build if it is 1. Also enables debug"
 	@echo "            logging in Logger class. [0]"
+	@echo "  VERBOSE - Print the actual commands. [0]"
 
 teditor: $(EXE)
 
 $(EXE): main.o $(CORE_OBJS) $(LIBRARIES)
-	$(LD) $(LDFLAGS) -o $@ $^
+	@if [ "$(VERBOSE)" = "0" ]; then \
+	    echo "Building $@ ..."; \
+	fi
+	$(PREFIX)$(LD) $(LDFLAGS) -o $@ $^
 
 $(TESTEXE): $(TEST_OBJS) $(LIBRARIES)
-	$(LD) $(LDFLAGS) -o $@ $^
+	@if [ "$(VERBOSE)" = "0" ]; then \
+	    echo "Building $@ ..."; \
+	fi
+	$(PREFIX)$(LD) $(LDFLAGS) -o $@ $^
 	$(TESTEXE)
 
 $(TESTS)/%.o: $(TESTS)/%.cpp $(HEADERS)
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
+	@if [ "$(VERBOSE)" = "0" ]; then \
+	    echo "Compiling $< ..."; \
+	fi
+	$(PREFIX)$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 %.o: %.cpp $(HEADERS)
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
+	@if [ "$(VERBOSE)" = "0" ]; then \
+	    echo "Compiling $< ..."; \
+	fi
+	$(PREFIX)$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 clean:
 	rm -rf $(CORE_OBJS) main.o $(EXE)
@@ -123,17 +142,29 @@ TS_ALL_OBJS    := $(TS_RT_OBJ) \
 tree-sitter: $(TS_LIB)
 
 $(TS_LIB): $(TS_ALL_OBJS)
-	mkdir -p $(TS_BINDIR)
-	$(AR) $(ARFLAGS) $@ $^
+	@if [ "$(VERBOSE)" = "0" ]; then \
+	    echo "Linking $@ ..."; \
+	fi
+	$(PREFIX)mkdir -p $(TS_BINDIR)
+	$(PREFIX)$(AR) $(ARFLAGS) $@ $^
 
 $(TS_RT_OBJ): $(TS_DIR)/src/runtime/runtime.c
-	$(CC) -c $(CCFLAGS) -o $@ $<
+	@if [ "$(VERBOSE)" = "0" ]; then \
+	    echo "Compiling $< ..."; \
+	fi
+	$(PREFIX)$(CC) -c $(CCFLAGS) -o $@ $<
 
 $(BINDIR)/parser-%.o: $(TS_DIR)-%/src/parser.c
-	$(CC) -c $(CCFLAGS) -o $@ $<
+	@if [ "$(VERBOSE)" = "0" ]; then \
+	    echo "Compiling $< ..."; \
+	fi
+	$(PREFIX)$(CC) -c $(CCFLAGS) -o $@ $<
 
 $(BINDIR)/scanner-%.o: $(TS_DIR)-%/src/scanner.cc
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
+	@if [ "$(VERBOSE)" = "0" ]; then \
+	    echo "Compiling $< ..."; \
+	fi
+	$(PREFIX)$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 tree-sitter-clean:
 	rm -rf $(TS_ALL_OBJS) $(TS_LIB)

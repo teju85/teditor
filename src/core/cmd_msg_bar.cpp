@@ -52,32 +52,29 @@ void CmdMsgBar::drawBuffer(Editor& ed) {
 }
 
 std::string CmdMsgBar::getFinalChoice() const {
-    if(usingChoices())
-        return choices->getFinalStr(optLoc, getStr());
+    if(usingChoices()) return choices->getFinalStr(optLoc, getStr());
     return getStr();
 }
 
 int CmdMsgBar::linesNeeded(const std::string& str, int wid) const {
     int len = (int)str.size();
-    if(len <= 0)
-        return 1;
+    if(len <= 0) return 1;
     return (len + wid - 1) / wid;
 }
 
 int CmdMsgBar::totalLinesNeeded() const {
     int count = at(0).numLinesNeeded(screenDim.x);
-    if(!usingChoices())
-        return count;
+    if(!usingChoices()) return count;
     const auto str = getStr();
     for(int i=startLine;i<=optLoc;++i)
         count += linesNeeded(choices->at(i), screenDim.x);
     return count;
 }
 
-void CmdMsgBar::insert(const char* str) {
+void CmdMsgBar::insert(const std::string& str) {
     auto& culoc = locs[0];
     lines[0].insert(str, culoc.x);
-    culoc.x += strlen(str);
+    culoc.x += (int)str.size();
 }
 
 // always insert on the first line!
@@ -85,8 +82,7 @@ void CmdMsgBar::insert(char c) {
     auto& culoc = locs[0];
     lines[0].insert(c, culoc.x);
     ++culoc.x;
-    if(!usingChoices())
-        return;
+    if(!usingChoices()) return;
     updateChoices();
     // then jump to the first matching option at this point!
     int len = choices->size();
@@ -102,11 +98,9 @@ void CmdMsgBar::insert(char c) {
 }
 
 void CmdMsgBar::updateChoices() {
-    if(!usingChoices())
-        return;
+    if(!usingChoices()) return;
     if(choices->updateChoices(getStr())) {
-        startLine = 0;
-        optLoc = 0;
+        startLine = optLoc = 0;
     }
     choices->updateMainBuffer(*this);
 }

@@ -49,7 +49,7 @@ public:
     CmdMsgBar();
     void resize(const Pos2d<int>& start, const Pos2d<int>& dim) override;
     void insert(char c) override;
-    void insert(const char* str) override;
+    void insert(const std::string& str) override;
     void drawBuffer(Editor& ed) override;
     void load(const std::string& file, int line=0) override {}
     void drawStatusBar(Editor& ed) override {}

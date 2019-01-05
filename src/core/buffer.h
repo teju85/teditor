@@ -41,7 +41,7 @@ public:
      */
     virtual void insert(char c);
     void insert(const Strings& strs);
-    virtual void insert(const char* buf);
+    virtual void insert(const std::string& buf);
     /** @} */
 
     /**
