@@ -32,8 +32,7 @@ Buffer::~Buffer() {
 }
 
 void Buffer::clearStack(OpStack& st) {
-    while(!st.empty())
-        st.pop();
+    while(!st.empty()) st.pop();
 }
 
 const AttrColor& Buffer::getColor(const std::string& name) const {
@@ -75,8 +74,7 @@ void Buffer::redoCmd() {
 
 Strings Buffer::regionAsStr() const {
     Strings out;
-    if(!isRegionActive())
-        return out;
+    if(!isRegionActive()) return out;
     int count = (int)regions.size();
     for(int j=0;j<count;++j) {
         auto rs = regionAsStr(regions[j], locs[j]);
@@ -123,10 +121,7 @@ void Buffer::resize(const Pos2d<int>& start, const Pos2d<int>& dim) {
 }
 
 void Buffer::load(const std::string& file, int line) {
-    if(isDir(file.c_str()))
-        loadDir(file);
-    else
-        loadFile(file, line);
+    isDir(file.c_str())? loadDir(file) : loadFile(file, line);
     mode = Mode::createMode(Mode::inferMode(file));
 }
 
@@ -288,27 +283,20 @@ Pos2d<int> Buffer::screen2buffer(const Pos2d<int>& loc) const {
     int sy = 0;
     for(;sy<=rel.y;++res.y)
         sy += lines[res.y].numLinesNeeded(w);
-    if(sy > rel.y)
-        --res.y;
+    if(sy > rel.y) --res.y;
     int dely = rel.y - sy + lines[res.y].numLinesNeeded(w);
     res.x = dely * w + rel.x;
     return res;
 }
 
 void Buffer::insertLine(int i) {
-    const auto& pos = locs[i];
-    lines.insert(lines.begin()+pos.y+1, Line());
-    auto& oldline = lines[pos.y];
-    bool eol = pos.x >= oldline.length();
-    if(!eol) {
-        std::string res = oldline.erase(pos.x, oldline.length()-pos.x);
-        auto& newline = lines[pos.y+1];
-        newline.append(res.c_str());
-    }
+    auto& pos = locs[i];
+    auto newLine = lines[pos.y].split(pos.x);
+    lines.insert(lines.begin() + pos.y + 1, newLine);
     // inserting line at the current cursor means all other cursors below it
     // must also be moved down by one line to preserve their right location
     moveDownAllNextCursors(i);
-    locs[i].x = 0;
+    pos.x = 0;
 }
 
 void Buffer::insert(char c) {
@@ -353,12 +341,10 @@ RemovedLines Buffer::keepRemoveLines(Pcre& pc, bool keep) {
     RemovedLines res;
     bool isRegion = isRegionActive();
     for(int i=0;i<(int)lines.size();++i) {
-        if(isRegion && !regions.isInside(i, 0, locs))
-            continue;
+        if(isRegion && !regions.isInside(i, 0, locs)) continue;
         const std::string str = lines[i].get();
         bool match = pc.isMatch(str);
-        if((match && keep) || (!match && !keep))
-            continue;
+        if((match && keep) || (!match && !keep)) continue;
         lines.erase(lines.begin()+i);
         res.push_back({str, {0, i}});
         --i;
@@ -368,8 +354,7 @@ RemovedLines Buffer::keepRemoveLines(Pcre& pc, bool keep) {
         modified = true;
     }
     // ensure that you don't segfault on full buffer removal!
-    if(length() <= 0)
-        addLine();
+    if(length() <= 0) addLine();
     return res;
 }
 
@@ -386,7 +371,7 @@ void Buffer::addLines(const RemovedLines& rlines) {
 
 void Buffer::gotoLine(int lineNum) {
     forEachCursor([lineNum, this](Pos2di& cu, size_t idx) {
-                      cu.y = std::min((int)lines.size()-1, std::max(0, lineNum));
+                      cu.y = std::min(length()-1, std::max(0, lineNum));
                   });
     startLine = std::max(0, lineNum - screenDim.y/2);
 }
@@ -419,8 +404,7 @@ Pos2d<int> Buffer::matchCurrentParen(int i, bool& isOpen) {
                     st.push(c);
                 else if(str[x] == mc) {
                     st.pop();
-                    if(st.empty())
-                        return {x, y};
+                    if(st.empty()) return {x, y};
                 }
             }
         }
@@ -434,8 +418,7 @@ Pos2d<int> Buffer::matchCurrentParen(int i, bool& isOpen) {
                     st.push(c);
                 else if(str[x] == mc) {
                     st.pop();
-                    if(st.empty())
-                        return {x, y};
+                    if(st.empty()) return {x, y};
                 }
             }
         }
@@ -485,6 +468,7 @@ Strings Buffer::remove(const Positions& start, const Positions& end) {
     return del;
 }
 
+///@todo: use Pos2d::find instead of the if-block below!
 std::string Buffer::removeFrom(const Pos2d<int>& start,
                                const Pos2d<int>& end) {
     std::string del;
@@ -915,13 +899,11 @@ void Buffer::indent() {
         cu.x += count;
         if(count > 0) {
             lines[line].prepend(' ', count);
-            if(cu.x <= lengthOf(line))
-                cu.x = lengthOf(line);
+            if(cu.x <= lengthOf(line)) cu.x = lengthOf(line);
             modified = true;
         } else if(count < 0) {
             lines[line].erase(0, -count);
-            if(cu.x < 0)
-                cu.x = 0;
+            if(cu.x < 0) cu.x = 0;
             modified = true;
         }
     }
