@@ -185,6 +185,9 @@ public:
     const Pos2di& cursorAt(int i) const { return locs[i]; }
     /** @} */
 
+    /** length of a given line in this buffer */
+    int lengthOf(int i) const { return lines[i].length(); }
+
     void indent();
 
     virtual int totalLinesNeeded() const;
@@ -301,6 +304,12 @@ protected:
             ++idx;
         }
         removeDuplicateCursors();
+    }
+    /** helper method to apply a function on cursors from a given index */
+    template <typename Lambda>
+    void forEachCursorFrom(Lambda op, int i) {
+        int len = cursorCount();
+        for(int j=i;j<len;++j) op(locs[j], j);
     }
     /** find whether there's a cursor already at the input location */
     bool findCursor(const Pos2di& pos) const;

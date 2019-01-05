@@ -412,7 +412,7 @@ Pos2d<int> Buffer::matchCurrentParen(int i, bool& isOpen) {
         int len = length();
         for(int y=culoc.y;y<len;++y) {
             int x = (y == culoc.y)? culoc.x : 0;
-            int xlen = at(y).length();
+            int xlen = lengthOf(y);
             const auto& str = at(y).get();
             for(;x<xlen;++x) {
                 if(str[x] == c)
@@ -427,7 +427,7 @@ Pos2d<int> Buffer::matchCurrentParen(int i, bool& isOpen) {
     } else if(isCloseParen(c)) {
         isOpen = false;
         for(int y=culoc.y;y>=0;--y) {
-            int x = (y == culoc.y)? culoc.x : at(y).length();
+            int x = (y == culoc.y)? culoc.x : lengthOf(y);
             const auto& str = at(y).get();
             for(;x>=0;--x) {
                 if(str[x] == c)
@@ -545,11 +545,11 @@ Strings Buffer::removeCurrent() {
     int len = cursorCount();
     for(int i=0;i<len;++i) {
         auto& culoc = locs[i];
-        if(culoc.x == lines[culoc.y].length() && culoc.y == length()-1) {
+        if(culoc.x == lengthOf(culoc.y) && culoc.y == length()-1) {
             del.push_back("");
             continue;
         }
-        if(culoc.x < lines[culoc.y].length()) {
+        if(culoc.x < lengthOf(culoc.y)) {
             auto str = lines[culoc.y].erase(culoc.x, 1);
             del.push_back(str);
             continue;
@@ -684,7 +684,7 @@ void Buffer::startOfLine() {
 }
 
 void Buffer::endOfLine() {
-    forEachCursor([this](Pos2di& cu, size_t idx) { cu.x = at(cu.y).length(); });
+    forEachCursor([this](Pos2di& cu, size_t idx) { cu.x = lengthOf(cu.y); });
 }
 
 void Buffer::left() {
@@ -694,7 +694,7 @@ void Buffer::left() {
                       if(cu.x < minLoc) {
                           if(cu.y >= 1) {
                               --cu.y;
-                              cu.x = at(cu.y).length();
+                              cu.x = lengthOf(cu.y);
                           } else {
                               cu.y = 0;
                               cu.x = minLoc;
@@ -707,7 +707,7 @@ void Buffer::left() {
 void Buffer::right() {
     forEachCursor([this](Pos2di& cu, size_t idx) {
                       ++cu.x;
-                      if(cu.x > at(cu.y).length()) {
+                      if(cu.x > lengthOf(cu.y)) {
                           if(cu.y < length()-1) {
                               ++cu.y;
                               cu.x = 0;
@@ -722,7 +722,7 @@ void Buffer::down() {
     forEachCursor([this](Pos2di& cu, size_t idx) {
                       if(cu.y < length()-1) {
                           ++cu.y;
-                          cu.x = std::min(cu.x, at(cu.y).length());
+                          cu.x = std::min(cu.x, lengthOf(cu.y));
                       }
                   });
     lineUp();
@@ -732,7 +732,7 @@ void Buffer::up() {
     forEachCursor([this](Pos2di& cu, size_t idx) {
                       if(cu.y >= 1) {
                           --cu.y;
-                          cu.x = std::min(cu.x, at(cu.y).length());
+                          cu.x = std::min(cu.x, lengthOf(cu.y));
                       }
                   });
     lineDown();
@@ -746,7 +746,7 @@ void Buffer::begin() {
 void Buffer::end() {
     forEachCursor([this](Pos2di& cu, size_t idx) {
                       cu.y = std::max(0, length()-1);
-                      cu.x = at(cu.y).length();
+                      cu.x = lengthOf(cu.y);
                   });
     lineEnd();
 }
@@ -772,10 +772,10 @@ void Buffer::pageUp(float jump) {
 void Buffer::nextPara() {
     int len = length();
     forEachCursor([&len, this](Pos2di& cu, size_t idx) {
-                      int prevLen = at(cu.y).length();
+                      int prevLen = lengthOf(cu.y);
                       for(++cu.y;cu.y<len;++cu.y) {
-                          if(at(cu.y).length() == 0 && prevLen != 0) break;
-                          prevLen = at(cu.y).length();
+                          if(lengthOf(cu.y) == 0 && prevLen != 0) break;
+                          prevLen = lengthOf(cu.y);
                       }
                       cu.y = std::min(cu.y, len-1);
                       cu.x = 0;
@@ -785,10 +785,10 @@ void Buffer::nextPara() {
 
 void Buffer::previousPara() {
     forEachCursor([this](Pos2di& cu, size_t idx) {
-                      int prevLen = at(cu.y).length();
+                      int prevLen = lengthOf(cu.y);
                       for(--cu.y;cu.y>=0;--cu.y) {
-                          if(at(cu.y).length() == 0 && prevLen != 0) break;
-                          prevLen = at(cu.y).length();
+                          if(lengthOf(cu.y) == 0 && prevLen != 0) break;
+                          prevLen = lengthOf(cu.y);
                       }
                       cu.y = std::max(cu.y, 0);
                       cu.x = 0;
@@ -817,7 +817,7 @@ void Buffer::previousWord() {
                       if(cu.x <= 0) {
                           if(cu.y <= 0) return;
                           --cu.y;
-                          cu.x = at(cu.y).length();
+                          cu.x = lengthOf(cu.y);
                       } else {
                           const auto& line = at(cu.y);
                           cu.x = line.findLastNotOf(word, cu.x - 1);
@@ -882,37 +882,25 @@ bool Buffer::findCursor(const Pos2di& pos) const {
 }
 
 void Buffer::moveRightCursorsOnSameLine(int i) {
-    int len = cursorCount();
-    const auto& culoc = locs[i];
-    for(int j=i;j<len;++j) {
-        auto& cu = locs[j];
-        if(cu.y == culoc.y) ++cu.x;
-    }
+    const auto culoc = locs[i];
+    forEachCursorFrom([&culoc](Pos2di& cu, int idx) {
+                          if(cu.y == culoc.y) ++cu.x;
+                      }, i);
 }
 
 void Buffer::moveLeftCursorsOnSameLine(int i) {
-    int len = cursorCount();
-    const auto& culoc = locs[i];
-    for(int j=i;j<len;++j) {
-        auto& cu = locs[j];
-        if(cu.y == culoc.y) --cu.x;
-    }
+    const auto culoc = locs[i];
+    forEachCursorFrom([&culoc](Pos2di& cu, int idx) {
+                          if(cu.y == culoc.y) --cu.x;
+                      }, i);
 }
 
 void Buffer::moveDownAllNextCursors(int i) {
-    int len = cursorCount();
-    for(int j=i;j<len;++j) {
-        auto& cu = locs[j];
-        ++cu.y;
-    }
+    forEachCursorFrom([](Pos2di& cu, int idx) { ++cu.y; }, i);
 }
 
 void Buffer::moveUpAllNextCursors(int i) {
-    int len = cursorCount();
-    for(int j=i;j<len;++j) {
-        auto& cu = locs[j];
-        --cu.y;
-    }
+    forEachCursorFrom([](Pos2di& cu, int idx) { --cu.y; }, i);
 }
 ////// End: Cursor operations //////
 
@@ -927,8 +915,8 @@ void Buffer::indent() {
         cu.x += count;
         if(count > 0) {
             lines[line].prepend(' ', count);
-            if(cu.x <= lines[line].length())
-                cu.x = lines[line].length();
+            if(cu.x <= lengthOf(line))
+                cu.x = lengthOf(line);
             modified = true;
         } else if(count < 0) {
             lines[line].erase(0, -count);

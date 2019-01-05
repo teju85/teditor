@@ -196,6 +196,13 @@ TEST_CASE("Buffer::RemoveRegion") {
     REQUIRE("" == ml.at(3).get());
 }
 
+TEST_CASE("Buffer::LengthOf") {
+    Buffer ml;
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
+    REQUIRE(21 == ml.length());
+    REQUIRE(ml.at(0).length() == ml.lengthOf(0));
+}
+
 TEST_CASE("Buffer::Remove") {
     Buffer ml;
     setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
