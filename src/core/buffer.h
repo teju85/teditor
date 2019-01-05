@@ -229,6 +229,8 @@ protected:
     enum OpType {
         /** insertion operation */
         OpInsert = 0,
+        /** char insertion operation */
+        OpInsertChar,
         /** backspace operation */
         OpDelete
     };
@@ -245,6 +247,8 @@ protected:
         Positions after;
         /** characters that were inserted/deleted in the above range */
         Strings chars;
+        /** a char that was inserted across all the cursors */
+        char c;
         /** type of operation */
         OpType type;
     }; // end class OpData
@@ -272,8 +276,7 @@ protected:
     /** stack of operations for redo */
     OpStack redoStack;
 
-    void insertLine(int i);
-    void insert(char c, int i);
+    void insert(char c, size_t i);
     void addLine() { lines.push_back(Line()); }
     void resetBufferState(int line, const std::string& file);
     KeyCmdMap& getKeyCmdMap() { return mode->getKeyCmdMap(); }

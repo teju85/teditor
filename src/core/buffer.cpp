@@ -289,32 +289,26 @@ Pos2d<int> Buffer::screen2buffer(const Pos2d<int>& loc) const {
     return res;
 }
 
-void Buffer::insertLine(int i) {
-    auto& pos = locs[i];
-    auto newLine = lines[pos.y].split(pos.x);
-    lines.insert(lines.begin() + pos.y + 1, newLine);
-    // inserting line at the current cursor means all other cursors below it
-    // must also be moved down by one line to preserve their right location
-    moveDownAllNextCursors(i);
-    pos.x = 0;
-}
-
 void Buffer::insert(char c) {
     modified = true;
     forEachCursor([c, this](Pos2di& cu, size_t idx) { insert(c, (int)idx); });
     lineUp();
-    removeDuplicateCursors();
 }
 
 ///@todo: what if a single line crosses the whole screen!?
-void Buffer::insert(char c, int i) {
+void Buffer::insert(char c, size_t i) {
+    auto& pos = locs[i];
     if(c == '\n' || c == (char)Key_Enter) {
-        insertLine(i);
+        auto newLine = lines[pos.y].split(pos.x);
+        lines.insert(lines.begin() + pos.y + 1, newLine);
+        // inserting line at the current cursor means all other cursors below it
+        // must also be moved down by one line to preserve their right location
+        moveDownAllNextCursors(i);
+        pos.x = 0;
         return;
     }
-    auto& culoc = locs[i];
-    auto& line = lines[culoc.y];
-    line.insert(c, culoc.x);
+    auto& line = lines[pos.y];
+    line.insert(c, pos.x);
     // inserting a char should move other cursors in the same line!
     moveRightCursorsOnSameLine(i);
 }
@@ -600,8 +594,7 @@ int Buffer::totalLinesNeeded() const {
 }
 
 void Buffer::lineUp() {
-    while(totalLinesNeeded() > screenDim.y)
-        ++startLine;
+    while(totalLinesNeeded() > screenDim.y) ++startLine;
 }
 
 void Buffer::lineDown() {
@@ -611,8 +604,7 @@ void Buffer::lineDown() {
 void Buffer::lineEnd() {
     auto screen = buffer2screen(locs[0]);
     int relY = screen.y - startLine;
-    if(relY < screenDim.y)
-        return;
+    if(relY < screenDim.y) return;
     int diff = relY - screenDim.y + 1;
     startLine += diff;
 }
@@ -645,7 +637,7 @@ void Buffer::save() {
     dirName = dirname(fileName);
     buffName = basename(fileName);
     modified = false;
-    CMBAR_MSG("Wrote to '%s'\n", fileName.c_str());
+    CMBAR_MSG("Wrote %s\n", fileName.c_str());
 }
 
 void Buffer::clear() {
