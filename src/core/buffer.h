@@ -130,6 +130,60 @@ public:
     /** clear buffer contents */
     virtual void clear();
 
+    /**
+     * @defgroup CursorMovements All methods for moving cursor
+     * @{
+     */
+    /** move to begining of line */
+    void startOfLine();
+    /** move to end of line */
+    void endOfLine();
+    /** move left */
+    void left();
+    /** move right */
+    void right();
+    /** move down */
+    void down();
+    /** move up */
+    void up();
+    /** go to beginning of the buffer */
+    void begin();
+    /** go to end of the buffer */
+    void end();
+    /** scroll down a page */
+    void pageDown(float jump);
+    /** scroll up a page */
+    void pageUp(float jump);
+    /** jump to start of next paragraph */
+    void nextPara();
+    /** jump to start of previous paragraph */
+    void previousPara();
+    /** jump to next word */
+    void nextWord();
+    /** jump to previous word */
+    void previousWord();
+    /** @} */
+
+    /**
+     * @defgroup CursorOps Cursor related operations
+     * @{
+     */
+    /** add a cursor from back */
+    void addCursorFromBack(const Pos2di& pos);
+    /** add a cursor from front */
+    void addCursorFromFront(const Pos2di& pos);
+    /** clear all cursors except the first one */
+    void clearAllCursorsButFirst();
+    /** cursor count */
+    int cursorCount() const { return (int)locs.size(); }
+    /** checks if there are any cursors on the given line */
+    bool hasCursorOn(int line) const;
+    /** save the current state of all cursors */
+    Positions saveCursors() const;
+    /** restore the state of all cursors to the given one */
+    void restoreCursors(const Positions& pos);
+    /** @} */
+
     void indent();
 
     Cursor& getCursor() { return cursor; }
@@ -210,6 +264,8 @@ protected:
     int topCmd;
     ///@todo: support applying multiple modes
     ModePtr mode;
+    /** cursor(s) */
+    Positions locs;
     /** stack of operations for undo */
     OpStack undoStack;
     /** stack of operations for redo */
@@ -231,6 +287,40 @@ protected:
 
     /** helper method to return the string in the given region */
     std::string regionAsStr(const Pos2di& start, const Pos2di& end) const;
+
+    /**
+     * @defgroup CursorOps Internal cursor operation details
+     * @{
+     */
+    /** remove cursors that are on the same location */
+    void removeDuplicateCursors();
+    /** helper method to apply a function on a given cursor */
+    template <typename Lambda>
+    void forEachCursor(Lambda op) {
+        size_t idx = 0;
+        for(auto& cu : locs) {
+            op(cu, idx);
+            ++idx;
+        }
+        removeDuplicateCursors();
+    }
+    /** find whether there's a cursor already at the input location */
+    bool findCursor(const Pos2di& pos) const;
+    /**
+     * move right all cursors from the input location onwards, which are on the
+     * same line
+     */
+    void moveRightCursorsOnSameLine(int i);
+    /**
+     * move left all cursors from the input location onwards, which are on the
+     * same line
+     */
+    void moveLeftCursorsOnSameLine(int i);
+    /** move down all cursors from the input location onwards */
+    void moveDownAllNextCursors(int i);
+    /** move up all cursors from the input location onwards */
+    void moveUpAllNextCursors(int i);
+    /** @} */
 
     friend class Editor;
 };

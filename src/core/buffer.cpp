@@ -16,10 +16,12 @@ Buffer::Buffer(const std::string& name):
     screenStart(), screenDim(), lines(), startLine(0), cursor(),
     modified(false), readOnly(false), buffName(name), fileName(), dirName(),
     regions(), regionActive(false), cmds(), topCmd(-1),
-    mode(Mode::createMode("text")), undoStack(), redoStack() {
+    mode(Mode::createMode("text")), locs(), undoStack(), redoStack() {
     addLine();
     cursor.reset(this);
     dirName = getpwd();
+    locs.push_back(Pos2di(0, 0));
+    begin();
 }
 
 Buffer::~Buffer() {
@@ -685,8 +687,248 @@ void Buffer::clear() {
     addLine();
     startLine = 0;
     cursor.reset(this);
+    begin();
     disableRegions();
 }
+
+////// Start: Cursor movements //////
+void Buffer::startOfLine() {
+    int minLoc = getMinStartLoc();
+    forEachCursor([&minLoc](Pos2di& cu, size_t idx) { cu.x = minLoc; });
+}
+
+void Buffer::endOfLine() {
+    forEachCursor([this](Pos2di& cu, size_t idx) { cu.x = at(cu.y).length(); });
+}
+
+void Buffer::left() {
+    int minLoc = getMinStartLoc();
+    forEachCursor([&minLoc, this](Pos2di& cu, size_t idx) {
+                      --cu.x;
+                      if(cu.x < minLoc) {
+                          if(cu.y >= 1) {
+                              --cu.y;
+                              cu.x = at(cu.y).length();
+                          } else {
+                              cu.y = 0;
+                              cu.x = minLoc;
+                          }
+                      }
+                  });
+    lineDown();
+}
+
+void Buffer::right() {
+    forEachCursor([this](Pos2di& cu, size_t idx) {
+                      ++cu.x;
+                      if(cu.x > at(cu.y).length()) {
+                          if(cu.y < length()-1) {
+                              ++cu.y;
+                              cu.x = 0;
+                          } else
+                              --cu.x;
+                      }
+                  });
+    lineUp();
+}
+
+void Buffer::down() {
+    forEachCursor([this](Pos2di& cu, size_t idx) {
+                      if(cu.y < length()-1) {
+                          ++cu.y;
+                          cu.x = std::min(cu.x, at(cu.y).length());
+                      }
+                  });
+    lineUp();
+}
+
+void Buffer::up() {
+    forEachCursor([this](Pos2di& cu, size_t idx) {
+                      if(cu.y >= 1) {
+                          --cu.y;
+                          cu.x = std::min(cu.x, at(cu.y).length());
+                      }
+                  });
+    lineDown();
+}
+
+void Buffer::begin() {
+    forEachCursor([](Pos2di& cu, size_t idx) { cu.x = cu.y = 0; });
+    lineReset();
+}
+
+void Buffer::end() {
+    forEachCursor([this](Pos2di& cu, size_t idx) {
+                      cu.y = std::max(0, length()-1);
+                      cu.x = at(cu.y).length();
+                  });
+    lineEnd();
+}
+
+void Buffer::pageDown(float jump) {
+    int ijump = verticalJump(jump);
+    forEachCursor([&ijump, this](Pos2di& cu, size_t idx) {
+                      cu.x = 0;
+                      cu.y = std::min(length()-1, cu.y+ijump);
+                  });
+    lineUp();
+}
+
+void Buffer::pageUp(float jump) {
+    int ijump = verticalJump(jump);
+    forEachCursor([&ijump](Pos2di& cu, size_t idx) {
+                      cu.x = 0;
+                      cu.y = std::max(0, cu.y-ijump);
+                  });
+    lineDown();
+}
+
+void Buffer::nextPara() {
+    int len = length();
+    forEachCursor([&len, this](Pos2di& cu, size_t idx) {
+                      int prevLen = at(cu.y).length();
+                      for(++cu.y;cu.y<len;++cu.y) {
+                          if(at(cu.y).length() == 0 && prevLen != 0) break;
+                          prevLen = at(cu.y).length();
+                      }
+                      cu.y = std::min(cu.y, len-1);
+                      cu.x = 0;
+                  });
+    lineUp();
+}
+
+void Buffer::previousPara() {
+    forEachCursor([this](Pos2di& cu, size_t idx) {
+                      int prevLen = at(cu.y).length();
+                      for(--cu.y;cu.y>=0;--cu.y) {
+                          if(at(cu.y).length() == 0 && prevLen != 0) break;
+                          prevLen = at(cu.y).length();
+                      }
+                      cu.y = std::max(cu.y, 0);
+                      cu.x = 0;
+                  });
+    lineDown();
+}
+
+void Buffer::nextWord() {
+    const auto& word = getWord();
+    forEachCursor([word, this](Pos2di& cu, size_t idx) {
+                      const auto& line = at(cu.y);
+                      if(cu.x >= line.length()) {
+                          if(cu.y >= length()-1) return;
+                          ++cu.y;
+                          cu.x = 0;
+                      } else {
+                          cu.x = line.findFirstNotOf(word, cu.x + 1);
+                      }
+                  });
+    lineUp();
+}
+
+void Buffer::previousWord() {
+    const auto& word = getWord();
+    forEachCursor([word, this](Pos2di& cu, size_t idx) {
+                      if(cu.x <= 0) {
+                          if(cu.y <= 0) return;
+                          --cu.y;
+                          cu.x = at(cu.y).length();
+                      } else {
+                          const auto& line = at(cu.y);
+                          cu.x = line.findLastNotOf(word, cu.x - 1);
+                      }
+                  });
+    lineDown();
+}
+
+void Buffer::removeDuplicateCursors() {
+    for(size_t i=0;i<locs.size();++i) {
+        for(size_t j=i+1;j<locs.size();++j) {
+            if(locs[i] == locs[j]) {
+                locs.erase(locs.begin()+j);
+                --j;
+            }
+        }
+    }
+}
+////// End: Cursor movements //////
+
+////// Start: Cursor operations //////
+void Buffer::addCursorFromBack(const Pos2di& pos) {
+    if(!findCursor(pos)) locs.push_back(pos);
+}
+
+void Buffer::addCursorFromFront(const Pos2di& pos) {
+    if(!findCursor(pos)) locs.insert(locs.begin(), pos);
+}
+
+void Buffer::clearAllCursorsButFirst() {
+    if(locs.size() <= 1) return;
+    auto first = locs[0];
+    locs.clear();
+    locs.push_back(first);
+}
+
+bool Buffer::hasCursorOn(int line) const {
+    for(const auto& cu : locs)
+        if(line == cu.y) return true;
+    return false;
+}
+
+Positions Buffer::saveCursors() const {
+    Positions out(locs.size());
+    std::copy(locs.begin(), locs.end(), out.begin());
+    return out;
+}
+
+void Buffer::restoreCursors(const Positions& pos) {
+    if(pos.empty()) return;
+    if(locs.size() != pos.size()) {
+        locs.clear();
+        locs.resize(pos.size());
+    }
+    std::copy(pos.begin(), pos.end(), locs.begin());
+}
+
+bool Buffer::findCursor(const Pos2di& pos) const {
+    for(const auto& cu : locs)
+        if(cu == pos) return true;
+    return false;
+}
+
+void Buffer::moveRightCursorsOnSameLine(int i) {
+    int len = cursorCount();
+    const auto& culoc = locs[i];
+    for(int j=i;j<len;++j) {
+        auto& cu = locs[j];
+        if(cu.y == culoc.y) ++cu.x;
+    }
+}
+
+void Buffer::moveLeftCursorsOnSameLine(int i) {
+    int len = cursorCount();
+    const auto& culoc = locs[i];
+    for(int j=i;j<len;++j) {
+        auto& cu = locs[j];
+        if(cu.y == culoc.y) --cu.x;
+    }
+}
+
+void Buffer::moveDownAllNextCursors(int i) {
+    int len = cursorCount();
+    for(int j=i;j<len;++j) {
+        auto& cu = locs[j];
+        ++cu.y;
+    }
+}
+
+void Buffer::moveUpAllNextCursors(int i) {
+    int len = cursorCount();
+    for(int j=i;j<len;++j) {
+        auto& cu = locs[j];
+        --cu.y;
+    }
+}
+////// End: Cursor operations //////
 
 ///@todo: support undo
 void Buffer::indent() {

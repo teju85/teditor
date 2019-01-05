@@ -538,11 +538,11 @@ TEST_CASE("Buffer::RegionAsStr") {
 }
 
 TEST_CASE("Buffer::Cut") {
+    Buffer ml;
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt", 0);
+    REQUIRE(4 == ml.length());
+    auto& cu = ml.getCursor();
     SECTION("Preceeding newline") {
-        Buffer ml;
-        setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt", 0);
-        REQUIRE(4 == ml.length());
-        auto& cu = ml.getCursor();
         cu.lineEnd(&ml);
         ml.enableRegions();
         cu.down(&ml);
@@ -555,10 +555,6 @@ TEST_CASE("Buffer::Cut") {
         REQUIRE(3 == ml.length());
     }
     SECTION("Succeeding newline") {
-        Buffer ml;
-        setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt", 0);
-        REQUIRE(4 == ml.length());
-        auto& cu = ml.getCursor();
         cu.home(&ml);
         ml.enableRegions();
         cu.down(&ml);
@@ -570,10 +566,6 @@ TEST_CASE("Buffer::Cut") {
         REQUIRE(3 == ml.length());
     }
     SECTION("Preceeding & Succeeding newline") {
-        Buffer ml;
-        setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt", 0);
-        REQUIRE(4 == ml.length());
-        auto& cu = ml.getCursor();
         cu.lineEnd(&ml);
         ml.enableRegions();
         cu.down(&ml);
@@ -586,6 +578,122 @@ TEST_CASE("Buffer::Cut") {
         REQUIRE("\nTesting123\n" == del[0]);
         ///@todo: issue with trailing newline now!!
         REQUIRE(3 == ml.length());
+    }
+}
+
+TEST_CASE("Buffer::cursor") {
+    Buffer ml;
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
+    REQUIRE(21 == ml.length());
+    REQUIRE(1 == ml.cursorCount());
+    REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
+
+    SECTION("basics") {
+        ml.clearAllCursorsButFirst();
+        REQUIRE(1 == ml.cursorCount());
+        ml.addCursorFromBack({0, 1});
+        REQUIRE(2 == ml.cursorCount());
+        ml.addCursorFromBack({0, 1});
+        REQUIRE(2 == ml.cursorCount());
+        ml.down();
+        ml.addCursorFromFront({0, 0});
+        REQUIRE(3 == ml.cursorCount());
+        Positions expected({{0, 0}, {0, 1}, {0, 2}});
+        REQUIRE(expected == ml.saveCursors());
+        ml.begin();
+        REQUIRE(1 == ml.cursorCount());
+        ml.addCursorFromBack({0, 1});
+        ml.addCursorFromBack({0, 2});
+        REQUIRE(3 == ml.cursorCount());
+        ml.clearAllCursorsButFirst();
+        REQUIRE(1 == ml.cursorCount());
+        ml.begin();
+        REQUIRE(ml.hasCursorOn(0));
+        REQUIRE_FALSE(ml.hasCursorOn(1));
+        ml.down();
+        REQUIRE_FALSE(ml.hasCursorOn(0));
+        REQUIRE(ml.hasCursorOn(1));
+    }
+
+    SECTION("simpleMovements") {
+        ml.endOfLine();
+        REQUIRE(Pos2di(ml.at(0).length(), 0) == ml.saveCursors()[0]);
+        ml.startOfLine();
+        REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
+        ml.right();
+        REQUIRE(Pos2di(1, 0) == ml.saveCursors()[0]);
+        ml.left();
+        REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
+        ml.down();
+        REQUIRE(Pos2di(0, 1) == ml.saveCursors()[0]);
+        ml.up();
+        REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
+        ml.end();
+        int y = ml.length() - 1;
+        int x = ml.at(y).length();
+        REQUIRE(Pos2di(x, y) == ml.saveCursors()[0]);
+        ml.begin();
+        REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
+        ml.pageDown(1.f);
+        REQUIRE(Pos2di(0, 9) == ml.saveCursors()[0]);
+        ml.pageUp(1.f);
+        REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
+        ml.nextPara();
+        REQUIRE(Pos2di(0, 3) == ml.saveCursors()[0]);
+        ml.previousPara();
+        REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
+        ml.nextWord();
+        REQUIRE(Pos2di(7, 0) == ml.saveCursors()[0]);
+        ml.previousWord();
+        REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
+    }
+
+    SECTION("left at buffer beginning") {
+        ml.left();
+        REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
+        ml.left();
+        REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
+    }
+
+    SECTION("left at line beginning") {
+        ml.down();
+        ml.left();
+        REQUIRE(Pos2di(ml.at(0).length(), 0) == ml.saveCursors()[0]);
+    }
+
+    SECTION("right at line end") {
+        ml.endOfLine();
+        ml.right();
+        REQUIRE(Pos2di(0, 1) == ml.saveCursors()[0]);
+    }
+
+    SECTION("right at buffer end") {
+        ml.end();
+        ml.right();
+        int y = ml.length() - 1;
+        int x = ml.at(y).length();
+        REQUIRE(Pos2di(x, y) == ml.saveCursors()[0]);
+        ml.right();
+        REQUIRE(Pos2di(x, y) == ml.saveCursors()[0]);
+    }
+
+    ///@todo: add more such movement tests in future!
+
+    SECTION("save and restore") {
+        ml.addCursorFromBack({0, 1});
+        ml.addCursorFromBack({0, 2});
+        REQUIRE(3 == ml.cursorCount());
+        Positions expected({{0, 0}, {0, 1}, {0, 2}});
+        REQUIRE(expected == ml.saveCursors());
+        Positions empty;
+        ml.restoreCursors(empty);
+        REQUIRE(3 == ml.cursorCount());
+        Positions smaller({{0, 0}, {0, 2}});
+        ml.restoreCursors(smaller);
+        REQUIRE((int)smaller.size() == ml.cursorCount());
+        Positions larger({{0, 0}, {0, 2}, {0, 3}, {0, 4}});
+        ml.restoreCursors(larger);
+        REQUIRE((int)larger.size() == ml.cursorCount());
     }
 }
 
