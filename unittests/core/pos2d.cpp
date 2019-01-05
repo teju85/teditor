@@ -118,4 +118,29 @@ TEST_CASE("Positions::added2") {
     REQUIRE(a == expected);
 }
 
+TEST_CASE("Regions") {
+    Positions locs = {
+        {2, 3},
+        {8, 3},
+        {6, 4}
+    };
+    Regions regs;
+    Positions locs2 = {
+        {5, 3},
+        {10, 3},
+        {12, 4}
+    };
+    REQUIRE(regs.empty());
+    REQUIRE_FALSE(regs.isInside(3, 4, locs));
+    REQUIRE_FALSE(regs.isInside(3, 9, locs));
+    REQUIRE_FALSE(regs.isInside(4, 10, locs));
+    regs.enable(locs2);
+    REQUIRE_FALSE(regs.empty());
+    REQUIRE(regs.isInside(3, 4, locs));
+    REQUIRE(regs.isInside(3, 9, locs));
+    REQUIRE(regs.isInside(4, 10, locs));
+    regs.clear();
+    REQUIRE(regs.empty());
+}
+
 } // end namespace teditor
