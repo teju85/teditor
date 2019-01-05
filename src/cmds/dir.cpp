@@ -8,7 +8,8 @@ namespace teditor {
 CMD_NO_UNDO(DirModeOpenFile, "dirmode-open-file") {
     auto& ed = Editor::getInstance();
     auto& buf = ed.getBuff();
-    auto file = buf.dirModeGetFileAtLine(buf.getCursor().at(0).y);
+    auto locs = buf.saveCursors();
+    auto file = buf.dirModeGetFileAtLine(locs[0].y);
     auto& dir = buf.getFileName();
     if(file == "." || file.empty())
         return;
@@ -22,7 +23,8 @@ CMD_NO_UNDO(DirModeOpenFile, "dirmode-open-file") {
 CMD_NO_UNDO(DirModeCopyFile, "dirmode-copy-file") {
     auto& ed = Editor::getInstance();
     auto& buf = ed.getBuff();
-    auto file = buf.dirModeGetFileAtLine(buf.getCursor().at(0).y);
+    auto locs = buf.saveCursors();
+    auto file = buf.dirModeGetFileAtLine(locs[0].y);
     auto& dir = buf.getFileName();
     if(isCurrentOrParentDir(file) || file.empty())
         return;
@@ -47,7 +49,8 @@ CMD_NO_UNDO(DirModeRefresh, "dirmode-refresh") {
 CMD_NO_UNDO(DirModeRenameFile, "dirmode-rename-file") {
     auto& ed = Editor::getInstance();
     auto& buf = ed.getBuff();
-    auto file = buf.dirModeGetFileAtLine(buf.getCursor().at(0).y);
+    auto locs = buf.saveCursors();
+    auto file = buf.dirModeGetFileAtLine(locs[0].y);
     auto& dir = buf.getFileName();
     if(isCurrentOrParentDir(file) || file.empty())
         return;
@@ -65,7 +68,8 @@ CMD_NO_UNDO(DirModeDeleteFile, "dirmode-delete-file") {
     auto& ed = Editor::getInstance();
     auto& buf = ed.getBuff();
     auto& dir = buf.getFileName();
-    auto file = buf.dirModeGetFileAtLine(buf.getCursor().at(0).y);
+    auto locs = buf.saveCursors();
+    auto file = buf.dirModeGetFileAtLine(locs[0].y);
     if(isCurrentOrParentDir(file) || file.empty())
         return;
     auto delFile = rel2abs(dir, file);

@@ -23,21 +23,20 @@ CMD_UNDO3(RemoveRegion, "remove-region", Positions regs, Positions before,
         return;
     }
     auto& mlbuffer = ed.getBuff();
-    auto& cu = mlbuffer.getCursor();
     switch(type) {
     case CMD_UNDO:
-        cu.restoreExcursion(regs);
+        mlbuffer.restoreCursors(regs);
         mlbuffer.insert(del);
         break;
     case CMD_REDO:
         del = mlbuffer.remove(regs, before);
-        cu.restoreExcursion(regs);
+        mlbuffer.restoreCursors(regs);
         break;
     default:
-        before = cu.saveExcursion();
+        before = mlbuffer.saveCursors();
         regs = mlbuffer.getRegionLocs();
         del = mlbuffer.remove(regs, before);
-        cu.restoreExcursion(regs);
+        mlbuffer.restoreCursors(regs);
     };
     ed.stopRegion();
 }
@@ -50,25 +49,24 @@ CMD_UNDO4(SortLines, "sort-lines", Positions after, Positions regs,
         return;
     }
     auto& mlbuffer = ed.getBuff();
-    auto& cu = mlbuffer.getCursor();
     switch(type) {
     case CMD_UNDO:
         mlbuffer.remove(regs, after);
-        cu.restoreExcursion(regs);
+        mlbuffer.restoreCursors(regs);
         mlbuffer.insert(del);
         break;
     case CMD_REDO:
-        cu.restoreExcursion(regs);
+        mlbuffer.restoreCursors(regs);
         ed.startRegion();
-        cu.restoreExcursion(before);
+        mlbuffer.restoreCursors(before);
         mlbuffer.sortRegions();
         break;
     default:
         regs = mlbuffer.getRegionLocs();
         del = mlbuffer.regionAsStr();
-        before = cu.saveExcursion();
+        before = mlbuffer.saveCursors();
         mlbuffer.sortRegions();
-        after = cu.saveExcursion();
+        after = mlbuffer.saveCursors();
     };
     ed.stopRegion();
 }
@@ -76,20 +74,19 @@ CMD_UNDO4(SortLines, "sort-lines", Positions after, Positions regs,
 CMD_UNDO2(InsertChar, "insert-char", char c, Positions before) {
     auto& ed = Editor::getInstance();
     auto& mlbuffer = ed.getBuff();
-    auto& cu = mlbuffer.getCursor();
     if(type == CMD_FRESH && ed.isRegionActive())
         ed.runCmd("remove-region");
     switch(type) {
     case CMD_UNDO:
-        cu.restoreExcursion(before);
+        mlbuffer.restoreCursors(before);
         mlbuffer.removeCurrent();
         break;
     case CMD_REDO:
-        cu.restoreExcursion(before);
+        mlbuffer.restoreCursors(before);
         mlbuffer.insert(c);
         break;
     default:
-        before = cu.saveExcursion();
+        before = mlbuffer.saveCursors();
         auto& in = ed.getInput();
         c = (char)in.mk.getKey();
         mlbuffer.insert(c);
@@ -105,20 +102,19 @@ CMD_UNDO3(BackspaceChar, "backspace-char", Strings del, Positions before,
         return;
     }
     auto& mlbuffer = ed.getBuff();
-    auto& cu = mlbuffer.getCursor();
     switch(type) {
     case CMD_UNDO:
-        cu.restoreExcursion(after);
+        mlbuffer.restoreCursors(after);
         mlbuffer.insert(del);
         break;
     case CMD_REDO:
-        cu.restoreExcursion(before);
+        mlbuffer.restoreCursors(before);
         mlbuffer.remove();
         break;
     default:
-        before = cu.saveExcursion();
+        before = mlbuffer.saveCursors();
         del = mlbuffer.remove();
-        after = cu.saveExcursion();
+        after = mlbuffer.saveCursors();
     };
 }
 
@@ -131,19 +127,18 @@ CMD_UNDO2(DeleteChar, "delete-char", Strings del,
         return;
     }
     auto& mlbuffer = ed.getBuff();
-    auto& cu = mlbuffer.getCursor();
     switch(type) {
     case CMD_UNDO:
-        cu.restoreExcursion(locs);
+        mlbuffer.restoreCursors(locs);
         mlbuffer.insert(del);
-        cu.restoreExcursion(locs);
+        mlbuffer.restoreCursors(locs);
         break;
     case CMD_REDO:
-        cu.restoreExcursion(locs);
+        mlbuffer.restoreCursors(locs);
         mlbuffer.removeCurrent();
         break;
     default:
-        locs = cu.saveExcursion();
+        locs = mlbuffer.saveCursors();
         del = mlbuffer.removeCurrent();
     };
 }
@@ -151,21 +146,20 @@ CMD_UNDO2(DeleteChar, "delete-char", Strings del,
 CMD_UNDO2(KillLine, "kill-line", Strings del, Positions locs) {
     auto& ed = Editor::getInstance();
     auto& buf = ed.getBuff();
-    auto& cu = buf.getCursor();
     if(ed.isRegionActive())
         ed.stopRegion();
     switch(type) {
     case CMD_UNDO:
-        cu.restoreExcursion(locs);
+        buf.restoreCursors(locs);
         buf.insert(del);
-        cu.restoreExcursion(locs);
+        buf.restoreCursors(locs);
         break;
     case CMD_REDO:
-        cu.restoreExcursion(locs);
+        buf.restoreCursors(locs);
         buf.killLine();
         break;
     default:
-        locs = cu.saveExcursion();
+        locs = buf.saveCursors();
         del = buf.killLine();
     };
 }
@@ -173,8 +167,7 @@ CMD_UNDO2(KillLine, "kill-line", Strings del, Positions locs) {
 CMD_UNDO2(KeepLines, "keep-lines", RemovedLines lines, std::string regex) {
     auto& ed = Editor::getInstance();
     auto& buf = ed.getBuff();
-    auto& cu = buf.getCursor();
-    if(cu.count() > 1) {
+    if(buf.cursorCount() > 1) {
         CMBAR_MSG("keep-lines works only with single cursor!\n");
         return;
     }
@@ -197,8 +190,7 @@ CMD_UNDO2(KeepLines, "keep-lines", RemovedLines lines, std::string regex) {
 CMD_UNDO2(RemoveLines, "remove-lines", RemovedLines lines, std::string regex) {
     auto& ed = Editor::getInstance();
     auto& buf = ed.getBuff();
-    auto& cu = buf.getCursor();
-    if(cu.count() > 1) {
+    if(buf.cursorCount() > 1) {
         CMBAR_MSG("remove-lines works only with single cursor!\n");
         return;
     }
@@ -224,14 +216,13 @@ CMD_UNDO3(ShellToBuffer, "shell-to-buffer", Positions before, Positions after,
     if(ed.isRegionActive())
         ed.stopRegion();
     auto& mlb = ed.getBuff();
-    auto& cu = mlb.getCursor();
     switch(type) {
     case CMD_UNDO:
-        cu.restoreExcursion(before);
+        mlb.restoreCursors(before);
         mlb.remove(before, after);
         break;
     case CMD_REDO:
-        cu.restoreExcursion(before);
+        mlb.restoreCursors(before);
         mlb.insert(output.c_str());
         break;
     default:
@@ -246,9 +237,9 @@ CMD_UNDO3(ShellToBuffer, "shell-to-buffer", Positions before, Positions after,
             canIundo = false;
             return;
         }
-        before = cu.saveExcursion();
+        before = mlb.saveCursors();
         mlb.insert(output.c_str());
-        after = cu.saveExcursion();
+        after = mlb.saveCursors();
     };
 }
 
@@ -256,7 +247,6 @@ CMD_UNDO3(PasteRegion, "paste-region", Strings del, Positions before,
           Positions after) {
     auto& ed = Editor::getInstance();
     auto& mlbuffer = ed.getBuff();
-    auto& cu = mlbuffer.getCursor();
     if(type == CMD_FRESH) {
         if(!ed.hasCopy()) {
             canIundo = false;
@@ -268,18 +258,18 @@ CMD_UNDO3(PasteRegion, "paste-region", Strings del, Positions before,
     }
     switch(type) {
     case CMD_UNDO:
-        cu.restoreExcursion(before);
+        mlbuffer.restoreCursors(before);
         mlbuffer.remove(before, after);
         break;
     case CMD_REDO:
-        cu.restoreExcursion(before);
+        mlbuffer.restoreCursors(before);
         mlbuffer.insert(del);
         break;
     default:
-        before = cu.saveExcursion();
+        before = mlbuffer.saveCursors();
         del = ed.copyData();
         mlbuffer.insert(del);
-        after = cu.saveExcursion();
+        after = mlbuffer.saveCursors();
     };
 }
 
@@ -288,7 +278,6 @@ CMD_UNDO3(CutRegion, "cut-region", Strings del, Positions before,
           Positions regs) {
     auto& ed = Editor::getInstance();
     auto& mlbuffer = ed.getBuff();
-    auto& cu = mlbuffer.getCursor();
     if(type == CMD_FRESH && !ed.isRegionActive()) {
         canIundo = false;
         CMBAR_MSG("No selection to cut!\n");
@@ -296,19 +285,19 @@ CMD_UNDO3(CutRegion, "cut-region", Strings del, Positions before,
     }
     switch(type) {
     case CMD_UNDO:
-        cu.restoreExcursion(regs);
+        mlbuffer.restoreCursors(regs);
         mlbuffer.insert(del);
         break;
     case CMD_REDO:
         del = mlbuffer.remove(regs, before);
-        cu.restoreExcursion(regs);
+        mlbuffer.restoreCursors(regs);
         break;
     default:
-        before = cu.saveExcursion();
+        before = mlbuffer.saveCursors();
         regs = mlbuffer.getRegionLocs();
         del = mlbuffer.remove(regs, before);
         ed.setCopyData(del);
-        cu.restoreExcursion(regs);
+        mlbuffer.restoreCursors(regs);
     };
     ed.stopRegion();
 }
@@ -333,76 +322,76 @@ CMD_NO_UNDO(ReloadBuffer, "reload-buffer") {
 
 CMD_NO_UNDO(CursorDown, "cursor-down") {
     auto& mlbuffer = Editor::getInstance().getBuff();
-    mlbuffer.getCursor().down(&mlbuffer);
+    mlbuffer.down();
 }
 
 CMD_NO_UNDO(CursorUp, "cursor-up") {
     auto& mlbuffer = Editor::getInstance().getBuff();
-    mlbuffer.getCursor().up(&mlbuffer);
+    mlbuffer.up();
 }
 
 CMD_NO_UNDO(CursorRight, "cursor-right") {
     auto& mlbuffer = Editor::getInstance().getBuff();
-    mlbuffer.getCursor().right(&mlbuffer);
+    mlbuffer.right();
 }
 
 CMD_NO_UNDO(CursorLeft, "cursor-left") {
     auto& mlbuffer = Editor::getInstance().getBuff();
-    mlbuffer.getCursor().left(&mlbuffer);
+    mlbuffer.left();
 }
 
 CMD_NO_UNDO(CursorReset, "cursor-reset") {
     auto& mlbuffer = Editor::getInstance().getBuff();
-    mlbuffer.getCursor().reset(&mlbuffer);
+    mlbuffer.begin();
 }
 
 CMD_NO_UNDO(CursorEnd, "cursor-end") {
     auto& mlbuffer = Editor::getInstance().getBuff();
-    mlbuffer.getCursor().end(&mlbuffer);
+    mlbuffer.end();
 }
 
 CMD_NO_UNDO(CursorHome, "cursor-home") {
     auto& mlbuffer = Editor::getInstance().getBuff();
-    mlbuffer.getCursor().home(&mlbuffer);
+    mlbuffer.startOfLine();
 }
 
 CMD_NO_UNDO(CursorLineEnd, "cursor-line-end") {
     auto& mlbuffer = Editor::getInstance().getBuff();
-    mlbuffer.getCursor().lineEnd(&mlbuffer);
+    mlbuffer.endOfLine();
 }
 
 CMD_NO_UNDO(PageDown, "page-down") {
     auto& ed = Editor::getInstance();
     auto& args = ed.getArgs();
     auto& mlbuffer = ed.getBuff();
-    mlbuffer.getCursor().pageDown(&mlbuffer, args.pageScrollJump);
+    mlbuffer.pageDown(args.pageScrollJump);
 }
 
 CMD_NO_UNDO(PageUp, "page-up") {
     auto& ed = Editor::getInstance();
     auto& args = ed.getArgs();
     auto& mlbuffer = ed.getBuff();
-    mlbuffer.getCursor().pageUp(&mlbuffer, args.pageScrollJump);
+    mlbuffer.pageUp(args.pageScrollJump);
 }
 
 CMD_NO_UNDO(NextPara, "next-para") {
     auto& mlbuffer = Editor::getInstance().getBuff();
-    mlbuffer.getCursor().nextPara(&mlbuffer);
+    mlbuffer.nextPara();
 }
 
 CMD_NO_UNDO(PreviousPara, "previous-para") {
     auto& mlbuffer = Editor::getInstance().getBuff();
-    mlbuffer.getCursor().previousPara(&mlbuffer);
+    mlbuffer.previousPara();
 }
 
 CMD_NO_UNDO(NextWord, "next-word") {
     auto& mlbuffer = Editor::getInstance().getBuff();
-    mlbuffer.getCursor().nextWord(&mlbuffer);
+    mlbuffer.nextWord();
 }
 
 CMD_NO_UNDO(PreviousWord, "previous-word") {
     auto& mlbuffer = Editor::getInstance().getBuff();
-    mlbuffer.getCursor().previousWord(&mlbuffer);
+    mlbuffer.previousWord();
 }
 
 CMD_NO_UNDO(MatchParen, "match-paren") {
@@ -463,11 +452,11 @@ CMD_NO_UNDO(StartRegion, "start-region") {
 
 CMD_NO_UNDO(Cancel, "cancel") {
     auto& ed = Editor::getInstance();
-    auto& cu = ed.getBuff().getCursor();
+    auto& buf = ed.getBuff();
     if(ed.isRegionActive())
         ed.stopRegion();
-    if(cu.count() > 1)
-        cu.clearAllButFirst();
+    if(buf.cursorCount() > 1)
+        buf.clearAllCursorsButFirst();
 }
 
 CMD_NO_UNDO(ScratchBuffer, "scratch-buffer") {
@@ -595,29 +584,27 @@ CMD_NO_UNDO(CommandRedo, "command-redo") {
 
 CMD_NO_UNDO(AddCursorDown, "add-cursor-down") {
     auto& buf = Editor::getInstance().getBuff();
-    auto& cu = buf.getCursor();
-    auto count = cu.count();
-    auto pos = cu.at(count-1);
+    auto count = buf.cursorCount();
+    auto pos = buf.cursorAt(count - 1);
     if(pos.y >= buf.length()) {
         CMBAR_MSG("add-cursor-down: reached end of buffer!\n");
         return;
     }
     ++pos.y;
     pos.x = std::min(buf.at(pos.y).length(), pos.x);
-    cu.addBack(pos);
+    buf.addCursorFromBack(pos);
 }
 
 CMD_NO_UNDO(AddCursorUp, "add-cursor-up") {
     auto& buf = Editor::getInstance().getBuff();
-    auto& cu = buf.getCursor();
-    auto pos = cu.at(0);
+    auto pos = buf.cursorAt(0);
     if(pos.y <= 0) {
         CMBAR_MSG("add-cursor-up: reached start of buffer!\n");
         return;
     }
     --pos.y;
     pos.x = std::min(buf.at(pos.y).length(), pos.x);
-    cu.addFront(pos);
+    buf.addCursorFromFront(pos);
 }
 
 CMD_NO_UNDO(Download, "download-url") {
@@ -637,14 +624,13 @@ CMD_UNDO3(DownloadBuffer, "download-to-buffer", Positions before, Positions afte
     if(ed.isRegionActive())
         ed.stopRegion();
     auto& mlb = ed.getBuff();
-    auto& cu = mlb.getCursor();
     switch(type) {
     case CMD_UNDO:
-        cu.restoreExcursion(before);
+        mlb.restoreCursors(before);
         mlb.remove(before, after);
         break;
     case CMD_REDO:
-        cu.restoreExcursion(before);
+        mlb.restoreCursors(before);
         mlb.insert(output.c_str());
         break;
     default:
@@ -658,9 +644,9 @@ CMD_UNDO3(DownloadBuffer, "download-to-buffer", Positions before, Positions afte
             canIundo = false;
             return;
         }
-        before = cu.saveExcursion();
+        before = mlb.saveCursors();
         mlb.insert(output.c_str());
-        after = cu.saveExcursion();
+        after = mlb.saveCursors();
     };
 }
 
@@ -682,12 +668,11 @@ CMD_NO_UNDO(SwitchBuffer, "buffer-switch") {
 CMD_NO_UNDO(TextSearch, "search") {
     auto& ed = Editor::getInstance();
     auto& buf = ed.getBuff();
-    auto& cu = buf.getCursor();
-    if(cu.count() > 1) {
+    if(buf.cursorCount() > 1) {
         CMBAR_MSG("search works only with single cursor!\n");
         return;
     }
-    auto pos = cu.saveExcursion();
+    auto pos = buf.saveCursors();
     ISearch is(buf);
     is.reset();
     auto ret = ed.prompt("Search: ", nullptr, &is);

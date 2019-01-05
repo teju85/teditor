@@ -182,12 +182,12 @@ public:
     Positions saveCursors() const;
     /** restore the state of all cursors to the given one */
     void restoreCursors(const Positions& pos);
+    /** cursor at i'th index */
+    const Pos2di& cursorAt(int i) const { return locs[i]; }
     /** @} */
 
     void indent();
 
-    Cursor& getCursor() { return cursor; }
-    const Cursor& getCursor() const { return cursor; }
     virtual int totalLinesNeeded() const;
     void lineUp();
     virtual void lineDown();
@@ -255,7 +255,6 @@ protected:
     Pos2d<int> screenStart, screenDim;
     std::vector<Line> lines;
     int startLine;
-    Cursor cursor;
     bool modified, readOnly;
     std::string buffName, fileName, dirName;
     Regions regions;

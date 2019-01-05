@@ -34,22 +34,22 @@ CMD_NO_UNDO(PromptInsertCharQuit, "prompt-insert-char-quit") {
 
 CMD_NO_UNDO(PromptCursorRight, "prompt-cursor-right") {
     auto& cmBar = Editor::getInstance().getCmBar();
-    cmBar.getCursor().right(&cmBar);
+    cmBar.right();
 }
 
 CMD_NO_UNDO(PromptCursorLeft, "prompt-cursor-left") {
     auto& cmBar = Editor::getInstance().getCmBar();
-    cmBar.getCursor().left(&cmBar);
+    cmBar.left();
 }
 
 CMD_NO_UNDO(PromptCursorHome, "prompt-cursor-home") {
     auto& cmBar = Editor::getInstance().getCmBar();
-    cmBar.getCursor().home(&cmBar);
+    cmBar.startOfLine();
 }
 
 CMD_NO_UNDO(PromptCursorLineEnd, "prompt-cursor-line-end") {
     auto& cmBar = Editor::getInstance().getCmBar();
-    cmBar.getCursor().lineEnd(&cmBar);
+    cmBar.endOfLine();
 }
 
 CMD_NO_UNDO(PromptBackspaceChar, "prompt-backspace-char") {

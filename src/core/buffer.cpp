@@ -13,12 +13,11 @@
 namespace teditor {
 
 Buffer::Buffer(const std::string& name):
-    screenStart(), screenDim(), lines(), startLine(0), cursor(),
-    modified(false), readOnly(false), buffName(name), fileName(), dirName(),
-    regions(), regionActive(false), cmds(), topCmd(-1),
-    mode(Mode::createMode("text")), locs(), undoStack(), redoStack() {
+    screenStart(), screenDim(), lines(), startLine(0), modified(false),
+    readOnly(false), buffName(name), fileName(), dirName(), regions(),
+    regionActive(false), cmds(), topCmd(-1), mode(Mode::createMode("text")),
+    locs(), undoStack(), redoStack() {
     addLine();
-    cursor.reset(this);
     dirName = getpwd();
     locs.push_back(Pos2di(0, 0));
     begin();
@@ -27,7 +26,7 @@ Buffer::Buffer(const std::string& name):
 Buffer::~Buffer() {
     if(!fileName.empty() && Editor::instanceReady()) {
         auto& ed = Editor::getInstance();
-        int line = cursor.at(0).y;
+        int line = locs[0].y;
         ed.addFileHistory(fileName, line);
     }
 }
@@ -80,7 +79,7 @@ Strings Buffer::regionAsStr() const {
         return out;
     int count = (int)regions.size();
     for(int j=0;j<count;++j) {
-        auto rs = regionAsStr(regions[j], cursor.at(j));
+        auto rs = regionAsStr(regions[j], locs[j]);
         out.push_back(rs);
     }
     return out;
@@ -107,7 +106,7 @@ std::string Buffer::regionAsStr(const Pos2di& start, const Pos2di& end) const {
 
 void Buffer::enableRegions() {
     regionActive = true;
-    regions.enable(cursor.getLocs());
+    regions.enable(locs);
 }
 
 void Buffer::disableRegions() {
@@ -147,7 +146,7 @@ void Buffer::loadDir(const std::string& dir) {
         lines.back().append(buff.c_str());
     }
     resetBufferState(0, first);
-    cursor.reset(this);
+    begin();
     readOnly = true;
 }
 
@@ -166,12 +165,12 @@ void Buffer::loadFile(const std::string& file, int line) {
     }
     fp.close();
     resetBufferState(line, absFile);
-    cursor.at(0) = {0, line};
+    locs[0] = {0, line};
 }
 
 void Buffer::resetBufferState(int line, const std::string& file) {
     startLine = line;
-    cursor.reset(this);
+    begin();
     modified = false;
     readOnly = isReadOnly(file.c_str());
     fileName = file;
@@ -191,9 +190,9 @@ void Buffer::drawBuffer(Editor& ed) {
 }
 
 void Buffer::drawCursor(Editor& ed, const std::string& bg) {
-    int n = cursor.count();
+    int n = cursorCount();
     for(int i=0;i<n;++i) {
-        auto& culoc = cursor.at(i);
+        auto& culoc = locs[i];
         char c = charAt(culoc);
         auto screenloc = buffer2screen(culoc);
         DEBUG("drawCursor: i=%d x,y=%d,%d sloc=%d,%d start=%d\n",
@@ -207,7 +206,7 @@ void Buffer::drawStatusBar(Editor& ed) {
     int x = screenStart.x;
     int y = screenStart.x + screenDim.y;
     ed.sendString(x, y, "statusfg", "statusbg", line.c_str(), screenDim.x);
-    const auto& loc = cursor.at(0);
+    const auto& loc = locs[0];
     // modified + linenum
     int count = ed.sendStringf(x, y, "statusfg", "statusbg",
                                " %s [%d:%d]/%d ", modified? "**" : "  ",
@@ -220,9 +219,9 @@ void Buffer::drawStatusBar(Editor& ed) {
                             " <%d/%d> [%s]", ed.currBuffId()+1, ed.buffSize(),
                             readOnly? "r-" : "rw");
     // multiple cursor counts
-    if(cursor.count() > 1) {
+    if(cursorCount() > 1) {
         count += ed.sendStringf(x+count, y, "statusfg", "statusbg",
-                                " mc:%d", cursor.count());
+                                " mc:%d", cursorCount());
     }
     // mode
     count += ed.sendStringf(x+count, y, "statusfg", "statusbg",
@@ -258,7 +257,7 @@ int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
         for(int i=0;i<count;++i) {
             // under the highlighted region
             auto c = str[start + i];
-            if(regions.isInside(lineNum, start+i, cursor))
+            if(regions.isInside(lineNum, start+i, locs))
                 ed.sendChar(xStart+i, y, "highlightfg", "highlightbg", c);
             else if(isD)
                 ed.sendChar(xStart+i, y, "dirfg", bg, c);
@@ -297,7 +296,7 @@ Pos2d<int> Buffer::screen2buffer(const Pos2d<int>& loc) const {
 }
 
 void Buffer::insertLine(int i) {
-    const auto& pos = cursor.at(i);
+    const auto& pos = locs[i];
     lines.insert(lines.begin()+pos.y+1, Line());
     auto& oldline = lines[pos.y];
     bool eol = pos.x >= oldline.length();
@@ -308,18 +307,15 @@ void Buffer::insertLine(int i) {
     }
     // inserting line at the current cursor means all other cursors below it
     // must also be moved down by one line to preserve their right location
-    cursor.moveDownAllNextCursors(i);
-    cursor.at(i).x = 0;
+    moveDownAllNextCursors(i);
+    locs[i].x = 0;
 }
 
 void Buffer::insert(char c) {
     modified = true;
-    int len = cursor.count();
-    for(int i=0;i<len;++i) {
-        insert(c, i);
-    }
+    forEachCursor([c, this](Pos2di& cu, size_t idx) { insert(c, (int)idx); });
     lineUp();
-    cursor.removeDuplicates();
+    removeDuplicateCursors();
 }
 
 ///@todo: what if a single line crosses the whole screen!?
@@ -328,23 +324,22 @@ void Buffer::insert(char c, int i) {
         insertLine(i);
         return;
     }
-    auto& culoc = cursor.at(i);
+    auto& culoc = locs[i];
     auto& line = lines[culoc.y];
     line.insert(c, culoc.x);
     // inserting a char should move other cursors in the same line!
-    cursor.moveRightCursorsOnSameLine(i);
+    moveRightCursorsOnSameLine(i);
 }
 
 void Buffer::insert(const Strings& strs) {
-    ASSERT((int)strs.size() == cursor.count(),
+    int len = cursorCount();
+    ASSERT((int)strs.size() == len,
            "insert: lines passed not the same as number of cursors! [%d,%d]",
-           (int)strs.size(), cursor.count());
-    int len = cursor.count();
-    for(int i=0;i<len;++i) {
-        auto& str = strs[i];
-        for(auto c : str)
-            insert(c, i);
-    }
+           (int)strs.size(), len);
+    forEachCursor([&strs, this](Pos2di& cu, size_t idx) {
+                      auto& str = strs[idx];
+                      for(auto c : str) insert(c, (int)idx);
+                  });
 }
 
 void Buffer::insert(const char* buf) {
@@ -358,7 +353,7 @@ RemovedLines Buffer::keepRemoveLines(Pcre& pc, bool keep) {
     RemovedLines res;
     bool isRegion = isRegionActive();
     for(int i=0;i<(int)lines.size();++i) {
-        if(isRegion && !regions.isInside(i, 0, cursor))
+        if(isRegion && !regions.isInside(i, 0, locs))
             continue;
         const std::string str = lines[i].get();
         bool match = pc.isMatch(str);
@@ -369,7 +364,7 @@ RemovedLines Buffer::keepRemoveLines(Pcre& pc, bool keep) {
         --i;
     }
     if(!res.empty()) {
-        cursor.reset(this);
+        begin();
         modified = true;
     }
     // ensure that you don't segfault on full buffer removal!
@@ -386,36 +381,28 @@ void Buffer::addLines(const RemovedLines& rlines) {
         lines.insert(lines.begin()+idx, Line());
         lines[idx].append(rl.str);
     }
-    cursor.reset(this);
+    begin();
 }
 
 void Buffer::gotoLine(int lineNum) {
-    int len = cursor.count();
-    for(int i=0;i<len;++i) {
-        auto& culoc = cursor.at(i);
-        culoc.y = std::min((int)lines.size()-1, std::max(0, lineNum));
-    }
-    cursor.removeDuplicates();
+    forEachCursor([lineNum, this](Pos2di& cu, size_t idx) {
+                      cu.y = std::min((int)lines.size()-1, std::max(0, lineNum));
+                  });
     startLine = std::max(0, lineNum - screenDim.y/2);
 }
 
 void Buffer::matchCurrentParen() {
-    int len = cursor.count();
     bool isOpen;
-    for(int i=0;i<len;++i) {
-        bool tmp;
-        auto loc = matchCurrentParen(i, i==0? isOpen : tmp);
-        cursor.at(i) = loc;
-    }
-    if(isOpen)
-        lineUp();
-    else
-        lineDown();
-    cursor.removeDuplicates();
+    forEachCursor([&isOpen, this](Pos2di& cu, size_t i) {
+                      bool tmp;
+                      auto loc = matchCurrentParen((int)i, i==0? isOpen : tmp);
+                      cu = loc;
+                  });
+    isOpen? lineUp() : lineDown();
 }
 
 Pos2d<int> Buffer::matchCurrentParen(int i, bool& isOpen) {
-    const auto& culoc = cursor.at(i);
+    const auto& culoc = locs[i];
     const auto& line = at(culoc.y).get();
     char c = line[culoc.x];
     char mc = getMatchingParen(c);
@@ -459,23 +446,23 @@ Pos2d<int> Buffer::matchCurrentParen(int i, bool& isOpen) {
 Strings Buffer::remove() {
     Strings del;
     modified = true;
-    int len = cursor.count();
+    int len = cursorCount();
     int minLoc = getMinStartLoc();
     for(int i=0;i<len;++i) {
-        auto& culoc = cursor.at(i);
+        auto& culoc = locs[i];
         if(culoc.x == minLoc && culoc.y == 0) {
             del.push_back("");
             continue;
         }
         if(culoc.x > 0) {
-            cursor.moveLeftCursorsOnSameLine(i);
+            moveLeftCursorsOnSameLine(i);
             auto str = lines[culoc.y].erase(culoc.x, 1);
             del.push_back(str);
             continue;
         }
         int oldy = culoc.y;
         const auto& oldstr = lines[oldy].get();
-        cursor.moveUpAllNextCursors(i);
+        moveUpAllNextCursors(i);
         auto& newline = lines[culoc.y];
         culoc.x = newline.length();
         newline.insert(oldstr.c_str(), culoc.x);
@@ -555,9 +542,9 @@ std::string Buffer::removeFrom(const Pos2d<int>& start,
 Strings Buffer::removeCurrent() {
     Strings del;
     modified = true;
-    int len = cursor.count();
+    int len = cursorCount();
     for(int i=0;i<len;++i) {
-        auto& culoc = cursor.at(i);
+        auto& culoc = locs[i];
         if(culoc.x == lines[culoc.y].length() && culoc.y == length()-1) {
             del.push_back("");
             continue;
@@ -581,9 +568,9 @@ Strings Buffer::removeCurrent() {
 Strings Buffer::killLine() {
     Strings del;
     modified = true;
-    int len = cursor.count();
+    int len = cursorCount();
     for(int i=0;i<len;++i) {
-        const auto& culoc = cursor.at(i);
+        const auto& culoc = locs[i];
         auto& line = lines.at(culoc.y);
         if(culoc.x >= line.length()) {
             if(culoc.y == length()-1) {
@@ -604,9 +591,9 @@ Strings Buffer::killLine() {
 
 void Buffer::sortRegions() {
     modified = true;
-    int len = cursor.count();
+    int len = cursorCount();
     for(int i=0;i<len;++i) {
-        auto& culoc = cursor.at(i);
+        auto& culoc = locs[i];
         int cuy = culoc.y;
         int ry = regions.at(i).y;
         DEBUG("sortRegions: cuy=%d ry=%d i=%d\n", cuy, ry, i);
@@ -624,7 +611,7 @@ char Buffer::charAt(const Pos2d<int>& pos) const {
 }
 
 int Buffer::totalLinesNeeded() const {
-    int end = cursor.at(0).y;
+    int end = locs[0].y;
     int len = 0;
     for(int i=startLine;i<=end;++i)
         len += lines[i].numLinesNeeded(screenDim.x);
@@ -637,11 +624,11 @@ void Buffer::lineUp() {
 }
 
 void Buffer::lineDown() {
-    startLine = std::min(startLine, cursor.at(0).y);
+    startLine = std::min(startLine, locs[0].y);
 }
 
 void Buffer::lineEnd() {
-    auto screen = buffer2screen(cursor.at(0));
+    auto screen = buffer2screen(locs[0]);
     int relY = screen.y - startLine;
     if(relY < screenDim.y)
         return;
@@ -686,7 +673,6 @@ void Buffer::clear() {
     lines.clear();
     addLine();
     startLine = 0;
-    cursor.reset(this);
     begin();
     disableRegions();
 }
@@ -932,9 +918,9 @@ void Buffer::moveUpAllNextCursors(int i) {
 
 ///@todo: support undo
 void Buffer::indent() {
-    int len = cursor.count();
+    int len = cursorCount();
     for(int i=0;i<len;++i) {
-        auto& cu = cursor.at(i);
+        auto& cu = locs[i];
         int line = cu.y;
         int count = mode->indent(*this, line);
         DEBUG("Indent: count=%d line=%d\n", count, line);

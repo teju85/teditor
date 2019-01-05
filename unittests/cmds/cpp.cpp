@@ -51,14 +51,13 @@ TEST_CASE("CppModeIndent") {
     Buffer ml;
     ml.resize({0, 0}, {30, 10});
     ml.load("samples/cpp-mode.cpp");
-    auto& culoc = ml.getCursor().at(0);
     SECTION("post-namespace indentation") {
-        culoc.y = 7;
+        for(int i=0;i<7;++i) ml.down();
         ml.indent();
         REQUIRE("static int thisLineNoIndent = 0;" == ml.at(7).get());
     }
     SECTION("#include and other directives") {
-        culoc.y = 4;
+        for(int i=0;i<4;++i) ml.down();
         ml.indent();
         REQUIRE("#include <stdint.h>" == ml.at(4).get());
     }

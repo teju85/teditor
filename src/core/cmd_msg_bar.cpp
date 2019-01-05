@@ -75,14 +75,14 @@ int CmdMsgBar::totalLinesNeeded() const {
 }
 
 void CmdMsgBar::insert(const char* str) {
-    auto& culoc = cursor.at(0);
+    auto& culoc = locs[0];
     lines[0].insert(str, culoc.x);
     culoc.x += strlen(str);
 }
 
 // always insert on the first line!
 void CmdMsgBar::insert(char c) {
-    auto& culoc = cursor.at(0);
+    auto& culoc = locs[0];
     lines[0].insert(c, culoc.x);
     ++culoc.x;
     if(!usingChoices())
@@ -112,7 +112,7 @@ void CmdMsgBar::updateChoices() {
 }
 
 void CmdMsgBar::clear() {
-    auto& culoc = cursor.at(0);
+    auto& culoc = locs[0];
     auto& line = lines[culoc.y];
     line.erase(0, line.length());
     culoc = {0, 0};
