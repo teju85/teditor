@@ -132,10 +132,6 @@ TEST_CASE("Buffer::Insert") {
     strs.push_back("line1");
     REQUIRE_NOTHROW(ml.insert(strs));
     REQUIRE("TAAline1* Hello" == ml.at(0).get());
-
-    // mismatch in number of cursors
-    strs.push_back("line2");
-    REQUIRE_THROWS(ml.insert(strs));
 }
 
 TEST_CASE("Buffer::InsertLine") {

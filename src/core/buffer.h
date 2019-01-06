@@ -201,7 +201,7 @@ public:
     const std::string& pwd() const { return dirName; }
     bool isRO() const { return readOnly; }
     bool isModified() const { return modified; }
-    bool isRegionActive() const { return regionActive; }
+    bool isRegionActive() const { return !regions.empty(); }
     virtual int getMinStartLoc() const { return 0; }
     std::string dirModeGetFileAtLine(int line);
 
@@ -220,8 +220,8 @@ public:
     const AttrColor& getColor(const std::string& name) const;
     int verticalJump(float jump) const { return (int)(jump * screenDim.y); }
     const std::string& getWord() const { return mode->word(); }
-    void enableRegions();
-    void disableRegions();
+    void enableRegions() { regions.enable(locs); }
+    void disableRegions() { regions.clear(); }
     const std::string& modeName() const { return mode->name(); }
 
 protected:
@@ -229,7 +229,9 @@ protected:
     enum OpType {
         /** insertion operation */
         OpInsert = 0,
-        /** char insertion operation */
+        /** inserting same string across all cursors */
+        OpInsertString,
+        /** inserting same char across all cursors */
         OpInsertChar,
         /** backspace operation */
         OpDelete
@@ -246,8 +248,10 @@ protected:
         /** till where the operation was performed */
         Positions after;
         /** characters that were inserted/deleted in the above range */
-        Strings chars;
-        /** a char that was inserted across all the cursors */
+        Strings strs;
+        /** string that was inserted across all the cursors */
+        std::string str;
+        /** char that was inserted across all the cursors */
         char c;
         /** type of operation */
         OpType type;
@@ -264,7 +268,6 @@ protected:
     bool modified, readOnly;
     std::string buffName, fileName, dirName;
     Regions regions;
-    bool regionActive;
     std::vector<CmdPtr> cmds;
     int topCmd;
     ///@todo: support applying multiple modes
@@ -276,6 +279,7 @@ protected:
     /** stack of operations for redo */
     OpStack redoStack;
 
+    void applyInsertOp(OpData& op, bool pushToStack=true);
     void insert(char c, size_t i);
     void addLine() { lines.push_back(Line()); }
     void resetBufferState(int line, const std::string& file);

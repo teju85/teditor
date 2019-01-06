@@ -5,18 +5,16 @@
 #include "logger.h"
 #include <iostream>
 #include <fstream>
-#include <unistd.h>
 #include <algorithm>
-#include <stack>
 
 
 namespace teditor {
 
 Buffer::Buffer(const std::string& name):
     screenStart(), screenDim(), lines(), startLine(0), modified(false),
-    readOnly(false), buffName(name), fileName(), dirName(), regions(),
-    regionActive(false), cmds(), topCmd(-1), mode(Mode::createMode("text")),
-    locs(), undoStack(), redoStack() {
+    readOnly(false), buffName(name), fileName(), dirName(), regions(), cmds(),
+    topCmd(-1), mode(Mode::createMode("text")), locs(), undoStack(),
+    redoStack() {
     addLine();
     dirName = getpwd();
     locs.push_back(Pos2di(0, 0));
@@ -30,6 +28,78 @@ Buffer::~Buffer() {
         ed.addFileHistory(fileName, line);
     }
 }
+
+////// Start: Buffer editing //////
+void Buffer::insert(char c) {
+    OpData op;
+    op.type = OpInsertChar;
+    op.c = c;
+    applyInsertOp(op);
+}
+
+void Buffer::insert(const Strings& strs) {
+    OpData op;
+    op.type = OpInsert;
+    op.strs = strs;
+    applyInsertOp(op);
+}
+
+void Buffer::insert(const std::string& buf) {
+    OpData op;
+    op.type = OpInsertString;
+    op.str = buf;
+    applyInsertOp(op);
+}
+
+void Buffer::applyInsertOp(OpData& op, bool pushToStack) {
+    if(pushToStack)
+        op.before = saveCursors();
+    else
+        restoreCursors(op.before);
+    if(op.type == OpInsert) {
+        forEachCursor([&op, this](Pos2di& cu, size_t idx) {
+                          auto& str = op.strs[idx];
+                          for(auto c : str) insert(c, (int)idx);
+                      });
+    } else if(op.type == OpInsertString) {
+        for(auto c : op.str) {
+            forEachCursor([c, this](Pos2di& cu, size_t idx) {
+                              insert(c, (int)idx);
+                          });
+        }
+    } else if(op.type == OpInsertChar) {
+        forEachCursor([&op, this](Pos2di& cu, size_t idx) {
+                          insert(op.c, (int)idx);
+                      });
+    }
+    lineUp();
+    modified = true;
+    if(pushToStack) {
+        op.after = saveCursors();
+        undoStack.push(op);
+    } else {
+        restoreCursors(op.after);
+    }
+}
+
+///@todo: what if a single line crosses the whole screen!?
+void Buffer::insert(char c, size_t i) {
+    auto& pos = locs[i];
+    if(c == '\n' || c == (char)Key_Enter) {
+        auto newLine = lines[pos.y].split(pos.x);
+        lines.insert(lines.begin() + pos.y + 1, newLine);
+        // inserting line at the current cursor means all other cursors below it
+        // must also be moved down by one line to preserve their right location
+        moveDownAllNextCursors(i);
+        pos.x = 0;
+        return;
+    }
+    auto& line = lines[pos.y];
+    line.insert(c, pos.x);
+    // inserting a char should move other cursors in the same line!
+    moveRightCursorsOnSameLine(i);
+}
+////// End: Buffer editing //////
 
 void Buffer::clearStack(OpStack& st) {
     while(!st.empty()) st.pop();
@@ -100,16 +170,6 @@ std::string Buffer::regionAsStr(const Pos2di& start, const Pos2di& end) const {
     const auto& line = at(big.y);
     out += line.get().substr(0, big.x);
     return out;
-}
-
-void Buffer::enableRegions() {
-    regionActive = true;
-    regions.enable(locs);
-}
-
-void Buffer::disableRegions() {
-    regionActive = false;
-    regions.clear();
 }
 
 void Buffer::resize(const Pos2d<int>& start, const Pos2d<int>& dim) {
@@ -287,45 +347,6 @@ Pos2d<int> Buffer::screen2buffer(const Pos2d<int>& loc) const {
     int dely = rel.y - sy + lines[res.y].numLinesNeeded(w);
     res.x = dely * w + rel.x;
     return res;
-}
-
-void Buffer::insert(char c) {
-    modified = true;
-    forEachCursor([c, this](Pos2di& cu, size_t idx) { insert(c, (int)idx); });
-    lineUp();
-}
-
-///@todo: what if a single line crosses the whole screen!?
-void Buffer::insert(char c, size_t i) {
-    auto& pos = locs[i];
-    if(c == '\n' || c == (char)Key_Enter) {
-        auto newLine = lines[pos.y].split(pos.x);
-        lines.insert(lines.begin() + pos.y + 1, newLine);
-        // inserting line at the current cursor means all other cursors below it
-        // must also be moved down by one line to preserve their right location
-        moveDownAllNextCursors(i);
-        pos.x = 0;
-        return;
-    }
-    auto& line = lines[pos.y];
-    line.insert(c, pos.x);
-    // inserting a char should move other cursors in the same line!
-    moveRightCursorsOnSameLine(i);
-}
-
-void Buffer::insert(const Strings& strs) {
-    int len = cursorCount();
-    ASSERT((int)strs.size() == len,
-           "insert: lines passed not the same as number of cursors! [%d,%d]",
-           (int)strs.size(), len);
-    forEachCursor([&strs, this](Pos2di& cu, size_t idx) {
-                      auto& str = strs[idx];
-                      for(auto c : str) insert(c, (int)idx);
-                  });
-}
-
-void Buffer::insert(const std::string& buf) {
-    for(auto c : buf) insert(c);
 }
 
 RemovedLines Buffer::keepRemoveLines(Pcre& pc, bool keep) {
@@ -628,8 +649,7 @@ void Buffer::save() {
     int len = (int)lines.size();
     for(int i=0;i<len;++i) {
         // don't write the final line if it is empty
-        if(i == len-1 && lines[i].empty())
-            continue;
+        if(i == len-1 && lines[i].empty()) continue;
         fp << lines[i].get() << "\n";
     }
     fp.close();
@@ -641,8 +661,7 @@ void Buffer::save() {
 }
 
 void Buffer::clear() {
-    for(auto& line : lines)
-        line.clear();
+    for(auto& line : lines) line.clear();
     lines.clear();
     addLine();
     startLine = 0;
