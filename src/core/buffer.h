@@ -36,18 +36,18 @@ public:
     virtual ~Buffer();
 
     /**
-     * @defgroup Insertion Various of adding characters into the buffer
+     * @defgroup BufferEdit Various of editing chars in the buffer
      * @{
      */
+    /** insert a character at all current cursor locations */
     virtual void insert(char c);
-    void insert(const Strings& strs);
-    virtual void insert(const std::string& buf);
-    /** @} */
-
     /**
-     * @defgroup Deletion Various ways of deleting chars from the buffer
-     * @{
+     * insert strings, each at a given cursor location. For this to work, one
+     * should pass as many strings as there are cursors!
      */
+    void insert(const Strings& strs);
+    /** insert a string at all current cursor locations */ 
+    virtual void insert(const std::string& buf);
     /** for deleting a char using backspace */
     Strings remove();
     /**
@@ -61,10 +61,9 @@ public:
     Strings removeCurrent();
     /** kills lines at current cursor location onwards and returns them */
     Strings killLine();
-    /** @} */
-
     /** sorts the lines in the regions */
     void sortRegions();
+    /** @} */
 
     /**
      * @brief Keep/Remove lines that match the input regex.

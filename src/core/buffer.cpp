@@ -284,8 +284,7 @@ void Buffer::drawStatusBar(Editor& ed) {
 }
 
 std::string Buffer::dirModeGetFileAtLine(int line) {
-    if(line == 0)
-        return "";
+    if(line == 0) return "";
     auto& str = at(line).get();
     return str.substr(dirModeFileOffset());
 }
@@ -297,8 +296,7 @@ int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
     int start = 0;
     int len = (int)line.size();
     // empty line
-    if(len <= 0)
-        return y + 1;
+    if(len <= 0) return y + 1;
     const auto* str = line.c_str();
     bool isD = mode->name() == "dir";
     if(isD) {
@@ -480,57 +478,42 @@ Strings Buffer::remove(const Positions& start, const Positions& end) {
     return del;
 }
 
-///@todo: use Pos2d::find instead of the if-block below!
 std::string Buffer::removeFrom(const Pos2d<int>& start,
                                const Pos2d<int>& end) {
     std::string del;
-    int yStart, yEnd, xStart, xEnd;
-    if(start.y < end.y) {
-        yStart = start.y;
-        yEnd = end.y;
-        xStart = start.x;
-        xEnd = end.x;
-    } else if(start.y > end.y) {
-        yStart = end.y;
-        yEnd = start.y;
-        xStart = start.x;
-        xEnd = end.x;
-    } else {
-        yStart = start.y;
-        yEnd = end.y;
-        xStart = std::min(start.x, end.x);
-        xEnd = std::max(start.x, end.x);
-        int len = xEnd - xStart;
-        del = at(yStart).erase(xStart, len);
+    Pos2di small, big;
+    if(0 == start.find(small, big, end)) {
+        int len = big.x - small.x;
+        del = at(small.y).erase(small.x, len);
         return del;
     }
-    auto& curr = at(yStart);
-    if(xStart == curr.length()) {
-        curr.insert(lines[yStart+1].get(), xStart);
-        lines.erase(lines.begin()+yStart+1);
-        --yEnd;
+    auto& curr = at(small.y);
+    if(small.x == curr.length()) {
+        curr.insert(lines[small.y+1].get(), small.x);
+        lines.erase(lines.begin()+small.y+1);
+        --big.y;
         del += '\n';
-        if(yEnd == yStart) {
-            del += at(yStart).erase(xStart, xEnd);
+        if(big.y == small.y) {
+            del += at(small.y).erase(small.x, big.x);
             return del;
         }
     }
-    bool isFullLine = xStart == 0;
-    int actualIdx = yStart;
-    del += curr.erase(xStart, curr.length()-xStart);
+    bool isFullLine = small.x == 0;
+    int actualIdx = small.y;
+    del += curr.erase(small.x, curr.length()-small.x);
     if(isFullLine)
-        lines.erase(lines.begin()+yStart);
+        lines.erase(lines.begin()+small.y);
     else
         ++actualIdx;
-    for(int line=yStart+1;line<yEnd;++line) {
+    for(int line=small.y+1;line<big.y;++line) {
         del += '\n';
         del += at(actualIdx).get();
         lines.erase(lines.begin()+actualIdx);
     }
     del += '\n';
-    if(xEnd > 0) {
+    if(big.x > 0) {
         auto& last = at(actualIdx);
-        del += last.erase(0, xEnd);
+        del += last.erase(0, big.x);
     }
     return del;
 }
