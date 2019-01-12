@@ -112,7 +112,7 @@ public:
     /** @} */
 
     /** check whether the two position lists are the same or not */
-    bool operator==(const Positions& a) const;
+    bool operator==(const Positions& a) const { return same(*this, a); }
 
     /**
      * @brief move all positions on the same line by 'delta' chars

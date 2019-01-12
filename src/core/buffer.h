@@ -49,7 +49,7 @@ public:
     /** insert a string at all current cursor locations */ 
     virtual void insert(const std::string& buf);
     /** [WIP!] main remove method */
-    void _remove();
+    void _remove(bool removeCurrentChar=false);
     /** for deleting a char using backspace */
     Strings remove();
     /**

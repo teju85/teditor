@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cstdlib>
 #include <string>
 #include <stdexcept>
@@ -40,8 +41,24 @@ std::string format(const char* fmt, va_list& vl);
         if(!(check))  THROW(fmt, ##__VA_ARGS__); \
     } while(0)
 
+
 /** short-form for vector of strings */
 typedef std::vector<std::string> Strings;
+
+/** whether all the strings internally are empty or not */
+inline bool allStringsEmpty(const Strings& strs) {
+    for(const auto& str : strs)
+        if(!str.empty()) return false;
+    return true;
+}
+
+/** whether the 2 vectors are same */
+template <typename T>
+bool same(const std::vector<T>& s1, const std::vector<T>& s2) {
+    if(s1.size() != s2.size()) return false;
+    return std::equal(s1.begin(), s1.end(), s2.begin());
+}
+
 
 bool operator>(const struct timeval& ta, const struct timeval& tb);
 

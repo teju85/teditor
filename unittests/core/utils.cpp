@@ -7,6 +7,30 @@
 
 namespace teditor {
 
+TEST_CASE("Utils::allStringsEmpty") {
+    Strings strs;
+    REQUIRE(allStringsEmpty(strs));
+    strs.push_back(std::string(""));
+    REQUIRE(allStringsEmpty(strs));
+    strs.push_back(std::string());
+    REQUIRE(allStringsEmpty(strs));
+    strs.push_back(std::string("Hi"));
+    REQUIRE_FALSE(allStringsEmpty(strs));
+}
+
+TEST_CASE("Utils::same") {
+    Strings strs1, strs2;
+    REQUIRE(same(strs1, strs2));
+    strs1.push_back("one");
+    REQUIRE_FALSE(same(strs1, strs2));
+    strs2.push_back("one");
+    REQUIRE(same(strs1, strs2));
+    strs1.push_back("two");
+    REQUIRE_FALSE(same(strs1, strs2));
+    strs2.push_back("three");
+    REQUIRE_FALSE(same(strs1, strs2));
+}
+
 void sleep(int timeMs) {
     clock_t goal = timeMs + clock();
     while (goal > clock());

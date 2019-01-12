@@ -88,7 +88,7 @@ void Buffer::insert(char c, size_t i) {
     moveRightCursorsOnSameLine(i);
 }
 
-void Buffer::_remove() {
+void Buffer::_remove(bool removeCurrentChar) {
     OpData op;
     op.type = OpDelete;
     if(isRegionActive()) {
@@ -97,6 +97,10 @@ void Buffer::_remove() {
         op.after = saveCursors();
         op.strs = remove(op.before, op.after);
         restoreCursors(op.before);
+        disableRegions();
+    } else if(removeCurrentChar) {
+        op.after = op.before = saveCursors();
+        op.strs = removeCurrent();
     } else {
         // order is reversed for 'after' and 'before' due to the following
         // insertion op during the undo of this operation!
@@ -105,13 +109,19 @@ void Buffer::_remove() {
         op.before = saveCursors();
     }
     lineDown();
-    undoStack.push(op);
-    modified = true;
+    if(!allStringsEmpty(op.strs)) {
+        undoStack.push(op);
+        modified = true;
+    }
 }
 
 void Buffer::applyDeleteOp(OpData& op) {
     restoreCursors(op.before);
-    remove(op.before, op.after);
+    if(op.before == op.after) { // removeCurrent was called
+        removeCurrent();
+    } else {
+        remove(op.before, op.after);
+    }
     lineDown();
     modified = true;
     restoreCursors(op.before);
@@ -119,7 +129,6 @@ void Buffer::applyDeleteOp(OpData& op) {
 
 Strings Buffer::remove() {
     Strings del;
-    modified = true;
     int len = cursorCount();
     int minLoc = getMinStartLoc();
     for(int i=0;i<len;++i) {
@@ -144,14 +153,17 @@ Strings Buffer::remove() {
         del.push_back("\n");
     }
     lineDown();
+    // only if there are some chars deleted, the buffer is modified!
+    if(!allStringsEmpty(del)) modified = true;
     return del;
 }
 
 Strings Buffer::remove(const Positions& start, const Positions& end) {
-    modified = true;
     Strings del;
     for(size_t i=0;i<start.size();++i)
         del.push_back(removeFrom(start[i], end[i]));
+    // only if there are some chars deleted, the buffer is modified!
+    if(!allStringsEmpty(del)) modified = true;
     return del;
 }
 
@@ -197,7 +209,6 @@ std::string Buffer::removeFrom(const Pos2d<int>& start,
 
 Strings Buffer::removeCurrent() {
     Strings del;
-    modified = true;
     int len = cursorCount();
     for(int i=0;i<len;++i) {
         auto& culoc = locs[i];
@@ -218,6 +229,8 @@ Strings Buffer::removeCurrent() {
         lines.erase(lines.begin()+oldy);
         del.push_back("\n");
     }
+    // only if there are some chars deleted, the buffer is modified!
+    if(!allStringsEmpty(del)) modified = true;
     return del;
 }
 
