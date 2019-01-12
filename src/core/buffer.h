@@ -48,6 +48,8 @@ public:
     void insert(const Strings& strs);
     /** insert a string at all current cursor locations */ 
     virtual void insert(const std::string& buf);
+    /** [WIP!] main remove method */
+    void _remove();
     /** for deleting a char using backspace */
     Strings remove();
     /**
@@ -177,7 +179,7 @@ public:
     /** checks if there are any cursors on the given line */
     bool hasCursorOn(int line) const;
     /** save the current state of all cursors */
-    Positions saveCursors() const;
+    Positions saveCursors() const { return copyCursors(locs); }
     /** restore the state of all cursors to the given one */
     void restoreCursors(const Positions& pos);
     /** cursor at i'th index */
@@ -228,12 +230,8 @@ protected:
     enum OpType {
         /** insertion operation */
         OpInsert = 0,
-        /** inserting same string across all cursors */
-        OpInsertString,
-        /** inserting same char across all cursors */
-        OpInsertChar,
         /** backspace operation */
-        OpDelete
+        OpDelete,
     };
 
 
@@ -248,10 +246,6 @@ protected:
         Positions after;
         /** characters that were inserted/deleted in the above range */
         Strings strs;
-        /** string that was inserted across all the cursors */
-        std::string str;
-        /** char that was inserted across all the cursors */
-        char c;
         /** type of operation */
         OpType type;
     }; // end class OpData
@@ -279,6 +273,7 @@ protected:
     OpStack redoStack;
 
     void applyInsertOp(OpData& op, bool pushToStack=true);
+    void applyDeleteOp(OpData& op, bool pushToStack=true);
     void insert(char c, size_t i);
     void addLine() { lines.push_back(Line()); }
     void resetBufferState(int line, const std::string& file);
@@ -288,6 +283,7 @@ protected:
     std::string removeFrom(const Pos2d<int>& start, const Pos2d<int>& end);
     Pos2d<int> matchCurrentParen(int i, bool& isOpen);
     int dirModeFileOffset() const { return 24; }
+    Positions copyCursors(const Positions& pos) const;
 
     /** clear the input stack (esp useful while clearing redo stack) */
     void clearStack(OpStack& st);

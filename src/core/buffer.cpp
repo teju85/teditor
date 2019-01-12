@@ -32,8 +32,8 @@ Buffer::~Buffer() {
 ////// Start: Buffer editing //////
 void Buffer::insert(char c) {
     OpData op;
-    op.type = OpInsertChar;
-    op.c = c;
+    op.type = OpInsert;
+    op.strs = Strings(locs.size(), std::string(1, c));
     applyInsertOp(op);
 }
 
@@ -46,8 +46,8 @@ void Buffer::insert(const Strings& strs) {
 
 void Buffer::insert(const std::string& buf) {
     OpData op;
-    op.type = OpInsertString;
-    op.str = buf;
+    op.type = OpInsert;
+    op.strs = Strings(locs.size(), buf);
     applyInsertOp(op);
 }
 
@@ -56,22 +56,10 @@ void Buffer::applyInsertOp(OpData& op, bool pushToStack) {
         op.before = saveCursors();
     else
         restoreCursors(op.before);
-    if(op.type == OpInsert) {
-        forEachCursor([&op, this](Pos2di& cu, size_t idx) {
-                          auto& str = op.strs[idx];
-                          for(auto c : str) insert(c, (int)idx);
-                      });
-    } else if(op.type == OpInsertString) {
-        for(auto c : op.str) {
-            forEachCursor([c, this](Pos2di& cu, size_t idx) {
-                              insert(c, (int)idx);
-                          });
-        }
-    } else if(op.type == OpInsertChar) {
-        forEachCursor([&op, this](Pos2di& cu, size_t idx) {
-                          insert(op.c, (int)idx);
-                      });
-    }
+    forEachCursor([&op, this](Pos2di& cu, size_t idx) {
+                      auto& str = op.strs[idx];
+                      for(auto c : str) insert(c, (int)idx);
+                  });
     lineUp();
     modified = true;
     if(pushToStack) {
@@ -98,6 +86,141 @@ void Buffer::insert(char c, size_t i) {
     line.insert(c, pos.x);
     // inserting a char should move other cursors in the same line!
     moveRightCursorsOnSameLine(i);
+}
+
+void Buffer::_remove() {
+    OpData op;
+    if(isRegionActive()) {
+        op.before = copyCursors(regions);
+        op.after = saveCursors();
+        applyDeleteOp(op);
+    } else {
+        op.before = saveCursors();
+        applyDeleteOp(op);
+        op.after = saveCursors();
+    }
+}
+
+///@todo: what if 'before' is after 'after'!?
+void Buffer::applyDeleteOp(OpData& op, bool pushToStack) {
+    if(pushToStack) {
+        op.type = OpDelete;
+        op.strs = remove(op.before, op.after);
+    } else {
+        restoreCursors(op.before);
+        remove(op.before, op.after);
+    }
+    lineDown();
+    modified = true;
+    if(pushToStack) {
+        undoStack.push(op);
+    } else {
+        restoreCursors(op.after);
+    }
+}
+
+Strings Buffer::remove() {
+    Strings del;
+    modified = true;
+    int len = cursorCount();
+    int minLoc = getMinStartLoc();
+    for(int i=0;i<len;++i) {
+        auto& culoc = locs[i];
+        if(culoc.x == minLoc && culoc.y == 0) {
+            del.push_back("");
+            continue;
+        }
+        if(culoc.x > 0) {
+            moveLeftCursorsOnSameLine(i);
+            auto str = lines[culoc.y].erase(culoc.x, 1);
+            del.push_back(str);
+            continue;
+        }
+        int oldy = culoc.y;
+        const auto& oldstr = lines[oldy].get();
+        moveUpAllNextCursors(i);
+        auto& newline = lines[culoc.y];
+        culoc.x = newline.length();
+        newline.insert(oldstr.c_str(), culoc.x);
+        lines.erase(lines.begin()+culoc.y+1);
+        del.push_back("\n");
+    }
+    lineDown();
+    return del;
+}
+
+Strings Buffer::remove(const Positions& start, const Positions& end) {
+    modified = true;
+    Strings del;
+    for(size_t i=0;i<start.size();++i)
+        del.push_back(removeFrom(start[i], end[i]));
+    return del;
+}
+
+std::string Buffer::removeFrom(const Pos2d<int>& start,
+                               const Pos2d<int>& end) {
+    std::string del;
+    Pos2di small, big;
+    if(0 == start.find(small, big, end)) {
+        int len = big.x - small.x;
+        del = at(small.y).erase(small.x, len);
+        return del;
+    }
+    auto& curr = at(small.y);
+    if(small.x == curr.length()) {
+        curr.insert(lines[small.y+1].get(), small.x);
+        lines.erase(lines.begin()+small.y+1);
+        --big.y;
+        del += '\n';
+        if(big.y == small.y) {
+            del += at(small.y).erase(small.x, big.x);
+            return del;
+        }
+    }
+    bool isFullLine = small.x == 0;
+    int actualIdx = small.y;
+    del += curr.erase(small.x, curr.length()-small.x);
+    if(isFullLine)
+        lines.erase(lines.begin()+small.y);
+    else
+        ++actualIdx;
+    for(int line=small.y+1;line<big.y;++line) {
+        del += '\n';
+        del += at(actualIdx).get();
+        lines.erase(lines.begin()+actualIdx);
+    }
+    del += '\n';
+    if(big.x > 0) {
+        auto& last = at(actualIdx);
+        del += last.erase(0, big.x);
+    }
+    return del;
+}
+
+Strings Buffer::removeCurrent() {
+    Strings del;
+    modified = true;
+    int len = cursorCount();
+    for(int i=0;i<len;++i) {
+        auto& culoc = locs[i];
+        if(culoc.x == lengthOf(culoc.y) && culoc.y == length()-1) {
+            del.push_back("");
+            continue;
+        }
+        if(culoc.x < lengthOf(culoc.y)) {
+            auto str = lines[culoc.y].erase(culoc.x, 1);
+            del.push_back(str);
+            continue;
+        }
+        int y = culoc.y;
+        int oldy = y + 1;
+        const auto& str = lines[oldy].get();
+        auto& line = lines[y];
+        line.insert(str.c_str(), culoc.x);
+        lines.erase(lines.begin()+oldy);
+        del.push_back("\n");
+    }
+    return del;
 }
 ////// End: Buffer editing //////
 
@@ -436,114 +559,6 @@ Pos2d<int> Buffer::matchCurrentParen(int i, bool& isOpen) {
     return culoc;
 }
 
-Strings Buffer::remove() {
-    Strings del;
-    modified = true;
-    int len = cursorCount();
-    int minLoc = getMinStartLoc();
-    for(int i=0;i<len;++i) {
-        auto& culoc = locs[i];
-        if(culoc.x == minLoc && culoc.y == 0) {
-            del.push_back("");
-            continue;
-        }
-        if(culoc.x > 0) {
-            moveLeftCursorsOnSameLine(i);
-            auto str = lines[culoc.y].erase(culoc.x, 1);
-            del.push_back(str);
-            continue;
-        }
-        int oldy = culoc.y;
-        const auto& oldstr = lines[oldy].get();
-        moveUpAllNextCursors(i);
-        auto& newline = lines[culoc.y];
-        culoc.x = newline.length();
-        newline.insert(oldstr.c_str(), culoc.x);
-        lines.erase(lines.begin()+culoc.y+1);
-        del.push_back("\n");
-    }
-    lineDown();
-    return del;
-}
-
-Strings Buffer::remove(const Positions& start, const Positions& end) {
-    modified = true;
-    ASSERT(start.size() == end.size(),
-           "remove: start length not same as end's [%lu,%lu]\n",
-           start.size(), end.size());
-    Strings del;
-    int len = (int)start.size();
-    for(int i=0;i<len;++i)
-        del.push_back(removeFrom(start[i], end[i]));
-    return del;
-}
-
-std::string Buffer::removeFrom(const Pos2d<int>& start,
-                               const Pos2d<int>& end) {
-    std::string del;
-    Pos2di small, big;
-    if(0 == start.find(small, big, end)) {
-        int len = big.x - small.x;
-        del = at(small.y).erase(small.x, len);
-        return del;
-    }
-    auto& curr = at(small.y);
-    if(small.x == curr.length()) {
-        curr.insert(lines[small.y+1].get(), small.x);
-        lines.erase(lines.begin()+small.y+1);
-        --big.y;
-        del += '\n';
-        if(big.y == small.y) {
-            del += at(small.y).erase(small.x, big.x);
-            return del;
-        }
-    }
-    bool isFullLine = small.x == 0;
-    int actualIdx = small.y;
-    del += curr.erase(small.x, curr.length()-small.x);
-    if(isFullLine)
-        lines.erase(lines.begin()+small.y);
-    else
-        ++actualIdx;
-    for(int line=small.y+1;line<big.y;++line) {
-        del += '\n';
-        del += at(actualIdx).get();
-        lines.erase(lines.begin()+actualIdx);
-    }
-    del += '\n';
-    if(big.x > 0) {
-        auto& last = at(actualIdx);
-        del += last.erase(0, big.x);
-    }
-    return del;
-}
-
-Strings Buffer::removeCurrent() {
-    Strings del;
-    modified = true;
-    int len = cursorCount();
-    for(int i=0;i<len;++i) {
-        auto& culoc = locs[i];
-        if(culoc.x == lengthOf(culoc.y) && culoc.y == length()-1) {
-            del.push_back("");
-            continue;
-        }
-        if(culoc.x < lengthOf(culoc.y)) {
-            auto str = lines[culoc.y].erase(culoc.x, 1);
-            del.push_back(str);
-            continue;
-        }
-        int y = culoc.y;
-        int oldy = y + 1;
-        const auto& str = lines[oldy].get();
-        auto& line = lines[y];
-        line.insert(str.c_str(), culoc.x);
-        lines.erase(lines.begin()+oldy);
-        del.push_back("\n");
-    }
-    return del;
-}
-
 Strings Buffer::killLine() {
     Strings del;
     modified = true;
@@ -835,9 +850,9 @@ bool Buffer::hasCursorOn(int line) const {
     return false;
 }
 
-Positions Buffer::saveCursors() const {
-    Positions out(locs.size());
-    std::copy(locs.begin(), locs.end(), out.begin());
+Positions Buffer::copyCursors(const Positions& pos) const {
+    Positions out(pos.size());
+    std::copy(pos.begin(), pos.end(), out.begin());
     return out;
 }
 
