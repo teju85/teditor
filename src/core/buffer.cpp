@@ -115,7 +115,7 @@ void Buffer::applyDeleteOp(OpData& op, bool pushToStack) {
     if(pushToStack) {
         undoStack.push(op);
     } else {
-        restoreCursors(op.after);
+        restoreCursors(op.before);
     }
 }
 
@@ -221,6 +221,36 @@ Strings Buffer::removeCurrent() {
         del.push_back("\n");
     }
     return del;
+}
+
+void Buffer::undo() {
+    if(undoStack.empty()) {
+        CMBAR_MSG("No further undo information\n");
+        return;
+    }
+    auto& top = undoStack.top();
+    if(top.type == OpInsert) {
+        applyDeleteOp(top, false);
+    } else if(top.type == OpDelete) {
+        applyInsertOp(top, false);
+    }
+    redoStack.push(top);
+    undoStack.pop();
+}
+
+void Buffer::redo() {
+    if(redoStack.empty()) {
+        CMBAR_MSG("No further redo information\n");
+        return;
+    }
+    auto& top = redoStack.top();
+    if(top.type == OpInsert) {
+        applyInsertOp(top, false);
+    } else if(top.type == OpDelete) {
+        applyDeleteOp(top, false);
+    }
+    undoStack.push(top);
+    redoStack.pop();
 }
 ////// End: Buffer editing //////
 
@@ -500,13 +530,6 @@ void Buffer::addLines(const RemovedLines& rlines) {
         lines[idx].append(rl.str);
     }
     begin();
-}
-
-void Buffer::gotoLine(int lineNum) {
-    forEachCursor([lineNum, this](Pos2di& cu, size_t idx) {
-                      cu.y = std::min(length()-1, std::max(0, lineNum));
-                  });
-    startLine = std::max(0, lineNum - screenDim.y/2);
 }
 
 void Buffer::matchCurrentParen() {
@@ -814,6 +837,13 @@ void Buffer::previousWord() {
                       }
                   });
     lineDown();
+}
+
+void Buffer::gotoLine(int lineNum) {
+    forEachCursor([lineNum, this](Pos2di& cu, size_t idx) {
+                      cu.y = std::min(length()-1, std::max(0, lineNum));
+                  });
+    startLine = std::max(0, lineNum - screenDim.y/2);
 }
 
 void Buffer::removeDuplicateCursors() {

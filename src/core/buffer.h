@@ -65,8 +65,6 @@ public:
     Strings killLine();
     /** sorts the lines in the regions */
     void sortRegions();
-    /** @} */
-
     /**
      * @brief Keep/Remove lines that match the input regex.
      * @param pc the regular expression that needs to be matched
@@ -74,15 +72,12 @@ public:
      * @return Returns all those that don't match (or match)
      */
     RemovedLines keepRemoveLines(Pcre& pc, bool keep);
-
     /** add the previously removed lines back into the buffer */
     void addLines(const RemovedLines& rlines);
+    /** @} */
 
     /** find matching paren at the current location */
     void matchCurrentParen();
-
-    /** goto the specified line number */
-    void gotoLine(int lineNum);
 
     /**
      * @brief resize the buffer in case of window size change
@@ -162,6 +157,8 @@ public:
     void nextWord();
     /** jump to previous word */
     void previousWord();
+    /** goto the specified line number */
+    void gotoLine(int lineNum);
     /** @} */
 
     /**
@@ -212,6 +209,9 @@ public:
      * region
      */
     Strings regionAsStr() const;
+
+    void undo();
+    void redo();
 
     void reload();
     void addCommand(CmdPtr c);
