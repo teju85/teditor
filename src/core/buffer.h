@@ -74,6 +74,18 @@ public:
     RemovedLines keepRemoveLines(Pcre& pc, bool keep);
     /** add the previously removed lines back into the buffer */
     void addLines(const RemovedLines& rlines);
+    /** clear buffer contents */
+    virtual void clear();
+    /** @} */
+
+    /**
+     * @defgroup UndoRedoStack Undo/Redo operations on the buffer
+     * @{
+     */
+    /** undo the previous operation */
+    void undo();
+    /** redo the previously undid operation */
+    void redo();
     /** @} */
 
     /** find matching paren at the current location */
@@ -121,9 +133,6 @@ public:
     int drawLine(int y, const std::string& line, Editor& ed, int lineNum,
                  const std::string& fg, const std::string& bg);
     /** @} */
-
-    /** clear buffer contents */
-    virtual void clear();
 
     /**
      * @defgroup CursorMovements All methods for moving cursor
@@ -210,9 +219,6 @@ public:
      */
     Strings regionAsStr() const;
 
-    void undo();
-    void redo();
-
     void reload();
     void addCommand(CmdPtr c);
     void undoCmd();
@@ -272,8 +278,6 @@ protected:
     /** stack of operations for redo */
     OpStack redoStack;
 
-    void applyInsertOp(OpData& op, bool pushToStack=true);
-    void applyDeleteOp(OpData& op);
     void insert(char c, size_t i);
     void addLine() { lines.push_back(Line()); }
     void resetBufferState(int line, const std::string& file);
@@ -285,8 +289,24 @@ protected:
     int dirModeFileOffset() const { return 24; }
     Positions copyCursors(const Positions& pos) const;
 
+    /**
+     * @defgroup UndoRedo Internal operations associated with undo/redo stack
+     * @{
+     */
+    /**
+     * @brief Insert characters into the buffer
+     * @param op the info on what, how and where to insert
+     * @param pushToStack whether to push this op into the 'undoStack'
+     */
+    void applyInsertOp(OpData& op, bool pushToStack=true);
+    /**
+     * @brief Delete characters/regions from the buffer
+     * @param op the info on what, how and where to delete from
+     */
+    void applyDeleteOp(OpData& op);
     /** clear the input stack (esp useful while clearing redo stack) */
     void clearStack(OpStack& st);
+    /** @} */
 
     /** helper method to return the string in the given region */
     std::string regionAsStr(const Pos2di& start, const Pos2di& end) const;

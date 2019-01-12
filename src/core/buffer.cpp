@@ -221,6 +221,15 @@ Strings Buffer::removeCurrent() {
     return del;
 }
 
+void Buffer::clear() {
+    for(auto& line : lines) line.clear();
+    lines.clear();
+    addLine();
+    startLine = 0;
+    begin();
+    disableRegions();
+}
+
 void Buffer::undo() {
     if(undoStack.empty()) {
         CMBAR_MSG("No further undo information\n");
@@ -677,15 +686,6 @@ void Buffer::save() {
     buffName = basename(fileName);
     modified = false;
     CMBAR_MSG("Wrote %s\n", fileName.c_str());
-}
-
-void Buffer::clear() {
-    for(auto& line : lines) line.clear();
-    lines.clear();
-    addLine();
-    startLine = 0;
-    begin();
-    disableRegions();
 }
 
 ////// Start: Cursor movements //////

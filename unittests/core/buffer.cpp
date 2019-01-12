@@ -712,6 +712,24 @@ TEST_CASE("Buffer::SingleCursorEdits") {
         REQUIRE(Pos2di(1, 0) == ml.saveCursors()[0]);
     }
 
+    SECTION("insert newline") {
+        ml.right(); ml.right();
+        ml.insert('\n');
+        REQUIRE(5 == ml.length());
+        REQUIRE("* " == ml.at(0).get());
+        REQUIRE("Hello" == ml.at(1).get());
+        REQUIRE(Pos2di(0, 1) == ml.saveCursors()[0]);
+        ml.undo();
+        REQUIRE(4 == ml.length());
+        REQUIRE("* Hello" == ml.at(0).get());
+        REQUIRE(Pos2di(2, 0) == ml.saveCursors()[0]);
+        ml.redo();
+        REQUIRE(5 == ml.length());
+        REQUIRE("* " == ml.at(0).get());
+        REQUIRE("Hello" == ml.at(1).get());
+        REQUIRE(Pos2di(0, 1) == ml.saveCursors()[0]);
+    }
+
     SECTION("insert string") {
         ml.insert("AA");
         REQUIRE("AA* Hello" == ml.at(0).get());
@@ -735,6 +753,24 @@ TEST_CASE("Buffer::SingleCursorEdits") {
         ml.redo();
         REQUIRE(" Hello" == ml.at(0).get());
         REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
+    }
+
+    SECTION("remove newline") {
+        ml.endOfLine(); ml.right();
+        REQUIRE(Pos2di(0, 1) == ml.saveCursors()[0]);
+        ml._remove();
+        REQUIRE(3 == ml.length());
+        REQUIRE("* HelloTesting123" == ml.at(0).get());
+        REQUIRE(Pos2di(7, 0) == ml.saveCursors()[0]);
+        ml.undo();
+        REQUIRE(4 == ml.length());
+        REQUIRE("* Hello" == ml.at(0).get());
+        REQUIRE("Testing123" == ml.at(1).get());
+        REQUIRE(Pos2di(0, 1) == ml.saveCursors()[0]);
+        ml.redo();
+        REQUIRE(3 == ml.length());
+        REQUIRE("* HelloTesting123" == ml.at(0).get());
+        REQUIRE(Pos2di(7, 0) == ml.saveCursors()[0]);
     }
 
     SECTION("remove region") {
