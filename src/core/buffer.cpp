@@ -90,33 +90,31 @@ void Buffer::insert(char c, size_t i) {
 
 void Buffer::_remove() {
     OpData op;
+    op.type = OpDelete;
     if(isRegionActive()) {
+        ///@todo: what if 'before' is after 'after'!?
         op.before = copyCursors(regions);
         op.after = saveCursors();
-        applyDeleteOp(op);
-    } else {
-        op.before = saveCursors();
-        applyDeleteOp(op);
-        op.after = saveCursors();
-    }
-}
-
-///@todo: what if 'before' is after 'after'!?
-void Buffer::applyDeleteOp(OpData& op, bool pushToStack) {
-    if(pushToStack) {
-        op.type = OpDelete;
         op.strs = remove(op.before, op.after);
-    } else {
         restoreCursors(op.before);
-        remove(op.before, op.after);
+    } else {
+        // order is reversed for 'after' and 'before' due to the following
+        // insertion op during the undo of this operation!
+        op.after = saveCursors();
+        op.strs = remove();
+        op.before = saveCursors();
     }
     lineDown();
+    undoStack.push(op);
     modified = true;
-    if(pushToStack) {
-        undoStack.push(op);
-    } else {
-        restoreCursors(op.before);
-    }
+}
+
+void Buffer::applyDeleteOp(OpData& op) {
+    restoreCursors(op.before);
+    remove(op.before, op.after);
+    lineDown();
+    modified = true;
+    restoreCursors(op.before);
 }
 
 Strings Buffer::remove() {
@@ -230,7 +228,7 @@ void Buffer::undo() {
     }
     auto& top = undoStack.top();
     if(top.type == OpInsert) {
-        applyDeleteOp(top, false);
+        applyDeleteOp(top);
     } else if(top.type == OpDelete) {
         applyInsertOp(top, false);
     }
@@ -247,7 +245,7 @@ void Buffer::redo() {
     if(top.type == OpInsert) {
         applyInsertOp(top, false);
     } else if(top.type == OpDelete) {
-        applyDeleteOp(top, false);
+        applyDeleteOp(top);
     }
     undoStack.push(top);
     redoStack.pop();

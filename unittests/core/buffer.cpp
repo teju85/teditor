@@ -693,4 +693,65 @@ TEST_CASE("Buffer::cursor") {
     }
 }
 
+TEST_CASE("Buffer::SingleCursorEdits") {
+    Buffer ml;
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
+    REQUIRE(4 == ml.length());
+    ml.begin();
+    REQUIRE(1 == ml.cursorCount());
+
+    SECTION("insert char") {
+        ml.insert('T');
+        REQUIRE("T* Hello" == ml.at(0).get());
+        REQUIRE(Pos2di(1, 0) == ml.saveCursors()[0]);
+        ml.undo();
+        REQUIRE("* Hello" == ml.at(0).get());
+        REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
+        ml.redo();
+        REQUIRE("T* Hello" == ml.at(0).get());
+        REQUIRE(Pos2di(1, 0) == ml.saveCursors()[0]);
+    }
+
+    SECTION("insert string") {
+        ml.insert("AA");
+        REQUIRE("AA* Hello" == ml.at(0).get());
+        REQUIRE(Pos2di(2, 0) == ml.saveCursors()[0]);
+        ml.undo();
+        REQUIRE("* Hello" == ml.at(0).get());
+        REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
+        ml.redo();
+        REQUIRE("AA* Hello" == ml.at(0).get());
+        REQUIRE(Pos2di(2, 0) == ml.saveCursors()[0]);
+    }
+
+    SECTION("remove char") {
+        ml.right();
+        ml._remove();
+        REQUIRE(" Hello" == ml.at(0).get());
+        REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
+        ml.undo();
+        REQUIRE("* Hello" == ml.at(0).get());
+        REQUIRE(Pos2di(1, 0) == ml.saveCursors()[0]);
+        ml.redo();
+        REQUIRE(" Hello" == ml.at(0).get());
+        REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
+    }
+
+    SECTION("remove region") {
+        ml.enableRegions();
+        ml.right();
+        ml.right();
+        REQUIRE(Pos2di(2, 0) == ml.saveCursors()[0]);
+        ml._remove();
+        REQUIRE("Hello" == ml.at(0).get());
+        REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
+        ml.undo();
+        REQUIRE("* Hello" == ml.at(0).get());
+        REQUIRE(Pos2di(2, 0) == ml.saveCursors()[0]);
+        ml.redo();
+        REQUIRE("Hello" == ml.at(0).get());
+        REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
+    }
+}
+
 } // end namespace teditor

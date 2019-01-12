@@ -273,7 +273,7 @@ protected:
     OpStack redoStack;
 
     void applyInsertOp(OpData& op, bool pushToStack=true);
-    void applyDeleteOp(OpData& op, bool pushToStack=true);
+    void applyDeleteOp(OpData& op);
     void insert(char c, size_t i);
     void addLine() { lines.push_back(Line()); }
     void resetBufferState(int line, const std::string& file);
