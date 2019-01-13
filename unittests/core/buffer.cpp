@@ -8,9 +8,7 @@ namespace teditor {
 TEST_CASE("Buffer::Location") {
     Buffer ml;
     setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt", 2);
-    auto pos = ml.saveCursors()[0];
-    REQUIRE(0 == pos.x);
-    REQUIRE(2 == pos.y);
+    REQUIRE(Pos2di(0, 2) == ml.saveCursors()[0]);
     REQUIRE("multiline.txt" == ml.bufferName());
     REQUIRE(4 == ml.length());
 }
@@ -18,8 +16,7 @@ TEST_CASE("Buffer::Location") {
 TEST_CASE("Buffer::KillLine") {
     Buffer ml;
     setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt", 2);
-    auto pos = ml.saveCursors()[0];
-    REQUIRE(Pos2di(0, 2) == pos);
+    REQUIRE(Pos2di(0, 2) == ml.saveCursors()[0]);
     REQUIRE("multiline.txt" == ml.bufferName());
     REQUIRE(4 == ml.length());
     auto del = ml.killLine();
@@ -35,10 +32,8 @@ TEST_CASE("Buffer::KillLine") {
 TEST_CASE("Buffer::BadFile") {
     Buffer ml;
     setupBuff(ml, {0, 0}, {30, 10}, "samples/nofile.txt", 2);
-    auto pos = ml.saveCursors()[0];
     REQUIRE(1 == ml.length());
-    REQUIRE(0 == pos.x);
-    REQUIRE(0 == pos.y);
+    REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
     REQUIRE("nofile.txt" == ml.bufferName());
 }
 
@@ -69,24 +64,12 @@ TEST_CASE("Buffer::Buffer2screen") {
     REQUIRE(4 == ml.length());
     REQUIRE(1 == ml.totalLinesNeeded());
     REQUIRE('*' == ml.charAt({0,0}));
-    Pos2di loc = {0, 0};
-    Pos2di bloc = ml.buffer2screen(loc);
-    REQUIRE(0 == bloc.x);
-    REQUIRE(0 == bloc.y);
-    loc = {4, 1};
+    REQUIRE(Pos2di(0, 0) == ml.buffer2screen({0, 0}));
     ml.resize({0, 0}, {5, 10});
     REQUIRE(2 == ml.totalLinesNeeded());
-    bloc = ml.buffer2screen(loc);
-    REQUIRE(4 == bloc.x);
-    REQUIRE(2 == bloc.y);
-    loc = {5, 1};
-    bloc = ml.buffer2screen(loc);
-    REQUIRE(0 == bloc.x);
-    REQUIRE(3 == bloc.y);
-    loc = {9, 2};
-    bloc = ml.buffer2screen(loc);
-    REQUIRE(4 == bloc.x);
-    REQUIRE(5 == bloc.y);
+    REQUIRE(Pos2di(4, 2) == ml.buffer2screen({4, 1}));
+    REQUIRE(Pos2di(0, 3) == ml.buffer2screen({5, 1}));
+    REQUIRE(Pos2di(4, 5) == ml.buffer2screen({9, 2}));
 }
 
 TEST_CASE("Buffer::Screen2buffer") {
@@ -94,19 +77,11 @@ TEST_CASE("Buffer::Screen2buffer") {
     setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
     REQUIRE(4 == ml.length());
     REQUIRE(1 == ml.totalLinesNeeded());
-    Pos2di loc = {0, 0};
-    auto loc1 = ml.screen2buffer(ml.buffer2screen(loc));
-    CHECK(loc1 == loc);
-    loc = {4, 1};
+    REQUIRE(Pos2di(0, 0) == ml.screen2buffer(ml.buffer2screen({0, 0})));
     ml.resize({0, 0}, {5, 10});
-    loc1 = ml.screen2buffer(ml.buffer2screen(loc));
-    CHECK(loc1 == loc);
-    loc = {5, 1};
-    loc1 = ml.screen2buffer(ml.buffer2screen(loc));
-    CHECK(loc1 == loc);
-    loc = {9, 2};
-    loc1 = ml.screen2buffer(ml.buffer2screen(loc));
-    CHECK(loc1 == loc);
+    REQUIRE(Pos2di(4, 1) == ml.screen2buffer(ml.buffer2screen({4, 1})));
+    REQUIRE(Pos2di(5, 1) == ml.screen2buffer(ml.buffer2screen({5, 1})));
+    REQUIRE(Pos2di(9, 2) == ml.screen2buffer(ml.buffer2screen({9, 2})));
 }
 
 TEST_CASE("Buffer::Insert") {
@@ -862,6 +837,58 @@ TEST_CASE("Buffer::SingleCursorEdits") {
         REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
         REQUIRE(ml.isModified());
     }
+}
+
+TEST_CASE("Buffer::MultipleCursorEdits") {
+    Buffer ml;
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
+    REQUIRE(4 == ml.length());
+    ml.begin();
+    ml.addCursorFromBack({0, 1});
+    REQUIRE(2 == ml.cursorCount());
+    REQUIRE_FALSE(ml.isModified());
+
+    SECTION("insert char") {
+        ml.insert('T');
+        REQUIRE("T* Hello" == ml.at(0).get());
+        REQUIRE("TTesting123" == ml.at(1).get());
+        REQUIRE(Pos2di(1, 0) == ml.saveCursors()[0]);
+        REQUIRE(Pos2di(1, 1) == ml.saveCursors()[1]);
+        ml.undo();
+        REQUIRE("* Hello" == ml.at(0).get());
+        REQUIRE("Testing123" == ml.at(1).get());
+        REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
+        REQUIRE(Pos2di(0, 1) == ml.saveCursors()[1]);
+        ml.redo();
+        REQUIRE("T* Hello" == ml.at(0).get());
+        REQUIRE("TTesting123" == ml.at(1).get());
+        REQUIRE(Pos2di(1, 0) == ml.saveCursors()[0]);
+        REQUIRE(Pos2di(1, 1) == ml.saveCursors()[1]);
+        REQUIRE(2 == ml.cursorCount());
+        REQUIRE(ml.isModified());
+    }
+
+    SECTION("insert string") {
+        ml.insert("AA");
+        REQUIRE("AA* Hello" == ml.at(0).get());
+        REQUIRE("AATesting123" == ml.at(1).get());
+        REQUIRE(Pos2di(2, 0) == ml.saveCursors()[0]);
+        REQUIRE(Pos2di(2, 1) == ml.saveCursors()[1]);
+        ml.undo();
+        REQUIRE("* Hello" == ml.at(0).get());
+        REQUIRE("Testing123" == ml.at(1).get());
+        REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
+        REQUIRE(Pos2di(0, 1) == ml.saveCursors()[1]);
+        ml.redo();
+        REQUIRE("AA* Hello" == ml.at(0).get());
+        REQUIRE("AATesting123" == ml.at(1).get());
+        REQUIRE(Pos2di(2, 0) == ml.saveCursors()[0]);
+        REQUIRE(Pos2di(2, 1) == ml.saveCursors()[1]);
+        REQUIRE(2 == ml.cursorCount());
+        REQUIRE(ml.isModified());
+    }
+
+    ///@todo: add tests for deletion operations
 }
 
 TEST_CASE("Buffer::MultipleUndoRedo1") {
