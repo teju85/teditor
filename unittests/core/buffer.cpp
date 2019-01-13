@@ -109,27 +109,6 @@ TEST_CASE("Buffer::Insert") {
     REQUIRE("TAAline1* Hello" == ml.at(0).get());
 }
 
-TEST_CASE("Buffer::InsertLine") {
-    Buffer ml;
-    setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
-    REQUIRE(4 == ml.length());
-    ml.begin();
-    ml.down();
-    // enter at beginning of the line
-    ml.insert('\n');
-    REQUIRE(5 == ml.length());
-    REQUIRE("" == ml.at(1).get());
-    REQUIRE("Testing123" == ml.at(2).get());
-    // enter at the end of line
-    ml.up();
-    ml.up();
-    ml.endOfLine();
-    ml.insert('\n');
-    REQUIRE(6 == ml.length());
-    REQUIRE("* Hello" == ml.at(0).get());
-    REQUIRE("" == ml.at(1).get());
-}
-
 TEST_CASE("Buffer::RemoveRegion") {
     Buffer ml;
     setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
@@ -724,6 +703,25 @@ TEST_CASE("Buffer::SingleCursorEdits") {
         REQUIRE("* Hello" == ml.at(0).get());
         REQUIRE("" == ml.at(1).get());
         REQUIRE(Pos2di(0, 1) == ml.saveCursors()[0]);
+        REQUIRE(ml.isModified());
+    }
+
+    SECTION("insert newline at the beginning of a line") {
+        ml.down();
+        ml.insert('\n');
+        REQUIRE(5 == ml.length());
+        REQUIRE("" == ml.at(1).get());
+        REQUIRE("Testing123" == ml.at(2).get());
+        REQUIRE(Pos2di(0, 2) == ml.saveCursors()[0]);
+        ml.undo();
+        REQUIRE(4 == ml.length());
+        REQUIRE("Testing123" == ml.at(1).get());
+        REQUIRE(Pos2di(0, 1) == ml.saveCursors()[0]);
+        ml.redo();
+        REQUIRE(5 == ml.length());
+        REQUIRE("" == ml.at(1).get());
+        REQUIRE("Testing123" == ml.at(2).get());
+        REQUIRE(Pos2di(0, 2) == ml.saveCursors()[0]);
         REQUIRE(ml.isModified());
     }
 
