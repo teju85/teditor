@@ -304,6 +304,11 @@ protected:
      * @param op the info on what, how and where to delete from
      */
     void applyDeleteOp(OpData& op);
+    /**
+     * pushing a new op onto the undo stack. It has the side-effect of clearing
+     * the redo stack so far accumulated!
+     */
+    void pushNewOp(OpData& op);
     /** clear the input stack (esp useful while clearing redo stack) */
     void clearStack(OpStack& st);
     /** @} */

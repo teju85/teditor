@@ -4,6 +4,9 @@
 
 namespace teditor {
 
+Line::Line(): line() {
+}
+
 std::string Line::erase(int idx, int count) {
     std::string ret;
     if(idx >= length() || (idx+count) > length())
@@ -20,6 +23,12 @@ Line Line::split(int idx) {
     auto del = erase(idx, length()-idx);
     other.append(del);
     return other;
+}
+
+// This is wierd!! If empty check is not done, some garbage string seems to be
+// appended everytime!
+void Line::join(const Line& other) {
+    if(!other.empty()) append(other.get());
 }
 
 void Line::prepend(char c, int count) {
@@ -39,6 +48,13 @@ void Line::insert(const char* c, int idx) {
         append(c);
     else
         line.insert(idx, c);
+}
+
+void Line::insert(const std::string& str, int idx) {
+    if(idx >= length())
+        append(str);
+    else
+        line.insert(idx, str);
 }
 
 int Line::numLinesNeeded(int wid) const {

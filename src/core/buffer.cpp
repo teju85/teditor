@@ -51,30 +51,11 @@ void Buffer::insert(const std::string& buf) {
     applyInsertOp(op);
 }
 
-void Buffer::applyInsertOp(OpData& op, bool pushToStack) {
-    if(pushToStack)
-        op.before = saveCursors();
-    else
-        restoreCursors(op.before);
-    forEachCursor([&op, this](Pos2di& cu, size_t idx) {
-                      auto& str = op.strs[idx];
-                      for(auto c : str) insert(c, (int)idx);
-                  });
-    lineUp();
-    modified = true;
-    if(pushToStack) {
-        op.after = saveCursors();
-        undoStack.push(op);
-    } else {
-        restoreCursors(op.after);
-    }
-}
-
 ///@todo: what if a single line crosses the whole screen!?
 void Buffer::insert(char c, size_t i) {
     auto& pos = locs[i];
     if(c == '\n' || c == (char)Key_Enter) {
-        auto newLine = lines[pos.y].split(pos.x);
+        auto newLine = at(pos.y).split(pos.x);
         lines.insert(lines.begin() + pos.y + 1, newLine);
         // inserting line at the current cursor means all other cursors below it
         // must also be moved down by one line to preserve their right location
@@ -110,21 +91,9 @@ void Buffer::_remove(bool removeCurrentChar) {
     }
     lineDown();
     if(!allStringsEmpty(op.strs)) {
-        undoStack.push(op);
+        pushNewOp(op);
         modified = true;
     }
-}
-
-void Buffer::applyDeleteOp(OpData& op) {
-    restoreCursors(op.before);
-    if(op.before == op.after) { // removeCurrent was called
-        removeCurrent();
-    } else {
-        remove(op.before, op.after);
-    }
-    lineDown();
-    modified = true;
-    restoreCursors(op.before);
 }
 
 Strings Buffer::remove() {
@@ -139,16 +108,16 @@ Strings Buffer::remove() {
         }
         if(culoc.x > 0) {
             moveLeftCursorsOnSameLine(i);
-            auto str = lines[culoc.y].erase(culoc.x, 1);
+            auto str = at(culoc.y).erase(culoc.x, 1);
             del.push_back(str);
             continue;
         }
         int oldy = culoc.y;
-        const auto& oldstr = lines[oldy].get();
         moveUpAllNextCursors(i);
-        auto& newline = lines[culoc.y];
+        const auto& oldline = at(oldy);
+        auto& newline = at(culoc.y);
         culoc.x = newline.length();
-        newline.insert(oldstr.c_str(), culoc.x);
+        newline.join(oldline);
         lines.erase(lines.begin()+culoc.y+1);
         del.push_back("\n");
     }
@@ -178,7 +147,7 @@ std::string Buffer::removeFrom(const Pos2d<int>& start,
     }
     auto& curr = at(small.y);
     if(small.x == curr.length()) {
-        curr.insert(lines[small.y+1].get(), small.x);
+        curr.join(at(small.y + 1));
         lines.erase(lines.begin()+small.y+1);
         --big.y;
         del += '\n';
@@ -223,9 +192,7 @@ Strings Buffer::removeCurrent() {
         }
         int y = culoc.y;
         int oldy = y + 1;
-        const auto& str = lines[oldy].get();
-        auto& line = lines[y];
-        line.insert(str.c_str(), culoc.x);
+        at(y).join(at(oldy));
         lines.erase(lines.begin()+oldy);
         del.push_back("\n");
     }
@@ -241,8 +208,13 @@ void Buffer::clear() {
     startLine = 0;
     begin();
     disableRegions();
+    clearStack(undoStack);
+    clearStack(redoStack);
 }
+////// End: Buffer editing //////
 
+
+////// Start: Buffer undo/redo //////
 void Buffer::undo() {
     if(undoStack.empty()) {
         CMBAR_MSG("No further undo information\n");
@@ -272,11 +244,47 @@ void Buffer::redo() {
     undoStack.push(top);
     redoStack.pop();
 }
-////// End: Buffer editing //////
+
+void Buffer::applyInsertOp(OpData& op, bool pushToStack) {
+    if(pushToStack)
+        op.before = saveCursors();
+    else
+        restoreCursors(op.before);
+    forEachCursor([&op, this](Pos2di& cu, size_t idx) {
+                      auto& str = op.strs[idx];
+                      for(auto c : str) insert(c, (int)idx);
+                  });
+    lineUp();
+    modified = true;
+    if(pushToStack) {
+        op.after = saveCursors();
+        pushNewOp(op);
+    } else {
+        restoreCursors(op.after);
+    }
+}
+
+void Buffer::applyDeleteOp(OpData& op) {
+    restoreCursors(op.before);
+    if(op.before == op.after) { // removeCurrent was called
+        removeCurrent();
+    } else {
+        remove(op.before, op.after);
+    }
+    lineDown();
+    modified = true;
+    restoreCursors(op.before);
+}
+
+void Buffer::pushNewOp(OpData& op) {
+    clearStack(redoStack);
+    undoStack.push(op);
+}
 
 void Buffer::clearStack(OpStack& st) {
     while(!st.empty()) st.pop();
 }
+////// End: Buffer undo/redo //////
 
 const AttrColor& Buffer::getColor(const std::string& name) const {
     return mode->getColorMap().get(name);
@@ -366,12 +374,12 @@ void Buffer::reload() {
 void Buffer::loadDir(const std::string& dir) {
     Files fs = listDir(dir);
     auto first = rel2abs(pwd(), dir);
-    lines.back().append(first.c_str());
+    lines.back().append(first);
     for(const auto& f : fs) {
         auto fname = isCurrentOrParentDir(f.name)? f.name : basename(f.name);
         auto buff = format("  %10.10s  %8lu  %s", f.perms, f.size, fname.c_str());
         addLine();
-        lines.back().append(buff.c_str());
+        lines.back().append(buff);
     }
     resetBufferState(0, first);
     begin();
@@ -388,7 +396,7 @@ void Buffer::loadFile(const std::string& file, int line) {
     }
     std::string currLine;
     while(std::getline(fp, currLine, '\n')) {
-        lines.back().append(currLine.c_str());
+        lines.back().append(currLine);
         addLine();
     }
     fp.close();

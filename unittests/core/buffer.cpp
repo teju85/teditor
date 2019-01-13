@@ -733,6 +733,25 @@ TEST_CASE("Buffer::SingleCursorEdits") {
         REQUIRE(ml.isModified());
     }
 
+    SECTION("insert newline at the end of a line") {
+        ml.endOfLine();
+        ml.insert('\n');
+        REQUIRE(5 == ml.length());
+        REQUIRE("* Hello" == ml.at(0).get());
+        REQUIRE("" == ml.at(1).get());
+        REQUIRE(Pos2di(0, 1) == ml.saveCursors()[0]);
+        ml.undo();
+        REQUIRE(4 == ml.length());
+        REQUIRE("* Hello" == ml.at(0).get());
+        REQUIRE(Pos2di(7, 0) == ml.saveCursors()[0]);
+        ml.redo();
+        REQUIRE(5 == ml.length());
+        REQUIRE("* Hello" == ml.at(0).get());
+        REQUIRE("" == ml.at(1).get());
+        REQUIRE(Pos2di(0, 1) == ml.saveCursors()[0]);
+        REQUIRE(ml.isModified());
+    }
+
     SECTION("insert string") {
         ml.insert("AA");
         REQUIRE("AA* Hello" == ml.at(0).get());
@@ -843,6 +862,43 @@ TEST_CASE("Buffer::SingleCursorEdits") {
         REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
         REQUIRE(ml.isModified());
     }
+}
+
+TEST_CASE("Buffer::MultipleUndoRedo1") {
+    Buffer ml;
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
+    REQUIRE(4 == ml.length());
+    ml.begin();
+    REQUIRE(1 == ml.cursorCount());
+    REQUIRE_FALSE(ml.isModified());
+    // insert char
+    ml.insert('T');
+    REQUIRE("T* Hello" == ml.at(0).get());
+    REQUIRE(Pos2di(1, 0) == ml.saveCursors()[0]);
+    // insert newline
+    ml.endOfLine();
+    ml.insert('\n');
+    REQUIRE(5 == ml.length());
+    REQUIRE("" == ml.at(1).get());
+    REQUIRE(Pos2di(0, 1) == ml.saveCursors()[0]);
+    // undo1
+    ml.undo();
+    REQUIRE(4 == ml.length());
+    REQUIRE("T* Hello" == ml.at(0).get());
+    REQUIRE(Pos2di(8, 0) == ml.saveCursors()[0]);
+    // undo2
+    ml.undo();
+    REQUIRE(4 == ml.length());
+    REQUIRE("* Hello" == ml.at(0).get());
+    REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
+    // redo's
+    ml.redo();
+    ml.redo();
+    REQUIRE(5 == ml.length());
+    REQUIRE("T* Hello" == ml.at(0).get());
+    REQUIRE("" == ml.at(1).get());
+    REQUIRE(Pos2di(0, 1) == ml.saveCursors()[0]);
+    REQUIRE(ml.isModified());
 }
 
 } // end namespace teditor

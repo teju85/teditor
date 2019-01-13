@@ -122,12 +122,14 @@ TEST_CASE("PCRE::Replace2") {
     REQUIRE("Beautiful Hello world!" == res);
 }
 
+static const std::string NoMatch("Nothing should match!");
+
 TEST_CASE("PCRE::Replace3") {
     Pcre p("Hello");
     std::string res;
-    auto cnt = p.replace("No matching subs!", "Beautiful", res);
+    auto cnt = p.replace(NoMatch, "Beautiful", res);
     REQUIRE(0 == cnt);
-    REQUIRE("No matching subs!" == res);
+    REQUIRE(NoMatch == res);
 }
 
 TEST_CASE("PCRE::ReplaceAll1") {
@@ -148,9 +150,9 @@ TEST_CASE("PCRE::ReplaceAll2") {
 TEST_CASE("PCRE::ReplaceAll3") {
     Pcre p("Hello");
     std::string res;
-    auto cnt = p.replaceAll("No matching subs!", "Beautiful", res);
+    auto cnt = p.replaceAll(NoMatch, "Beautiful", res);
     REQUIRE(0 == cnt);
-    REQUIRE("No matching subs!" == res);
+    REQUIRE(NoMatch == res);
 }
 
 } // end namespace teditor

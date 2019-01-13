@@ -64,6 +64,16 @@ TEST_CASE("Line - split-n-join") {
     REQUIRE(line.get() == "Testing the line split");
 }
 
+TEST_CASE("Line - split-n-join empty line") {
+    Line line;
+    line.append("Testing the line split");
+    auto other = line.split(22);
+    REQUIRE(other.get() == "");
+    REQUIRE(line.get() == "Testing the line split");
+    line.join(other);
+    REQUIRE(line.get() == "Testing the line split");
+}
+
 TEST_CASE("Line::prepend") {
     Line line;
     REQUIRE(line.empty());

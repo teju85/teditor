@@ -10,6 +10,9 @@ namespace teditor {
 /** Base class to store a line in the buffer */
 class Line {
 public:
+    /** default ctor */
+    Line();
+
     /**
      * @defgroup Add Functions to append/prepend/insert chars to the line
      * @{
@@ -22,7 +25,7 @@ public:
     void prepend(char c, int count);
     void insert(char c, int idx);
     void insert(const char* c, int idx);
-    void insert(const std::string& str, int idx) { insert(str.c_str(), idx); }
+    void insert(const std::string& str, int idx);
     /** @} */
 
     /** erases from the given index and returns the erased chars */
@@ -33,7 +36,7 @@ public:
      * @{
      */
     Line split(int idx);
-    void join(const Line& other) { append(other.get()); }
+    void join(const Line& other);
     /** @} */
 
     /** number of lines needed on the screen to render this line */
