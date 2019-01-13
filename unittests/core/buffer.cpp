@@ -119,7 +119,7 @@ TEST_CASE("Buffer::RemoveRegion") {
     start.push_back({0, 0});
     end.push_back({0, 3});
     // end includes a newline
-    auto del = ml.remove(start, end);
+    auto del = ml.removeRegion(start, end);
     REQUIRE(1U == del.size());
     REQUIRE("#ifndef _GNU_SOURCE\n#define _GNU_SOURCE // for wcstring, strcasestr\n#endif\n"
             == del[0]);
@@ -133,7 +133,7 @@ TEST_CASE("Buffer::RemoveRegion") {
 
     // end doesn't include a newline
     end[0] = {ml.at(2).length(), 2};
-    del = ml.remove(start, end);
+    del = ml.removeRegion(start, end);
     REQUIRE(1U == del.size());
     REQUIRE("#ifndef _GNU_SOURCE\n#define _GNU_SOURCE // for wcstring, strcasestr\n#endif"
             == del[0]);
@@ -153,14 +153,14 @@ TEST_CASE("Buffer::LengthOf") {
     REQUIRE(ml.at(0).length() == ml.lengthOf(0));
 }
 
-TEST_CASE("Buffer::Remove") {
+TEST_CASE("Buffer::RemoveChar") {
     Buffer ml;
     setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
     REQUIRE(21 == ml.length());
     REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
 
     // remove at the beginning of buffer
-    auto del = ml.remove();
+    auto del = ml.removeChar();
     REQUIRE(1U == del.size());
     REQUIRE("" == del[0]);
     REQUIRE(21 == ml.length());
@@ -173,7 +173,7 @@ TEST_CASE("Buffer::Remove") {
     // remove inside a line
     ml.begin();
     ml.right();
-    del = ml.remove();
+    del = ml.removeChar();
     REQUIRE(1U == del.size());
     REQUIRE("#" == del[0]);
     REQUIRE(18 == ml.at(0).length());
@@ -184,7 +184,7 @@ TEST_CASE("Buffer::Remove") {
     // remove at line beginning
     ml.begin();
     ml.down();
-    del = ml.remove();
+    del = ml.removeChar();
     REQUIRE(1U == del.size());
     REQUIRE("\n" == del[0]);
     REQUIRE(20 == ml.length());
@@ -198,7 +198,7 @@ TEST_CASE("Buffer::Remove") {
     REQUIRE(47 == ml.at(1).length());
 }
 
-TEST_CASE("Buffer::RemoveCurrent") {
+TEST_CASE("Buffer::RemoveCurrentChar") {
     Buffer ml;
     setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
     REQUIRE(21 == ml.length());
@@ -206,7 +206,7 @@ TEST_CASE("Buffer::RemoveCurrent") {
 
     // remove at the end of buffer
     ml.end();
-    auto del = ml.removeCurrent();
+    auto del = ml.removeCurrentChar();
     REQUIRE(1U == del.size());
     REQUIRE("" == del[0]);
     REQUIRE(21 == ml.length());
@@ -219,7 +219,7 @@ TEST_CASE("Buffer::RemoveCurrent") {
     // remove inside a line
     ml.begin();
     ml.right();
-    del = ml.removeCurrent();
+    del = ml.removeCurrentChar();
     REQUIRE(1U == del.size());
     REQUIRE("i" == del[0]);
     REQUIRE(18 == ml.at(0).length());
@@ -230,7 +230,7 @@ TEST_CASE("Buffer::RemoveCurrent") {
     // remove at line end
     ml.begin();
     ml.endOfLine();
-    del = ml.removeCurrent();
+    del = ml.removeCurrentChar();
     REQUIRE(1U == del.size());
     REQUIRE("\n" == del[0]);
     REQUIRE(20 == ml.length());
@@ -278,7 +278,7 @@ TEST_CASE("Buffer::SortRegionsEmptyLine") {
     REQUIRE("#endif" == ml.at(2).get());
     REQUIRE("#ifndef _GNU_SOURCE" == ml.at(3).get());
     // undo
-    ml.remove(pos, after);
+    ml.removeRegion(pos, after);
     ml.restoreCursors(pos);
     ml.insert(del);
     REQUIRE(21 == ml.length());
@@ -313,7 +313,7 @@ TEST_CASE("Buffer::SortRegions") {
     REQUIRE("#endif" == ml.at(1).get());
     REQUIRE("#ifndef _GNU_SOURCE" == ml.at(2).get());
     // undo
-    ml.remove(pos, after);
+    ml.removeRegion(pos, after);
     ml.restoreCursors(pos);
     ml.insert(del);
     REQUIRE(21 == ml.length());
@@ -499,7 +499,7 @@ TEST_CASE("Buffer::Cut") {
         ml.endOfLine();
         auto before = ml.saveCursors();
         auto regs = ml.getRegionLocs();
-        auto del = ml.remove(regs, before);
+        auto del = ml.removeRegion(regs, before);
         REQUIRE(1U == del.size());
         REQUIRE("\nTesting123" == del[0]);
         REQUIRE(3 == ml.length());
@@ -510,7 +510,7 @@ TEST_CASE("Buffer::Cut") {
         ml.down();
         auto before = ml.saveCursors();
         auto regs = ml.getRegionLocs();
-        auto del = ml.remove(regs, before);
+        auto del = ml.removeRegion(regs, before);
         REQUIRE(1U == del.size());
         REQUIRE("* Hello\n" == del[0]);
         REQUIRE(3 == ml.length());
@@ -523,7 +523,7 @@ TEST_CASE("Buffer::Cut") {
         ml.startOfLine();
         auto before = ml.saveCursors();
         auto regs = ml.getRegionLocs();
-        auto del = ml.remove(regs, before);
+        auto del = ml.removeRegion(regs, before);
         REQUIRE(1U == del.size());
         REQUIRE("\nTesting123\n" == del[0]);
         ///@todo: issue with trailing newline now!!
@@ -739,7 +739,7 @@ TEST_CASE("Buffer::SingleCursorEdits") {
     }
 
     SECTION("remove from front") {
-        ml._remove();
+        ml.remove();
         REQUIRE("* Hello" == ml.at(0).get());
         REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
         REQUIRE_FALSE(ml.isModified());
@@ -754,7 +754,7 @@ TEST_CASE("Buffer::SingleCursorEdits") {
 
     SECTION("remove char") {
         ml.right();
-        ml._remove();
+        ml.remove();
         REQUIRE(" Hello" == ml.at(0).get());
         REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
         ml.undo();
@@ -769,7 +769,7 @@ TEST_CASE("Buffer::SingleCursorEdits") {
     SECTION("remove newline") {
         ml.endOfLine(); ml.right();
         REQUIRE(Pos2di(0, 1) == ml.saveCursors()[0]);
-        ml._remove();
+        ml.remove();
         REQUIRE(3 == ml.length());
         REQUIRE("* HelloTesting123" == ml.at(0).get());
         REQUIRE(Pos2di(7, 0) == ml.saveCursors()[0]);
@@ -787,7 +787,7 @@ TEST_CASE("Buffer::SingleCursorEdits") {
 
     SECTION("remove current char") {
         ml.right();
-        ml._remove(true);
+        ml.remove(true);
         REQUIRE("*Hello" == ml.at(0).get());
         REQUIRE(Pos2di(1, 0) == ml.saveCursors()[0]);
         ml.undo();
@@ -802,7 +802,7 @@ TEST_CASE("Buffer::SingleCursorEdits") {
     SECTION("remove current newline") {
         ml.endOfLine();
         REQUIRE(Pos2di(7, 0) == ml.saveCursors()[0]);
-        ml._remove(true);
+        ml.remove(true);
         REQUIRE(3 == ml.length());
         REQUIRE("* HelloTesting123" == ml.at(0).get());
         REQUIRE(Pos2di(7, 0) == ml.saveCursors()[0]);
@@ -823,7 +823,7 @@ TEST_CASE("Buffer::SingleCursorEdits") {
         ml.right();
         ml.right();
         REQUIRE(Pos2di(2, 0) == ml.saveCursors()[0]);
-        ml._remove();
+        ml.remove();
         REQUIRE_FALSE(ml.isRegionActive());
         REQUIRE("Hello" == ml.at(0).get());
         REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);

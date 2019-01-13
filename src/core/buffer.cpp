@@ -69,24 +69,24 @@ void Buffer::insert(char c, size_t i) {
     moveRightCursorsOnSameLine(i);
 }
 
-void Buffer::_remove(bool removeCurrentChar) {
+void Buffer::remove(bool removeCurrent) {
     OpData op;
     op.type = OpDelete;
     if(isRegionActive()) {
         ///@todo: what if 'before' is after 'after'!?
         op.before = copyCursors(regions);
         op.after = saveCursors();
-        op.strs = remove(op.before, op.after);
+        op.strs = removeRegion(op.before, op.after);
         restoreCursors(op.before);
         disableRegions();
-    } else if(removeCurrentChar) {
+    } else if(removeCurrent) {
         op.after = op.before = saveCursors();
-        op.strs = removeCurrent();
+        op.strs = removeCurrentChar();
     } else {
         // order is reversed for 'after' and 'before' due to the following
         // insertion op during the undo of this operation!
         op.after = saveCursors();
-        op.strs = remove();
+        op.strs = removeChar();
         op.before = saveCursors();
     }
     lineDown();
@@ -96,7 +96,7 @@ void Buffer::_remove(bool removeCurrentChar) {
     }
 }
 
-Strings Buffer::remove() {
+Strings Buffer::removeChar() {
     Strings del;
     int len = cursorCount();
     int minLoc = getMinStartLoc();
@@ -127,7 +127,7 @@ Strings Buffer::remove() {
     return del;
 }
 
-Strings Buffer::remove(const Positions& start, const Positions& end) {
+Strings Buffer::removeRegion(const Positions& start, const Positions& end) {
     Strings del;
     for(size_t i=0;i<start.size();++i)
         del.push_back(removeFrom(start[i], end[i]));
@@ -176,7 +176,7 @@ std::string Buffer::removeFrom(const Pos2d<int>& start,
     return del;
 }
 
-Strings Buffer::removeCurrent() {
+Strings Buffer::removeCurrentChar() {
     Strings del;
     int len = cursorCount();
     for(int i=0;i<len;++i) {
@@ -267,9 +267,9 @@ void Buffer::applyInsertOp(OpData& op, bool pushToStack) {
 void Buffer::applyDeleteOp(OpData& op) {
     restoreCursors(op.before);
     if(op.before == op.after) { // removeCurrent was called
-        removeCurrent();
+        removeCurrentChar();
     } else {
-        remove(op.before, op.after);
+        removeRegion(op.before, op.after);
     }
     lineDown();
     modified = true;

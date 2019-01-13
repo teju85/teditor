@@ -17,7 +17,7 @@ enum CommandCallType {
     CMD_FRESH = 0,
     /** Command's undo part is being called */
     CMD_UNDO,
-    /** Commads' redo part is being called */
+    /** Command's redo part is being called */
     CMD_REDO
 };
 

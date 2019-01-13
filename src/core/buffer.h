@@ -49,18 +49,18 @@ public:
     /** insert a string at all current cursor locations */ 
     virtual void insert(const std::string& buf);
     /** [WIP!] main remove method */
-    void _remove(bool removeCurrentChar=false);
+    void remove(bool removeCurrent=false);
     /** for deleting a char using backspace */
-    Strings remove();
+    Strings removeChar();
     /**
      * @brief removes regions between start and end
      * @param start list of region starts
      * @param end list of region ends
      * @return list of deleted regions
      */
-    Strings remove(const Positions& start, const Positions& end);
+    Strings removeRegion(const Positions& start, const Positions& end);
     /** removes chars at current cursor locations and returns them */
-    Strings removeCurrent();
+    Strings removeCurrentChar();
     /** kills lines at current cursor location onwards and returns them */
     Strings killLine();
     /** sorts the lines in the regions */

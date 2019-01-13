@@ -29,13 +29,13 @@ CMD_UNDO3(RemoveRegion, "remove-region", Positions regs, Positions before,
         mlbuffer.insert(del);
         break;
     case CMD_REDO:
-        del = mlbuffer.remove(regs, before);
+        del = mlbuffer.removeRegion(regs, before);
         mlbuffer.restoreCursors(regs);
         break;
     default:
         before = mlbuffer.saveCursors();
         regs = mlbuffer.getRegionLocs();
-        del = mlbuffer.remove(regs, before);
+        del = mlbuffer.removeRegion(regs, before);
         mlbuffer.restoreCursors(regs);
     };
     ed.stopRegion();
@@ -51,7 +51,7 @@ CMD_UNDO4(SortLines, "sort-lines", Positions after, Positions regs,
     auto& mlbuffer = ed.getBuff();
     switch(type) {
     case CMD_UNDO:
-        mlbuffer.remove(regs, after);
+        mlbuffer.removeRegion(regs, after);
         mlbuffer.restoreCursors(regs);
         mlbuffer.insert(del);
         break;
@@ -79,7 +79,7 @@ CMD_UNDO2(InsertChar, "insert-char", char c, Positions before) {
     switch(type) {
     case CMD_UNDO:
         mlbuffer.restoreCursors(before);
-        mlbuffer.removeCurrent();
+        mlbuffer.removeCurrentChar();
         break;
     case CMD_REDO:
         mlbuffer.restoreCursors(before);
@@ -109,11 +109,11 @@ CMD_UNDO3(BackspaceChar, "backspace-char", Strings del, Positions before,
         break;
     case CMD_REDO:
         mlbuffer.restoreCursors(before);
-        mlbuffer.remove();
+        mlbuffer.removeChar();
         break;
     default:
         before = mlbuffer.saveCursors();
-        del = mlbuffer.remove();
+        del = mlbuffer.removeChar();
         after = mlbuffer.saveCursors();
     };
 }
@@ -135,11 +135,11 @@ CMD_UNDO2(DeleteChar, "delete-char", Strings del,
         break;
     case CMD_REDO:
         mlbuffer.restoreCursors(locs);
-        mlbuffer.removeCurrent();
+        mlbuffer.removeCurrentChar();
         break;
     default:
         locs = mlbuffer.saveCursors();
-        del = mlbuffer.removeCurrent();
+        del = mlbuffer.removeCurrentChar();
     };
 }
 
@@ -219,7 +219,7 @@ CMD_UNDO3(ShellToBuffer, "shell-to-buffer", Positions before, Positions after,
     switch(type) {
     case CMD_UNDO:
         mlb.restoreCursors(before);
-        mlb.remove(before, after);
+        mlb.removeRegion(before, after);
         break;
     case CMD_REDO:
         mlb.restoreCursors(before);
@@ -259,7 +259,7 @@ CMD_UNDO3(PasteRegion, "paste-region", Strings del, Positions before,
     switch(type) {
     case CMD_UNDO:
         mlbuffer.restoreCursors(before);
-        mlbuffer.remove(before, after);
+        mlbuffer.removeRegion(before, after);
         break;
     case CMD_REDO:
         mlbuffer.restoreCursors(before);
@@ -289,13 +289,13 @@ CMD_UNDO3(CutRegion, "cut-region", Strings del, Positions before,
         mlbuffer.insert(del);
         break;
     case CMD_REDO:
-        del = mlbuffer.remove(regs, before);
+        del = mlbuffer.removeRegion(regs, before);
         mlbuffer.restoreCursors(regs);
         break;
     default:
         before = mlbuffer.saveCursors();
         regs = mlbuffer.getRegionLocs();
-        del = mlbuffer.remove(regs, before);
+        del = mlbuffer.removeRegion(regs, before);
         ed.setCopyData(del);
         mlbuffer.restoreCursors(regs);
     };
@@ -627,7 +627,7 @@ CMD_UNDO3(DownloadBuffer, "download-to-buffer", Positions before, Positions afte
     switch(type) {
     case CMD_UNDO:
         mlb.restoreCursors(before);
-        mlb.remove(before, after);
+        mlb.removeRegion(before, after);
         break;
     case CMD_REDO:
         mlb.restoreCursors(before);
