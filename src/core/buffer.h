@@ -48,18 +48,28 @@ public:
     void insert(const Strings& strs);
     /** insert a string at all current cursor locations */ 
     virtual void insert(const std::string& buf);
-    /** [WIP!] main remove method */
+    /**
+     * @brief [WIP!] main remove method
+     * @param removeCurrent whether to remove the current char over the cursor
+     */
     void remove(bool removeCurrent=false);
-    /** for deleting a char using backspace */
+    /**
+     * for deleting a char using backspace
+     * @todo this should be removed in favor of 'remove' method
+     */
     Strings removeChar();
     /**
      * @brief removes regions between start and end
      * @param start list of region starts
      * @param end list of region ends
      * @return list of deleted regions
+     * @todo this should be removed in favor of 'remove' method
      */
     Strings removeRegion(const Positions& start, const Positions& end);
-    /** removes chars at current cursor locations and returns them */
+    /**
+     * removes chars at current cursor locations and returns them
+     * @todo this should be removed in favor of 'remove' method
+     */
     Strings removeCurrentChar();
     /** kills lines at current cursor location onwards and returns them */
     Strings killLine();
@@ -220,9 +230,6 @@ public:
     Strings regionAsStr() const;
 
     void reload();
-    void addCommand(CmdPtr c);
-    void undoCmd();
-    void redoCmd();
     const Positions& getRegionLocs() const { return regions.getLocs(); }
     const AttrColor& getColor(const std::string& name) const;
     int verticalJump(float jump) const { return (int)(jump * screenDim.y); }
@@ -267,8 +274,6 @@ protected:
     bool modified, readOnly;
     std::string buffName, fileName, dirName;
     Regions regions;
-    std::vector<CmdPtr> cmds;
-    int topCmd;
     ///@todo: support applying multiple modes
     ModePtr mode;
     /** cursor(s) */
