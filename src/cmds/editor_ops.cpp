@@ -307,133 +307,40 @@ DEF_CMD(Quit, "quit",
 //     ed.stopRegion();
 // }
 
-// CMD_NO_UNDO(CopyRegion, "copy-region") {
-//     auto& ed = Editor::getInstance();
-//     if(!ed.isRegionActive()) {
-//         CMBAR_MSG("No selection to copy!\n");
-//         return;
-//     }
-//     auto& mlb = ed.getBuff();
-//     auto cp = mlb.regionAsStr();
-//     ed.setCopyData(cp);
-// }
+DEF_CMD(StartRegion, "start-region",
+        DEF_OP() {
+            if(!ed.isRegionActive()) {
+                ed.startRegion();
+            } else {
+                ed.stopRegion();
+                ed.startRegion();
+            }
+        },
+        DEF_HELP() { return "Start region from the current cursor position"; });
 
-// CMD_NO_UNDO(ReloadBuffer, "reload-buffer") {
-//     auto& ed = Editor::getInstance();
-//     auto& buf = ed.getBuff();
-//     if(buf.isModified() && ed.promptYesNo("Buffer modified, still reload? "))
-//         buf.reload();
-// }
+DEF_CMD(Cancel, "cancel",
+        DEF_OP() {
+            auto& buf = ed.getBuff();
+            if(ed.isRegionActive()) ed.stopRegion();
+            if(buf.cursorCount() > 1) buf.clearAllCursorsButFirst();
+        },
+        DEF_HELP() { return "Cancel all multiple-cursors + active regions"; });
 
-// CMD_NO_UNDO(CursorDown, "cursor-down") {
-//     auto& mlbuffer = Editor::getInstance().getBuff();
-//     mlbuffer.down();
-// }
+DEF_CMD(CopyRegion, "copy-region",
+        DEF_OP() {
+            if(!ed.isRegionActive()) {
+                CMBAR_MSG("No selection to copy!\n");
+                return;
+            }
+            auto& buf = ed.getBuff();
+            auto cp = buf.regionAsStr();
+            ed.setCopyData(cp);
+        },
+        DEF_HELP() { return "Copy current region into internal clipboard"; });
 
-// CMD_NO_UNDO(CursorUp, "cursor-up") {
-//     auto& mlbuffer = Editor::getInstance().getBuff();
-//     mlbuffer.up();
-// }
-
-// CMD_NO_UNDO(CursorRight, "cursor-right") {
-//     auto& mlbuffer = Editor::getInstance().getBuff();
-//     mlbuffer.right();
-// }
-
-// CMD_NO_UNDO(CursorLeft, "cursor-left") {
-//     auto& mlbuffer = Editor::getInstance().getBuff();
-//     mlbuffer.left();
-// }
-
-// CMD_NO_UNDO(CursorReset, "cursor-reset") {
-//     auto& mlbuffer = Editor::getInstance().getBuff();
-//     mlbuffer.begin();
-// }
-
-// CMD_NO_UNDO(CursorEnd, "cursor-end") {
-//     auto& mlbuffer = Editor::getInstance().getBuff();
-//     mlbuffer.end();
-// }
-
-// CMD_NO_UNDO(CursorHome, "cursor-home") {
-//     auto& mlbuffer = Editor::getInstance().getBuff();
-//     mlbuffer.startOfLine();
-// }
-
-// CMD_NO_UNDO(CursorLineEnd, "cursor-line-end") {
-//     auto& mlbuffer = Editor::getInstance().getBuff();
-//     mlbuffer.endOfLine();
-// }
-
-// CMD_NO_UNDO(PageDown, "page-down") {
-//     auto& ed = Editor::getInstance();
-//     auto& args = ed.getArgs();
-//     auto& mlbuffer = ed.getBuff();
-//     mlbuffer.pageDown(args.pageScrollJump);
-// }
-
-// CMD_NO_UNDO(PageUp, "page-up") {
-//     auto& ed = Editor::getInstance();
-//     auto& args = ed.getArgs();
-//     auto& mlbuffer = ed.getBuff();
-//     mlbuffer.pageUp(args.pageScrollJump);
-// }
-
-// CMD_NO_UNDO(NextPara, "next-para") {
-//     auto& mlbuffer = Editor::getInstance().getBuff();
-//     mlbuffer.nextPara();
-// }
-
-// CMD_NO_UNDO(PreviousPara, "previous-para") {
-//     auto& mlbuffer = Editor::getInstance().getBuff();
-//     mlbuffer.previousPara();
-// }
-
-// CMD_NO_UNDO(NextWord, "next-word") {
-//     auto& mlbuffer = Editor::getInstance().getBuff();
-//     mlbuffer.nextWord();
-// }
-
-// CMD_NO_UNDO(PreviousWord, "previous-word") {
-//     auto& mlbuffer = Editor::getInstance().getBuff();
-//     mlbuffer.previousWord();
-// }
-
-// CMD_NO_UNDO(MatchParen, "match-paren") {
-//     auto& mlbuffer = Editor::getInstance().getBuff();
-//     mlbuffer.matchCurrentParen();
-// }
-
-// CMD_NO_UNDO(GotoLine, "goto-line") {
-//     auto& ed = Editor::getInstance();
-//     auto line = ed.prompt("Goto: ");
-//     int lineNum = str2num(line);
-//     ed.getBuff().gotoLine(lineNum);
-// }
-
-// CMD_NO_UNDO(StartRegion, "start-region") {
-//     auto& ed = Editor::getInstance();
-//     if(!ed.isRegionActive()) {
-//         ed.startRegion();
-//     } else {
-//         ed.stopRegion();
-//         ed.startRegion();
-//     }
-// }
-
-// CMD_NO_UNDO(Cancel, "cancel") {
-//     auto& ed = Editor::getInstance();
-//     auto& buf = ed.getBuff();
-//     if(ed.isRegionActive())
-//         ed.stopRegion();
-//     if(buf.cursorCount() > 1)
-//         buf.clearAllCursorsButFirst();
-// }
-
-// CMD_NO_UNDO(ScratchBuffer, "scratch-buffer") {
-//     auto& ed = Editor::getInstance();
-//     ed.createScratchBuff(true);
-// }
+DEF_CMD(ScratchBuffer, "scratch-buffer",
+        DEF_OP() { ed.createScratchBuff(true); },
+        DEF_HELP() { return "Create a scratch buffer and switch to it"; });
 
 // CMD_NO_UNDO(FindFileHistory, "find-file-history") {
 //     auto& ed = Editor::getInstance();

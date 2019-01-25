@@ -53,5 +53,18 @@ DEF_CMD(KillOthers, "kill-other-buffers",
                 " unsaved buffers and will prompt them to be saved.";
         });
 
+DEF_CMD(Reload, "reload-buffer",
+        DEF_OP() {
+            auto& buf = ed.getBuff();
+            if(buf.isModified() &&
+               ed.promptYesNo("Buffer modified, still reload? "))
+                buf.reload();
+        },
+        DEF_HELP() {
+            return "Reloads the buffer contents from the filesystem. Note that"
+                " this will overwrite any modified-but-unsaved changes in the"
+                " current buffer!";
+        });
+
 } // end namespace BufferOps
 } // end namespace teditor
