@@ -4,6 +4,7 @@
 
 
 namespace teditor {
+namespace DirMode {
 
 // CMD_NO_UNDO(DirModeOpenFile, "dirmode-open-file") {
 //     auto& ed = Editor::getInstance();
@@ -40,11 +41,15 @@ namespace teditor {
 //     }
 // }
 
-// CMD_NO_UNDO(DirModeRefresh, "dirmode-refresh") {
-//     auto& buf = Editor::getInstance().getBuff();
-//     buf.clear();
-//     buf.load(buf.getFileName(), 0);
-// }
+DEF_CMD(Refresh, "dirmode-refresh",
+        [](Editor& ed) {
+            auto& buf = ed.getBuff();
+            buf.clear();
+            buf.load(buf.getFileName(), 0);
+        },
+        [](Editor& ed) -> std::string {
+            return "Reload the directory contents.";
+        });
 
 // CMD_NO_UNDO(DirModeRenameFile, "dirmode-rename-file") {
 //     auto& ed = Editor::getInstance();
@@ -83,4 +88,5 @@ namespace teditor {
 //     ed.runCmd("dirmode-refresh");
 // }
 
+} // end namespace DirMode
 } // end namespace teditor

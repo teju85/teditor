@@ -5,6 +5,7 @@
 
 
 namespace teditor {
+namespace Text {
 
 DEF_CMD(Quit, "quit",
         [](Editor& ed) {
@@ -15,12 +16,6 @@ DEF_CMD(Quit, "quit",
             return "Quit the editor. It'll check for any modified but unsaved"
                 " buffers and prompt for saving them.";
         });
-
-// CMD_NO_UNDO(Quit, "quit") {
-//     auto& ed = Editor::getInstance();
-//     ed.requestQuitEventLoop();
-//     ed.checkForModifiedBuffers();
-// }
 
 // ///@todo: support for when before is before regs!
 // ///@todo: there's still a newline issue when selection spans the whole last line
@@ -440,15 +435,13 @@ DEF_CMD(Quit, "quit",
 //     ed.decrementCurrBuff();
 // }
 
-// CMD_NO_UNDO(KillCurrBuff, "kill-this-buffer") {
-//     auto& ed = Editor::getInstance();
-//     ed.killCurrBuff();
-// }
+DEF_CMD(KillCurrBuff, "kill-this-buffer",
+        [](Editor& ed) { ed.killCurrBuff(); },
+        [](Editor& ed) -> std::string { return "Kill the current buffer."; });
 
-// CMD_NO_UNDO(KillOtherBuffs, "kill-other-buffers") {
-//     auto& ed = Editor::getInstance();
-//     ed.killOtherBuffs();
-// }
+DEF_CMD(KillOtherBuffs, "kill-other-buffers",
+        [](Editor& ed) { ed.killOtherBuffs(); },
+        [](Editor& ed) -> std::string { return "Kill other buffers."; });
 
 // CMD_NO_UNDO(StartRegion, "start-region") {
 //     auto& ed = Editor::getInstance();
@@ -720,4 +713,5 @@ DEF_CMD(Quit, "quit",
 //             cmd.c_str(), res.status, res.output.c_str());
 // }
 
+} // end namespace Text
 } // end namespace teditor
