@@ -5,7 +5,7 @@
 
 
 namespace teditor {
-namespace Text {
+namespace EditorOps {
 
 DEF_CMD(Quit, "quit",
         DEF_OP() {
@@ -681,5 +681,5 @@ DEF_CMD(Quit, "quit",
 //             cmd.c_str(), res.status, res.output.c_str());
 // }
 
-} // end namespace Text
+} // end namespace EditorOps
 } // end namespace teditor
