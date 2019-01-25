@@ -61,4 +61,10 @@ struct RegisterCmd {
 #define DEF_CMD_NO_HELP(UniqName, CmdName, OpFunc)      \
     DEF_CMD(UniqName, CmdName, OpFunc, nullptr)
 
+/** helper macro to define a command function */
+#define DEF_OP()  [](Editor& ed)
+
+/** helper macro to define a help function */
+#define DEF_HELP()  [](Editor& ed) -> std::string
+
 }; // end namespace teditor

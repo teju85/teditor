@@ -8,11 +8,11 @@ namespace teditor {
 namespace Text {
 
 DEF_CMD(Quit, "quit",
-        [](Editor& ed) {
+        DEF_OP() {
             ed.requestQuitEventLoop();
             ed.checkForModifiedBuffers();
         },
-        [](Editor& ed) -> std::string {
+        DEF_HELP() {
             return "Quit the editor. It'll check for any modified but unsaved"
                 " buffers and prompt for saving them.";
         });
@@ -410,38 +410,6 @@ DEF_CMD(Quit, "quit",
 //     int lineNum = str2num(line);
 //     ed.getBuff().gotoLine(lineNum);
 // }
-
-// CMD_NO_UNDO(BufferSave, "buffer-save") {
-//     auto& mlbuffer = Editor::getInstance().getBuff();
-//     if(mlbuffer.isRO()) {
-//         CMBAR_MSG("buffer-save: Read Only Buffer!\n");
-//         return;
-//     }
-//     mlbuffer.save();
-// }
-
-// CMD_NO_UNDO(BufferPwd, "pwd") {
-//     auto& buf = Editor::getInstance().getBuff();
-//     CMBAR_MSG("Pwd: %s\n", buf.pwd().c_str());
-// }
-
-// CMD_NO_UNDO(BufferNext, "buffer-next") {
-//     auto& ed = Editor::getInstance();
-//     ed.incrementCurrBuff();
-// }
-
-// CMD_NO_UNDO(BufferPrev, "buffer-prev") {
-//     auto& ed = Editor::getInstance();
-//     ed.decrementCurrBuff();
-// }
-
-DEF_CMD(KillCurrBuff, "kill-this-buffer",
-        [](Editor& ed) { ed.killCurrBuff(); },
-        [](Editor& ed) -> std::string { return "Kill the current buffer."; });
-
-DEF_CMD(KillOtherBuffs, "kill-other-buffers",
-        [](Editor& ed) { ed.killOtherBuffs(); },
-        [](Editor& ed) -> std::string { return "Kill other buffers."; });
 
 // CMD_NO_UNDO(StartRegion, "start-region") {
 //     auto& ed = Editor::getInstance();
