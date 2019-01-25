@@ -384,44 +384,57 @@ DEF_CMD(ScratchBuffer, "scratch-buffer",
 //         ed.load(file, 0);
 // }
 
-// CMD_NO_UNDO(RunCommand, "run-command") {
-//     auto& ed = Editor::getInstance();
-//     StringChoices sc(allCmdNames());
-//     auto cmd = ed.prompt("Cmd: ", nullptr, &sc);
-//     if(cmd.empty())
-//         return;
-//     try {
-//         ed.runCmd(cmd);
-//     } catch(const std::runtime_error& e) {
-//         CMBAR_MSG("Unknown command: %s!\n", cmd.c_str());
-//     }
-// }
+DEF_CMD(RunCommand, "run-command",
+        DEF_OP() {
+            StringChoices sc(allCmdNames());
+            auto cmd = ed.prompt("Cmd: ", nullptr, &sc);
+            if(cmd.empty()) return;
+            try {
+                ed.runCmd(cmd);
+            } catch(const std::runtime_error& e) {
+                CMBAR_MSG("Unknown command: %s!\n", cmd.c_str());
+            }
+        },
+        DEF_HELP() {
+            return "Prompts user to choose a command from the current database"
+                " and runs it.";
+        });
 
-// CMD_NO_UNDO(ShellCommand, "shell-command") {
-//     auto& ed = Editor::getInstance();
-//     auto cmd = ed.prompt("Shell Command: ");
-//     if(!cmd.empty()) {
-//         auto res = check_output(cmd);
-//         MESSAGE("Shell Command: %s (exit-status=%d)\nOutput: %s",
-//                 cmd.c_str(), res.status, res.output.c_str());
-//     }
-// }
+DEF_CMD(ShellCommand, "shell-command",
+        DEF_OP() {
+            auto cmd = ed.prompt("Shell Command: ");
+            if(!cmd.empty()) {
+                auto res = check_output(cmd);
+                MESSAGE("Shell Command: %s (exit-status=%d)\nOutput: %s",
+                        cmd.c_str(), res.status, res.output.c_str());
+            }
+        },
+        DEF_HELP() {
+            return "Prompts user to type in a shell command to run. The current"
+                " working dir for running this command will be the same as that"
+                " of the current buffer.";
+        });
 
-// CMD_NO_UNDO(LaunchExplorer, "open-explorer") {
-//     auto& ed = Editor::getInstance();
-//     auto& mlbuffer = ed.getBuff();
-//     check_output("cygstart " + mlbuffer.pwd());
-// }
+DEF_CMD(LaunchExplorer, "open-explorer",
+        DEF_OP() { check_output("cygstart " + ed.getBuff().pwd()); },
+        DEF_HELP() {
+            return "Opens the file explorer. Currently only works on cygwin!";
+        });
 
-// CMD_NO_UNDO(LaunchBrowser, "browser") {
-//     auto& ed = Editor::getInstance();
-//     auto& buf = ed.getBuff();
-//     auto& args = ed.getArgs();
-//     std::string url;
-//     if(ed.isRegionActive())
-//         url = buf.regionAsStr()[0];
-//     check_output(args.browserCmd + " '" + url + "'");
-// }
+DEF_CMD(LaunchBrowser, "browser",
+        DEF_OP() {
+            auto& buf = ed.getBuff();
+            auto& args = ed.getArgs();
+            std::string url;
+            if(ed.isRegionActive()) url = buf.regionAsStr()[0];
+            check_output(args.browserCmd + " '" + url + "'");
+        },
+        DEF_HELP() {
+            return "Opens the url pointed by the current active region in the"
+                " browser. If no active regions, it'll just open the browser."
+                " The arg 'browserCmd' can be used to customize the command"
+                " used to launch the browser.";
+        });
 
 // CMD_NO_UNDO(BrowserSearch, "browser-search") {
 //     OptionMap opts;
