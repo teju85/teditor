@@ -169,7 +169,7 @@ TEST_CASE("Buffer::SortRegionsEmptyLine") {
     setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
     REQUIRE(21 == ml.length());
     REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
-    ml.enableRegions();
+    ml.startRegion();
     auto pos = ml.getRegionLocs();
     ml.nextPara();
     auto del = ml.regionAsStr();
@@ -179,7 +179,7 @@ TEST_CASE("Buffer::SortRegionsEmptyLine") {
     REQUIRE(Pos2di(0, 3) == ml.saveCursors()[0]);
     ml.sortRegions();
     auto after = ml.saveCursors();
-    ml.disableRegions();
+    ml.stopRegion();
     REQUIRE(21 == ml.length());
     REQUIRE(Pos2di(ml.at(3).length(), 3) == ml.saveCursors()[0]);
     REQUIRE("" == ml.at(0).get());
@@ -203,7 +203,7 @@ TEST_CASE("Buffer::SortRegions") {
     setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
     REQUIRE(21 == ml.length());
     REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
-    ml.enableRegions();
+    ml.startRegion();
     auto pos = ml.getRegionLocs();
     ml.nextPara();
     // don't include the empty line!
@@ -215,7 +215,7 @@ TEST_CASE("Buffer::SortRegions") {
     REQUIRE(Pos2di(ml.at(2).length(), 2) == ml.saveCursors()[0]);
     ml.sortRegions();
     auto after = ml.saveCursors();
-    ml.disableRegions();
+    ml.stopRegion();
     REQUIRE(21 == ml.length());
     REQUIRE(Pos2di(ml.at(2).length(), 2) == ml.saveCursors()[0]);
     REQUIRE("#define _GNU_SOURCE // for wcstring, strcasestr" == ml.at(0).get());
@@ -358,42 +358,42 @@ TEST_CASE("Buffer::RegionAsStr") {
     REQUIRE(4 == ml.length());
     SECTION("newline at the beginning") {
         ml.endOfLine();
-        ml.enableRegions();
+        ml.startRegion();
         ml.down();
         ml.endOfLine();
         auto strs = ml.regionAsStr();
         REQUIRE(1U == strs.size());
         REQUIRE("\nTesting123" == strs[0]);
-        ml.disableRegions();
+        ml.stopRegion();
     }
     SECTION("full line") {
-        ml.enableRegions();
+        ml.startRegion();
         ml.endOfLine();
         auto strs = ml.regionAsStr();
         REQUIRE(1U == strs.size());
         REQUIRE("* Hello" == strs[0]);
-        ml.disableRegions();
+        ml.stopRegion();
     }
     SECTION("newline at the end") {
-        ml.enableRegions();
+        ml.startRegion();
         ml.endOfLine();
         ml.right();
         auto strs = ml.regionAsStr();
         REQUIRE(1U == strs.size());
         REQUIRE("* Hello\n" == strs[0]);
-        ml.disableRegions();
+        ml.stopRegion();
     }
     SECTION("partial lines") {
         ml.right();
         ml.right();
-        ml.enableRegions();
+        ml.startRegion();
         ml.down();
         ml.endOfLine();
         ml.left();
         auto strs = ml.regionAsStr();
         REQUIRE(1U == strs.size());
         REQUIRE("Hello\nTesting12" == strs[0]);
-        ml.disableRegions();
+        ml.stopRegion();
     }
 }
 
@@ -403,7 +403,7 @@ TEST_CASE("Buffer::Cut") {
     REQUIRE(4 == ml.length());
     SECTION("Preceeding newline") {
         ml.endOfLine();
-        ml.enableRegions();
+        ml.startRegion();
         ml.down();
         ml.endOfLine();
         auto before = ml.saveCursors();
@@ -415,7 +415,7 @@ TEST_CASE("Buffer::Cut") {
     }
     SECTION("Succeeding newline") {
         ml.startOfLine();
-        ml.enableRegions();
+        ml.startRegion();
         ml.down();
         auto before = ml.saveCursors();
         auto regs = ml.getRegionLocs();
@@ -426,7 +426,7 @@ TEST_CASE("Buffer::Cut") {
     }
     SECTION("Preceeding & Succeeding newline") {
         ml.endOfLine();
-        ml.enableRegions();
+        ml.startRegion();
         ml.down();
         ml.down();
         ml.startOfLine();
@@ -728,7 +728,7 @@ TEST_CASE("Buffer::SingleCursorEdits") {
     }
 
     SECTION("remove region") {
-        ml.enableRegions();
+        ml.startRegion();
         ml.right();
         ml.right();
         REQUIRE(Pos2di(2, 0) == ml.saveCursors()[0]);

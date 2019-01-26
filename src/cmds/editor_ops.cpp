@@ -110,7 +110,7 @@ DEF_CMD(LaunchBrowser, "browser",
             auto& buf = ed.getBuff();
             auto& args = ed.getArgs();
             std::string url;
-            if(ed.isRegionActive()) url = buf.regionAsStr()[0];
+            if(buf.isRegionActive()) url = buf.regionAsStr()[0];
             check_output(args.browserCmd + " '" + url + "'");
         },
         DEF_HELP() {

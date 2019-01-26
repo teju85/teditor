@@ -19,7 +19,7 @@ DEF_CMD(InsertChar, "insert-char",
             auto& buf = ed.getBuff();
             char c = ed.getInput().mk.getKey();
             buf.insert(c);
-            if(ed.isRegionActive()) ed.runCmd("backspace-char");
+            if(buf.isRegionActive()) ed.runCmd("backspace-char");
         },
         DEF_HELP() { return "Inserts currently pressed char into buffer."; });
 
@@ -40,7 +40,7 @@ DEF_CMD(DeleteChar, "delete-char",
 // CMD_UNDO4(SortLines, "sort-lines", Positions after, Positions regs,
 //           Strings del, Positions before) {
 //     auto& ed = Editor::getInstance();
-//     if(type == CMD_FRESH && !ed.isRegionActive()) {
+//     if(type == CMD_FRESH && !buf.isRegionActive()) {
 //         canIundo = false;
 //         return;
 //     }
@@ -53,7 +53,7 @@ DEF_CMD(DeleteChar, "delete-char",
 //         break;
 //     case CMD_REDO:
 //         buf.restoreCursors(regs);
-//         ed.startRegion();
+//         buf.startRegion();
 //         buf.restoreCursors(before);
 //         buf.sortRegions();
 //         break;
@@ -64,14 +64,14 @@ DEF_CMD(DeleteChar, "delete-char",
 //         buf.sortRegions();
 //         after = buf.saveCursors();
 //     };
-//     ed.stopRegion();
+//     buf.stopRegion();
 // }
 
 // CMD_UNDO2(KillLine, "kill-line", Strings del, Positions locs) {
 //     auto& ed = Editor::getInstance();
 //     auto& buf = ed.getBuff();
-//     if(ed.isRegionActive())
-//         ed.stopRegion();
+//     if(buf.isRegionActive())
+//         buf.stopRegion();
 //     switch(type) {
 //     case CMD_UNDO:
 //         buf.restoreCursors(locs);
@@ -137,8 +137,8 @@ DEF_CMD(DeleteChar, "delete-char",
 // CMD_UNDO3(ShellToBuffer, "shell-to-buffer", Positions before, Positions after,
 //           std::string output) {
 //     auto& ed = Editor::getInstance();
-//     if(ed.isRegionActive())
-//         ed.stopRegion();
+//     if(buf.isRegionActive())
+//         buf.stopRegion();
 //     auto& mlb = ed.getBuff();
 //     switch(type) {
 //     case CMD_UNDO:
@@ -177,7 +177,7 @@ DEF_CMD(DeleteChar, "delete-char",
 //             CMBAR_MSG("No selection to paste!\n");
 //             return;
 //         }
-//         if(ed.isRegionActive())
+//         if(buf.isRegionActive())
 //             ed.runCmd("remove-region");
 //     }
 //     switch(type) {
@@ -202,7 +202,7 @@ DEF_CMD(DeleteChar, "delete-char",
 //           Positions regs) {
 //     auto& ed = Editor::getInstance();
 //     auto& buf = ed.getBuff();
-//     if(type == CMD_FRESH && !ed.isRegionActive()) {
+//     if(type == CMD_FRESH && !buf.isRegionActive()) {
 //         canIundo = false;
 //         CMBAR_MSG("No selection to cut!\n");
 //         return;
@@ -223,14 +223,14 @@ DEF_CMD(DeleteChar, "delete-char",
 //         ed.setCopyData(del);
 //         buf.restoreCursors(regs);
 //     };
-//     ed.stopRegion();
+//     buf.stopRegion();
 // }
 
 // CMD_UNDO3(DownloadBuffer, "download-to-buffer", Positions before, Positions after,
 //           std::string output) {
 //     auto& ed = Editor::getInstance();
-//     if(ed.isRegionActive())
-//         ed.stopRegion();
+//     if(buf.isRegionActive())
+//         buf.stopRegion();
 //     auto& mlb = ed.getBuff();
 //     switch(type) {
 //     case CMD_UNDO:
@@ -260,11 +260,12 @@ DEF_CMD(DeleteChar, "delete-char",
 
 DEF_CMD(StartRegion, "start-region",
         DEF_OP() {
-            if(!ed.isRegionActive()) {
-                ed.startRegion();
+            auto& buf = ed.getBuff();
+            if(!buf.isRegionActive()) {
+                buf.startRegion();
             } else {
-                ed.stopRegion();
-                ed.startRegion();
+                buf.stopRegion();
+                buf.startRegion();
             }
         },
         DEF_HELP() { return "Start region from the current cursor position"; });
@@ -272,18 +273,18 @@ DEF_CMD(StartRegion, "start-region",
 DEF_CMD(Cancel, "cancel",
         DEF_OP() {
             auto& buf = ed.getBuff();
-            if(ed.isRegionActive()) ed.stopRegion();
+            if(buf.isRegionActive()) buf.stopRegion();
             if(buf.cursorCount() > 1) buf.clearAllCursorsButFirst();
         },
         DEF_HELP() { return "Cancel all multiple-cursors + active regions"; });
 
 DEF_CMD(CopyRegion, "copy-region",
         DEF_OP() {
-            if(!ed.isRegionActive()) {
+            auto& buf = ed.getBuff();
+            if(!buf.isRegionActive()) {
                 CMBAR_MSG("No selection to copy!\n");
                 return;
             }
-            auto& buf = ed.getBuff();
             auto cp = buf.regionAsStr();
             ed.setCopyData(cp);
         },

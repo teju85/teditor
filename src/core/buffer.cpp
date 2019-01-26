@@ -77,7 +77,7 @@ void Buffer::remove(bool removeCurrent) {
         op.after = saveCursors();
         op.strs = removeRegion(op.before, op.after);
         restoreCursors(op.before);
-        disableRegions();
+        stopRegion();
     } else if(removeCurrent) {
         op.after = op.before = saveCursors();
         op.strs = removeCurrentChar();
@@ -206,7 +206,7 @@ void Buffer::clear() {
     addLine();
     startLine = 0;
     begin();
-    disableRegions();
+    stopRegion();
     clearStack(undoStack);
     clearStack(redoStack);
 }
@@ -378,7 +378,7 @@ void Buffer::resetBufferState(int line, const std::string& file) {
     fileName = file;
     dirName = isDir(file.c_str())? file : dirname(file);
     buffName = basename(file);
-    disableRegions();
+    stopRegion();
 }
 
 void Buffer::drawBuffer(Editor& ed) {

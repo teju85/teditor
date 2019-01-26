@@ -36,7 +36,6 @@ public:
     const Buffer& getBuff() const { return *buffs[currBuff]; }
     CmdMsgBar& getCmBar() { return cmBar; }
     Buffer& getMessagesBuff();
-    bool isRegionActive() const { return getBuff().isRegionActive(); }
     std::string prompt(const std::string& msg, KeyCmdMap* kcMap=nullptr,
                        Choices* choices=nullptr,
                        const std::string& defVal=std::string());
@@ -44,8 +43,6 @@ public:
     std::string promptEnum(const std::string& msg, OptionMap& opts);
     void load(const std::string& file, int line);
     void runCmd(const std::string& cmd);
-    void startRegion() { getBuff().enableRegions(); }
-    void stopRegion() { getBuff().disableRegions(); }
     void checkForModifiedBuffers();
     void checkForModifiedBuffer(Buffer* mlb);
     bool hasCopy() const { return !copiedStr.empty(); }

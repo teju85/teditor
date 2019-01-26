@@ -208,24 +208,32 @@ public:
     const std::string& pwd() const { return dirName; }
     bool isRO() const { return readOnly; }
     bool isModified() const { return modified; }
-    bool isRegionActive() const { return !regions.empty(); }
     virtual int getMinStartLoc() const { return 0; }
     std::string dirModeGetFileAtLine(int line);
 
+    /**
+     * @defgroup RegionOps Operations with regions
+     * @{
+     */
+    /** checks if there's an active region */
+    bool isRegionActive() const { return !regions.empty(); }
     /**
      * Return the string that represents the currently highlighted region. In
      * case of multiple-cursors, this will return one such string for each
      * region
      */
     Strings regionAsStr() const;
+    /** start a mark (or region) */
+    void startRegion() { regions.enable(locs); }
+    /** stop the currently active mark (or region) */
+    void stopRegion() { regions.clear(); }
+    /** @} */
 
     void reload();
     const Positions& getRegionLocs() const { return regions.getLocs(); }
     const AttrColor& getColor(const std::string& name) const;
     int verticalJump(float jump) const { return (int)(jump * screenDim.y); }
     const std::string& getWord() const { return mode->word(); }
-    void enableRegions() { regions.enable(locs); }
-    void disableRegions() { regions.clear(); }
     const std::string& modeName() const { return mode->name(); }
 
 protected:
