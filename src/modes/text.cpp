@@ -7,19 +7,14 @@ namespace teditor {
 
 REGISTER_MODE(TextMode, "text");
 
-
-TextMode::TextMode():
-    Mode("text",
-         "abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNOPQRSTUVWXYZ0123456789_"),
-    kcMap(), cMap() {
-    populateKeyMap<TextMode::Keys>(kcMap);
-    kcMap.resetTraversal();
-    populateColorMap<TextMode::Colors>(cMap);
+TextMode::TextMode(const std::string& n, const std::string& w):
+    ReadOnlyMode(n, w) {
+    populateKeyMap<TextMode::Keys>(getKeyCmdMap());
+    populateColorMap<TextMode::Colors>(getColorMap());
 }
 
 int TextMode::indent(Buffer& buf, int line) {
-    if(!(0 < line && line < buf.length()))
-        return 0;
+    if(!(0 < line && line < buf.length())) return 0;
     const auto& prev = buf.at(line-1);
     auto& curr = buf.at(line);
     int prevInd = prev.indentSize();
@@ -31,7 +26,6 @@ bool TextMode::modeCheck(const std::string& file) {
     static Pcre reg("[.]txt$");
     return reg.isMatch(file);
 }
-
 
 std::vector<KeyCmdPair> TextMode::Keys::All = {
     {" ", "insert-char"},
@@ -130,69 +124,18 @@ std::vector<KeyCmdPair> TextMode::Keys::All = {
     {"}", "insert-char"},
     {"~", "insert-char"},
     {"enter", "insert-char"},
-    {"down", "cursor-down"},
-    {"up", "cursor-up"},
-    {"right", "cursor-right"},
-    {"left", "cursor-left"},
-    {"C-home", "cursor-reset"},
-    {"C-end", "cursor-end"},
-    {"home", "cursor-home"},
-    {"end", "cursor-line-end"},
-    {"pagedown", "page-down"},
-    {"pageup", "page-up"},
-    {"C-up", "previous-para"},
-    {"C-down", "next-para"},
-    {"C-left", "previous-word"},
-    {"C-P", "match-paren"},
-    {"C-right", "next-word"},
     {"backspace", "backspace-char"},
     {"del", "delete-char"},
     {"C-S", "save-buffer"},
-    {"M-right", "next-buffer"},
-    {"M-left", "prev-buffer"},
-    {"C-Q C-E", "quit"},
     {"C-Q C-T", "kill-this-buffer"},
-    {"C-Q C-O", "kill-other-buffers"},
-    {"C-~", "start-region"},
-    {"esc", "cancel"},
-    {"F10", "find-file-history"},
-    {"F11", "find-file"},
-    {"F12", "scratch-buffer"},
-    {"M-x", "run-command"},
-    {"M-!", "shell-command"},
-    {"F7", "browser-search"},
     {"C-K", "kill-line"},
     {"C-Z", "command-undo"},
     {"C-Y", "command-redo"},
-    {"F5", "reload-buffer"},
-    {"C-D", "add-cursor-down"},
-    {"C-U", "add-cursor-up"},
-    {"C-C", "copy-region"},
     {"C-V", "paste-region"},
     {"C-X", "cut-region"},
-    {"M-g", "goto-line"},
-    {"C-B C-S", "buffer-switch"},
-    {"C-F", "search"},
-    {"C-G C-B", "git-branch"},
     {"tab", "indent"}
 };
 
-std::vector<NameColorPair> TextMode::Colors::All = {
-    {"defaultfg",         "White"},
-    {"defaultbg",         "DarkerGray"},
-    {"highlightfg",       "defaultfg"},
-    {"highlightbg",       "DarkestGray"},
-    {"cursorfg",          "Black"},
-    {"cursorbg",          "White"},
-    {"inactivecursorbg",  "DarkGray"},
-    {"statusfg",          "DarkGreen"},
-    {"statusbg",          "DarkestGray"},
-    {"statusnamefg",      "Underline:Yellow"},
-    {"cmbarfg",           "defaultfg"},
-    {"cmbarbg",           "defaultbg"},
-    {"cmbarhighlightfg",  "highlightfg"},
-    {"cmbarhighlightbg",  "highlightbg"}
-};
-
+std::vector<NameColorPair> TextMode::Colors::All;
 
 } // end namespace teditor
