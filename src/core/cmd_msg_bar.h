@@ -53,7 +53,7 @@ public:
     void drawBuffer(Editor& ed) override;
     void load(const std::string& file, int line=0) override {}
     void drawStatusBar(Editor& ed) override {}
-    void save() override {}
+    void save(const std::string& fName="") override {}
     void clear() override;
     void setMinLoc(int loc) { minLoc = loc; }
     int getMinStartLoc() const override { return minLoc; }

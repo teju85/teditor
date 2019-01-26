@@ -204,7 +204,7 @@ public:
     virtual void lineDown();
     void lineReset() { startLine = 0; }
     void lineEnd();
-    virtual void save();
+    virtual void save(const std::string& fName="");
     const std::string& bufferName() const { return buffName; }
     const std::string& getFileName() const { return fileName; }
     const std::string& pwd() const { return dirName; }

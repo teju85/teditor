@@ -101,6 +101,12 @@ Strings Editor::buffNamesToString() const {
     return ret;
 }
 
+void Editor::saveBuffer(Buffer& buf) {
+    auto fileName = buf.getFileName();
+    if(fileName.empty()) fileName = prompt("File to save: ");
+    buf.save(fileName);
+}
+
 int Editor::cmBarHeight() const {
     if(cmdMsgBarActive && cmBar.usingChoices())
         return args.cmdMsgBarMultiHeight;

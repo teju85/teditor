@@ -666,19 +666,18 @@ void Buffer::lineEnd() {
     startLine += diff;
 }
 
-void Buffer::save() {
+void Buffer::save(const std::string& fName) {
     if(!modified) {
         CMBAR_MSG("Nothing to save");
         return;
     }
-    if(fileName.empty()) {
-        auto& ed = Editor::getInstance();
-        fileName = ed.prompt("File to save: ");
-    }
-    if(fileName.empty()) {
+    auto f = fName;
+    if(f.empty()) f = fileName;
+    if(f.empty()) {
         CMBAR_MSG("Empty file name!");
         return;
     }
+    fileName = f;
     std::ofstream fp;
     fp.open(fileName.c_str());
     ASSERT(fp.is_open(), "Failed to open file '%s'!", fileName.c_str());

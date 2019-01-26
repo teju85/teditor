@@ -83,6 +83,7 @@ public:
     void addFileHistory(const std::string& file, int line);
     Strings fileHistoryToString() const;
     Strings buffNamesToString() const;
+    void saveBuffer(Buffer& buf);
 
 private:
     ByteBuffer outbuff;

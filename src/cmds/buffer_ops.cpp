@@ -247,7 +247,7 @@ DEF_CMD(Save, "save-buffer",
                 CMBAR_MSG("save-buffer: Read Only Buffer!\n");
                 return;
             }
-            buf.save();
+            ed.saveBuffer(buf);
         },
         DEF_HELP() {
             return "Saves contents of the current buffer to the filesystem.";
