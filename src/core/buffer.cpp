@@ -12,9 +12,8 @@ namespace teditor {
 
 Buffer::Buffer(const std::string& name):
     screenStart(), screenDim(), lines(), startLine(0), modified(false),
-    readOnly(false), buffName(name), fileName(), dirName(), regions(), cmds(),
-    topCmd(-1), mode(Mode::createMode("text")), locs(), undoStack(),
-    redoStack() {
+    readOnly(false), buffName(name), fileName(), dirName(), regions(),
+    mode(Mode::createMode("text")), locs(), undoStack(), redoStack() {
     addLine();
     dirName = getpwd();
     locs.push_back(Pos2di(0, 0));
@@ -290,39 +289,6 @@ const AttrColor& Buffer::getColor(const std::string& name) const {
     return mode->getColorMap().get(name);
 }
 
-void Buffer::addCommand(CmdPtr c) {
-    int len = (int)cmds.size();
-    if(topCmd < 0) {
-        cmds.clear();
-        cmds.push_back(c);
-    } else if(topCmd == len-1) {
-        cmds.push_back(c);
-    } else {
-        cmds.erase(cmds.begin()+topCmd+1, cmds.end());
-        cmds.push_back(c);
-    }
-    topCmd = (int)cmds.size() - 1;
-}
-
-void Buffer::undoCmd() {
-    if(topCmd < 0) {
-        CMBAR_MSG("No further undo!");
-        return;
-    }
-    cmds[topCmd]->exec(CMD_UNDO);
-    --topCmd;
-}
-
-void Buffer::redoCmd() {
-    int len = (int)cmds.size();
-    if(topCmd >= len-1) {
-        CMBAR_MSG("No further redo!");
-        return;
-    }
-    topCmd++;
-    cmds[topCmd]->exec(CMD_REDO);
-}
-
 Strings Buffer::regionAsStr() const {
     Strings out;
     if(!isRegionActive()) return out;
@@ -413,8 +379,6 @@ void Buffer::resetBufferState(int line, const std::string& file) {
     dirName = isDir(file.c_str())? file : dirname(file);
     buffName = basename(file);
     disableRegions();
-    cmds.clear();
-    topCmd = -1;
 }
 
 void Buffer::drawBuffer(Editor& ed) {

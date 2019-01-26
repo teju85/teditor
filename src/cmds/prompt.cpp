@@ -4,74 +4,77 @@
 
 
 namespace teditor {
+namespace Prompt {
 
-CMD_NO_UNDO(PromptQuit, "prompt-quit") {
-    Editor::getInstance().requestQuitPromptLoop();
-}
+DEF_CMD(Quit, "prompt-quit",
+        DEF_OP() { ed.requestQuitPromptLoop(); },
+        DEF_HELP() { return "Quit the current prompt"; });
 
-CMD_NO_UNDO(PromptCancel, "prompt-cancel") {
-    auto& ed = Editor::getInstance();
-    ed.requestCancelPromptLoop();
-    ed.requestQuitPromptLoop();
-}
+DEF_CMD(Cancel, "prompt-cancel",
+        DEF_OP() {
+            ed.requestCancelPromptLoop();
+            ed.requestQuitPromptLoop();
+        },
+        DEF_HELP() { return "Cancels the currently active prompt"; });
 
-CMD_NO_UNDO(PromptInsertChar, "prompt-insert-char") {
-    auto& ed = Editor::getInstance();
-    auto& in = ed.getInput();
-    auto& cmBar = ed.getCmBar();
-    auto c = (char)in.mk.getKey();
-    cmBar.insert(c);
-}
+DEF_CMD(InsertChar, "prompt-insert-char",
+        DEF_OP() {
+            auto& in = ed.getInput();
+            auto& cmBar = ed.getCmBar();
+            auto c = (char)in.mk.getKey();
+            cmBar.insert(c);
+        },
+        DEF_HELP() {
+            return "Insert a character at the current cursor position"
+                " and move the cursor one character to the right.";
+        });
 
-CMD_NO_UNDO(PromptInsertCharQuit, "prompt-insert-char-quit") {
-    auto& ed = Editor::getInstance();
-    auto& in = ed.getInput();
-    auto& cmBar = ed.getCmBar();
-    auto c = (char)in.mk.getKey();
-    cmBar.insert(c);
-    ed.requestQuitPromptLoop();
-}
+DEF_CMD(InsertCharQuit, "prompt-insert-char-quit",
+        DEF_OP() {
+            ed.runCmd("prompt-insert-char");
+            ed.runCmd("prompt-quit");
+        },
+        DEF_HELP() { return "Insert character and quit the prompt"; });
 
-CMD_NO_UNDO(PromptCursorRight, "prompt-cursor-right") {
-    auto& cmBar = Editor::getInstance().getCmBar();
-    cmBar.right();
-}
+DEF_CMD(CursorRight, "prompt-cursor-right",
+        DEF_OP() { ed.getCmBar().right(); },
+        DEF_HELP() { return "Move cursor one char to the right"; });
 
-CMD_NO_UNDO(PromptCursorLeft, "prompt-cursor-left") {
-    auto& cmBar = Editor::getInstance().getCmBar();
-    cmBar.left();
-}
+DEF_CMD(CursorLeft, "prompt-cursor-left",
+        DEF_OP() { ed.getCmBar().left(); },
+        DEF_HELP() { return "Move cursor one char to the left"; });
 
-CMD_NO_UNDO(PromptCursorHome, "prompt-cursor-home") {
-    auto& cmBar = Editor::getInstance().getCmBar();
-    cmBar.startOfLine();
-}
+DEF_CMD(CursorHome, "prompt-cursor-home",
+        DEF_OP() { ed.getCmBar().startOfLine(); },
+        DEF_HELP() { return "Move cursor to the beginning of the prompt"; });
 
-CMD_NO_UNDO(PromptCursorLineEnd, "prompt-cursor-line-end") {
-    auto& cmBar = Editor::getInstance().getCmBar();
-    cmBar.endOfLine();
-}
+DEF_CMD(CursorLineEnd, "prompt-cursor-line-end",
+        DEF_OP() { ed.getCmBar().endOfLine(); },
+        DEF_HELP() { return "Move cursor to the end of the prompt"; });
 
-CMD_NO_UNDO(PromptBackspaceChar, "prompt-backspace-char") {
-    auto& cmBar = Editor::getInstance().getCmBar();
-    cmBar.removeChar();
-    cmBar.updateChoices();
-}
+DEF_CMD(BackspaceChar, "prompt-backspace-char",
+        DEF_OP() {
+            auto& cmBar = ed.getCmBar();
+            cmBar.remove();
+            cmBar.updateChoices();
+        },
+        DEF_HELP() { return "Remove one char from the left of the cursor"; });
 
-CMD_NO_UNDO(PromptDeleteChar, "prompt-delete-char") {
-    auto& cmBar = Editor::getInstance().getCmBar();
-    cmBar.removeCurrentChar();
-    cmBar.updateChoices();
-}
+DEF_CMD(DeleteChar, "prompt-delete-char",
+        DEF_OP() {
+            auto& cmBar = ed.getCmBar();
+            cmBar.remove(true);
+            cmBar.updateChoices();
+        },
+        DEF_HELP() { return "Remove one char at the cursor"; });
 
-CMD_NO_UNDO(PromptOptionsDown, "prompt-options-down") {
-    auto& cmBar = Editor::getInstance().getCmBar();
-    cmBar.down();
-}
+DEF_CMD(OptionsDown, "prompt-options-down",
+        DEF_OP() { ed.getCmBar().down(); },
+        DEF_HELP() { return "Scroll down in the options list"; });
 
-CMD_NO_UNDO(PromptOptionsUp, "prompt-options-up") {
-    auto& cmBar = Editor::getInstance().getCmBar();
-    cmBar.up();
-}
+DEF_CMD(OptionsUp, "prompt-options-up",
+        DEF_OP() { ed.getCmBar().up(); },
+        DEF_HELP() { return "Scroll up in the options list"; });
 
+} // end namespace Prompt
 } // end namespace teditor

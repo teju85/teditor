@@ -114,19 +114,8 @@ const AttrColor& Editor::getColor(const std::string& name) const {
 }
 
 void Editor::runCmd(const std::string& cmd) {
-    if(cmd.empty())
-        return;
-    auto c = Command::createCmd(cmd);
-    bool undo = c->canUndo();
-    auto& buf = getBuff();
-    if(undo && buf.isRO()) {
-        CMBAR_MSG("%s: Read Only Buffer!\n", cmd.c_str());
-        return;
-    }
-    c->exec(CMD_FRESH);
-    // check for undo status once more!
-    if(c->canUndo())
-        buf.addCommand(c);
+    if(cmd.empty()) return;
+    getCmd(cmd).first(*this);
 }
 
 void Editor::createScratchBuff(bool switchToIt) {
