@@ -68,6 +68,22 @@ void Buffer::insert(char c, size_t i) {
     moveRightCursorsOnSameLine(i);
 }
 
+Strings Buffer::removeAndCopy() {
+    OpData op;
+    op.type = OpDelete;
+    if(!isRegionActive()) return op.strs;
+    ///@todo: what if 'before' is after 'after'!?
+    op.before = copyCursors(regions);
+    op.after = saveCursors();
+    op.strs = removeRegion(op.before, op.after);
+    restoreCursors(op.before);
+    stopRegion();
+    lineDown();
+    pushNewOp(op);
+    modified = true;
+    return op.strs;
+}
+
 void Buffer::remove(bool removeCurrent) {
     OpData op;
     op.type = OpDelete;

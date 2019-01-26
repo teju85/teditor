@@ -744,6 +744,30 @@ TEST_CASE("Buffer::SingleCursorEdits") {
         REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
         REQUIRE(ml.isModified());
     }
+
+    SECTION("remove region and copy") {
+        ml.startRegion();
+        ml.right();
+        ml.right();
+        REQUIRE(Pos2di(2, 0) == ml.saveCursors()[0]);
+        auto del = ml.removeAndCopy();
+        REQUIRE_FALSE(ml.isRegionActive());
+        REQUIRE("Hello" == ml.at(0).get());
+        REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
+        REQUIRE(1U == del.size());
+        REQUIRE("* " == del[0]);
+        REQUIRE(ml.isModified());
+    }
+
+    SECTION("no region trying to copy") {
+        auto del = ml.removeAndCopy();
+        REQUIRE_FALSE(ml.isRegionActive());
+        REQUIRE("* Hello" == ml.at(0).get());
+        REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
+        REQUIRE(0U == del.size());
+        REQUIRE_FALSE(ml.isRegionActive());
+        REQUIRE_FALSE(ml.isModified());
+    }
 }
 
 TEST_CASE("Buffer::MultipleCursorEdits") {

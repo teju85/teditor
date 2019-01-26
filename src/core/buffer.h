@@ -53,6 +53,8 @@ public:
      * @param removeCurrent whether to remove the current char over the cursor
      */
     void remove(bool removeCurrent=false);
+    /** remove a region and return its contents to be copied to clipboard */
+    Strings removeAndCopy();
     /**
      * @brief removes regions between start and end
      * @param start list of region starts

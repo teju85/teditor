@@ -134,129 +134,64 @@ DEF_CMD(DeleteChar, "delete-char",
 //     };
 // }
 
-// CMD_UNDO3(ShellToBuffer, "shell-to-buffer", Positions before, Positions after,
-//           std::string output) {
-//     auto& ed = Editor::getInstance();
-//     if(buf.isRegionActive())
-//         buf.stopRegion();
-//     auto& mlb = ed.getBuff();
-//     switch(type) {
-//     case CMD_UNDO:
-//         mlb.restoreCursors(before);
-//         mlb.removeRegion(before, after);
-//         break;
-//     case CMD_REDO:
-//         mlb.restoreCursors(before);
-//         mlb.insert(output.c_str());
-//         break;
-//     default:
-//         auto cmd = ed.prompt("Shell Command: ");
-//         if(cmd.empty()) {
-//             canIundo = false;
-//             return;
-//         }
-//         auto res = check_output(cmd);
-//         output = res.output;
-//         if(output.empty()) {
-//             canIundo = false;
-//             return;
-//         }
-//         before = mlb.saveCursors();
-//         mlb.insert(output.c_str());
-//         after = mlb.saveCursors();
-//     };
-// }
+DEF_CMD(ShellToBuffer, "shell-to-buffer",
+        DEF_OP() {
+            auto& buf = ed.getBuff();
+            if(buf.isRegionActive()) buf.remove();
+            auto cmd = ed.prompt("Shell Command: ");
+            if(cmd.empty()) return;
+            auto res = check_output(cmd);
+            if(res.output.empty()) return;
+            buf.insert(res.output);
+        },
+        DEF_HELP() {
+            return "Prompts the user for a command, executes it inside a shall"
+                " and inserts its output into the current buffer.";
+        });
 
-// CMD_UNDO3(PasteRegion, "paste-region", Strings del, Positions before,
-//           Positions after) {
-//     auto& ed = Editor::getInstance();
-//     auto& buf = ed.getBuff();
-//     if(type == CMD_FRESH) {
-//         if(!ed.hasCopy()) {
-//             canIundo = false;
-//             CMBAR_MSG("No selection to paste!\n");
-//             return;
-//         }
-//         if(buf.isRegionActive())
-//             ed.runCmd("remove-region");
-//     }
-//     switch(type) {
-//     case CMD_UNDO:
-//         buf.restoreCursors(before);
-//         buf.removeRegion(before, after);
-//         break;
-//     case CMD_REDO:
-//         buf.restoreCursors(before);
-//         buf.insert(del);
-//         break;
-//     default:
-//         before = buf.saveCursors();
-//         del = ed.copyData();
-//         buf.insert(del);
-//         after = buf.saveCursors();
-//     };
-// }
+DEF_CMD(PasteRegion, "paste-region",
+        DEF_OP() {
+            auto& buf = ed.getBuff();
+            if(!ed.hasCopy()) {
+                CMBAR_MSG("No selection to paste!\n");
+                return;
+            }
+            if(buf.isRegionActive()) buf.remove();
+            buf.insert(ed.copyData());
+        },
+        DEF_HELP() {
+            return "Copies the last copied (or cut) region from the clipboard.";
+        });
 
-// ///@todo: what if before is before regs!?
-// CMD_UNDO3(CutRegion, "cut-region", Strings del, Positions before,
-//           Positions regs) {
-//     auto& ed = Editor::getInstance();
-//     auto& buf = ed.getBuff();
-//     if(type == CMD_FRESH && !buf.isRegionActive()) {
-//         canIundo = false;
-//         CMBAR_MSG("No selection to cut!\n");
-//         return;
-//     }
-//     switch(type) {
-//     case CMD_UNDO:
-//         buf.restoreCursors(regs);
-//         buf.insert(del);
-//         break;
-//     case CMD_REDO:
-//         del = buf.removeRegion(regs, before);
-//         buf.restoreCursors(regs);
-//         break;
-//     default:
-//         before = buf.saveCursors();
-//         regs = buf.getRegionLocs();
-//         del = buf.removeRegion(regs, before);
-//         ed.setCopyData(del);
-//         buf.restoreCursors(regs);
-//     };
-//     buf.stopRegion();
-// }
+DEF_CMD(CutRegion, "cut-region",
+        DEF_OP() {
+            auto& buf = ed.getBuff();
+            if(!buf.isRegionActive()) {
+                CMBAR_MSG("No selection to cut!\n");
+                return;
+            }
+            auto del = buf.removeAndCopy();
+            ed.setCopyData(del);
+        },
+        DEF_HELP() {
+            return "Cuts the currently active region and copies that data into"
+                " the clipboard for a future paste command.";
+        });
 
-// CMD_UNDO3(DownloadBuffer, "download-to-buffer", Positions before, Positions after,
-//           std::string output) {
-//     auto& ed = Editor::getInstance();
-//     if(buf.isRegionActive())
-//         buf.stopRegion();
-//     auto& mlb = ed.getBuff();
-//     switch(type) {
-//     case CMD_UNDO:
-//         mlb.restoreCursors(before);
-//         mlb.removeRegion(before, after);
-//         break;
-//     case CMD_REDO:
-//         mlb.restoreCursors(before);
-//         mlb.insert(output.c_str());
-//         break;
-//     default:
-//         auto url = ed.prompt("URL: ");
-//         if(url.empty()) {
-//             canIundo = false;
-//             return;
-//         }
-//         auto output = downloadUrlToString(url);
-//         if(output.empty()) {
-//             canIundo = false;
-//             return;
-//         }
-//         before = mlb.saveCursors();
-//         mlb.insert(output.c_str());
-//         after = mlb.saveCursors();
-//     };
-// }
+DEF_CMD(DownloadBuffer, "download-to-buffer",
+        DEF_OP() {
+            auto& buf = ed.getBuff();
+            if(buf.isRegionActive()) buf.remove();
+            auto url = ed.prompt("URL: ");
+            if(url.empty()) return;
+            auto output = downloadUrlToString(url);
+            if(output.empty()) return;
+            buf.insert(output);
+        },
+        DEF_HELP() {
+            return "Prompt the user for a URL and downloads the contents of"
+                " that URL into the buffer.";
+        });
 
 DEF_CMD(StartRegion, "start-region",
         DEF_OP() {
