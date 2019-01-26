@@ -8,14 +8,16 @@ namespace BufferOps {
 
 DEF_CMD(CommandUndo, "command-undo",
         DEF_OP() {
-            if(!ed.getBuff().undo()) CMBAR_MSG("No further undo information\n");
+            if(!ed.getBuff().undo())
+                CMBAR_MSG(ed, "No further undo information\n");
         },
         DEF_HELP() { return "Undo the previous edition in this buffer."; });
 
 DEF_CMD(CommandRedo, "command-redo",
         DEF_OP() {
-            if(!ed.getBuff().redo()) CMBAR_MSG("No further redo information\n");
-        }
+            if(!ed.getBuff().redo())
+                CMBAR_MSG(ed, "No further redo information\n");
+        },
         DEF_HELP() { return "Redo the previous undo in this buffer."; });
 
 DEF_CMD(InsertChar, "insert-char",
@@ -43,7 +45,6 @@ DEF_CMD(DeleteChar, "delete-char",
 
 // CMD_UNDO4(SortLines, "sort-lines", Positions after, Positions regs,
 //           Strings del, Positions before) {
-//     auto& ed = Editor::getInstance();
 //     if(type == CMD_FRESH && !buf.isRegionActive()) {
 //         canIundo = false;
 //         return;
@@ -72,7 +73,6 @@ DEF_CMD(DeleteChar, "delete-char",
 // }
 
 // CMD_UNDO2(KillLine, "kill-line", Strings del, Positions locs) {
-//     auto& ed = Editor::getInstance();
 //     auto& buf = ed.getBuff();
 //     if(buf.isRegionActive())
 //         buf.stopRegion();
@@ -93,10 +93,9 @@ DEF_CMD(DeleteChar, "delete-char",
 // }
 
 // CMD_UNDO2(KeepLines, "keep-lines", RemovedLines lines, std::string regex) {
-//     auto& ed = Editor::getInstance();
 //     auto& buf = ed.getBuff();
 //     if(buf.cursorCount() > 1) {
-//         CMBAR_MSG("keep-lines works only with single cursor!\n");
+//         CMBAR_MSG(ed, "keep-lines works only with single cursor!\n");
 //         return;
 //     }
 //     switch(type) {
@@ -116,10 +115,9 @@ DEF_CMD(DeleteChar, "delete-char",
 // }
 
 // CMD_UNDO2(RemoveLines, "remove-lines", RemovedLines lines, std::string regex) {
-//     auto& ed = Editor::getInstance();
 //     auto& buf = ed.getBuff();
 //     if(buf.cursorCount() > 1) {
-//         CMBAR_MSG("remove-lines works only with single cursor!\n");
+//         CMBAR_MSG(ed, "remove-lines works only with single cursor!\n");
 //         return;
 //     }
 //     switch(type) {
@@ -157,7 +155,7 @@ DEF_CMD(PasteRegion, "paste-region",
         DEF_OP() {
             auto& buf = ed.getBuff();
             if(!ed.hasCopy()) {
-                CMBAR_MSG("No selection to paste!\n");
+                CMBAR_MSG(ed, "No selection to paste!\n");
                 return;
             }
             if(buf.isRegionActive()) buf.remove();
@@ -171,7 +169,7 @@ DEF_CMD(CutRegion, "cut-region",
         DEF_OP() {
             auto& buf = ed.getBuff();
             if(!buf.isRegionActive()) {
-                CMBAR_MSG("No selection to cut!\n");
+                CMBAR_MSG(ed, "No selection to cut!\n");
                 return;
             }
             auto del = buf.removeAndCopy();
@@ -221,7 +219,7 @@ DEF_CMD(CopyRegion, "copy-region",
         DEF_OP() {
             auto& buf = ed.getBuff();
             if(!buf.isRegionActive()) {
-                CMBAR_MSG("No selection to copy!\n");
+                CMBAR_MSG(ed, "No selection to copy!\n");
                 return;
             }
             auto cp = buf.regionAsStr();
@@ -233,7 +231,7 @@ DEF_CMD(TextSearch, "search",
         DEF_OP() {
             auto& buf = ed.getBuff();
             if(buf.cursorCount() > 1) {
-                CMBAR_MSG("search works only with single cursor!\n");
+                CMBAR_MSG(ed, "search works only with single cursor!\n");
                 return;
             }
             auto pos = buf.saveCursors();
@@ -248,7 +246,7 @@ DEF_CMD(Save, "save-buffer",
         DEF_OP() {
             auto& buf = ed.getBuff();
             if(buf.isRO()) {
-                CMBAR_MSG("save-buffer: Read Only Buffer!\n");
+                CMBAR_MSG(ed, "save-buffer: Read Only Buffer!\n");
                 return;
             }
             ed.saveBuffer(buf);
@@ -260,7 +258,7 @@ DEF_CMD(Save, "save-buffer",
 DEF_CMD(Pwd, "pwd",
         DEF_OP() {
             const auto& buf = ed.getBuff();
-            CMBAR_MSG("Pwd: %s\n", buf.pwd().c_str());
+            CMBAR_MSG(ed, "Pwd: %s\n", buf.pwd().c_str());
         },
         DEF_HELP() {
             return "Prints the current working directory of the buffer.";

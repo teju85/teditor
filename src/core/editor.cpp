@@ -103,16 +103,16 @@ Strings Editor::buffNamesToString() const {
 
 void Editor::saveBuffer(Buffer& buf) {
     if(!buf.isModified()) {
-        CMBAR_MSG("Nothing to save");
+        CMBAR_MSG(*this, "Nothing to save");
         return;
     }
     auto fileName = buf.getFileName();
     if(fileName.empty()) fileName = prompt("File to save: ");
     if(fileName.empty()) {
-        CMBAR_MSG("Empty file name!");
+        CMBAR_MSG(*this, "Empty file name!");
         return;
     }
-    if(buf.save(fileName)) CMBAR_MSG("Wrote %s\n", fileName.c_str());
+    if(buf.save(fileName)) CMBAR_MSG(*this, "Wrote %s\n", fileName.c_str());
 }
 
 int Editor::cmBarHeight() const {
@@ -243,7 +243,7 @@ void Editor::run() {
         DEBUG("Editor:run: status=%d meta=%u key=%u keystr='%s'\n", status,
               input.mk.getMeta(), input.mk.getKey(), input.mk.toStr().c_str());
         if(status == Input::UndefinedSequence) {
-            MESSAGE("Editor:run:: Undefined sequence: %s\n",
+            MESSAGE(*this, "Editor:run:: Undefined sequence: %s\n",
                     input.getOldSeq().c_str());
             continue;
         } else if(status < 0)
@@ -257,19 +257,19 @@ void Editor::run() {
             currKey = input.mk.toStr();
             state = kcMap.traverse(currKey);
             if(state == TS_LEAF) {
-                CMBAR("\n");
+                CMBAR(*this, "\n");
                 std::string cmd = kcMap.getCmd();
                 runCmd(cmd);
                 kcMap.resetTraversal();
                 keySoFar.clear();
             } else if(state == TS_NULL) {
                 keySoFar += " " + currKey;
-                CMBAR("Unknown key %s!\n", keySoFar.c_str());
+                CMBAR(*this, "Unknown key %s!\n", keySoFar.c_str());
                 keySoFar.clear();
                 kcMap.resetTraversal();
             } else {
                 keySoFar += " " + currKey;
-                CMBAR("%s - ", keySoFar.c_str());
+                CMBAR(*this, "%s - ", keySoFar.c_str());
             }
             break;
         ///@todo: mouse support
@@ -496,7 +496,7 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
         DEBUG("Prompter::loop: status=%d meta=%u key=%u keystr='%s'\n", status,
               input.mk.getMeta(), input.mk.getKey(), input.mk.toStr().c_str());
         if(status == Input::UndefinedSequence) {
-            MESSAGE("Prompter::loop: Undefined sequence: %s\n",
+            MESSAGE(*this, "Prompter::loop: Undefined sequence: %s\n",
                     input.getOldSeq().c_str());
             break;
         } else if(status < 0)

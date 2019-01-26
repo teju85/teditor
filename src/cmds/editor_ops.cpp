@@ -25,7 +25,7 @@ DEF_CMD(HelpCommand, "help-command",
                 std::string name = "*help-" + cmd;
                 ed.createReadOnlyBuff(name, contents, true);
             } catch(const std::runtime_error& e) {
-                CMBAR_MSG("Unknown command: %s!\n", cmd.c_str());
+                CMBAR_MSG(ed, "Unknown command: %s!\n", cmd.c_str());
             }
         },
         DEF_HELP() {
@@ -94,7 +94,7 @@ DEF_CMD(RunCommand, "run-command",
             try {
                 ed.runCmd(cmd);
             } catch(const std::runtime_error& e) {
-                CMBAR_MSG("Unknown command: %s!\n", cmd.c_str());
+                CMBAR_MSG(ed, "Unknown command: %s!\n", cmd.c_str());
             }
         },
         DEF_HELP() {
@@ -107,7 +107,7 @@ DEF_CMD(ShellCommand, "shell-command",
             auto cmd = ed.prompt("Shell Command: ");
             if(!cmd.empty()) {
                 auto res = check_output(cmd);
-                MESSAGE("Shell Command: %s (exit-status=%d)\nOutput: %s",
+                MESSAGE(ed, "Shell Command: %s (exit-status=%d)\nOutput: %s",
                         cmd.c_str(), res.status, res.output.c_str());
             }
         },
@@ -197,9 +197,9 @@ DEF_CMD(GitBranch, "git-branch",
             auto& buf = ed.getBuff();
             auto br = gitBranchName(buf.pwd());
             if(br.empty())
-                CMBAR("Not a git-repo!\n");
+                CMBAR(ed, "Not a git-repo!\n");
             else
-                CMBAR("git-branch=%s\n", br.c_str());
+                CMBAR(ed, "git-branch=%s\n", br.c_str());
         },
         DEF_HELP() { return "Prints the git branch of the current dir."; });
 
@@ -221,7 +221,7 @@ DEF_CMD(TaskManager, "task-manager",
         DEF_OP() {
             std::string cmd = "cygstart Taskmgr.exe";
             auto res = check_output(cmd);
-            MESSAGE("Shell Command: %s (exit-status=%d)\nOutput: %s",
+            MESSAGE(ed, "Shell Command: %s (exit-status=%d)\nOutput: %s",
                     cmd.c_str(), res.status, res.output.c_str());
         },
         DEF_HELP() { return "Starts task manager UI. Only for windows!"; });

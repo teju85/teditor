@@ -128,8 +128,8 @@ private:
 
     PCRE2_SIZE utf8Jump(char* subject, size_t subLen, PCRE2_SIZE start);
 
-    bool smallOvector(const Match& m) const;
-    bool kAssertion(const char* subject) const;
+    bool smallOvector(const Match& m) const { return m.groups == 0; }
+    bool kAssertion() const { return ovector[0] > ovector[1]; }
 };
 
 

@@ -93,7 +93,7 @@ DEF_CMD(AddCursorDown, "add-cursor-down",
             auto count = buf.cursorCount();
             auto pos = buf.cursorAt(count - 1);
             if(pos.y >= buf.length()) {
-                CMBAR_MSG("add-cursor-down: reached end of buffer!\n");
+                CMBAR_MSG(ed, "add-cursor-down: reached end of buffer!\n");
                 return;
             }
             ++pos.y;
@@ -107,7 +107,7 @@ DEF_CMD(AddCursorUp, "add-cursor-up",
             auto& buf = ed.getBuff();
             auto pos = buf.cursorAt(0);
             if(pos.y <= 0) {
-                CMBAR_MSG("add-cursor-up: reached start of buffer!\n");
+                CMBAR_MSG(ed, "add-cursor-up: reached start of buffer!\n");
                 return;
             }
             --pos.y;

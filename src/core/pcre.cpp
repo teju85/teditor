@@ -1,6 +1,5 @@
 #include "pcre.h"
 #include "utils.h"
-#include "logger.h"
 
 
 // Courtesy: Code here is straight out of pcre2demo.c!!
@@ -75,24 +74,6 @@ Pcre::~Pcre() {
     pcre2_code_free(re);
 }
 
-bool Pcre::smallOvector(const Match& m) const {
-    if(m.groups == 0) {
-        MESSAGE("ovector was small for re='%s'!\n", regex.c_str());
-        return true;
-    }
-    return false;
-}
-
-bool Pcre::kAssertion(const char* subject) const {
-    if(ovector[0] > ovector[1]) {
-        MESSAGE("\\K was used in assertion re='%s' match='%.*s'\n",
-                regex.c_str(), (int)(ovector[0] - ovector[1]),
-                subject + ovector[1]);
-        return true;
-    }
-    return false;
-}
-
 bool Pcre::isMatch(const std::string& str) {
     char* subject = (char*)str.c_str();
     int rc = pcre2_match(re, (PCRE2_SPTR)subject, str.size(), 0, 0,
@@ -133,8 +114,7 @@ Match Pcre::find(const std::string& str, int loc) {
     char* subject = (char*)str.c_str();
     m.groups = pcre2_match(re, (PCRE2_SPTR)subject, str.size(), loc, 0,
                            matchData, nullptr);
-    if(m.groups < 0 || smallOvector(m) || kAssertion(subject))
-        return m;
+    if(m.groups < 0 || smallOvector(m) || kAssertion()) return m;
     storeGroups(m);
     return m;
 }
@@ -156,8 +136,7 @@ Matches Pcre::findAll(const std::string& str) {
     auto subLen = str.size();
     m.groups = pcre2_match(re, (PCRE2_SPTR)subject, str.size(), 0, 0,
                            matchData, nullptr);
-    if(m.groups < 0 || smallOvector(m) || kAssertion(subject))
-        return ms;
+    if(m.groups < 0 || smallOvector(m) || kAssertion()) return ms;
     storeGroups(m);
     ms.push_back(m);
     while(true) {

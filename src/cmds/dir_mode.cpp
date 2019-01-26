@@ -36,7 +36,7 @@ DEF_CMD(CopyFile, "dirmode-copy-file",
             auto dst = ed.prompt("Dst file: ");
             dst = rel2abs(dir, dst);
             if(!dst.empty()) {
-                MESSAGE("Copied '%s' to '%s'\n", file.c_str(), dst.c_str());
+                MESSAGE(ed, "Copied '%s' to '%s'\n", file.c_str(), dst.c_str());
                 copyFile(file, dst);
             }
             ed.runCmd("reload-buffer");
@@ -57,7 +57,7 @@ DEF_CMD(RenameFile, "dirmode-rename-file",
             auto dst = ed.prompt("Dst file: ");
             dst = rel2abs(dir, dst);
             if(!dst.empty()) {
-                MESSAGE("Renamed '%s' to '%s'\n", file.c_str(), dst.c_str());
+                MESSAGE(ed, "Renamed '%s'->'%s'\n", file.c_str(), dst.c_str());
                 rename(file.c_str(), dst.c_str());
             }
             ed.runCmd("reload-buffer");
@@ -79,7 +79,7 @@ DEF_CMD(DeleteFile, "dirmode-delete-file",
             if(ed.promptYesNo("Delete " + delFile + "?")) {
                 std::string cmd = "rm -rf " + delFile;
                 auto res = check_output(cmd);
-                MESSAGE("Deleted file='%s'\n", delFile.c_str());
+                MESSAGE(ed, "Deleted file='%s'\n", delFile.c_str());
             }
             ed.runCmd("reload-buffer");
         },

@@ -58,30 +58,25 @@ void Logger::log(int lev, const char* fmt, ...) {
     fflush(inst->logfp);
 }
 
-void Logger::msgBar(const char* fmt, ...) {
-    if(!Editor::instanceReady())
-        return;
+void Logger::msgBar(Editor& ed, const char* fmt, ...) {
     va_list vl;
     va_start(vl, fmt);
-    auto buf = format(fmt, vl);
+    auto str = format(fmt, vl);
     va_end(vl);
     int len;
-    inst->removeNewLine((char*)buf.c_str(), len);
-    auto& ed = Editor::getInstance();
+    inst->removeNewLine((char*)str.c_str(), len);
     auto& cmBar = ed.getCmBar();
     cmBar.clear();
-    cmBar.insert(buf.c_str());
+    cmBar.insert(str);
 }
 
-void Logger::messages(const char* fmt, ...) {
-    if(!Editor::instanceReady())
-        return;
+void Logger::messages(Editor& ed, const char* fmt, ...) {
     va_list vl;
     va_start(vl, fmt);
-    auto buf = format(fmt, vl);
+    auto str = format(fmt, vl);
     va_end(vl);
-    auto& mlb = Editor::getInstance().getMessagesBuff();
-    mlb.insert(buf.c_str());
+    auto& buf = ed.getMessagesBuff();
+    buf.insert(str);
 }
 
 } // end namespace teditor

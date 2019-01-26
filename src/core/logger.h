@@ -20,12 +20,14 @@ public:
 };
 
 
+class Editor;
+
 class Logger {
 public:
     static void setLevel(int le);
     static void log(int lev, const char* fmt, ...);
-    static void messages(const char* fmt, ...);
-    static void msgBar(const char* fmt, ...);
+    static void messages(Editor& ed, const char* fmt, ...);
+    static void msgBar(Editor& ed, const char* fmt, ...);
     static int logLevel();
 
 private:
@@ -41,12 +43,12 @@ private:
     int level;
 };
 
-#define CMBAR(fmt, ...) Logger::msgBar(fmt, ##__VA_ARGS__)
-#define MESSAGE(fmt, ...) Logger::messages(fmt, ##__VA_ARGS__)
+#define CMBAR(ed, fmt, ...) Logger::msgBar(ed, fmt, ##__VA_ARGS__)
+#define MESSAGE(ed, fmt, ...) Logger::messages(ed, fmt, ##__VA_ARGS__)
 
-#define CMBAR_MSG(fmt, ...) do {                \
-        CMBAR(fmt, ##__VA_ARGS__);             \
-        MESSAGE(fmt, ##__VA_ARGS__);            \
+#define CMBAR_MSG(ed, fmt, ...) do {              \
+        CMBAR(ed, fmt, ##__VA_ARGS__);            \
+        MESSAGE(ed, fmt, ##__VA_ARGS__);          \
     } while(0)
 
 #define LOG(lev, fmt, ...) do {                                         \
