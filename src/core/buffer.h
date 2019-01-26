@@ -49,28 +49,18 @@ public:
     /** insert a string at all current cursor locations */ 
     virtual void insert(const std::string& buf);
     /**
-     * @brief [WIP!] main remove method
+     * @brief main remove method
      * @param removeCurrent whether to remove the current char over the cursor
      */
     void remove(bool removeCurrent=false);
-    /**
-     * for deleting a char using backspace
-     * @todo this should be removed in favor of 'remove' method
-     */
-    Strings removeChar();
     /**
      * @brief removes regions between start and end
      * @param start list of region starts
      * @param end list of region ends
      * @return list of deleted regions
-     * @todo this should be removed in favor of 'remove' method
+     * @todo make this private after updating unittests accordingly
      */
     Strings removeRegion(const Positions& start, const Positions& end);
-    /**
-     * removes chars at current cursor locations and returns them
-     * @todo this should be removed in favor of 'remove' method
-     */
-    Strings removeCurrentChar();
     /** kills lines at current cursor location onwards and returns them */
     Strings killLine();
     /** sorts the lines in the regions */
@@ -283,7 +273,7 @@ protected:
     /** stack of operations for redo */
     OpStack redoStack;
 
-    void insert(char c, size_t i);
+
     void addLine() { lines.push_back(Line()); }
     void resetBufferState(int line, const std::string& file);
     KeyCmdMap& getKeyCmdMap() { return mode->getKeyCmdMap(); }
@@ -293,6 +283,20 @@ protected:
     Pos2d<int> matchCurrentParen(int i, bool& isOpen);
     int dirModeFileOffset() const { return 24; }
     Positions copyCursors(const Positions& pos) const;
+
+
+    /**
+     * @defgroup BufferOpsImpl Internal buffer edit operations
+     * @{
+     */
+    /** insert a character at the given cursor count */
+    void insert(char c, size_t i);
+    /** for deleting a char using backspace */
+    Strings removeChar();
+    /** removes chars at current cursor locations and returns them */
+    Strings removeCurrentChar();
+    /** @} */
+
 
     /**
      * @defgroup UndoRedo Internal operations associated with undo/redo stack
@@ -318,8 +322,10 @@ protected:
     void clearStack(OpStack& st);
     /** @} */
 
+
     /** helper method to return the string in the given region */
     std::string regionAsStr(const Pos2di& start, const Pos2di& end) const;
+
 
     /**
      * @defgroup CursorOps Internal cursor operation details
