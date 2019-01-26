@@ -230,11 +230,8 @@ void Buffer::clear() {
 
 
 ////// Start: Buffer undo/redo //////
-void Buffer::undo() {
-    if(undoStack.empty()) {
-        CMBAR_MSG("No further undo information\n");
-        return;
-    }
+bool Buffer::undo() {
+    if(undoStack.empty()) return false;
     auto& top = undoStack.top();
     if(top.type == OpInsert) {
         applyDeleteOp(top);
@@ -243,13 +240,11 @@ void Buffer::undo() {
     }
     redoStack.push(top);
     undoStack.pop();
+    return true;
 }
 
-void Buffer::redo() {
-    if(redoStack.empty()) {
-        CMBAR_MSG("No further redo information\n");
-        return;
-    }
+bool Buffer::redo() {
+    if(redoStack.empty()) return false;
     auto& top = redoStack.top();
     if(top.type == OpInsert) {
         applyInsertOp(top, false);
@@ -258,6 +253,7 @@ void Buffer::redo() {
     }
     undoStack.push(top);
     redoStack.pop();
+    return true;
 }
 
 void Buffer::applyInsertOp(OpData& op, bool pushToStack) {
@@ -666,17 +662,10 @@ void Buffer::lineEnd() {
     startLine += diff;
 }
 
-void Buffer::save(const std::string& fName) {
-    if(!modified) {
-        CMBAR_MSG("Nothing to save");
-        return;
-    }
+bool Buffer::save(const std::string& fName) {
     auto f = fName;
     if(f.empty()) f = fileName;
-    if(f.empty()) {
-        CMBAR_MSG("Empty file name!");
-        return;
-    }
+    if(f.empty()) return false;
     fileName = f;
     std::ofstream fp;
     fp.open(fileName.c_str());
@@ -692,7 +681,7 @@ void Buffer::save(const std::string& fName) {
     dirName = dirname(fileName);
     buffName = basename(fileName);
     modified = false;
-    CMBAR_MSG("Wrote %s\n", fileName.c_str());
+    return true;
 }
 
 ////// Start: Cursor movements //////

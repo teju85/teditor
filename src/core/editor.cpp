@@ -102,9 +102,17 @@ Strings Editor::buffNamesToString() const {
 }
 
 void Editor::saveBuffer(Buffer& buf) {
+    if(!buf.isModified()) {
+        CMBAR_MSG("Nothing to save");
+        return;
+    }
     auto fileName = buf.getFileName();
     if(fileName.empty()) fileName = prompt("File to save: ");
-    buf.save(fileName);
+    if(fileName.empty()) {
+        CMBAR_MSG("Empty file name!");
+        return;
+    }
+    if(buf.save(fileName)) CMBAR_MSG("Wrote %s\n", fileName.c_str());
 }
 
 int Editor::cmBarHeight() const {

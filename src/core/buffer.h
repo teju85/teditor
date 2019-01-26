@@ -84,10 +84,15 @@ public:
      * @defgroup UndoRedoStack Undo/Redo operations on the buffer
      * @{
      */
-    /** undo the previous operation */
-    void undo();
-    /** redo the previously undid operation */
-    void redo();
+    /**
+     * @brief undo the previous operation
+     * @return false if there's nothing to undo, else true */
+    bool undo();
+    /**
+     * @brief redo the previously undid operation.
+     * @return false if there's nothing to redo, else true
+     */
+    bool redo();
     /** @} */
 
     /** find matching paren at the current location */
@@ -204,7 +209,7 @@ public:
     virtual void lineDown();
     void lineReset() { startLine = 0; }
     void lineEnd();
-    virtual void save(const std::string& fName="");
+    virtual bool save(const std::string& fName="");
     const std::string& bufferName() const { return buffName; }
     const std::string& getFileName() const { return fileName; }
     const std::string& pwd() const { return dirName; }

@@ -7,11 +7,15 @@ namespace teditor {
 namespace BufferOps {
 
 DEF_CMD(CommandUndo, "command-undo",
-        DEF_OP() { ed.getBuff().undo(); },
+        DEF_OP() {
+            if(!ed.getBuff().undo()) CMBAR_MSG("No further undo information\n");
+        },
         DEF_HELP() { return "Undo the previous edition in this buffer."; });
 
 DEF_CMD(CommandRedo, "command-redo",
-        DEF_OP() { ed.getBuff().redo(); },
+        DEF_OP() {
+            if(!ed.getBuff().redo()) CMBAR_MSG("No further redo information\n");
+        }
         DEF_HELP() { return "Redo the previous undo in this buffer."; });
 
 DEF_CMD(InsertChar, "insert-char",

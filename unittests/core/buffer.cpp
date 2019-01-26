@@ -568,10 +568,10 @@ TEST_CASE("Buffer::SingleCursorEdits") {
         ml.insert('T');
         REQUIRE("T* Hello" == ml.at(0).get());
         REQUIRE(Pos2di(1, 0) == ml.saveCursors()[0]);
-        ml.undo();
+        REQUIRE(ml.undo());
         REQUIRE("* Hello" == ml.at(0).get());
         REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
-        ml.redo();
+        REQUIRE(ml.redo());
         REQUIRE("T* Hello" == ml.at(0).get());
         REQUIRE(Pos2di(1, 0) == ml.saveCursors()[0]);
         REQUIRE(ml.isModified());
@@ -584,11 +584,11 @@ TEST_CASE("Buffer::SingleCursorEdits") {
         REQUIRE("* " == ml.at(0).get());
         REQUIRE("Hello" == ml.at(1).get());
         REQUIRE(Pos2di(0, 1) == ml.saveCursors()[0]);
-        ml.undo();
+        REQUIRE(ml.undo());
         REQUIRE(4 == ml.length());
         REQUIRE("* Hello" == ml.at(0).get());
         REQUIRE(Pos2di(2, 0) == ml.saveCursors()[0]);
-        ml.redo();
+        REQUIRE(ml.redo());
         REQUIRE(5 == ml.length());
         REQUIRE("* " == ml.at(0).get());
         REQUIRE("Hello" == ml.at(1).get());
@@ -603,11 +603,11 @@ TEST_CASE("Buffer::SingleCursorEdits") {
         REQUIRE("* Hello" == ml.at(0).get());
         REQUIRE("" == ml.at(1).get());
         REQUIRE(Pos2di(0, 1) == ml.saveCursors()[0]);
-        ml.undo();
+        REQUIRE(ml.undo());
         REQUIRE(4 == ml.length());
         REQUIRE("* Hello" == ml.at(0).get());
         REQUIRE(Pos2di(7, 0) == ml.saveCursors()[0]);
-        ml.redo();
+        REQUIRE(ml.redo());
         REQUIRE(5 == ml.length());
         REQUIRE("* Hello" == ml.at(0).get());
         REQUIRE("" == ml.at(1).get());
@@ -622,11 +622,11 @@ TEST_CASE("Buffer::SingleCursorEdits") {
         REQUIRE("" == ml.at(1).get());
         REQUIRE("Testing123" == ml.at(2).get());
         REQUIRE(Pos2di(0, 2) == ml.saveCursors()[0]);
-        ml.undo();
+        REQUIRE(ml.undo());
         REQUIRE(4 == ml.length());
         REQUIRE("Testing123" == ml.at(1).get());
         REQUIRE(Pos2di(0, 1) == ml.saveCursors()[0]);
-        ml.redo();
+        REQUIRE(ml.redo());
         REQUIRE(5 == ml.length());
         REQUIRE("" == ml.at(1).get());
         REQUIRE("Testing123" == ml.at(2).get());
@@ -638,10 +638,10 @@ TEST_CASE("Buffer::SingleCursorEdits") {
         ml.insert("AA");
         REQUIRE("AA* Hello" == ml.at(0).get());
         REQUIRE(Pos2di(2, 0) == ml.saveCursors()[0]);
-        ml.undo();
+        REQUIRE(ml.undo());
         REQUIRE("* Hello" == ml.at(0).get());
         REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
-        ml.redo();
+        REQUIRE(ml.redo());
         REQUIRE("AA* Hello" == ml.at(0).get());
         REQUIRE(Pos2di(2, 0) == ml.saveCursors()[0]);
         REQUIRE(ml.isModified());
@@ -652,10 +652,10 @@ TEST_CASE("Buffer::SingleCursorEdits") {
         REQUIRE("* Hello" == ml.at(0).get());
         REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
         REQUIRE_FALSE(ml.isModified());
-        ml.undo();
+        REQUIRE_FALSE(ml.undo());
         REQUIRE("* Hello" == ml.at(0).get());
         REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
-        ml.redo();
+        REQUIRE_FALSE(ml.redo());
         REQUIRE("* Hello" == ml.at(0).get());
         REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
         REQUIRE_FALSE(ml.isModified());
@@ -666,10 +666,10 @@ TEST_CASE("Buffer::SingleCursorEdits") {
         ml.remove();
         REQUIRE(" Hello" == ml.at(0).get());
         REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
-        ml.undo();
+        REQUIRE(ml.undo());
         REQUIRE("* Hello" == ml.at(0).get());
         REQUIRE(Pos2di(1, 0) == ml.saveCursors()[0]);
-        ml.redo();
+        REQUIRE(ml.redo());
         REQUIRE(" Hello" == ml.at(0).get());
         REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
         REQUIRE(ml.isModified());
@@ -682,12 +682,12 @@ TEST_CASE("Buffer::SingleCursorEdits") {
         REQUIRE(3 == ml.length());
         REQUIRE("* HelloTesting123" == ml.at(0).get());
         REQUIRE(Pos2di(7, 0) == ml.saveCursors()[0]);
-        ml.undo();
+        REQUIRE(ml.undo());
         REQUIRE(4 == ml.length());
         REQUIRE("* Hello" == ml.at(0).get());
         REQUIRE("Testing123" == ml.at(1).get());
         REQUIRE(Pos2di(0, 1) == ml.saveCursors()[0]);
-        ml.redo();
+        REQUIRE(ml.redo());
         REQUIRE(3 == ml.length());
         REQUIRE("* HelloTesting123" == ml.at(0).get());
         REQUIRE(Pos2di(7, 0) == ml.saveCursors()[0]);
@@ -699,10 +699,10 @@ TEST_CASE("Buffer::SingleCursorEdits") {
         ml.remove(true);
         REQUIRE("*Hello" == ml.at(0).get());
         REQUIRE(Pos2di(1, 0) == ml.saveCursors()[0]);
-        ml.undo();
+        REQUIRE(ml.undo());
         REQUIRE("* Hello" == ml.at(0).get());
         REQUIRE(Pos2di(1, 0) == ml.saveCursors()[0]);
-        ml.redo();
+        REQUIRE(ml.redo());
         REQUIRE("*Hello" == ml.at(0).get());
         REQUIRE(Pos2di(1, 0) == ml.saveCursors()[0]);
         REQUIRE(ml.isModified());
@@ -715,12 +715,12 @@ TEST_CASE("Buffer::SingleCursorEdits") {
         REQUIRE(3 == ml.length());
         REQUIRE("* HelloTesting123" == ml.at(0).get());
         REQUIRE(Pos2di(7, 0) == ml.saveCursors()[0]);
-        ml.undo();
+        REQUIRE(ml.undo());
         REQUIRE(4 == ml.length());
         REQUIRE("* Hello" == ml.at(0).get());
         REQUIRE("Testing123" == ml.at(1).get());
         REQUIRE(Pos2di(7, 0) == ml.saveCursors()[0]);
-        ml.redo();
+        REQUIRE(ml.redo());
         REQUIRE(3 == ml.length());
         REQUIRE("* HelloTesting123" == ml.at(0).get());
         REQUIRE(Pos2di(7, 0) == ml.saveCursors()[0]);
@@ -736,10 +736,10 @@ TEST_CASE("Buffer::SingleCursorEdits") {
         REQUIRE_FALSE(ml.isRegionActive());
         REQUIRE("Hello" == ml.at(0).get());
         REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
-        ml.undo();
+        REQUIRE(ml.undo());
         REQUIRE("* Hello" == ml.at(0).get());
         REQUIRE(Pos2di(2, 0) == ml.saveCursors()[0]);
-        ml.redo();
+        REQUIRE(ml.redo());
         REQUIRE("Hello" == ml.at(0).get());
         REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
         REQUIRE(ml.isModified());
@@ -785,12 +785,12 @@ TEST_CASE("Buffer::MultipleCursorEdits") {
         REQUIRE("TTesting123" == ml.at(1).get());
         REQUIRE(Pos2di(1, 0) == ml.saveCursors()[0]);
         REQUIRE(Pos2di(1, 1) == ml.saveCursors()[1]);
-        ml.undo();
+        REQUIRE(ml.undo());
         REQUIRE("* Hello" == ml.at(0).get());
         REQUIRE("Testing123" == ml.at(1).get());
         REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
         REQUIRE(Pos2di(0, 1) == ml.saveCursors()[1]);
-        ml.redo();
+        REQUIRE(ml.redo());
         REQUIRE("T* Hello" == ml.at(0).get());
         REQUIRE("TTesting123" == ml.at(1).get());
         REQUIRE(Pos2di(1, 0) == ml.saveCursors()[0]);
@@ -805,12 +805,12 @@ TEST_CASE("Buffer::MultipleCursorEdits") {
         REQUIRE("AATesting123" == ml.at(1).get());
         REQUIRE(Pos2di(2, 0) == ml.saveCursors()[0]);
         REQUIRE(Pos2di(2, 1) == ml.saveCursors()[1]);
-        ml.undo();
+        REQUIRE(ml.undo());
         REQUIRE("* Hello" == ml.at(0).get());
         REQUIRE("Testing123" == ml.at(1).get());
         REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
         REQUIRE(Pos2di(0, 1) == ml.saveCursors()[1]);
-        ml.redo();
+        REQUIRE(ml.redo());
         REQUIRE("AA* Hello" == ml.at(0).get());
         REQUIRE("AATesting123" == ml.at(1).get());
         REQUIRE(Pos2di(2, 0) == ml.saveCursors()[0]);
@@ -840,23 +840,27 @@ TEST_CASE("Buffer::MultipleUndoRedo1") {
     REQUIRE("" == ml.at(1).get());
     REQUIRE(Pos2di(0, 1) == ml.saveCursors()[0]);
     // undo1
-    ml.undo();
+    REQUIRE(ml.undo());
     REQUIRE(4 == ml.length());
     REQUIRE("T* Hello" == ml.at(0).get());
     REQUIRE(Pos2di(8, 0) == ml.saveCursors()[0]);
     // undo2
-    ml.undo();
+    REQUIRE(ml.undo());
     REQUIRE(4 == ml.length());
     REQUIRE("* Hello" == ml.at(0).get());
     REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
+    // more undo's are useless!
+    REQUIRE_FALSE(ml.undo());
     // redo's
-    ml.redo();
-    ml.redo();
+    REQUIRE(ml.redo());
+    REQUIRE(ml.redo());
     REQUIRE(5 == ml.length());
     REQUIRE("T* Hello" == ml.at(0).get());
     REQUIRE("" == ml.at(1).get());
     REQUIRE(Pos2di(0, 1) == ml.saveCursors()[0]);
     REQUIRE(ml.isModified());
+    // more redo's are useless!
+    REQUIRE_FALSE(ml.redo());
 }
 
 } // end namespace teditor
