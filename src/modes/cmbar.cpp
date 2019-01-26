@@ -6,12 +6,20 @@
 
 namespace teditor {
 
-
 /** cmbar mode */
 class CmBarMode: public Mode {
 public:
-    CmBarMode();
+    CmBarMode():
+        Mode("cmbar",
+             "abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNOPQRSTUVWXYZ0123456789_-"),
+        kcMap(), cMap() {
+        populateKeyMap<CmBarMode::Keys>(kcMap);
+        kcMap.resetTraversal();
+        populateColorMap<CmBarMode::Colors>(cMap);
+    }
+
     int indent(Buffer& buf, int line) { return 0; }
+
     KeyCmdMap& getKeyCmdMap() { return kcMap; }
     ColorMap& getColorMap() { return cMap; }
 
@@ -28,17 +36,6 @@ private:
 };
 
 REGISTER_MODE(CmBarMode, "cmbar");
-
-
-CmBarMode::CmBarMode():
-    Mode("cmbar",
-         "abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNOPQRSTUVWXYZ0123456789_-"),
-    kcMap(), cMap() {
-    populateKeyMap<CmBarMode::Keys>(kcMap);
-    kcMap.resetTraversal();
-    populateColorMap<CmBarMode::Colors>(cMap);
-}
-
 
 std::vector<KeyCmdPair> CmBarMode::Keys::All = {
     {" ", "prompt-insert-char"},
@@ -162,6 +159,5 @@ std::vector<NameColorPair> CmBarMode::Colors::All = {
     {"cmbarhighlightfg",  "highlightfg"},
     {"cmbarhighlightbg",  "highlightbg"}
 };
-
 
 } // end namespace teditor
