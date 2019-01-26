@@ -1,7 +1,5 @@
 #include "core/editor.h"
 #include "core/command.h"
-#include <stdio.h>
-#include "core/isearch.h"
 
 
 namespace teditor {
@@ -17,372 +15,58 @@ DEF_CMD(Quit, "quit",
                 " buffers and prompt for saving them.";
         });
 
-// ///@todo: support for when before is before regs!
-// ///@todo: there's still a newline issue when selection spans the whole last line
-// /// v/s selection ends at the beginning of the last line!
-// CMD_UNDO3(RemoveRegion, "remove-region", Positions regs, Positions before,
-//           Strings del) {
-//     auto& ed = Editor::getInstance();
-//     if(type == CMD_FRESH && !ed.isRegionActive()) {
-//         canIundo = false;
-//         return;
-//     }
-//     auto& mlbuffer = ed.getBuff();
-//     switch(type) {
-//     case CMD_UNDO:
-//         mlbuffer.restoreCursors(regs);
-//         mlbuffer.insert(del);
-//         break;
-//     case CMD_REDO:
-//         del = mlbuffer.removeRegion(regs, before);
-//         mlbuffer.restoreCursors(regs);
-//         break;
-//     default:
-//         before = mlbuffer.saveCursors();
-//         regs = mlbuffer.getRegionLocs();
-//         del = mlbuffer.removeRegion(regs, before);
-//         mlbuffer.restoreCursors(regs);
-//     };
-//     ed.stopRegion();
-// }
-
-// CMD_UNDO4(SortLines, "sort-lines", Positions after, Positions regs,
-//           Strings del, Positions before) {
-//     auto& ed = Editor::getInstance();
-//     if(type == CMD_FRESH && !ed.isRegionActive()) {
-//         canIundo = false;
-//         return;
-//     }
-//     auto& mlbuffer = ed.getBuff();
-//     switch(type) {
-//     case CMD_UNDO:
-//         mlbuffer.removeRegion(regs, after);
-//         mlbuffer.restoreCursors(regs);
-//         mlbuffer.insert(del);
-//         break;
-//     case CMD_REDO:
-//         mlbuffer.restoreCursors(regs);
-//         ed.startRegion();
-//         mlbuffer.restoreCursors(before);
-//         mlbuffer.sortRegions();
-//         break;
-//     default:
-//         regs = mlbuffer.getRegionLocs();
-//         del = mlbuffer.regionAsStr();
-//         before = mlbuffer.saveCursors();
-//         mlbuffer.sortRegions();
-//         after = mlbuffer.saveCursors();
-//     };
-//     ed.stopRegion();
-// }
-
-// CMD_UNDO2(InsertChar, "insert-char", char c, Positions before) {
-//     auto& ed = Editor::getInstance();
-//     auto& mlbuffer = ed.getBuff();
-//     if(type == CMD_FRESH && ed.isRegionActive())
-//         ed.runCmd("remove-region");
-//     switch(type) {
-//     case CMD_UNDO:
-//         mlbuffer.restoreCursors(before);
-//         mlbuffer.removeCurrentChar();
-//         break;
-//     case CMD_REDO:
-//         mlbuffer.restoreCursors(before);
-//         mlbuffer.insert(c);
-//         break;
-//     default:
-//         before = mlbuffer.saveCursors();
-//         auto& in = ed.getInput();
-//         c = (char)in.mk.getKey();
-//         mlbuffer.insert(c);
-//     };
-// }
-
-// CMD_UNDO3(BackspaceChar, "backspace-char", Strings del, Positions before,
-//           Positions after) {
-//     auto& ed = Editor::getInstance();
-//     if(type == CMD_FRESH && ed.isRegionActive()) {
-//         canIundo = false;
-//         ed.runCmd("remove-region");
-//         return;
-//     }
-//     auto& mlbuffer = ed.getBuff();
-//     switch(type) {
-//     case CMD_UNDO:
-//         mlbuffer.restoreCursors(after);
-//         mlbuffer.insert(del);
-//         break;
-//     case CMD_REDO:
-//         mlbuffer.restoreCursors(before);
-//         mlbuffer.removeChar();
-//         break;
-//     default:
-//         before = mlbuffer.saveCursors();
-//         del = mlbuffer.removeChar();
-//         after = mlbuffer.saveCursors();
-//     };
-// }
-
-// CMD_UNDO2(DeleteChar, "delete-char", Strings del,
-//           Positions locs) {
-//     auto& ed = Editor::getInstance();
-//     if(type == CMD_FRESH && ed.isRegionActive()) {
-//         canIundo = false;
-//         ed.runCmd("remove-region");
-//         return;
-//     }
-//     auto& mlbuffer = ed.getBuff();
-//     switch(type) {
-//     case CMD_UNDO:
-//         mlbuffer.restoreCursors(locs);
-//         mlbuffer.insert(del);
-//         mlbuffer.restoreCursors(locs);
-//         break;
-//     case CMD_REDO:
-//         mlbuffer.restoreCursors(locs);
-//         mlbuffer.removeCurrentChar();
-//         break;
-//     default:
-//         locs = mlbuffer.saveCursors();
-//         del = mlbuffer.removeCurrentChar();
-//     };
-// }
-
-// CMD_UNDO2(KillLine, "kill-line", Strings del, Positions locs) {
-//     auto& ed = Editor::getInstance();
-//     auto& buf = ed.getBuff();
-//     if(ed.isRegionActive())
-//         ed.stopRegion();
-//     switch(type) {
-//     case CMD_UNDO:
-//         buf.restoreCursors(locs);
-//         buf.insert(del);
-//         buf.restoreCursors(locs);
-//         break;
-//     case CMD_REDO:
-//         buf.restoreCursors(locs);
-//         buf.killLine();
-//         break;
-//     default:
-//         locs = buf.saveCursors();
-//         del = buf.killLine();
-//     };
-// }
-
-// CMD_UNDO2(KeepLines, "keep-lines", RemovedLines lines, std::string regex) {
-//     auto& ed = Editor::getInstance();
-//     auto& buf = ed.getBuff();
-//     if(buf.cursorCount() > 1) {
-//         CMBAR_MSG("keep-lines works only with single cursor!\n");
-//         return;
-//     }
-//     switch(type) {
-//     case CMD_UNDO:
-//         buf.addLines(lines);
-//         break;
-//     case CMD_REDO: {
-//         Pcre pc(regex, true);
-//         buf.keepRemoveLines(pc, true);
-//         break;
-//     }
-//     default:
-//         regex = ed.prompt("Regex: ");
-//         Pcre pc(regex, true);
-//         lines = buf.keepRemoveLines(pc, true);
-//     };
-// }
-
-// CMD_UNDO2(RemoveLines, "remove-lines", RemovedLines lines, std::string regex) {
-//     auto& ed = Editor::getInstance();
-//     auto& buf = ed.getBuff();
-//     if(buf.cursorCount() > 1) {
-//         CMBAR_MSG("remove-lines works only with single cursor!\n");
-//         return;
-//     }
-//     switch(type) {
-//     case CMD_UNDO:
-//         buf.addLines(lines);
-//         break;
-//     case CMD_REDO: {
-//         Pcre pc(regex, true);
-//         buf.keepRemoveLines(pc, false);
-//         break;
-//     }
-//     default:
-//         regex = ed.prompt("Regex: ");
-//         Pcre pc(regex, true);
-//         lines = buf.keepRemoveLines(pc, false);
-//     };
-// }
-
-// CMD_UNDO3(ShellToBuffer, "shell-to-buffer", Positions before, Positions after,
-//           std::string output) {
-//     auto& ed = Editor::getInstance();
-//     if(ed.isRegionActive())
-//         ed.stopRegion();
-//     auto& mlb = ed.getBuff();
-//     switch(type) {
-//     case CMD_UNDO:
-//         mlb.restoreCursors(before);
-//         mlb.removeRegion(before, after);
-//         break;
-//     case CMD_REDO:
-//         mlb.restoreCursors(before);
-//         mlb.insert(output.c_str());
-//         break;
-//     default:
-//         auto cmd = ed.prompt("Shell Command: ");
-//         if(cmd.empty()) {
-//             canIundo = false;
-//             return;
-//         }
-//         auto res = check_output(cmd);
-//         output = res.output;
-//         if(output.empty()) {
-//             canIundo = false;
-//             return;
-//         }
-//         before = mlb.saveCursors();
-//         mlb.insert(output.c_str());
-//         after = mlb.saveCursors();
-//     };
-// }
-
-// CMD_UNDO3(PasteRegion, "paste-region", Strings del, Positions before,
-//           Positions after) {
-//     auto& ed = Editor::getInstance();
-//     auto& mlbuffer = ed.getBuff();
-//     if(type == CMD_FRESH) {
-//         if(!ed.hasCopy()) {
-//             canIundo = false;
-//             CMBAR_MSG("No selection to paste!\n");
-//             return;
-//         }
-//         if(ed.isRegionActive())
-//             ed.runCmd("remove-region");
-//     }
-//     switch(type) {
-//     case CMD_UNDO:
-//         mlbuffer.restoreCursors(before);
-//         mlbuffer.removeRegion(before, after);
-//         break;
-//     case CMD_REDO:
-//         mlbuffer.restoreCursors(before);
-//         mlbuffer.insert(del);
-//         break;
-//     default:
-//         before = mlbuffer.saveCursors();
-//         del = ed.copyData();
-//         mlbuffer.insert(del);
-//         after = mlbuffer.saveCursors();
-//     };
-// }
-
-// ///@todo: what if before is before regs!?
-// CMD_UNDO3(CutRegion, "cut-region", Strings del, Positions before,
-//           Positions regs) {
-//     auto& ed = Editor::getInstance();
-//     auto& mlbuffer = ed.getBuff();
-//     if(type == CMD_FRESH && !ed.isRegionActive()) {
-//         canIundo = false;
-//         CMBAR_MSG("No selection to cut!\n");
-//         return;
-//     }
-//     switch(type) {
-//     case CMD_UNDO:
-//         mlbuffer.restoreCursors(regs);
-//         mlbuffer.insert(del);
-//         break;
-//     case CMD_REDO:
-//         del = mlbuffer.removeRegion(regs, before);
-//         mlbuffer.restoreCursors(regs);
-//         break;
-//     default:
-//         before = mlbuffer.saveCursors();
-//         regs = mlbuffer.getRegionLocs();
-//         del = mlbuffer.removeRegion(regs, before);
-//         ed.setCopyData(del);
-//         mlbuffer.restoreCursors(regs);
-//     };
-//     ed.stopRegion();
-// }
-
-DEF_CMD(StartRegion, "start-region",
-        DEF_OP() {
-            if(!ed.isRegionActive()) {
-                ed.startRegion();
-            } else {
-                ed.stopRegion();
-                ed.startRegion();
-            }
-        },
-        DEF_HELP() { return "Start region from the current cursor position"; });
-
-DEF_CMD(Cancel, "cancel",
-        DEF_OP() {
-            auto& buf = ed.getBuff();
-            if(ed.isRegionActive()) ed.stopRegion();
-            if(buf.cursorCount() > 1) buf.clearAllCursorsButFirst();
-        },
-        DEF_HELP() { return "Cancel all multiple-cursors + active regions"; });
-
-DEF_CMD(CopyRegion, "copy-region",
-        DEF_OP() {
-            if(!ed.isRegionActive()) {
-                CMBAR_MSG("No selection to copy!\n");
-                return;
-            }
-            auto& buf = ed.getBuff();
-            auto cp = buf.regionAsStr();
-            ed.setCopyData(cp);
-        },
-        DEF_HELP() { return "Copy current region into internal clipboard"; });
-
 DEF_CMD(ScratchBuffer, "scratch-buffer",
         DEF_OP() { ed.createScratchBuff(true); },
         DEF_HELP() { return "Create a scratch buffer and switch to it"; });
 
-// CMD_NO_UNDO(FindFileHistory, "find-file-history") {
-//     auto& ed = Editor::getInstance();
-//     StringChoices sc(ed.fileHistoryToString());
-//     auto file = ed.prompt("Find File History: ", nullptr, &sc);
-//     if(file.empty())
-//         return;
-//     auto fi = readFileInfo(file);
-//     ed.load(fi.first, fi.second);
-// }
+DEF_CMD(FindFileHistory, "find-file-history",
+        DEF_OP() {
+            StringChoices sc(ed.fileHistoryToString());
+            auto file = ed.prompt("Find File History: ", nullptr, &sc);
+            if(file.empty()) return;
+            auto fi = readFileInfo(file);
+            ed.load(fi.first, fi.second);
+        },
+        DEF_HELP() {
+            return "Opens a prompt with a list of previously opened files for a"
+                " speedier finding of a file. History file is always stored at"
+                " $homeFolder/history. The arg 'homeFolder' can be customized"
+                " as it is the folder which has all teditor related settings."
+                " The arg maxFileHistory controls the amount of previous files"
+                " to be remembered.";
+        });
 
-// class FileChoices: public StringChoices {
-// public:
-//     FileChoices(const Strings& arr, ChoicesFilter cf=fileStrFind):
-//         StringChoices(arr, cf) {
-//     }
+class FileChoices: public StringChoices {
+public:
+    FileChoices(const Strings& arr, ChoicesFilter cf=fileStrFind):
+        StringChoices(arr, cf) {
+    }
 
-//     bool updateChoices(const std::string& str) {
-//         if(str.empty() || str.back() != '/')
-//             return false;
-//         options = listDirRel(str);
-//         return true;
-//     }
+    bool updateChoices(const std::string& str) {
+        if(str.empty() || str.back() != '/')
+            return false;
+        options = listDirRel(str);
+        return true;
+    }
 
-//     std::string getFinalStr(int idx, const std::string& str) const {
-//         auto loc = str.find_last_of('/');
-//         if(loc == std::string::npos)
-//             return str;
-//         auto sub = str.substr(0, loc+1) + at(idx);
-//         return sub;
-//     }
-// };
+    std::string getFinalStr(int idx, const std::string& str) const {
+        auto loc = str.find_last_of('/');
+        if(loc == std::string::npos)
+            return str;
+        auto sub = str.substr(0, loc+1) + at(idx);
+        return sub;
+    }
+};
 
-// CMD_NO_UNDO(FindFile, "find-file") {
-//     auto& ed = Editor::getInstance();
-//     auto& buf = ed.getBuff();
-//     auto pwd = buf.pwd() + '/';
-//     FileChoices sc(listDirRel(pwd));
-//     auto file = ed.prompt("Find File: ", nullptr, &sc, pwd);
-//     if(!file.empty())
-//         ed.load(file, 0);
-// }
+DEF_CMD(FindFile, "find-file",
+        DEF_OP() {
+            auto& buf = ed.getBuff();
+            auto pwd = buf.pwd() + '/';
+            FileChoices sc(listDirRel(pwd));
+            auto file = ed.prompt("Find File: ", nullptr, &sc, pwd);
+            if(!file.empty()) ed.load(file, 0);
+        },
+        DEF_HELP() { return "Opens a prompt for user to find a file."; });
 
 DEF_CMD(RunCommand, "run-command",
         DEF_OP() {
@@ -436,170 +120,93 @@ DEF_CMD(LaunchBrowser, "browser",
                 " used to launch the browser.";
         });
 
-// CMD_NO_UNDO(BrowserSearch, "browser-search") {
-//     OptionMap opts;
-//     opts["duckduckgo"] = "http://www.duckduckgo.com/?t=hb&ia=meanings&q=\"%s\"";
-//     opts["google"] = "http://www.google.com/#q=\"%s\"";
-//     opts["maps"] = "https://www.google.co.in/maps/search/\"%s\"";
-//     opts["nvsearch"] = "https://nvsearch.nvidia.com/Pages/results.aspx?k=\"%s\"";
-//     opts["stock"] = "https://duckduckgo.com/?q=\"%s\"&t=ffab&ia=stock";
-//     opts["youtube"] = "https://www.youtube.com/results?search_query=\"%s\"";
-//     auto& ed = Editor::getInstance();
-//     auto& args = ed.getArgs();
-//     auto command = ed.promptEnum("Search:", opts);
-//     if(command.empty())
-//         return;
-//     command = args.browserCmd + " '" + command + "'";
-//     // we'll only look at first cursor!
-//     auto query = ed.getBuff().regionAsStr();
-//     std::string queryStr;
-//     if(query.empty())
-//         queryStr = ed.prompt("Query: ");
-//     else
-//         queryStr = query[0];
-//     if(queryStr.empty())
-//         return;
-//     auto buf = format(command.c_str(), queryStr.c_str());
-//     check_output(buf.c_str());
-// }
+DEF_CMD(BrowserSearch, "browser-search",
+        DEF_OP() {
+            OptionMap opts;
+            opts["duckduckgo"] = "http://www.duckduckgo.com/?t=hb&ia=meanings&q=\"%s\"";
+            opts["google"] = "http://www.google.com/#q=\"%s\"";
+            opts["maps"] = "https://www.google.co.in/maps/search/\"%s\"";
+            opts["nvsearch"] = "https://nvsearch.nvidia.com/Pages/results.aspx?k=\"%s\"";
+            opts["stock"] = "https://duckduckgo.com/?q=\"%s\"&t=ffab&ia=stock";
+            opts["youtube"] = "https://www.youtube.com/results?search_query=\"%s\"";
+            auto& args = ed.getArgs();
+            auto command = ed.promptEnum("Search:", opts);
+            if(command.empty()) return;
+            command = args.browserCmd + " '" + command + "'";
+            // we'll only look at first cursor!
+            auto query = ed.getBuff().regionAsStr();
+            auto queryStr = query.empty()? ed.prompt("Query: ") : query[0];
+            if(queryStr.empty()) return;
+            auto buf = format(command.c_str(), queryStr.c_str());
+            check_output(buf.c_str());
+        },
+        DEF_HELP() {
+            return "Opens a prompt to search for a given string among various"
+                " search options. The given string is first tried for in the"
+                " currently active region, if not, it'll be prompted for.";
+        });
 
-// CMD_NO_UNDO(CommandUndo, "command-undo") {
-//     auto& buf = Editor::getInstance().getBuff();
-//     buf.undoCmd();
-// }
+DEF_CMD(Download, "download-url",
+        DEF_OP() {
+            auto url = ed.prompt("URL: ");
+            if(url.empty()) return;
+            auto file = ed.prompt("File: ");
+            if(file.empty()) return;
+            downloadUrl(url, file);
+        },
+        DEF_HELP() {
+            return "Prompts for a URL and a filename and dowloads that URL into"
+                " that file.";
+        });
 
-// CMD_NO_UNDO(CommandRedo, "command-redo") {
-//     auto& buf = Editor::getInstance().getBuff();
-//     buf.redoCmd();
-// }
+DEF_CMD(MakeDir, "mkdir",
+        DEF_OP() {
+            auto res = ed.prompt("Dir name: ");
+            if(!res.empty()) makeDir(res);
+        },
+        DEF_HELP() { return "Creates a directory by prompting the user."; });
 
-// CMD_NO_UNDO(AddCursorDown, "add-cursor-down") {
-//     auto& buf = Editor::getInstance().getBuff();
-//     auto count = buf.cursorCount();
-//     auto pos = buf.cursorAt(count - 1);
-//     if(pos.y >= buf.length()) {
-//         CMBAR_MSG("add-cursor-down: reached end of buffer!\n");
-//         return;
-//     }
-//     ++pos.y;
-//     pos.x = std::min(buf.at(pos.y).length(), pos.x);
-//     buf.addCursorFromBack(pos);
-// }
+DEF_CMD(SwitchBuffer, "buffer-switch",
+        DEF_OP() {
+            StringChoices sc(ed.buffNamesToString());
+            auto buf = ed.prompt("Buffer: ", nullptr, &sc);
+            if(!buf.empty()) ed.switchToBuff(buf);
+        },
+        DEF_HELP() { return "Switches to a user selected buffer."; });
 
-// CMD_NO_UNDO(AddCursorUp, "add-cursor-up") {
-//     auto& buf = Editor::getInstance().getBuff();
-//     auto pos = buf.cursorAt(0);
-//     if(pos.y <= 0) {
-//         CMBAR_MSG("add-cursor-up: reached start of buffer!\n");
-//         return;
-//     }
-//     --pos.y;
-//     pos.x = std::min(buf.at(pos.y).length(), pos.x);
-//     buf.addCursorFromFront(pos);
-// }
+DEF_CMD(GitBranch, "git-branch",
+        DEF_OP() {
+            auto& buf = ed.getBuff();
+            auto br = gitBranchName(buf.pwd());
+            if(br.empty())
+                CMBAR("Not a git-repo!\n");
+            else
+                CMBAR("git-branch=%s\n", br.c_str());
+        },
+        DEF_HELP() { return "Prints the git branch of the current dir."; });
 
-// CMD_NO_UNDO(Download, "download-url") {
-//     auto& ed = Editor::getInstance();
-//     auto url = ed.prompt("URL: ");
-//     if(url.empty())
-//         return;
-//     auto file = ed.prompt("File: ");
-//     if(file.empty())
-//         return;
-//     downloadUrl(url, file);
-// }
+DEF_CMD(IndentLine, "indent",
+        DEF_OP() { ed.getBuff().indent(); },
+        DEF_HELP() { return "Indents the current line."; });
 
-// CMD_UNDO3(DownloadBuffer, "download-to-buffer", Positions before, Positions after,
-//           std::string output) {
-//     auto& ed = Editor::getInstance();
-//     if(ed.isRegionActive())
-//         ed.stopRegion();
-//     auto& mlb = ed.getBuff();
-//     switch(type) {
-//     case CMD_UNDO:
-//         mlb.restoreCursors(before);
-//         mlb.removeRegion(before, after);
-//         break;
-//     case CMD_REDO:
-//         mlb.restoreCursors(before);
-//         mlb.insert(output.c_str());
-//         break;
-//     default:
-//         auto url = ed.prompt("URL: ");
-//         if(url.empty()) {
-//             canIundo = false;
-//             return;
-//         }
-//         auto output = downloadUrlToString(url);
-//         if(output.empty()) {
-//             canIundo = false;
-//             return;
-//         }
-//         before = mlb.saveCursors();
-//         mlb.insert(output.c_str());
-//         after = mlb.saveCursors();
-//     };
-// }
+DEF_CMD(OrgNotesDir, "org-notes-dir",
+        DEF_OP() {
+            const auto& args = ed.getArgs();
+            ed.load(args.orgNotesDir, 0);
+        },
+        DEF_HELP() {
+            return "Loads the dir containing all org files. The dir can be"
+                " parameterized by the arg 'orgNotesDir'.";
+        });
 
-// CMD_NO_UNDO(MakeDir, "mkdir") {
-//     auto& ed = Editor::getInstance();
-//     auto res = ed.prompt("Dir name: ");
-//     if(!res.empty())
-//         makeDir(res);
-// }
-
-// CMD_NO_UNDO(SwitchBuffer, "buffer-switch") {
-//     auto& ed = Editor::getInstance();
-//     StringChoices sc(ed.buffNamesToString());
-//     auto buf = ed.prompt("Buffer: ", nullptr, &sc);
-//     if(!buf.empty())
-//         ed.switchToBuff(buf);
-// }
-
-// CMD_NO_UNDO(TextSearch, "search") {
-//     auto& ed = Editor::getInstance();
-//     auto& buf = ed.getBuff();
-//     if(buf.cursorCount() > 1) {
-//         CMBAR_MSG("search works only with single cursor!\n");
-//         return;
-//     }
-//     auto pos = buf.saveCursors();
-//     ISearch is(buf);
-//     is.reset();
-//     auto ret = ed.prompt("Search: ", nullptr, &is);
-//     if(!ret.empty())
-//         buf.gotoLine(is.getIdx());
-//     else
-//         buf.gotoLine(pos[0].y);
-// }
-
-// CMD_NO_UNDO(GitBranch, "git-branch") {
-//     auto& buf = Editor::getInstance().getBuff();
-//     auto br = gitBranchName(buf.pwd());
-//     if(br.empty())
-//         CMBAR("Not a git-repo!\n");
-//     else
-//         CMBAR("git-branch=%s\n", br.c_str());
-// }
-
-// ///@todo: support undo
-// CMD_NO_UNDO(IndentLine, "indent") {
-//     auto& ed = Editor::getInstance();
-//     ed.getBuff().indent();
-// }
-
-// CMD_NO_UNDO(OrgNotesDir, "org-notes-dir") {
-//     auto& ed = Editor::getInstance();
-//     const auto& args = ed.getArgs();
-//     ed.load(args.orgNotesDir, 0);
-// }
-
-// CMD_NO_UNDO(TaskManager, "task-manager") {
-//     std::string cmd = "cygstart Taskmgr.exe";
-//     auto res = check_output(cmd);
-//     MESSAGE("Shell Command: %s (exit-status=%d)\nOutput: %s",
-//             cmd.c_str(), res.status, res.output.c_str());
-// }
+DEF_CMD(TaskManager, "task-manager",
+        DEF_OP() {
+            std::string cmd = "cygstart Taskmgr.exe";
+            auto res = check_output(cmd);
+            MESSAGE("Shell Command: %s (exit-status=%d)\nOutput: %s",
+                    cmd.c_str(), res.status, res.output.c_str());
+        },
+        DEF_HELP() { return "Starts task manager UI. Only for windows!"; });
 
 } // end namespace EditorOps
 } // end namespace teditor
