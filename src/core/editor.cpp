@@ -27,12 +27,13 @@ void exitGracefully(int signum) {
 
 const int Editor::OutBuffSize = 32 * 1024;
 
-Editor* Editor::inst = nullptr;
+// HACK HACK HACK: for window change handler!
+Editor* _inst = nullptr;
 
 void sigwinch_handler(int xxx) {
     (void) xxx;
     const int zzz = 1;
-    (void)write(Editor::getInstance().getWinchFd(1), &zzz, sizeof(int));
+    (void)write(_inst->getWinchFd(1), &zzz, sizeof(int));
 }
 
 
@@ -67,6 +68,8 @@ Editor::Editor(const Args& args_):
     clearBackBuff();
     hideCursor();  // we'll manually handle the cursor draws
     input.reset();
+    ASSERT(_inst == nullptr, "Editor has already been constructed!");
+    _inst = this;
 }
 
 Editor::~Editor() {

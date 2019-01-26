@@ -27,8 +27,8 @@ typedef std::unordered_map<std::string, std::string> OptionMap;
 
 class Editor {
 public:
-    static bool instanceReady() { return inst != nullptr; }
-    static Editor& getInstance() { return *inst; }
+    Editor(const Args& args_);
+    ~Editor();
     int width() const { return tsize.x; }
     int height() const { return tsize.y; }
     void setTitle(const char* ti) { writef("%c]0;%s%c\n", '\033', ti, '\007'); }
@@ -106,10 +106,6 @@ private:
 
     static const int OutBuffSize;
 
-    static Editor* inst;
-
-    Editor(const Args& args_);
-    ~Editor();
     void setSignalHandlers();
     void render();
     void updateTermSize();
@@ -139,8 +135,6 @@ private:
     void pruneFileHistory();
     void addFileHistory(const std::string& file, int line);
     void deleteBuffer(Buffer* buf);
-
-    friend class SingletonHandler<Editor, Args>;
 };
 
 }; // end namespace teditor

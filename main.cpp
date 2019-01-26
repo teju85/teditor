@@ -10,8 +10,8 @@ int main(int argc, char** argv) {
     try {
         SingletonHandler<Logger,std::string> shl("debug.log");
         Args args(argc, argv);
-        SingletonHandler<Editor,Args> she(args);
-        Editor::getInstance().run();
+        Editor ed(args);
+        ed.run();
     } catch(const std::runtime_error& e) {
         printf("teditor: Error: %s\n", e.what());
         return -1;
