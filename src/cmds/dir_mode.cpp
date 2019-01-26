@@ -39,20 +39,11 @@ DEF_CMD(CopyFile, "dirmode-copy-file",
                 MESSAGE("Copied '%s' to '%s'\n", file.c_str(), dst.c_str());
                 copyFile(file, dst);
             }
+            ed.runCmd("reload-buffer");
         },
         DEF_HELP() {
             return "Copy the file under the cursor by prompting for the name of"
                 " the new file. Currently, copying directories is unsupported!";
-        });
-
-DEF_CMD(Refresh, "dirmode-refresh",
-        DEF_OP() {
-            auto& buf = ed.getBuff();
-            buf.clear();
-            buf.load(buf.getFileName(), 0);
-        },
-        DEF_HELP() {
-            return "Reload the directory contents.";
         });
 
 DEF_CMD(RenameFile, "dirmode-rename-file",
@@ -69,7 +60,7 @@ DEF_CMD(RenameFile, "dirmode-rename-file",
                 MESSAGE("Renamed '%s' to '%s'\n", file.c_str(), dst.c_str());
                 rename(file.c_str(), dst.c_str());
             }
-            ed.runCmd("dirmode-refresh");
+            ed.runCmd("reload-buffer");
         },
         DEF_HELP() {
             return "Rename the file under the cursor. This will reload the"
@@ -90,7 +81,7 @@ DEF_CMD(DeleteFile, "dirmode-delete-file",
                 auto res = check_output(cmd);
                 MESSAGE("Deleted file='%s'\n", delFile.c_str());
             }
-            ed.runCmd("dirmode-refresh");
+            ed.runCmd("reload-buffer");
         },
         DEF_HELP() {
             return "Delete the file under the cursor. This will reload the"

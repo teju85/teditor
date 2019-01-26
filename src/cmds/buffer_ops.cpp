@@ -291,7 +291,7 @@ DEF_CMD(KillOthers, "kill-other-buffers",
 DEF_CMD(Reload, "reload-buffer",
         DEF_OP() {
             auto& buf = ed.getBuff();
-            if(buf.isModified() &&
+            if(!buf.isModified() ||
                ed.promptYesNo("Buffer modified, still reload? "))
                 buf.reload();
         },
