@@ -34,7 +34,7 @@ private:
     Logger(const std::string& file_);
     ~Logger();
     void open();
-    bool removeNewLine(char* buf, int& len);
+    bool removeNewLine(std::string& buf);
 
     friend class SingletonHandler<Logger, std::string>;
     static Logger* inst;

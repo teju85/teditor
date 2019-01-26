@@ -33,15 +33,12 @@ void Logger::open() {
     }
 }
 
-bool Logger::removeNewLine(char* buf, int& len) {
-    len = strlen(buf);
+bool Logger::removeNewLine(std::string& buf) {
     bool newLineFound = false;
-    if(buf[len-1] == '\n') {
-        buf[len-1] = '\0';
+    if(buf.back() == '\n') {
+        buf.pop_back();
         newLineFound = true;
-        --len;
-        if(len == 0)
-            newLineFound = false;
+        if(buf.empty()) newLineFound = false;
     }
     return newLineFound;
 }
@@ -63,8 +60,7 @@ void Logger::msgBar(Editor& ed, const char* fmt, ...) {
     va_start(vl, fmt);
     auto str = format(fmt, vl);
     va_end(vl);
-    int len;
-    inst->removeNewLine((char*)str.c_str(), len);
+    inst->removeNewLine(str);
     auto& cmBar = ed.getCmBar();
     cmBar.clear();
     cmBar.insert(str);
