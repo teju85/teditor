@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <map>
+#include <unordered_map>
 #include <memory>
 #include <vector>
 #include "utils.h"
@@ -20,7 +20,7 @@ typedef std::string (*HelpFunc)(Editor& ed);
 /** Main class to add operators onto the editor/buffer */
 typedef std::pair<OperateFunc, HelpFunc> Command;
 /** list of all currently registered commands */
-typedef std::map<std::string,Command> CommandMap;
+typedef std::unordered_map<std::string,Command> CommandMap;
 
 
 /**
