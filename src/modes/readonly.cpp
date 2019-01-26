@@ -54,7 +54,8 @@ std::vector<KeyCmdPair> ReadOnlyMode::Keys::All = {
     {"M-g", "goto-line"},
     {"C-B C-S", "buffer-switch"},
     {"C-F", "search"},
-    {"C-G C-B", "git-branch"}
+    {"C-G C-B", "git-branch"},
+    {"F1", "help-command"}
 };
 
 std::vector<NameColorPair> ReadOnlyMode::Colors::All = {

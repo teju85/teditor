@@ -15,6 +15,24 @@ DEF_CMD(Quit, "quit",
                 " buffers and prompt for saving them.";
         });
 
+DEF_CMD(HelpCommand, "help-command",
+        DEF_OP() {
+            StringChoices sc(allCmdNames());
+            auto cmd = ed.prompt("Help for Cmd? ", nullptr, &sc);
+            if(cmd.empty()) return;
+            try {
+                auto contents = getCmd(cmd).second(ed);
+                std::string name = "*help-" + cmd;
+                ed.createReadOnlyBuff(name, contents, true);
+            } catch(const std::runtime_error& e) {
+                CMBAR_MSG("Unknown command: %s!\n", cmd.c_str());
+            }
+        },
+        DEF_HELP() {
+            return "Prints help messages for a given command. It creates a new"
+                " read-only buffer for doing so.";
+        });
+
 DEF_CMD(ScratchBuffer, "scratch-buffer",
         DEF_OP() { ed.createScratchBuff(true); },
         DEF_HELP() { return "Create a scratch buffer and switch to it"; });
