@@ -20,14 +20,6 @@ Buffer::Buffer(const std::string& name):
     begin();
 }
 
-Buffer::~Buffer() {
-    if(!fileName.empty() && Editor::instanceReady()) {
-        auto& ed = Editor::getInstance();
-        int line = locs[0].y;
-        ed.addFileHistory(fileName, line);
-    }
-}
-
 ////// Start: Buffer editing //////
 void Buffer::insert(char c) {
     OpData op;

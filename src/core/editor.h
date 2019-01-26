@@ -80,7 +80,6 @@ public:
     void selectCmBar() { cmdMsgBarActive = true; }
     void unselectCmBar() { cmdMsgBarActive = false; }
     const Args& getArgs() const { return args; }
-    void addFileHistory(const std::string& file, int line);
     Strings fileHistoryToString() const;
     Strings buffNamesToString() const;
     void saveBuffer(Buffer& buf);
@@ -131,13 +130,15 @@ private:
     int peekEvent(int timeoutMs);
     void draw();
     void loadFiles();
-    void mlResize(Buffer* mlb);
+    void bufResize(Buffer* mlb);
     Buffer* getBuff(const std::string& name);
     const AttrColor& getColor(const std::string& name) const;
     int cmBarHeight() const;
     void loadFileHistory();
     void storeFileHistory();
     void pruneFileHistory();
+    void addFileHistory(const std::string& file, int line);
+    void deleteBuffer(Buffer* buf);
 
     friend class SingletonHandler<Editor, Args>;
 };

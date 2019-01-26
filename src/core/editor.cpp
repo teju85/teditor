@@ -76,8 +76,7 @@ Editor::~Editor() {
     outbuff.puts(term.func(Func_ExitKeypad));
     outbuff.puts(term.func(Func_ExitMouse));
     flush();
-    for(auto itr : buffs)
-        delete itr;
+    for(auto itr : buffs) deleteBuffer(itr);
     fileshist.prune();
     fileshist.store();
     tcsetattr(inout, TCSAFLUSH, &origTios);
@@ -134,10 +133,10 @@ void Editor::runCmd(const std::string& cmd) {
 
 void Editor::createScratchBuff(bool switchToIt) {
     auto bName = uniquifyName("*scratch", buffNames);
-    auto* mlb = new Buffer(bName);
-    mlResize(mlb);
-    buffs.push_back(mlb);
-    buffNames.insert(mlb->bufferName());
+    auto* buf = new Buffer(bName);
+    bufResize(buf);
+    buffs.push_back(buf);
+    buffNames.insert(buf->bufferName());
     if(switchToIt) currBuff = (int)buffs.size() - 1;
 }
 
@@ -145,7 +144,7 @@ void Editor::createReadOnlyBuff(const std::string& name,
                                 const std::string& contents, bool switchToIt) {
     auto bName = uniquifyName(name, buffNames);
     auto* buf = new Buffer(bName);
-    mlResize(buf);
+    bufResize(buf);
     buffs.push_back(buf);
     buffNames.insert(buf->bufferName());
     buf->insert(contents);
@@ -169,11 +168,11 @@ void Editor::loadFiles() {
 }
 
 void Editor::load(const std::string& file, int line) {
-    auto* mlb = new Buffer;
-    mlResize(mlb);
-    mlb->load(file, line);
-    buffs.push_back(mlb);
-    buffNames.insert(mlb->bufferName());
+    auto* buf = new Buffer;
+    bufResize(buf);
+    buf->load(file, line);
+    buffs.push_back(buf);
+    buffNames.insert(buf->bufferName());
     currBuff = (int)buffs.size() - 1;
 }
 
@@ -203,7 +202,7 @@ void Editor::switchToBuff(const std::string& name) {
 void Editor::killCurrBuff() {
     checkForModifiedBuffer(buffs[currBuff]);
     buffNames.erase(buffs[currBuff]->bufferName());
-    delete buffs[currBuff];
+    deleteBuffer(buffs[currBuff]);
     buffs.erase(buffs.begin()+currBuff);
     if(buffs.empty()) {
         createScratchBuff();
@@ -215,18 +214,27 @@ void Editor::killCurrBuff() {
 }
 
 void Editor::killOtherBuffs() {
-    auto* mlb = buffs[currBuff];
+    auto* buf = buffs[currBuff];
     for(int i=0;i<(int)buffs.size();++i) {
         if(i != currBuff) {
             checkForModifiedBuffer(buffs[i]);
-            delete buffs[i];
+            deleteBuffer(buffs[i]);
         }
     }
     buffs.clear();
     buffNames.clear();
     currBuff = 0;
-    buffs.push_back(mlb);
-    buffNames.insert(mlb->bufferName());
+    buffs.push_back(buf);
+    buffNames.insert(buf->bufferName());
+}
+
+void Editor::deleteBuffer(Buffer* buf) {
+    auto& f = buf->getFileName();
+    if(!f.empty()) {
+        int line = buf->saveCursors()[0].y;
+        addFileHistory(f, line);
+    }
+    delete buf;
 }
 
 void Editor::run() {
@@ -287,12 +295,12 @@ void Editor::checkForModifiedBuffers() {
         checkForModifiedBuffer(itr);
 }
 
-void Editor::checkForModifiedBuffer(Buffer* mlb) {
-    const auto& name = mlb->bufferName();
-    if(!mlb->isModified() || mlb->isRO()) return;
+void Editor::checkForModifiedBuffer(Buffer* buf) {
+    const auto& name = buf->bufferName();
+    if(!buf->isModified() || buf->isRO()) return;
     // temp buffers need no saving
     if(name[0] == '*') return;
-    if(promptYesNo("Buffer " + name + " modified. Save?")) mlb->save();
+    if(promptYesNo("Buffer " + name + " modified. Save?")) buf->save();
 }
 
 void Editor::writef(const char* fmt, ...) {
@@ -378,7 +386,7 @@ void Editor::resize() {
     backbuff.clear(defaultfg, defaultbg);
     frontbuff.clear(defaultfg, defaultbg);
     for(auto itr : buffs)
-        mlResize(itr);
+        bufResize(itr);
     clearScreen();
 }
 
@@ -389,14 +397,14 @@ void Editor::clearBackBuff() {
 }
 
 Buffer& Editor::getMessagesBuff() {
-    Buffer* mlb = getBuff("*messages");
-    if(mlb != nullptr)
-        return *mlb;
-    auto* mlb1 = new Buffer("*messages");
-    mlResize(mlb1);
-    buffs.push_back(mlb1);
-    buffNames.insert(mlb1->bufferName());
-    return *mlb1;
+    Buffer* buf = getBuff("*messages");
+    if(buf != nullptr)
+        return *buf;
+    auto* buf1 = new Buffer("*messages");
+    bufResize(buf1);
+    buffs.push_back(buf1);
+    buffNames.insert(buf1->bufferName());
+    return *buf1;
 }
 
 Buffer* Editor::getBuff(const std::string& name) {
@@ -482,7 +490,7 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
     if(choices != nullptr)
         cmBar.setChoices(choices);
     cmBar.setMinLoc((int)msg.size());
-    mlResize(&getBuff());
+    bufResize(&getBuff());
     quitPromptLoop = cancelPromptLoop = false;
     cmBar.insert(msg.c_str());
     if(!defVal.empty())
@@ -524,7 +532,7 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
         cmBar.clearChoices();
     }
     unselectCmBar();
-    mlResize(&getBuff());
+    bufResize(&getBuff());
     return ret;
 }
 
@@ -548,13 +556,13 @@ void Editor::draw() {
     DEBUG("draw: ended\n");
 }
 
-void Editor::mlResize(Buffer* mlb) {
+void Editor::bufResize(Buffer* buf) {
     int ht = cmBarHeight();
     auto sz = tsize;
     sz.y -= ht;
-    mlb->resize({0, 0}, sz);
+    buf->resize({0, 0}, sz);
     cmBar.resize({0, sz.y}, {tsize.x, ht});
-    DEBUG("mlResize: buff-x,y=%d,%d ht=%d\n", sz.x, sz.y, ht);
+    DEBUG("bufResize: buff-x,y=%d,%d ht=%d\n", sz.x, sz.y, ht);
 }
 
 void Editor::render() {

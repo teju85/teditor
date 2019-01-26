@@ -33,7 +33,7 @@ class Editor;
 class Buffer {
 public:
     Buffer(const std::string& name="");
-    virtual ~Buffer();
+    virtual ~Buffer() {}
 
     /**
      * @defgroup BufferEdit Various of editing chars in the buffer
