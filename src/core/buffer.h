@@ -237,6 +237,7 @@ public:
     int verticalJump(float jump) const { return (int)(jump * screenDim.y); }
     const std::string& getWord() const { return mode->word(); }
     const std::string& modeName() const { return mode->name(); }
+    void makeReadOnly();
 
 protected:
     /** the operation type */

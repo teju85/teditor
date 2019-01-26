@@ -353,6 +353,13 @@ void Buffer::reload() {
     load(fileName, 0);
 }
 
+void Buffer::makeReadOnly() {
+    mode = Mode::createMode("ro");
+    modified = false;
+    clearStack(undoStack);
+    clearStack(redoStack);
+}
+
 void Buffer::loadDir(const std::string& dir) {
     Files fs = listDir(dir);
     auto first = rel2abs(pwd(), dir);

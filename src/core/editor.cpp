@@ -124,8 +124,19 @@ void Editor::createScratchBuff(bool switchToIt) {
     mlResize(mlb);
     buffs.push_back(mlb);
     buffNames.insert(mlb->bufferName());
-    if(switchToIt)
-        currBuff = (int)buffs.size() - 1;
+    if(switchToIt) currBuff = (int)buffs.size() - 1;
+}
+
+void Editor::createReadOnlyBuff(const std::string& name,
+                                const std::string& contents, bool switchToIt) {
+    auto bName = uniquifyName(name, buffNames);
+    auto* buf = new Buffer(bName);
+    mlResize(buf);
+    buffs.push_back(buf);
+    buffNames.insert(buf->bufferName());
+    buf->insert(contents);
+    buf->makeReadOnly();
+    if(switchToIt) currBuff = (int)buffs.size() - 1;
 }
 
 ///@todo: uniquify buffer names!

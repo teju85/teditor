@@ -75,6 +75,8 @@ public:
     int currBuffId() const { return currBuff; }
     int buffSize() const { return (int)buffs.size(); }
     void createScratchBuff(bool switchToIt=false);
+    void createReadOnlyBuff(const std::string& name,
+                            const std::string& contents, bool switchToIt=false);
     void selectCmBar() { cmdMsgBarActive = true; }
     void unselectCmBar() { cmdMsgBarActive = false; }
     const Args& getArgs() const { return args; }

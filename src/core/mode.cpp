@@ -20,19 +20,16 @@ Strings allModeNames() {
     Strings ret;
     // 'cmbar' is not really a mode per-se!
     for(const auto itr : m)
-        if(itr.first != "cmbar")
-            ret.push_back(itr.first);
+        if(itr.first != "cmbar") ret.push_back(itr.first);
     return ret;
 }
 
 std::string Mode::inferMode(const std::string& file) {
     auto& i = infers();
     // special case for directories
-    if(isDir(file.c_str()))
-        return "dir";
+    if(isDir(file.c_str())) return "dir";
     for(const auto itr : i)
-        if(itr.second(file))
-            return itr.first;
+        if(itr.second(file)) return itr.first;
     // default mode
     return "text";
 }
