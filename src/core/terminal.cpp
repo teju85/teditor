@@ -54,26 +54,37 @@ ColorSupport Terminal::colorSupported() const {
 std::string Terminal::tryReading(const char* path, const char* term) const {
     char tmp1[2048], tmp2[2048];
     snprintf(tmp1, sizeof(tmp1), "%s/%c/%s", path, term[0], term);
-    // fallback to darwin specific dirs structure
+    // for MacOS
     snprintf(tmp2, sizeof(tmp2), "%s/%x/%s", path, term[0], term);
     try {
         return slurp(tmp1);
-    } catch(...) {
+    } catch(const std::runtime_error& e) {
         return slurp(tmp2);
     }
 }
 
 std::string Terminal::loadTerminfo() const {
+    // look inside $TERMINFO/
     try {
         std::string termInfo(env("TERMINFO"));
         return tryReading(termInfo.c_str(), termName.c_str());
-    } catch(...) { }
+    } catch(const std::runtime_error& e) {}
+    // else, look inside $HOME/.terminfo/
     try {
         std::string home(env("HOME"));
         std::string path = home + "/.terminfo";
         return tryReading(path.c_str(), termName.c_str());
-    } catch(...) { }
-    ///@todo: support reading from TERMINFO_DIRS env-var?
+    } catch(const std::runtime_error& e) {}
+    // else, look inside dirs mentioned under $TERMINFO_DIRS
+    std::string termInfoDirs(env("TERMINFO_DIRS"));
+    auto dirs = split(termInfoDirs, ':');
+    for(const auto& dir : dirs) {
+        if(dir.empty()) continue;
+        try {
+            return tryReading(dir.c_str(), termName.c_str());
+        } catch(const std::runtime_error& e) {}
+    }
+    // finally... try /usr/share/terminfo
     return tryReading("/usr/share/terminfo", termName.c_str());
 }
 
