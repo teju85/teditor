@@ -2,7 +2,6 @@
 
 #include "buffer.h"
 #include "terminal.h"
-#include <termios.h>
 #include <stdarg.h>
 #include <string>
 #include <vector>
@@ -14,7 +13,6 @@
 #include "input.h"
 #include <unordered_map>
 #include "files_hist.h"
-#include "byte_buffer.h"
 #include "cell_buffer.h"
 #include "cmd_msg_bar.h"
 
@@ -29,8 +27,8 @@ class Editor {
 public:
     Editor(const Args& args_);
     ~Editor();
-    int width() const { return tsize.x; }
-    int height() const { return tsize.y; }
+    int width() const { return term.width(); }
+    int height() const { return term.height(); }
     void setTitle(const char* ti) { writef("%c]0;%s%c\n", '\033', ti, '\007'); }
     Buffer& getBuff() { return *buffs[currBuff]; }
     const Buffer& getBuff() const { return *buffs[currBuff]; }
@@ -49,7 +47,7 @@ public:
     const Strings& copyData() const { return copiedStr; }
     void setCopyData(const Strings& in) { copiedStr = in; }
 
-    int getFd() { return inout; }
+    int getFd() { return term.getFd(); }
     void requestResize() { bufferResize = true; }
     void disableResize() { bufferResize = false; }
     int getWinchFd(int id) const { return winchFds[id]; }
@@ -85,12 +83,9 @@ public:
     void saveBuffer(Buffer& buf);
 
 private:
-    ByteBuffer outbuff;
     CellBuffer backbuff, frontbuff;
-    Pos2d<int> tsize;
-    int inout, currBuff, winchFds[2];
+    int currBuff, winchFds[2];
     Terminal term;
-    struct termios tios, origTios;
     AttrColor lastfg, lastbg;
     bool bufferResize;
     Input input;
@@ -104,8 +99,6 @@ private:
     KeyCmdMap ynMap;
     FilesHist fileshist;
 
-    static const int OutBuffSize;
-
     void setSignalHandlers();
     void render();
     void updateTermSize();
@@ -116,12 +109,7 @@ private:
     void resize();
     void clearBackBuff();
     void sendCell(int x, int y, const Cell& c) { backbuff.at(x, y) = c; }
-    void flush() { outbuff.flush(inout); }
     void writef(const char* fmt, ...);
-    void hideCursor() { outbuff.puts(term.func(Func_HideCursor)); }
-    void showCursor() { outbuff.puts(term.func(Func_ShowCursor)); }
-    void enableMouse() { outbuff.puts(term.func(Func_EnterMouse)); }
-    void disableMouse() { outbuff.puts(term.func(Func_ExitMouse)); }
     int pollEvent();
     int peekEvent(int timeoutMs);
     void draw();

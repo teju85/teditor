@@ -21,11 +21,7 @@
 
 namespace teditor {
 
-void exitGracefully(int signum) {
-    exit(signum);
-}
-
-const int Editor::OutBuffSize = 32 * 1024;
+void exitGracefully(int signum) { exit(signum); }
 
 // HACK HACK HACK: for window change handler!
 Editor* _inst = nullptr;
@@ -48,44 +44,30 @@ std::vector<KeyCmdPair> PromptYesNoKeys::All = {
 
 
 Editor::Editor(const Args& args_):
-    outbuff(OutBuffSize), backbuff(), frontbuff(), tsize(), inout(-1),
-    currBuff(0), winchFds(), term(args_.ttyFile), tios(), origTios(), lastfg(),
-    lastbg(), bufferResize(false), args(args_), cmBar(), buffs(), buffNames(),
-    quitEventLoop(false), quitPromptLoop(false), cancelPromptLoop(false),
-    cmdMsgBarActive(false), copiedStr(), defcMap(), ynMap(),
-    fileshist(args.getHistFile(), args.maxFileHistory) {
-    inout = open(args.ttyFile.c_str(), O_RDWR);
-    ASSERT(inout >= 0, "Failed to open tty '%s'!", args.ttyFile.c_str());
+    backbuff(), frontbuff(), currBuff(0), winchFds(), term(args_.ttyFile),
+    lastfg(), lastbg(), bufferResize(false), args(args_), cmBar(), buffs(),
+    buffNames(), quitEventLoop(false), quitPromptLoop(false),
+    cancelPromptLoop(false), cmdMsgBarActive(false), copiedStr(), defcMap(),
+    ynMap(), fileshist(args.getHistFile(), args.maxFileHistory) {
     ASSERT(pipe(winchFds) >= 0, "Failed to setup 'pipe'!");
     setSignalHandler();
-    setupTios();
-    outbuff.puts(term.func(Func_EnterKeypad));
-    outbuff.puts(term.func(Func_EnterCA));
     auto m = Mode::createMode("text");
     defcMap = m->getColorMap();
     populateKeyMap<PromptYesNoKeys>(ynMap, true);
     resize();
     clearBackBuff();
-    hideCursor();  // we'll manually handle the cursor draws
     input.reset();
     ASSERT(_inst == nullptr, "Editor has already been constructed!");
     _inst = this;
 }
 
 Editor::~Editor() {
-    showCursor();
-    outbuff.puts(term.func(Func_Sgr0)); // reset attrs
-    outbuff.puts(term.func(Func_ExitCA));
-    outbuff.puts(term.func(Func_ExitKeypad));
-    outbuff.puts(term.func(Func_ExitMouse));
-    flush();
+    term.flush();
     for(auto itr : buffs) deleteBuffer(itr);
     fileshist.prune();
     fileshist.store();
-    tcsetattr(inout, TCSAFLUSH, &origTios);
     close(winchFds[0]);
     close(winchFds[1]);
-    close(inout);
     _inst = nullptr;
 }
 
@@ -99,8 +81,7 @@ Strings Editor::fileHistoryToString() const {
 
 Strings Editor::buffNamesToString() const {
     Strings ret;
-    for(const auto* buff : buffs)
-        ret.push_back(buff->bufferName());
+    for(const auto* buff : buffs) ret.push_back(buff->bufferName());
     return ret;
 }
 
@@ -312,15 +293,7 @@ void Editor::writef(const char* fmt, ...) {
     va_start(vl, fmt);
     std::string buf = format(fmt, vl);
     va_end(vl);
-    outbuff.puts(buf.c_str());
-}
-
-void Editor::updateTermSize() {
-    struct winsize sz;
-    memset(&sz, 0, sizeof(sz));
-    ioctl(inout, TIOCGWINSZ, &sz);
-    tsize.x = sz.ws_col;
-    tsize.y = sz.ws_row;
+    term.puts(buf);
 }
 
 void Editor::setSignalHandler() {
@@ -337,20 +310,6 @@ void Editor::setSignalHandler() {
     sigaction(SIGQUIT, &action, NULL);
     sigaction(SIGHUP, &action, NULL);
     signal(SIGPIPE, SIG_IGN);
-}
-
-void Editor::setupTios() {
-    tcgetattr(inout, &origTios);
-    memcpy(&tios, &origTios, sizeof(tios));
-    tios.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP
-                      | INLCR | IGNCR | ICRNL | IXON); // INPCK
-    tios.c_oflag &= ~OPOST;
-    tios.c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
-    tios.c_cflag &= ~(CSIZE | PARENB);
-    tios.c_cflag |= CS8;
-    tios.c_cc[VMIN] = 0;  // Return each byte, or zero for timeout.
-    tios.c_cc[VTIME] = 0; // 0ms timeout (unit is tens of second).
-    tcsetattr(inout, TCSAFLUSH, &tios);
 }
 
 int Editor::sendString(int x, int y, const std::string& fg,
@@ -382,9 +341,9 @@ int Editor::sendStringf(int x, int y, const std::string& fg,
 }
 
 void Editor::resize() {
-    updateTermSize();
-    backbuff.resize(tsize.x, tsize.y);
-    frontbuff.resize(tsize.x, tsize.y);
+    term.updateTermSize();
+    backbuff.resize(term.width(), term.height());
+    frontbuff.resize(term.width(), term.height());
     const auto& defaultfg = getColor("defaultfg");
     const auto& defaultbg = getColor("defaultbg");
     backbuff.clear(defaultfg, defaultbg);
@@ -402,8 +361,7 @@ void Editor::clearBackBuff() {
 
 Buffer& Editor::getMessagesBuff() {
     Buffer* buf = getBuff("*messages");
-    if(buf != nullptr)
-        return *buf;
+    if(buf != nullptr) return *buf;
     auto* buf1 = new Buffer("*messages");
     bufResize(buf1);
     buffs.push_back(buf1);
@@ -413,8 +371,7 @@ Buffer& Editor::getMessagesBuff() {
 
 Buffer* Editor::getBuff(const std::string& name) {
     for(auto itr : buffs)
-        if(itr->bufferName() == name)
-            return itr;
+        if(itr->bufferName() == name) return itr;
     return nullptr;
 }
 
@@ -423,7 +380,7 @@ void Editor::writeLiteral(const char* fmt, ...) {
     va_start(vl, fmt);
     std::string buf = format(fmt, vl);
     va_end(vl);
-    outbuff.append(buf.c_str(), (int)buf.size());
+    term.puts(buf);
 }
 
 void Editor::writeCursor(int x, int y) {
@@ -436,18 +393,18 @@ void Editor::writeChar(uint32_t c, int x, int y) {
     if(!c)
         buf[0] = ' '; // replace 0 with whitespace
     writeCursor(x, y);
-    outbuff.append(buf, bw);
+    term.puts(buf, bw);
 }
 
 void Editor::setColors(AttrColor fg, AttrColor bg) {
     if((fg == lastfg) && (bg == lastbg)) return;
     lastfg = fg;
     lastbg = bg;
-    outbuff.puts(term.func(Func_Sgr0)); // reset attrs
+    term.puts(Func_Sgr0); // reset attrs
     if(fg.isBold())
-        outbuff.puts(term.func(Func_Bold));
+        term.puts(Func_Bold);
     if(fg.isUnderline())
-        outbuff.puts(term.func(Func_Underline));
+        term.puts(Func_Underline);
     uint8_t fgcol = (uint8_t)fg.color();
     uint8_t bgcol = (uint8_t)bg.color();
     writeLiteral("\033[38;5;%d;48;5;%dm", fgcol, bgcol);
@@ -457,7 +414,7 @@ void Editor::clearScreen() {
     const auto& defaultfg = getColor("defaultfg");
     const auto& defaultbg = getColor("defaultbg");
     setColors(defaultfg, defaultbg);
-    outbuff.puts(term.func(Func_ClearScreen));
+    term.puts(Func_ClearScreen);
     clearBackBuff();
     render();
 }
@@ -562,10 +519,10 @@ void Editor::draw() {
 
 void Editor::bufResize(Buffer* buf) {
     int ht = cmBarHeight();
-    auto sz = tsize;
+    Pos2di sz(term.width(), term.height());
     sz.y -= ht;
     buf->resize({0, 0}, sz);
-    cmBar.resize({0, sz.y}, {tsize.x, ht});
+    cmBar.resize({0, sz.y}, {sz.x, ht});
     DEBUG("bufResize: buff-x,y=%d,%d ht=%d\n", sz.x, sz.y, ht);
 }
 
@@ -603,7 +560,7 @@ void Editor::render() {
             x += wid;
         }
     }
-    flush();
+    term.flush();
 }
 
 int Editor::pollEvent() {
