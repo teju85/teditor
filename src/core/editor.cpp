@@ -86,6 +86,7 @@ Editor::~Editor() {
     close(winchFds[0]);
     close(winchFds[1]);
     close(inout);
+    _inst = nullptr;
 }
 
 void Editor::addFileHistory(const std::string& file, int line)  {
