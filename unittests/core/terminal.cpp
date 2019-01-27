@@ -12,7 +12,7 @@ TEST_CASE("Terminal::Sizes") {
 TEST_CASE("Terminal::Name") {
     std::string term = env("TERM");
     setenv("TERM", "xterm", 6);
-    Terminal te;
+    Terminal te("/dev/tty");
     REQUIRE("xterm" == te.name());
     setenv("TERM", term.c_str(), term.size());
 }

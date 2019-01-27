@@ -1,41 +1,58 @@
 #include "terminal.h"
-#include "utils.h"
 #include <cstdio>
 #include <sys/stat.h>
 #include <stdint.h>
+#include "logger.h"
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <fcntl.h>
+
+// Note:
+//   Most stuff here related to terminfo usage is shamelessly borrowed from
+// github.com/nsf/termbox. (Thanks!)
 
 
 namespace teditor {
 
 const std::string Terminal::EnterMouseSeq = "\x1b[?1000h\x1b[?1002h\x1b[?1015h\x1b[?1006h";
 const std::string Terminal::ExitMouseSeq = "\x1b[?1006l\x1b[?1015l\x1b[?1002l\x1b[?1000l";
+const int Terminal::BuffSize = 32 * 1024;
 const int Terminal::Magic = 0432;
 const int Terminal::TiFuncs[] = {28, 40, 16, 13, 5, 39, 36, 27, 26, 34, 89, 88};
 const int Terminal::TiNFuncs = sizeof(Terminal::TiFuncs) / sizeof(int);
-const int Terminal::TiKeys[] = { 66, 68,
-                                 /* apparently not a typo; 67 is F10 for whatever reason */
-                                 69, 70, 71, 72, 73, 74, 75, 67, 216, 217, 77, 59,
-                                 76, 164, 82, 81, 79, 83, 61, 87};
+const int Terminal::TiKeys[] = {
+    66, 68, /* apparently not a typo; 67 is F10 for whatever reason */
+    69, 70, 71, 72, 73, 74, 75, 67, 216, 217, 77, 59, 76, 164, 82, 81, 79, 83,
+    61, 87};
 const int Terminal::TiNKeys = sizeof(Terminal::TiKeys) / sizeof(int);
 
-Terminal::Terminal(): keys(), funcs(), termName() {
+Terminal::Terminal(const std::string& tty):
+    keys(), funcs(), termName(), outbuff(), ttyFile(tty), inout(-1) {
+    ///@todo!
+    // inout = open(ttyFile.c_str(), O_RDWR);
+    // ASSERT(inout >= 0, "Terminal: Failed to open tty '%s'!", ttyFile.c_str());
+    outbuff.reserve(BuffSize);
     termName = env("TERM");
     std::string tidata = loadTerminfo();
     int16_t *header = (int16_t*)&(tidata[0]);
-    if((header[1] + header[2]) % 2) {
-        // old quirk to align everything on word boundaries
-        header[2] += 1;
-    }
+    // old quirk to align everything on word boundaries
+    if((header[1] + header[2]) % 2) header[2] += 1;
     const int str_offset = TiNFuncs + header[1] + header[2] + 2 * header[3];
     const int table_offset = str_offset + 2 * header[4];
-    for(int i=0;i<TiNKeys;++i) {
-        keys.push_back(copyString(tidata, str_offset + 2 * TiKeys[i], table_offset));
-    }
-    for(int i=0;i<Func_FuncsNum-2;++i) {
-        funcs.push_back(copyString(tidata, str_offset + 2 * TiFuncs[i], table_offset));
-    }
+    for(int i=0;i<TiNKeys;++i)
+        keys.push_back(copyString(tidata, str_offset + 2 * TiKeys[i],
+                                  table_offset));
+    for(int i=0;i<Func_FuncsNum-2;++i)
+        funcs.push_back(copyString(tidata, str_offset + 2 * TiFuncs[i],
+                                   table_offset));
     funcs.push_back(EnterMouseSeq);
     funcs.push_back(ExitMouseSeq);
+    INFO("Terminal: term=%s\n", termName.c_str());
+}
+
+Terminal::~Terminal() {
+    ///@todo!
+    // close(inout);
 }
 
 ColorSupport Terminal::colorSupported() const {
@@ -49,6 +66,21 @@ ColorSupport Terminal::colorSupported() const {
         return ColorSupport_256;
     }
     return ColorSupport_None;
+}
+
+void Terminal::puts(const char* data, size_t len) {
+    auto currCap = outbuff.capacity();
+    auto requiredCap = outbuff.length() + len;
+    while(currCap < requiredCap) currCap *= 2;
+    if(outbuff.capacity() != currCap) outbuff.reserve(currCap);
+    outbuff.append(data, len);
+}
+
+void Terminal::flush() {
+    int fd = 0;
+    (void)write(fd, outbuff.c_str(), outbuff.length());
+    ULTRA_DEBUG("flush: len=%lu buf=%s\n", outbuff.length(), outbuff.c_str());
+    outbuff.clear();
 }
 
 std::string Terminal::tryReading(const char* path, const char* term) const {

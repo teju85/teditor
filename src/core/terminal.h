@@ -43,11 +43,27 @@ enum ColorSupport {
 
 class Terminal {
 public:
-    Terminal();
+    Terminal(const std::string& tty);
+    ~Terminal();
     ColorSupport colorSupported() const;
     std::string name() const { return termName; }
     const char* key(int id) const { return keys[id].c_str(); }
     const char* func(int id) const { return funcs[id].c_str(); }
+
+    /**
+     * @defgroup PtyOps Operations to interact with the underlying pty
+     * @{
+     */
+    /**
+     * @brief append data at the end of the current buffer contents
+     * @param data the data to be appended
+     * @param len number of elements in the data
+     */
+    void puts(const char* data, size_t len);
+    void puts(const std::string& data) { puts(data.c_str(), data.length()); }
+    /** flush the contents of the buffer to the pty */
+    void flush();
+    /** @} */
 
     static const int Magic;
     static const int TiFuncs[];
@@ -57,10 +73,18 @@ public:
 
 private:
     Strings keys, funcs;
+    /** pty name */
     std::string termName;
+    /** buffer used to communicate commands to the pty */
+    std::string outbuff;
+    /** tty file to be used for communication */
+    std::string ttyFile;
+    /** file descriptor for the ttyFile */
+    int inout;
 
     static const std::string EnterMouseSeq;
     static const std::string ExitMouseSeq;
+    static const int BuffSize;
 
     std::string tryReading(const char* path, const char* term) const;
     std::string loadTerminfo() const;
