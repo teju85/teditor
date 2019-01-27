@@ -23,7 +23,7 @@ DEF_CMD(CommandRedo, "command-redo",
 DEF_CMD(InsertChar, "insert-char",
         DEF_OP() {
             auto& buf = ed.getBuff();
-            char c = ed.getInput().mk.getKey();
+            auto c = (char)ed.getKey();
             buf.insert(c);
             if(buf.isRegionActive()) ed.runCmd("backspace-char");
         },

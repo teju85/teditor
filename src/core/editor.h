@@ -10,7 +10,6 @@
 #include "logger.h"
 #include "buffer.h"
 #include "keys.h"
-#include "input.h"
 #include <unordered_map>
 #include "files_hist.h"
 #include "cell_buffer.h"
@@ -47,10 +46,6 @@ public:
     const Strings& copyData() const { return copiedStr; }
     void setCopyData(const Strings& in) { copiedStr = in; }
 
-    int getFd() { return term.getFd(); }
-    void requestResize() { bufferResize = true; }
-    void disableResize() { bufferResize = false; }
-    int getWinchFd(int id) const { return winchFds[id]; }
     int sendChar(int x, int y, const std::string& fg, const std::string& bg,
                  char c);
     int sendString(int x, int y, const std::string& fg, const std::string& bg,
@@ -64,7 +59,6 @@ public:
     void requestQuitEventLoop() { quitEventLoop = true; }
     void requestQuitPromptLoop() { quitPromptLoop = true; }
     void requestCancelPromptLoop() { cancelPromptLoop = true; }
-    Input& getInput() { return input; }
     void incrementCurrBuff();
     void decrementCurrBuff();
     void switchToBuff(const std::string& name);
@@ -81,14 +75,13 @@ public:
     Strings fileHistoryToString() const;
     Strings buffNamesToString() const;
     void saveBuffer(Buffer& buf);
+    key_t getKey() const { return term.mk.getKey(); }
 
 private:
     CellBuffer backbuff, frontbuff;
-    int currBuff, winchFds[2];
+    int currBuff;
     Terminal term;
     AttrColor lastfg, lastbg;
-    bool bufferResize;
-    Input input;
     Args args;
     CmdMsgBar cmBar;
     std::vector<Buffer*> buffs;
@@ -110,7 +103,7 @@ private:
     void clearBackBuff();
     void sendCell(int x, int y, const Cell& c) { backbuff.at(x, y) = c; }
     void writef(const char* fmt, ...);
-    int pollEvent();
+    int pollEvent() { return term.waitAndFill(nullptr); }
     int peekEvent(int timeoutMs);
     void draw();
     void loadFiles();

@@ -19,9 +19,8 @@ DEF_CMD(Cancel, "prompt-cancel",
 
 DEF_CMD(InsertChar, "prompt-insert-char",
         DEF_OP() {
-            auto& in = ed.getInput();
             auto& cmBar = ed.getCmBar();
-            auto c = (char)in.mk.getKey();
+            auto c = (char)ed.getKey();
             cmBar.insert(c);
         },
         DEF_HELP() {

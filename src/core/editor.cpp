@@ -6,7 +6,6 @@
 #include <vector>
 #include "editor.h"
 #include "keys.h"
-#include <sys/ioctl.h>
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -16,22 +15,9 @@
 #include <algorithm>
 #include "mode.h"
 #include "key_cmd_map.h"
-#include <signal.h>
 
 
 namespace teditor {
-
-void exitGracefully(int signum) { exit(signum); }
-
-// HACK HACK HACK: for window change handler!
-Editor* _inst = nullptr;
-
-void sigwinch_handler(int xxx) {
-    (void) xxx;
-    const int zzz = 1;
-    (void)write(_inst->getWinchFd(1), &zzz, sizeof(int));
-}
-
 
 struct PromptYesNoKeys {
     static std::vector<KeyCmdPair> All;
@@ -44,21 +30,16 @@ std::vector<KeyCmdPair> PromptYesNoKeys::All = {
 
 
 Editor::Editor(const Args& args_):
-    backbuff(), frontbuff(), currBuff(0), winchFds(), term(args_.ttyFile),
-    lastfg(), lastbg(), bufferResize(false), args(args_), cmBar(), buffs(),
-    buffNames(), quitEventLoop(false), quitPromptLoop(false),
-    cancelPromptLoop(false), cmdMsgBarActive(false), copiedStr(), defcMap(),
-    ynMap(), fileshist(args.getHistFile(), args.maxFileHistory) {
-    ASSERT(pipe(winchFds) >= 0, "Failed to setup 'pipe'!");
-    setSignalHandler();
+    backbuff(), frontbuff(), currBuff(0), term(args_.ttyFile), lastfg(),
+    lastbg(), args(args_), cmBar(), buffs(), buffNames(), quitEventLoop(false),
+    quitPromptLoop(false), cancelPromptLoop(false), cmdMsgBarActive(false),
+    copiedStr(), defcMap(), ynMap(),
+    fileshist(args.getHistFile(), args.maxFileHistory) {
     auto m = Mode::createMode("text");
     defcMap = m->getColorMap();
     populateKeyMap<PromptYesNoKeys>(ynMap, true);
     resize();
     clearBackBuff();
-    input.reset();
-    ASSERT(_inst == nullptr, "Editor has already been constructed!");
-    _inst = this;
 }
 
 Editor::~Editor() {
@@ -66,9 +47,6 @@ Editor::~Editor() {
     for(auto itr : buffs) deleteBuffer(itr);
     fileshist.prune();
     fileshist.store();
-    close(winchFds[0]);
-    close(winchFds[1]);
-    _inst = nullptr;
 }
 
 void Editor::addFileHistory(const std::string& file, int line)  {
@@ -234,20 +212,20 @@ void Editor::run() {
         auto& kcMap = getBuff().getKeyCmdMap();
         int status = pollEvent();
         DEBUG("Editor:run: status=%d meta=%u key=%u keystr='%s'\n", status,
-              input.mk.getMeta(), input.mk.getKey(), input.mk.toStr().c_str());
-        if(status == Input::UndefinedSequence) {
+              term.mk.getMeta(), term.mk.getKey(), term.mk.toStr().c_str());
+        if(status == Terminal::UndefinedSequence) {
             MESSAGE(*this, "Editor:run:: Undefined sequence: %s\n",
-                    input.getOldSeq().c_str());
+                    term.getOldSeq().c_str());
             continue;
         } else if(status < 0)
             break;
-        switch(input.type) {
+        switch(term.type) {
         case Event_Resize:
             clearBackBuff();
             resize();
             break;
         case Event_Key:
-            currKey = input.mk.toStr();
+            currKey = term.mk.toStr();
             state = kcMap.traverse(currKey);
             if(state == TS_LEAF) {
                 CMBAR(*this, "\n");
@@ -294,22 +272,6 @@ void Editor::writef(const char* fmt, ...) {
     std::string buf = format(fmt, vl);
     va_end(vl);
     term.puts(buf);
-}
-
-void Editor::setSignalHandler() {
-    struct sigaction sa;
-    memset(&sa, 0, sizeof(sa));
-    sa.sa_handler = sigwinch_handler;
-    sa.sa_flags = 0;
-    sigaction(SIGWINCH, &sa, 0);
-    struct sigaction action;
-    memset(&action, 0, sizeof(struct sigaction));
-    action.sa_handler = exitGracefully;
-    sigaction(SIGTERM, &action, NULL);
-    sigaction(SIGINT, &action, NULL);
-    sigaction(SIGQUIT, &action, NULL);
-    sigaction(SIGHUP, &action, NULL);
-    signal(SIGPIPE, SIG_IGN);
 }
 
 int Editor::sendString(int x, int y, const std::string& fg,
@@ -463,15 +425,15 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
     while(!quitPromptLoop) {
         int status = pollEvent();
         DEBUG("Prompter::loop: status=%d meta=%u key=%u keystr='%s'\n", status,
-              input.mk.getMeta(), input.mk.getKey(), input.mk.toStr().c_str());
-        if(status == Input::UndefinedSequence) {
+              term.mk.getMeta(), term.mk.getKey(), term.mk.toStr().c_str());
+        if(status == Terminal::UndefinedSequence) {
             MESSAGE(*this, "Prompter::loop: Undefined sequence: %s\n",
-                    input.getOldSeq().c_str());
+                    term.getOldSeq().c_str());
             break;
         } else if(status < 0)
             break;
-        if(input.type == Event_Key) {
-            currKey = input.mk.toStr();
+        if(term.type == Event_Key) {
+            currKey = term.mk.toStr();
             state = kcMap->traverse(currKey);
             if(state == TS_LEAF) {
                 std::string cmd = kcMap->getCmd();
@@ -527,8 +489,8 @@ void Editor::bufResize(Buffer* buf) {
 }
 
 void Editor::render() {
-    if(bufferResize) {
-        bufferResize = false;
+    if(term.bufferResize()) {
+        term.disableResize();
         resize();
     }
     int h = (int)frontbuff.h();
@@ -563,15 +525,11 @@ void Editor::render() {
     term.flush();
 }
 
-int Editor::pollEvent() {
-    return input.waitAndFill(nullptr, *this);
-}
-
 int Editor::peekEvent(int timeoutMs) {
     struct timeval tv;
     tv.tv_sec = timeoutMs / 1000;
     tv.tv_usec = (timeoutMs - (tv.tv_sec * 1000)) * 1000;
-    return input.waitAndFill(&tv, *this);
+    return term.waitAndFill(&tv);
 }
 
 } // end namespace teditor

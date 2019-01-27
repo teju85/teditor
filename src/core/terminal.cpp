@@ -6,13 +6,26 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>
-
+#include <vector>
+#include <unordered_map>
+#include <signal.h>
 // Note:
 //   Most stuff here related to terminfo usage is shamelessly borrowed from
 // github.com/nsf/termbox. (Thanks!)
 
 
 namespace teditor {
+
+void exitGracefully(int signum) { exit(signum); }
+
+// HACK HACK HACK: for window change handler!
+Terminal* _inst = nullptr;
+
+void sigwinch_handler(int xxx) {
+    (void) xxx;
+    const int zzz = 1;
+    (void)write(_inst->getWinchFd(1), &zzz, sizeof(int));
+}
 
 const std::string Terminal::EnterMouseSeq = "\x1b[?1000h\x1b[?1002h\x1b[?1015h\x1b[?1006h";
 const std::string Terminal::ExitMouseSeq = "\x1b[?1006l\x1b[?1015l\x1b[?1002l\x1b[?1000l";
@@ -25,6 +38,8 @@ const int Terminal::TiKeys[] = {
     69, 70, 71, 72, 73, 74, 75, 67, 216, 217, 77, 59, 76, 164, 82, 81, 79, 83,
     61, 87};
 const int Terminal::TiNKeys = sizeof(Terminal::TiKeys) / sizeof(int);
+const int Terminal::UndefinedSequence = -10;
+
 
 void Terminal::puts(const char* data, size_t len) {
     auto currCap = outbuff.capacity();
@@ -35,8 +50,7 @@ void Terminal::puts(const char* data, size_t len) {
 }
 
 void Terminal::flush() {
-    int fd = 0;
-    (void)write(fd, outbuff.c_str(), outbuff.length());
+    (void)write(inout, outbuff.c_str(), outbuff.length());
     ULTRA_DEBUG("flush: len=%lu buf=%s\n", outbuff.length(), outbuff.c_str());
     outbuff.clear();
 }
@@ -50,8 +64,9 @@ void Terminal::updateTermSize() {
 }
 
 Terminal::Terminal(const std::string& tty):
+    type(), mk(), loc(),
     keys(), funcs(), termName(env("TERM")), outbuff(), ttyFile(tty), inout(-1),
-    tios(), origTios() {
+    tios(), origTios(), seq(), oldSeq(), buffResize(false), winchFds() {
     // terminfo setup
     std::string tidata = loadTerminfo();
     int16_t *header = (int16_t*)&(tidata[0]);
@@ -76,6 +91,12 @@ Terminal::Terminal(const std::string& tty):
     puts(Func_EnterKeypad);
     puts(Func_EnterCA);
     puts(Func_HideCursor); // we'll manually handle the cursor draws
+    // event handler setup
+    ASSERT(pipe(winchFds) >= 0, "Failed to setup 'pipe'!");
+    reset();
+    setSignalHandler();
+    ASSERT(_inst == nullptr, "Terminal has already been constructed!");
+    _inst = this;
 }
 
 Terminal::~Terminal() {
@@ -87,6 +108,25 @@ Terminal::~Terminal() {
     flush();
     tcsetattr(inout, TCSAFLUSH, &origTios);
     close(inout);
+    close(winchFds[0]);
+    close(winchFds[1]);
+    _inst = nullptr;
+}
+
+void Terminal::setSignalHandler() {
+    struct sigaction sa;
+    memset(&sa, 0, sizeof(sa));
+    sa.sa_handler = sigwinch_handler;
+    sa.sa_flags = 0;
+    sigaction(SIGWINCH, &sa, 0);
+    struct sigaction action;
+    memset(&action, 0, sizeof(struct sigaction));
+    action.sa_handler = exitGracefully;
+    sigaction(SIGTERM, &action, NULL);
+    sigaction(SIGINT, &action, NULL);
+    sigaction(SIGQUIT, &action, NULL);
+    sigaction(SIGHUP, &action, NULL);
+    signal(SIGPIPE, SIG_IGN);
 }
 
 void Terminal::setupTios() {
@@ -160,6 +200,119 @@ std::string Terminal::copyString(const std::string& tidata, int str,
     const char *src = d + table + off;
     std::string ret(src);
     return ret;
+}
+
+
+struct KeyCombo {
+    MetaKey mk;
+    std::string escSeq;
+    static const std::vector<KeyCombo> Combos;
+};
+
+#include "xterm_strokes.h"
+
+struct AllCombos {
+    AllCombos() { for(auto& c : KeyCombo::Combos) allKeys[c.escSeq] = c.mk; }
+    static std::unordered_map<std::string, MetaKey> allKeys;
+    static const AllCombos test;
+};
+
+std::unordered_map<std::string, MetaKey> AllCombos::allKeys;
+const AllCombos AllCombos::test;
+
+void Terminal::reset() {
+    type = Event_None;
+    loc = {0, 0};
+    mk.reset();
+    mk.setMeta(Meta_None);
+}
+
+int Terminal::decodeChar(key_t ch) {
+    mk.setKey(ch);
+    // Ctrl A-Z and 0-7, except Enter
+    if(ch < Key_Space && ch != Key_Enter && ch != Key_Tab)
+        mk.updateMeta(Meta_Ctrl);
+    return 1;
+}
+
+int Terminal::decodeEscSeq() {
+    int len = (int)seq.length();
+    DEBUG("decodeEscSeq: len=%d seq=%s\n", len, seq.c_str());
+    if(len == 0) {
+        mk.setKey(Key_Esc);
+        return 1;
+    }
+    // Alt-<key>
+    if(len == 1 && (char)Key_Space <= seq[0] && seq[0] <= (char)Key_Tilde) {
+        mk = MetaKey(Meta_Alt, (key_t)seq[0]);
+        seq.erase(0, 1);
+        return 1;
+    }
+    // check for shortest string matching the list of keys
+    for(int i=1;i<=len;++i) {
+        std::string str(seq, 0, i);
+        const auto itr = AllCombos::allKeys.find(str);
+        if(itr != AllCombos::allKeys.end()) {
+            mk = itr->second;
+            seq.erase(0, i);
+            return i;
+        }
+    }
+    oldSeq = seq;
+    seq.clear();
+    return UndefinedSequence;
+}
+
+int Terminal::readAndExtract() {
+    if(seq.empty()) {
+        int rs = 1;
+        do {
+            char c;
+            rs = read(inout, &c, 1);
+            if(rs > 0)
+                seq += c;
+        } while(rs > 0);
+    }
+    ///@todo: support for mouse events
+    type = Event_Key;
+    mk.setMeta(Meta_None);
+    char c = seq[0];
+    seq.erase(0, 1);
+    if(c == (char)Key_Esc) return decodeEscSeq();
+    if(c <= (char)Key_Backspace2) return decodeChar(c);
+    ASSERT(false, "Terminal::readAndExtract: UTF8 sequence found '%u'!",
+           (uint32_t)c);
+}
+
+int Terminal::waitAndFill(struct timeval* timeout) {
+    int n;
+    fd_set events;
+    reset();
+    while(1) {
+        FD_ZERO(&events);
+        FD_SET(inout, &events);
+        FD_SET(winchFds[0], &events);
+        int maxfd  = std::max(winchFds[0], inout);
+        int result = select(maxfd+1, &events, 0, 0, timeout);
+        if(!result) return 0;
+        // resize event
+        if(FD_ISSET(winchFds[0], &events)) {
+            type = Event_Resize;
+            int zzz = 0;
+            n = read(winchFds[0], &zzz, sizeof(int));
+            buffResize = true;
+            return type;
+        } else {
+            disableResize();
+        }
+        // key/mouse events
+        if(FD_ISSET(inout, &events)) {
+            n = readAndExtract();
+            if(n == UndefinedSequence) return n;
+            if(n < 0) return -1;
+            if(n > 0) return type;
+        }
+    }
 }
 
 } // end namespace teditor

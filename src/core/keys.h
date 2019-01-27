@@ -2,7 +2,6 @@
 
 #include <stdint.h>
 #include "utils.h"
-#include "terminal.h"
 
 
 namespace teditor {
