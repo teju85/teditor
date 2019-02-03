@@ -18,13 +18,10 @@ namespace teditor {
 
 void exitGracefully(int signum) { exit(signum); }
 
-// HACK HACK HACK: for window change handler!
-Terminal* _inst = nullptr;
-
 void sigwinch_handler(int xxx) {
     (void) xxx;
     const int zzz = 1;
-    (void)write(_inst->getWinchFd(1), &zzz, sizeof(int));
+    (void)write(Terminal::getInstance().getWinchFd(1), &zzz, sizeof(int));
 }
 
 const std::string Terminal::EnterMouseSeq = "\x1b[?1000h\x1b[?1002h\x1b[?1015h\x1b[?1006h";
@@ -39,7 +36,12 @@ const int Terminal::TiKeys[] = {
     61, 87};
 const int Terminal::TiNKeys = sizeof(Terminal::TiKeys) / sizeof(int);
 const int Terminal::UndefinedSequence = -10;
+Terminal* Terminal::inst = nullptr;
 
+Terminal& Terminal::getInstance() {
+    ASSERT(inst != nullptr, "Terminal has not been initialized!");
+    return *inst;
+}
 
 void Terminal::puts(const char* data, size_t len) {
     auto currCap = outbuff.capacity();
@@ -95,8 +97,6 @@ Terminal::Terminal(const std::string& tty):
     ASSERT(pipe(winchFds) >= 0, "Failed to setup 'pipe'!");
     reset();
     setSignalHandler();
-    ASSERT(_inst == nullptr, "Terminal has already been constructed!");
-    _inst = this;
 }
 
 Terminal::~Terminal() {
@@ -110,7 +110,6 @@ Terminal::~Terminal() {
     close(inout);
     close(winchFds[0]);
     close(winchFds[1]);
-    _inst = nullptr;
 }
 
 void Terminal::setSignalHandler() {

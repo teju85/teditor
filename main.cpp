@@ -2,15 +2,17 @@
 #include <cstdio>
 #include "core/args.h"
 #include "core/editor.h"
+#include "core/terminal.h"
 
 
 int main(int argc, char** argv) {
     using namespace teditor;
     ///@todo: add more relevant catch statements in future!
     try {
-        SingletonHandler<Logger,std::string> shl("debug.log");
+        SingletonHandler<Logger, std::string> shl("debug.log");
         Args args(argc, argv);
-        Editor ed(args);
+        SingletonHandler<Terminal, std::string> term(args.ttyFile);
+        Editor ed(args, Terminal::getInstance());
         ed.run();
     } catch(const std::runtime_error& e) {
         printf("teditor: Error: %s\n", e.what());

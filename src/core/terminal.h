@@ -6,7 +6,7 @@
 #include <termios.h>
 #include "pos2d.h"
 #include "keys.h"
-
+#include "logger.h"
 
 namespace teditor {
 
@@ -55,8 +55,6 @@ public:
     /** for mouse events */
     Pos2d<uint16_t> loc;
 
-    Terminal(const std::string& tty);
-    ~Terminal();
     int getWinchFd(int idx) const { return winchFds[idx]; }
     int width() const { return tsize.x; }
     int height() const { return tsize.y; }
@@ -96,6 +94,9 @@ public:
     void disableResize() { buffResize = false; }
     /** @} */
 
+    /** get the singleton instance */
+    static Terminal& getInstance();
+
     static const int Magic;
     static const int TiFuncs[];
     static const int TiNFuncs;
@@ -126,6 +127,8 @@ private:
     /** window change listeners */
     int winchFds[2];
 
+    /** the singleton object */
+    static Terminal* inst;
     static const std::string EnterMouseSeq;
     static const std::string ExitMouseSeq;
     static const int BuffSize;
@@ -136,6 +139,8 @@ private:
         CS_True
     };
 
+    Terminal(const std::string& tty);
+    ~Terminal();
     void setSignalHandler();
     void setupTios();
     ColorSupport colorSupported() const;
@@ -147,6 +152,8 @@ private:
     int readAndExtract();
     int decodeChar(key_t ch);
     int decodeEscSeq();
+
+    template <typename A, typename B> friend class SingletonHandler;
 };
 
 }; // end namespace teditor

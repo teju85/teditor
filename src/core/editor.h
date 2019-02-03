@@ -24,7 +24,7 @@ typedef std::unordered_map<std::string, std::string> OptionMap;
 
 class Editor {
 public:
-    Editor(const Args& args_);
+    Editor(const Args& args_, Terminal& t);
     ~Editor();
     int width() const { return term.width(); }
     int height() const { return term.height(); }
@@ -80,7 +80,7 @@ public:
 private:
     CellBuffer backbuff, frontbuff;
     int currBuff;
-    Terminal term;
+    Terminal& term;
     AttrColor lastfg, lastbg;
     Args args;
     CmdMsgBar cmBar;

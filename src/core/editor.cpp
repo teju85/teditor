@@ -29,9 +29,9 @@ std::vector<KeyCmdPair> PromptYesNoKeys::All = {
 };
 
 
-Editor::Editor(const Args& args_):
-    backbuff(), frontbuff(), currBuff(0), term(args_.ttyFile), lastfg(),
-    lastbg(), args(args_), cmBar(), buffs(), buffNames(), quitEventLoop(false),
+Editor::Editor(const Args& args_, Terminal& t):
+    backbuff(), frontbuff(), currBuff(0), term(t), lastfg(), lastbg(),
+    args(args_), cmBar(), buffs(), buffNames(), quitEventLoop(false),
     quitPromptLoop(false), cancelPromptLoop(false), cmdMsgBarActive(false),
     copiedStr(), defcMap(), ynMap(),
     fileshist(args.getHistFile(), args.maxFileHistory) {
