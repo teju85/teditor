@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <string>
+#include "utils.h"
 
 namespace teditor {
 
@@ -10,12 +11,15 @@ template <typename Clazz, typename ClazzArgs>
 class SingletonHandler {
 public:
     SingletonHandler(const ClazzArgs& args) {
+        ASSERT(Clazz::inst == nullptr,
+               "Singleton object is already initialized!");
         Clazz::inst = new Clazz(args);
     }
 
     ~SingletonHandler() {
         if(Clazz::inst != nullptr)
             delete Clazz::inst;
+        Clazz::inst = nullptr;
     }
 };
 
