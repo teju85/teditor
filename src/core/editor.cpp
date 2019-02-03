@@ -29,12 +29,11 @@ std::vector<KeyCmdPair> PromptYesNoKeys::All = {
 };
 
 
-Editor::Editor(const Args& args_, Terminal& t):
-    backbuff(), frontbuff(), currBuff(0), term(t), lastfg(), lastbg(),
-    args(args_), cmBar(), buffs(), buffNames(), quitEventLoop(false),
-    quitPromptLoop(false), cancelPromptLoop(false), cmdMsgBarActive(false),
-    copiedStr(), defcMap(), ynMap(),
-    fileshist(args.getHistFile(), args.maxFileHistory) {
+Editor::Editor(const Args& args_):
+    backbuff(), frontbuff(), currBuff(0), lastfg(), lastbg(), args(args_),
+    cmBar(), buffs(), buffNames(), quitEventLoop(false), quitPromptLoop(false),
+    cancelPromptLoop(false), cmdMsgBarActive(false), copiedStr(), defcMap(),
+    ynMap(), fileshist(args.getHistFile(), args.maxFileHistory) {
     auto m = Mode::createMode("text");
     defcMap = m->getColorMap();
     populateKeyMap<PromptYesNoKeys>(ynMap, true);
@@ -43,7 +42,6 @@ Editor::Editor(const Args& args_, Terminal& t):
 }
 
 Editor::~Editor() {
-    term.flush();
     for(auto itr : buffs) deleteBuffer(itr);
     fileshist.prune();
     fileshist.store();
@@ -208,6 +206,7 @@ void Editor::run() {
     quitEventLoop = false;
     TrieStatus state = TS_NULL;
     std::string keySoFar, currKey;
+    auto& term = Terminal::getInstance();
     while(true) {
         auto& kcMap = getBuff().getKeyCmdMap();
         int status = pollEvent();
@@ -271,7 +270,7 @@ void Editor::writef(const char* fmt, ...) {
     va_start(vl, fmt);
     std::string buf = format(fmt, vl);
     va_end(vl);
-    term.puts(buf);
+    Terminal::getInstance().puts(buf);
 }
 
 int Editor::sendString(int x, int y, const std::string& fg,
@@ -303,6 +302,7 @@ int Editor::sendStringf(int x, int y, const std::string& fg,
 }
 
 void Editor::resize() {
+    auto& term = Terminal::getInstance();
     term.updateTermSize();
     backbuff.resize(term.width(), term.height());
     frontbuff.resize(term.width(), term.height());
@@ -342,7 +342,7 @@ void Editor::writeLiteral(const char* fmt, ...) {
     va_start(vl, fmt);
     std::string buf = format(fmt, vl);
     va_end(vl);
-    term.puts(buf);
+    Terminal::getInstance().puts(buf);
 }
 
 void Editor::writeCursor(int x, int y) {
@@ -355,11 +355,12 @@ void Editor::writeChar(uint32_t c, int x, int y) {
     if(!c)
         buf[0] = ' '; // replace 0 with whitespace
     writeCursor(x, y);
-    term.puts(buf, bw);
+    Terminal::getInstance().puts(buf, bw);
 }
 
 void Editor::setColors(AttrColor fg, AttrColor bg) {
     if((fg == lastfg) && (bg == lastbg)) return;
+    auto& term = Terminal::getInstance();
     lastfg = fg;
     lastbg = bg;
     term.puts(Func_Sgr0); // reset attrs
@@ -376,7 +377,7 @@ void Editor::clearScreen() {
     const auto& defaultfg = getColor("defaultfg");
     const auto& defaultbg = getColor("defaultbg");
     setColors(defaultfg, defaultbg);
-    term.puts(Func_ClearScreen);
+    Terminal::getInstance().puts(Func_ClearScreen);
     clearBackBuff();
     render();
 }
@@ -422,6 +423,7 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
     TrieStatus state = TS_NULL;
     draw();
     render();
+    auto& term = Terminal::getInstance();
     while(!quitPromptLoop) {
         int status = pollEvent();
         DEBUG("Prompter::loop: status=%d meta=%u key=%u keystr='%s'\n", status,
@@ -480,6 +482,7 @@ void Editor::draw() {
 }
 
 void Editor::bufResize(Buffer* buf) {
+    auto& term = Terminal::getInstance();
     int ht = cmBarHeight();
     Pos2di sz(term.width(), term.height());
     sz.y -= ht;
@@ -489,6 +492,7 @@ void Editor::bufResize(Buffer* buf) {
 }
 
 void Editor::render() {
+    auto& term = Terminal::getInstance();
     if(term.bufferResize()) {
         term.disableResize();
         resize();
@@ -522,14 +526,14 @@ void Editor::render() {
             x += wid;
         }
     }
-    term.flush();
+    Terminal::getInstance().flush();
 }
 
 int Editor::peekEvent(int timeoutMs) {
     struct timeval tv;
     tv.tv_sec = timeoutMs / 1000;
     tv.tv_usec = (timeoutMs - (tv.tv_sec * 1000)) * 1000;
-    return term.waitAndFill(&tv);
+    return Terminal::getInstance().waitAndFill(&tv);
 }
 
 } // end namespace teditor

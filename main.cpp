@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
         SingletonHandler<Logger, std::string> shl("debug.log");
         Args args(argc, argv);
         SingletonHandler<Terminal, std::string> term(args.ttyFile);
-        Editor ed(args, Terminal::getInstance());
+        Editor ed(args);
         ed.run();
     } catch(const std::runtime_error& e) {
         printf("teditor: Error: %s\n", e.what());

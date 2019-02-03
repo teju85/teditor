@@ -24,10 +24,8 @@ typedef std::unordered_map<std::string, std::string> OptionMap;
 
 class Editor {
 public:
-    Editor(const Args& args_, Terminal& t);
+    Editor(const Args& args_);
     ~Editor();
-    int width() const { return term.width(); }
-    int height() const { return term.height(); }
     void setTitle(const char* ti) { writef("%c]0;%s%c\n", '\033', ti, '\007'); }
     Buffer& getBuff() { return *buffs[currBuff]; }
     const Buffer& getBuff() const { return *buffs[currBuff]; }
@@ -75,12 +73,11 @@ public:
     Strings fileHistoryToString() const;
     Strings buffNamesToString() const;
     void saveBuffer(Buffer& buf);
-    key_t getKey() const { return term.mk.getKey(); }
+    key_t getKey() const { return Terminal::getInstance().mk.getKey(); }
 
 private:
     CellBuffer backbuff, frontbuff;
     int currBuff;
-    Terminal& term;
     AttrColor lastfg, lastbg;
     Args args;
     CmdMsgBar cmBar;
@@ -92,19 +89,21 @@ private:
     KeyCmdMap ynMap;
     FilesHist fileshist;
 
-    void setSignalHandlers();
+    /**
+     * @defgroup InternalTermOps Internal Terminal related operations
+     * @{
+     */
     void render();
-    void updateTermSize();
-    void setSignalHandler();
-    void setupTios();
+    int pollEvent() { return Terminal::getInstance().waitAndFill(nullptr); }
+    int peekEvent(int timeoutMs);
+    /** @} */
+
     void writeLiteral(const char* fmt, ...);
     void clearScreen();
     void resize();
     void clearBackBuff();
     void sendCell(int x, int y, const Cell& c) { backbuff.at(x, y) = c; }
     void writef(const char* fmt, ...);
-    int pollEvent() { return term.waitAndFill(nullptr); }
-    int peekEvent(int timeoutMs);
     void draw();
     void loadFiles();
     void bufResize(Buffer* mlb);
