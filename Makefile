@@ -42,7 +42,7 @@ CORE_OBJS      := $(patsubst %.cpp,%.o,$(CPPSRC))
 TESTSRC        := $(shell find $(TESTS) -name "*.cpp")
 TEST_OBJS      := $(patsubst %.cpp,%.o,$(TESTSRC)) \
                   $(CORE_OBJS)
-TESTEXE        := tests
+TESTEXE        := $(BINDIR)/tests
 ifeq ($(DEBUG),1)
     CXXFLAGS   += -g
     LDFLAGS    += -g
@@ -79,6 +79,8 @@ $(EXE): main.o $(CORE_OBJS) $(LIBRARIES)
 	    echo "Building $@ ..."; \
 	fi
 	$(PREFIX)$(LD) $(LDFLAGS) -o $@ $^
+
+tests: $(TESTEXE)
 
 $(TESTEXE): $(TEST_OBJS) $(LIBRARIES)
 	@if [ "$(VERBOSE)" = "0" ]; then \
