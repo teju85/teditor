@@ -81,13 +81,13 @@ $(EXE): main.o $(CORE_OBJS) $(LIBRARIES)
 	$(PREFIX)$(LD) $(LDFLAGS) -o $@ $^
 
 tests: $(TESTEXE)
+	$(TESTEXE)
 
 $(TESTEXE): $(TEST_OBJS) $(LIBRARIES)
 	@if [ "$(VERBOSE)" = "0" ]; then \
 	    echo "Building $@ ..."; \
 	fi
 	$(PREFIX)$(LD) $(LDFLAGS) -o $@ $^
-	$(TESTEXE)
 
 $(TESTS)/%.o: $(TESTS)/%.cpp $(HEADERS)
 	@if [ "$(VERBOSE)" = "0" ]; then \
