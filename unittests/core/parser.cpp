@@ -4,31 +4,26 @@
 #include <string.h>
 #include <string>
 
-
-extern "C" TSLanguage *tree_sitter_cpp();
-
 namespace teditor {
 
 TEST_CASE("Parser::Test - Correct") {
-    auto correct = slurp("samples/correct.cpp");
-    Parser p(tree_sitter_cpp());
-    Tree t;
-    t.parse(correct, p);
-    TSNode root = ts_tree_root_node(t.get());
-    REQUIRE(ts_node_child_count(root) == 1);
-    std::string actual(ts_node_type(root));
-    REQUIRE(actual == "translation_unit");
+  auto correct = slurp("samples/correct.cpp");
+  Parser p("cpp");
+  Parser::Tree t;
+  p.parse(correct, t);
+  auto root = t.root();
+  REQUIRE(root.childCount() == 1);
+  REQUIRE(root.type() == "translation_unit");
 }
 
 TEST_CASE("Parser::Test - Inorrect") {
-    auto correct = slurp("samples/incorrect.cpp");
-    Parser p(tree_sitter_cpp());
-    Tree t;
-    t.parse(correct, p);
-    TSNode root = ts_tree_root_node(t.get());
-    REQUIRE(ts_node_child_count(root) == 4);
-    std::string actual(ts_node_type(root));
-    REQUIRE(actual == "ERROR");
+  auto incorrect = slurp("samples/incorrect.cpp");
+  Parser p("cpp");
+  Parser::Tree t;
+  p.parse(incorrect, t);
+  auto root = t.root();
+  REQUIRE(root.childCount() == 4);
+  REQUIRE(root.type() == "ERROR");
 }
 
 } // end namespace teditor
