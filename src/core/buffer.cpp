@@ -910,25 +910,26 @@ void Buffer::moveUpAllNextCursors(int i) {
 }
 ////// End: Cursor operations //////
 
-///@todo: support undo
 void Buffer::indent() {
-  int len = cursorCount();
-  for(int i=0;i<len;++i) {
-    auto& cu = locs[i];
+  Strings strs;
+  Positions start, end;
+  bool add = true;
+  forEachCursor([&strs, &start, &end, &add, this](Pos2di& cu, int i) {
     int line = cu.y;
     int count = mode->indent(*this, line);
     DEBUG("Indent: count=%d line=%d\n", count, line);
-    cu.x += count;
-    if(count > 0) {
-      lines[line].prepend(' ', count);
-      if(cu.x <= lengthOf(line)) cu.x = lengthOf(line);
-      modified = true;
-    } else if(count < 0) {
-      lines[line].erase(0, -count);
-      if(cu.x < 0) cu.x = 0;
-      modified = true;
+    if(count >= 0) {
+      std::string str(count, ' ');
+      strs.push_back(str);
+      add = true;
+    } else {
+      start.push_back({0, line});
+      end.push_back({-count, line});
+      add = false;
     }
-  }
+  });
+  if(add) insert(strs);
+  else removeRegion(start, end);
 }
 
 } // end namespace teditor
