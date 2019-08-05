@@ -13,6 +13,7 @@
 #include <fcntl.h>
 #include <fstream>
 #include <iostream>
+#include <cctype>
 
 
 namespace teditor {
@@ -363,6 +364,16 @@ void copyFile(const std::string& in, const std::string& out) {
         (void)write(ofp, buf, size);
     close(ifp);
     close(ofp);
+}
+
+std::string urlHexify(const std::string& url) {
+  std::string ret;
+  ret.reserve(url.size() * 3);
+  for(auto c : url) {
+    if(std::isalnum(c) || ':' == c || '/' == c || '.' == c) ret += c;
+    else ret += format("%%%02x", c);
+  }
+  return ret;
 }
 
 void downloadUrl(const std::string& url, const std::string& file) {

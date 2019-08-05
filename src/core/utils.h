@@ -126,6 +126,9 @@ Strings listDirRel(const std::string& dir);
 
 void copyFile(const std::string& in, const std::string& out);
 
+/** @brief Hexify the input url */
+std::string urlHexify(const std::string& url);
+
 /** @brief Download the content of input url into the given file */
 void downloadUrl(const std::string& url, const std::string& file);
 
