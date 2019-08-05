@@ -184,24 +184,24 @@ static const key_t Key_Invalid         = 0xFFFFFFFF;
 
 
 struct MetaKey {
-    MetaKey(): key(Key_Invalid) {}
-    MetaKey(key_t k): key(k) {}
-    MetaKey(key_t m, key_t k): key(m | k) {}
-    bool isInvalid() const { return key == Key_Invalid; }
-    key_t getMeta() const { return key & ~Mask; }
-    key_t getKey() const { return key & Mask; }
-    key_t getFull() const { return key; }
-    bool isAscii() const;
-    void reset() { key = Key_Invalid; }
-    void setKey(key_t k) { key = getMeta() | (k & Mask); }
-    void setMeta(key_t m) { key = (m & ~Mask) | getKey(); }
-    void updateMeta(key_t m) { key = (m & ~Mask) | key; }
-    std::string toStr() const;
+  MetaKey(): key(Key_Invalid) {}
+  MetaKey(key_t k): key(k) {}
+  MetaKey(key_t m, key_t k): key(m | k) {}
+  bool isInvalid() const { return key == Key_Invalid; }
+  key_t getMeta() const { return key & ~Mask; }
+  key_t getKey() const { return key & Mask; }
+  key_t getFull() const { return key; }
+  bool isAscii() const;
+  void reset() { key = Key_Invalid; }
+  void setKey(key_t k) { key = getMeta() | (k & Mask); }
+  void setMeta(key_t m) { key = (m & ~Mask) | getKey(); }
+  void updateMeta(key_t m) { key = (m & ~Mask) | key; }
+  std::string toStr() const;
 
 private:
-    key_t key;
+  key_t key;
 
-    static const uint32_t Mask;
+  static const uint32_t Mask;
 };
 
 bool operator==(const MetaKey& mk1, const MetaKey& mk2);

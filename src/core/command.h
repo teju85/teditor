@@ -48,18 +48,18 @@ Strings allCmdNames();
 
 /** helper class to register the command into the command database */
 struct RegisterCmd {
-    RegisterCmd(const std::string& cmd, OperateFunc op, HelpFunc help=nullptr) {
-        registerCmd(cmd, std::make_pair(op, help));
-    }
+  RegisterCmd(const std::string& cmd, OperateFunc op, HelpFunc help=nullptr) {
+    registerCmd(cmd, std::make_pair(op, help));
+  }
 };
 
 /** macro to register a command to the database */
-#define DEF_CMD(UniqName, CmdName, OpFunc, HelpFunc)    \
-    RegisterCmd cmd ## UniqName(CmdName, OpFunc, HelpFunc)
+#define DEF_CMD(UniqName, CmdName, OpFunc, HelpFunc)            \
+  RegisterCmd cmd ## UniqName(CmdName, OpFunc, HelpFunc)
 
 /** helper macro to define a command without any help */
 #define DEF_CMD_NO_HELP(UniqName, CmdName, OpFunc)      \
-    DEF_CMD(UniqName, CmdName, OpFunc, nullptr)
+  DEF_CMD(UniqName, CmdName, OpFunc, nullptr)
 
 /** helper macro to define a command function */
 #define DEF_OP()  [](Editor& ed)

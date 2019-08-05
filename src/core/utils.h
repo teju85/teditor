@@ -23,12 +23,12 @@ std::string format(const char* fmt, va_list& vl);
  * @brief Macro to throw runtime_error exception
  * @param fmt C-string format containing error message
  */
-#define THROW(fmt, ...)                                                   \
-    do {                                                                  \
-        std::string msg = format("Exception occured! file=%s line=%d: "   \
-                                 fmt, __FILE__, __LINE__, ##__VA_ARGS__); \
-        throw std::runtime_error(msg);                                    \
-    } while(0)
+#define THROW(fmt, ...)                                                 \
+  do {                                                                  \
+    std::string msg = format("Exception occured! file=%s line=%d: "     \
+                             fmt, __FILE__, __LINE__, ##__VA_ARGS__);   \
+    throw std::runtime_error(msg);                                      \
+  } while(0)
 
 /**
  * @def ASSERT(check, fmt, ...)
@@ -36,27 +36,27 @@ std::string format(const char* fmt, va_list& vl);
  * @param check the boolean check to be performed
  * @param fmt C-string format containing error message
  */
-#define ASSERT(check, fmt, ...)                  \
-    do {                                         \
-        if(!(check))  THROW(fmt, ##__VA_ARGS__); \
-    } while(0)
+#define ASSERT(check, fmt, ...)                 \
+  do {                                          \
+    if(!(check))  THROW(fmt, ##__VA_ARGS__);    \
+  } while(0)
 
 
 /** short-form for vector of strings */
-typedef std::vector<std::string> Strings;
+  typedef std::vector<std::string> Strings;
 
 /** whether all the strings internally are empty or not */
 inline bool allStringsEmpty(const Strings& strs) {
-    for(const auto& str : strs)
-        if(!str.empty()) return false;
-    return true;
+  for(const auto& str : strs)
+    if(!str.empty()) return false;
+  return true;
 }
 
 /** whether the 2 vectors are same */
 template <typename T>
 bool same(const std::vector<T>& s1, const std::vector<T>& s2) {
-    if(s1.size() != s2.size()) return false;
-    return std::equal(s1.begin(), s1.end(), s2.begin());
+  if(s1.size() != s2.size()) return false;
+  return std::equal(s1.begin(), s1.end(), s2.begin());
 }
 
 
@@ -104,19 +104,19 @@ std::string gitBranchName(const std::string& dir);
 
 
 struct CmdStatus {
-    std::string output;
-    int status;
+  std::string output;
+  int status;
 };
 
 CmdStatus check_output(const std::string& cmd);
 
 
 struct FilePerm {
-    FilePerm(const std::string& n);
+  FilePerm(const std::string& n);
 
-    std::string name;
-    char perms[10];
-    size_t size;
+  std::string name;
+  char perms[10];
+  size_t size;
 };
 
 typedef std::vector<FilePerm> Files;
