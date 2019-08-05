@@ -310,6 +310,7 @@ TEST_CASE("Utils::urlHexify") {
   REQUIRE(urlHexify("0123456789") == "0123456789");
   REQUIRE(urlHexify("`~!@# ") == "%60%7e%21%40%23%20");
   REQUIRE(urlHexify("abc`~!@#def") == "abc%60%7e%21%40%23def");
+  REQUIRE(urlHexify("testing c") == "testing%20c");
 }
 
 } // end namespace teditor

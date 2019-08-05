@@ -141,12 +141,12 @@ DEF_CMD(LaunchBrowser, "browser",
 DEF_CMD(BrowserSearch, "browser-search",
         DEF_OP() {
             OptionMap opts;
-            opts["duckduckgo"] = "http://www.duckduckgo.com/?t=hb&ia=meanings&q=\"%s\"";
-            opts["google"] = "http://www.google.com/#q=\"%s\"";
-            opts["maps"] = "https://www.google.co.in/maps/search/\"%s\"";
-            opts["nvsearch"] = "https://nvsearch.nvidia.com/Pages/results.aspx?k=\"%s\"";
-            opts["stock"] = "https://duckduckgo.com/?q=\"%s\"&t=ffab&ia=stock";
-            opts["youtube"] = "https://www.youtube.com/results?search_query=\"%s\"";
+            opts["duckduckgo"] = "http://www.duckduckgo.com/?t=hb&ia=meanings&q=%s";
+            opts["google"] = "http://www.google.com/#q=%s";
+            opts["maps"] = "https://www.google.co.in/maps/search/%s";
+            opts["nvsearch"] = "https://nvsearch.nvidia.com/Pages/results.aspx?k=%s";
+            opts["stock"] = "https://duckduckgo.com/?q=%s&t=ffab&ia=stock";
+            opts["youtube"] = "https://www.youtube.com/results?search_query=%s";
             auto& args = ed.getArgs();
             auto command = ed.promptEnum("Search:", opts);
             if(command.empty()) return;
@@ -155,7 +155,8 @@ DEF_CMD(BrowserSearch, "browser-search",
             auto query = ed.getBuff().regionAsStr();
             auto queryStr = query.empty()? ed.prompt("Query: ") : query[0];
             if(queryStr.empty()) return;
-            auto buf = format(command.c_str(), queryStr.c_str());
+            auto hexified = urlHexify(queryStr);
+            auto buf = format(command.c_str(), hexified.c_str());
             check_output(buf.c_str());
         },
         DEF_HELP() {
