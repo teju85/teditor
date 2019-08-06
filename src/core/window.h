@@ -69,7 +69,15 @@ protected:
   Pos2di screenStart, screenDim;
 };
 
-/** simple typedef of a list of windows */
-typedef std::vector<Window*> Windows;
+
+/** a list of windows */
+class Windows : public std::vector<Window*> {
+public:
+  Windows();
+  ~Windows();
+
+private:
+  int currWin;
+};
 
 }; // end namespace teditor

@@ -39,12 +39,7 @@ Editor::Editor(const Args& args_):
   // This array is here only to make sure we get consistent interface to the
   // Window API.
   cmBarArr.push_back(cmBar);
-  // first window is always the cmBar window
-  windows.push_back(new Window);
   getCmBarWindow().attachBuffs(&cmBarArr);
-  DEBUG("Editor: attached cmbar to its window\n");
-  // second window starts as the main window which can then further be split
-  windows.push_back(new Window);
   getWindow().attachBuffs(&buffs);
   auto m = Mode::createMode("text");
   defcMap = m->getColorMap();
@@ -55,7 +50,6 @@ Editor::Editor(const Args& args_):
 }
 
 Editor::~Editor() {
-  for(auto itr : windows) delete itr;
   fileshist.prune();
   fileshist.store();
 }

@@ -61,4 +61,17 @@ void Window::drawCursor(Editor& ed, const std::string& bg) {
 
 int Window::totalLinesNeeded() const { return getBuff().totalLinesNeeded(); }
 
+
+Windows::Windows(): std::vector<Window*>(), currWin(1) {
+  // first window is always the cmBar window
+  push_back(new Window);
+  // second window starts as the main window which can then further be split
+  push_back(new Window);
+}
+
+Windows::~Windows() {
+  for(auto itr : *this) delete itr;
+  clear();
+}
+
 } // end namespace teditor
