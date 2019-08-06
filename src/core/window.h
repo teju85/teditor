@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pos2d.h"
+#include <vector>
 
 
 namespace teditor {
@@ -52,5 +53,8 @@ protected:
   Buffer* currBuff;
   Pos2di screenStart, screenDim;
 };
+
+/** simple typedef of a list of windows */
+typedef std::vector<Window*> Windows;
 
 }; // end namespace teditor

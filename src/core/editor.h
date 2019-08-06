@@ -85,8 +85,8 @@ private:
   AttrColor lastfg, lastbg;
   Args args;
   CmdMsgBar cmBar;
-  std::vector<Buffer*> buffs;
-  std::vector<Window*> windows;
+  Buffers buffs;
+  Windows windows;
   std::set<std::string> buffNames;
   bool quitEventLoop, quitPromptLoop, cancelPromptLoop, cmdMsgBarActive;
   Strings copiedStr;

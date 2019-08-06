@@ -11,6 +11,7 @@
 #include "mode.h"
 #include "pos2d.h"
 #include <stack>
+#include <vector>
 
 
 namespace teditor {
@@ -387,5 +388,9 @@ protected:
 
   friend class Editor;
 };
+
+
+/** simple typedef for a list of buffers */
+typedef std::vector<Buffer*> Buffers;
 
 }; // end namespace teditor
