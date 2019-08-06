@@ -65,6 +65,8 @@ std::vector<NameColorPair> ReadOnlyMode::Colors::All = {
     {"highlightbg",       "DarkestGray"},
     {"cursorfg",          "Black"},
     {"cursorbg",          "White"},
+    {"winframebg",        "Black"},
+    {"winframefg",        "White"},
     {"inactivecursorbg",  "DarkGray"},
     {"statusfg",          "DarkGreen"},
     {"statusbg",          "DarkestGray"},
