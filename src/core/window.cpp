@@ -4,7 +4,7 @@
 
 namespace teditor {
 
-void Window::attachBuff(Buffer& b) { currBuff = &b; }
+void Window::attachBuff(Buffer* b) { currBuff = b; }
 
 Buffer& Window::getCurrBuff() { return *currBuff; }
 

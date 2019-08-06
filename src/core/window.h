@@ -8,11 +8,13 @@ namespace teditor {
 class Buffer;
 class Editor;
 
+///@todo: have the concept of current-buffer moved from Editor to this class
 /** Window to draw the contents of an associated buffer */
 class Window {
 public:
+  ///@todo: use full Buffers reference instead of a single buffer
   /** attach a buffer to this window */
-  void attachBuff(Buffer& b);
+  void attachBuff(Buffer* b);
 
   /** returns the currently associated buffer with this window */
   Buffer& getCurrBuff();
