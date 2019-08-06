@@ -9,7 +9,8 @@ namespace teditor {
 
 TEST_CASE("Window::Buffer2screen") {
     Buffer ml;
-    Window w = setupBuffWin(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
+    Window w;
+    setupBuffWin(w, ml, {0, 0}, {30, 10}, "samples/multiline.txt");
     REQUIRE(4 == ml.length());
     REQUIRE(1 == w.totalLinesNeeded());
     REQUIRE(Pos2di(0, 0) == w.buffer2screen({0, 0}));
@@ -22,7 +23,8 @@ TEST_CASE("Window::Buffer2screen") {
 
 TEST_CASE("Window::Screen2buffer") {
     Buffer ml;
-    Window w = setupBuffWin(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
+    Window w;
+    setupBuffWin(w, ml, {0, 0}, {30, 10}, "samples/multiline.txt");
     REQUIRE(4 == ml.length());
     REQUIRE(1 == ml.totalLinesNeeded());
     REQUIRE(Pos2di(0, 0) == w.screen2buffer(w.buffer2screen({0, 0})));

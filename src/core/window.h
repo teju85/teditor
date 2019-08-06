@@ -11,16 +11,6 @@ class Editor;
 /** Window to draw the contents of an associated buffer */
 class Window {
 public:
-  /**
-   * @brief ctor
-   * @param b the associated buffer for this window
-   * @param start window start
-   * @param dim window dim
-   */
-  Window(Buffer& b, const Pos2di& start, const Pos2di& dim);
-
-  ~Window() {}
-
   /** attach a buffer to this window */
   void attachBuff(Buffer& b);
 
@@ -56,7 +46,7 @@ public:
   int totalLinesNeeded() const;
 
 protected:
-  Buffer& currBuff;
+  Buffer* currBuff;
   Pos2di screenStart, screenDim;
 };
 

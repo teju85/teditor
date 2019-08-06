@@ -9,11 +9,11 @@ void setupBuff(Buffer& ml, const Pos2d<int>& pos, const Pos2d<int>& dim,
     ml.load(file, line);
 }
 
-Window setupBuffWin(Buffer& ml, const Pos2d<int>& pos, const Pos2d<int>& dim,
-                    const std::string& file, int line) {
+void setupBuffWin(Window& w, Buffer& ml, const Pos2d<int>& pos,
+                  const Pos2d<int>& dim, const std::string& file, int line) {
   setupBuff(ml, pos, dim, file, line);
-  Window w(ml, pos, dim);
-  return w;
+  w.attachBuff(ml);
+  w.resize(pos, dim);
 }
 
 } // end namespace teditor
