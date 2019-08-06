@@ -400,7 +400,8 @@ public:
 
   void clear();
   void push_back(Buffer* buf);
-  const std::set<std::string>& names() const { return buffNames; }
+
+  /** list of buffer names, in the order they are found in this object */
   Strings namesList() const;
 
   /** erase buffer at the given index */

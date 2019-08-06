@@ -144,11 +144,9 @@ void Editor::switchToBuff(const std::string& name) {
 }
 
 void Editor::killCurrBuff() {
-  checkForModifiedBuffer(buffs[currBuff]);
   deleteBuffer(currBuff);
   if(buffs.empty()) {
-    createScratchBuff();
-    setCurrBuff(0);
+    createScratchBuff(true);
     return;
   }
   int i = currBuff;
@@ -160,10 +158,7 @@ void Editor::killOtherBuffs() {
   auto* buf = buffs[currBuff];
   ///@todo: fixme!!
   for(int i=0;i<(int)buffs.size();++i) {
-    if(i != currBuff) {
-      checkForModifiedBuffer(buffs[i]);
-      deleteBuffer(i);
-    }
+    if(i != currBuff) deleteBuffer(i);
   }
   buffs.clear();
   buffs.push_back(buf);
@@ -172,6 +167,7 @@ void Editor::killOtherBuffs() {
 
 void Editor::deleteBuffer(int idx) {
   Buffer* buf = buffs[idx];
+  checkForModifiedBuffer(buffs[currBuff]);
   auto& f = buf->getFileName();
   if(!f.empty()) {
     int line = buf->saveCursors()[0].y;
