@@ -195,8 +195,8 @@ public:
   Positions saveCursors() const { return copyCursors(locs); }
   /** restore the state of all cursors to the given one */
   void restoreCursors(const Positions& pos);
-  /** cursor at i'th index */
   const Pos2di& cursorAt(int i) const { return locs[i]; }
+  const Positions& cursors() const { return locs; }
   /** @} */
 
   /** length of a given line in this buffer */
@@ -217,6 +217,7 @@ public:
   bool isModified() const { return modified; }
   virtual int getMinStartLoc() const { return 0; }
   std::string dirModeGetFileAtLine(int line);
+  int start() const { return startLine; }
 
   /**
    * @defgroup RegionOps Operations with regions
@@ -234,6 +235,7 @@ public:
   void startRegion() { regions.enable(locs); }
   /** stop the currently active mark (or region) */
   void stopRegion() { regions.clear(); }
+  const Regions& getRegions() const { return regions; }
   /** @} */
 
   void reload();
