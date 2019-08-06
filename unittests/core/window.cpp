@@ -15,6 +15,7 @@ TEST_CASE("Window::Buffer2screen") {
     REQUIRE(1 == w.totalLinesNeeded());
     REQUIRE(Pos2di(0, 0) == w.buffer2screen({0, 0}));
     w.resize({0, 0}, {5, 10});
+    ml.resize({0, 0}, {5, 10});
     REQUIRE(2 == w.totalLinesNeeded());
     REQUIRE(Pos2di(4, 2) == w.buffer2screen({4, 1}));
     REQUIRE(Pos2di(0, 3) == w.buffer2screen({5, 1}));
@@ -29,6 +30,7 @@ TEST_CASE("Window::Screen2buffer") {
     REQUIRE(1 == ml.totalLinesNeeded());
     REQUIRE(Pos2di(0, 0) == w.screen2buffer(w.buffer2screen({0, 0})));
     w.resize({0, 0}, {5, 10});
+    ml.resize({0, 0}, {5, 10});
     REQUIRE(2 == w.totalLinesNeeded());
     REQUIRE(Pos2di(4, 1) == w.screen2buffer(w.buffer2screen({4, 1})));
     REQUIRE(Pos2di(5, 1) == w.screen2buffer(w.buffer2screen({5, 1})));

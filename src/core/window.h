@@ -42,8 +42,6 @@ public:
   void drawBuffer(Editor& ed);
   void drawCursor(Editor& ed, const std::string& bg);
   void drawStatusBar(Editor& ed);
-  int drawLine(int y, const std::string& line, Editor& ed, int lineNum,
-               const std::string& fg, const std::string& bg);
   /** @} */
 
   /** number of lines needed to draw the currrent buffer in this window */
