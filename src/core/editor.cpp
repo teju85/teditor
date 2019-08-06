@@ -31,7 +31,7 @@ std::vector<KeyCmdPair> PromptYesNoKeys::All = {
 
 Editor::Editor(const Args& args_):
   backbuff(), frontbuff(), currBuff(0), currWin(1), lastfg(), lastbg(),
-  args(args_), cmBar(), buffs(), windows(), buffNames(), quitEventLoop(false),
+  args(args_), cmBar(), buffs(), windows(), quitEventLoop(false),
   quitPromptLoop(false), cancelPromptLoop(false), cmdMsgBarActive(false),
   copiedStr(), defcMap(), ynMap(),
   fileshist(args.getHistFile(), args.maxFileHistory) {
@@ -51,7 +51,6 @@ Editor::Editor(const Args& args_):
 }
 
 Editor::~Editor() {
-  for(auto itr : buffs) deleteBuffer(itr);
   for(auto itr : windows) delete itr;
   fileshist.prune();
   fileshist.store();
@@ -93,21 +92,19 @@ void Editor::runCmd(const std::string& cmd) {
 }
 
 void Editor::createScratchBuff(bool switchToIt) {
-  auto bName = uniquifyName("*scratch", buffNames);
+  auto bName = uniquifyName("*scratch", buffs.names());
   auto* buf = new Buffer(bName);
   bufResize(buf);
   buffs.push_back(buf);
-  buffNames.insert(buf->bufferName());
   if(switchToIt) setCurrBuff((int)buffs.size() - 1);
 }
 
 void Editor::createReadOnlyBuff(const std::string& name,
                                 const std::string& contents, bool switchToIt) {
-  auto bName = uniquifyName(name, buffNames);
+  auto bName = uniquifyName(name, buffs.names());
   auto* buf = new Buffer(bName);
   bufResize(buf);
   buffs.push_back(buf);
-  buffNames.insert(buf->bufferName());
   buf->insert(contents);
   buf->makeReadOnly();
   if(switchToIt) setCurrBuff((int)buffs.size() - 1);
@@ -131,7 +128,6 @@ void Editor::load(const std::string& file, int line) {
   bufResize(buf);
   buf->load(file, line);
   buffs.push_back(buf);
-  buffNames.insert(buf->bufferName());
   setCurrBuff((int)buffs.size() - 1);
 }
 
@@ -160,8 +156,7 @@ void Editor::switchToBuff(const std::string& name) {
 
 void Editor::killCurrBuff() {
   checkForModifiedBuffer(buffs[currBuff]);
-  deleteBuffer(buffs[currBuff]);
-  buffs.erase(buffs.begin()+currBuff);
+  deleteBuffer(currBuff);
   if(buffs.empty()) {
     createScratchBuff();
     setCurrBuff(0);
@@ -174,27 +169,26 @@ void Editor::killCurrBuff() {
 
 void Editor::killOtherBuffs() {
   auto* buf = buffs[currBuff];
+  ///@todo: fixme!!
   for(int i=0;i<(int)buffs.size();++i) {
     if(i != currBuff) {
       checkForModifiedBuffer(buffs[i]);
-      deleteBuffer(buffs[i]);
+      deleteBuffer(i);
     }
   }
   buffs.clear();
-  buffNames.clear();
   buffs.push_back(buf);
   setCurrBuff(0);
-  buffNames.insert(buf->bufferName());
 }
 
-void Editor::deleteBuffer(Buffer* buf) {
-  buffNames.erase(buf->bufferName());
+void Editor::deleteBuffer(int idx) {
+  Buffer* buf = buffs[idx];
   auto& f = buf->getFileName();
   if(!f.empty()) {
     int line = buf->saveCursors()[0].y;
     fileshist.add(f, line);
   }
-  delete buf;
+  buffs.erase(idx);
 }
 
 void Editor::setCurrBuff(int i) {
@@ -328,7 +322,6 @@ Buffer& Editor::getMessagesBuff() {
   auto* buf1 = new Buffer("*messages");
   bufResize(buf1);
   buffs.push_back(buf1);
-  buffNames.insert(buf1->bufferName());
   return *buf1;
 }
 

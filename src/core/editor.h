@@ -5,7 +5,6 @@
 #include <stdarg.h>
 #include <string>
 #include <vector>
-#include <set>
 #include "args.h"
 #include "logger.h"
 #include "buffer.h"
@@ -86,7 +85,6 @@ private:
   CmdMsgBar cmBar;
   Buffers buffs;
   Windows windows;
-  std::set<std::string> buffNames;
   bool quitEventLoop, quitPromptLoop, cancelPromptLoop, cmdMsgBarActive;
   Strings copiedStr;
   ColorMap defcMap;
@@ -114,7 +112,7 @@ private:
   Buffer* getBuff(const std::string& name);
   const AttrColor& getColor(const std::string& name) const;
   int cmBarHeight() const;
-  void deleteBuffer(Buffer* buf);
+  void deleteBuffer(int idx);
   void setCurrBuff(int i);
 };
 

@@ -932,4 +932,30 @@ void Buffer::indent() {
   else removeRegion(start, end);
 }
 
+
+Buffers::~Buffers() {
+  for(int i=0;i<(int)size();++i) {
+    erase(i);
+    --i;
+  }
+  buffNames.clear();
+}
+
+void Buffers::clear() {
+  std::vector<Buffer*>::clear();
+  buffNames.clear();
+}
+
+void Buffers::push_back(Buffer* buf) {
+  std::vector<Buffer*>::push_back(buf);
+  buffNames.insert(buf->bufferName());
+}
+
+void Buffers::erase(int idx) {
+  Buffer* buf = at(idx);
+  buffNames.erase(buf->bufferName());
+  delete buf;
+  std::vector<Buffer*>::erase(begin() + idx);
+}
+
 } // end namespace teditor

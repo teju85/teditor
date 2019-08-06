@@ -390,7 +390,20 @@ protected:
 };
 
 
-/** simple typedef for a list of buffers */
-typedef std::vector<Buffer*> Buffers;
+/** a list of buffers */
+class Buffers : public std::vector<Buffer*> {
+public:
+  ~Buffers();
+
+  void clear();
+  void push_back(Buffer* buf);
+  const std::set<std::string>& names() const { return buffNames; }
+
+  /** erase buffer at the given index */
+  void erase(int idx);
+
+private:
+  std::set<std::string> buffNames;
+};
 
 }; // end namespace teditor
