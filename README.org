@@ -1,8 +1,11 @@
 * teditor
 *teditor* is a terminal based editor, written from scratch in C++. More details
 about this editor can be found [[https://teju85.github.io/blog/tags.html#teditor][here]].
+* Supported OS's
+This has been only tested on cygwin till now. Should work for unix-based
+systems. If it doesn't build/work properly on them, fixes are most welcome.
 * Pre-reqs
-Very minimal set of pre-reqs are needed for this project!
+Very minimal set of pre-reqs are needed for this project.
 ** Compile time
 1. GNU-make (>= 4.2.1)
 2. G++ (>= 5.4.0)
@@ -21,13 +24,13 @@ $ ./bin/teditor
 #+END_SRC
 NOTE: If you have customized your minttyrc for the user configured colors,
 then your experience with the default colors may vary!!
-* Generating documentation
+* Developers
+** Generating documentation
 It is expected that one has installed doxygen for this purpose. Generated
 documentation can then be found inside the folder 'html'.
 #+BEGIN_SRC bash
 $ make doc
 #+END_SRC
-* Developers
 ** Unit testing
 Unit-tests are run via catch2.
 #+BEGIN_SRC bash
