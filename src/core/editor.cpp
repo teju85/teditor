@@ -30,8 +30,8 @@ std::vector<KeyCmdPair> PromptYesNoKeys::All = {
 
 
 Editor::Editor(const Args& args_):
-  backbuff(), frontbuff(), currBuff(0), lastfg(), lastbg(), args(args_),
-  cmBar(), buffs(), windows(), buffNames(), quitEventLoop(false),
+  backbuff(), frontbuff(), currBuff(0), currWin(1), lastfg(), lastbg(),
+  args(args_), cmBar(), buffs(), windows(), buffNames(), quitEventLoop(false),
   quitPromptLoop(false), cancelPromptLoop(false), cmdMsgBarActive(false),
   copiedStr(), defcMap(), ynMap(),
   fileshist(args.getHistFile(), args.maxFileHistory) {
@@ -201,7 +201,7 @@ void Editor::deleteBuffer(Buffer* buf) {
 
 void Editor::setCurrBuff(int i) {
   currBuff = i;
-  windows[1]->attachBuff(buffs[currBuff]);
+  windows[currWin]->attachBuff(buffs[currBuff]);
 }
 
 void Editor::run() {
@@ -486,7 +486,7 @@ void Editor::bufResize(Buffer* buf) {
   buf->resize({0, 0}, sz);
   cmBar.resize({0, sz.y}, {sz.x, ht});
   ///@todo: add support for multiple windows
-  windows[1]->resize({0, 0}, sz);
+  windows[currWin]->resize({0, 0}, sz);
   windows[0]->resize({0, sz.y}, {sz.x, ht});
   DEBUG("bufResize: buff-x,y=%d,%d ht=%d\n", sz.x, sz.y, ht);
 }

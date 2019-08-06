@@ -30,9 +30,8 @@ public:
   void setTitle(const char* ti) { writef("%c]0;%s%c\n", '\033', ti, '\007'); }
   Buffer& getBuff() { return *buffs[currBuff]; }
   const Buffer& getBuff() const { return *buffs[currBuff]; }
-  ///@todo: support for multiple windows
-  Window& getWindow() { return *windows[1]; }
-  const Window& getWindow() const { return *windows[1]; }
+  Window& getWindow() { return *windows[currWin]; }
+  const Window& getWindow() const { return *windows[currWin]; }
   Window& getCmBarWindow() { return *windows[0]; }
   CmdMsgBar& getCmBar() { return cmBar; }
   Buffer& getMessagesBuff();
@@ -81,7 +80,7 @@ public:
 
 private:
   CellBuffer backbuff, frontbuff;
-  int currBuff;
+  int currBuff, currWin;
   AttrColor lastfg, lastbg;
   Args args;
   CmdMsgBar cmBar;
