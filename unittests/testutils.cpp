@@ -9,10 +9,11 @@ void setupBuff(Buffer& ml, const Pos2d<int>& pos, const Pos2d<int>& dim,
     ml.load(file, line);
 }
 
-void setupBuffWin(Window& w, Buffer& ml, const Pos2d<int>& pos,
+void setupBuffWin(Window& w, Buffers& bs, const Pos2d<int>& pos,
                   const Pos2d<int>& dim, const std::string& file, int line) {
-  setupBuff(ml, pos, dim, file, line);
-  w.attachBuff(&ml);
+  bs.push_back(new Buffer);
+  setupBuff(*(bs.at(bs.size() - 1)), pos, dim, file, line);
+  w.attachBuffs(&bs);
   w.resize(pos, dim);
 }
 

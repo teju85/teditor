@@ -30,10 +30,10 @@ std::vector<KeyCmdPair> PromptYesNoKeys::All = {
 
 
 Editor::Editor(const Args& args_):
-  backbuff(), frontbuff(), currBuff(0), currWin(1), lastfg(), lastbg(),
-  args(args_), cmBar(new CmdMsgBar), buffs(), cmBarArr(), windows(),
-  quitEventLoop(false), quitPromptLoop(false), cancelPromptLoop(false),
-  cmdMsgBarActive(false), copiedStr(), defcMap(), ynMap(),
+  backbuff(), frontbuff(), currWin(1), lastfg(), lastbg(), args(args_),
+  cmBar(new CmdMsgBar), buffs(), cmBarArr(), windows(), quitEventLoop(false),
+  quitPromptLoop(false), cancelPromptLoop(false), cmdMsgBarActive(false),
+  copiedStr(), defcMap(), ynMap(),
   fileshist(args.getHistFile(), args.maxFileHistory) {
   DEBUG("Editor: ctor started\n");
   // This array is here only to make sure we get consistent interface to the
@@ -41,10 +41,11 @@ Editor::Editor(const Args& args_):
   cmBarArr.push_back(cmBar);
   // first window is always the cmBar window
   windows.push_back(new Window);
-  windows[0]->attachBuff(cmBar);
+  windows[0]->attachBuffs(&cmBarArr);
   DEBUG("Editor: attached cmbar to its window\n");
   // second window starts as the main window which can then further be split
   windows.push_back(new Window);
+  windows[currWin]->attachBuffs(&buffs);
   auto m = Mode::createMode("text");
   defcMap = m->getColorMap();
   populateKeyMap<PromptYesNoKeys>(ynMap, true);
@@ -123,18 +124,6 @@ void Editor::load(const std::string& file, int line) {
   setCurrBuff((int)buffs.size() - 1);
 }
 
-void Editor::incrementCurrBuff() {
-  int i = currBuff + 1;
-  if(i >= (int)buffs.size()) i = 0;
-  setCurrBuff(i);
-}
-
-void Editor::decrementCurrBuff() {
-  int i = currBuff - 1;
-  if(i < 0) i = (int)buffs.size() - 1;
-  setCurrBuff(i);
-}
-
 void Editor::switchToBuff(const std::string& name) {
   int idx = 0;
   for(const auto* buff : buffs) {
@@ -148,12 +137,12 @@ void Editor::switchToBuff(const std::string& name) {
 
 ///@todo: support for multiple windows
 void Editor::killCurrBuff() {
-  deleteBuffer(currBuff);
+  deleteBuffer(currBuffId());
   if(buffs.empty()) {
     createScratchBuff(true);
     return;
   }
-  int i = currBuff;
+  int i = currBuffId();
   if(i >= (int)buffs.size()) i = 0;
   setCurrBuff(i);
 }
@@ -161,9 +150,9 @@ void Editor::killCurrBuff() {
 ///@todo: support for multiple windows
 void Editor::killOtherBuffs() {
   for(int i=0;i<(int)buffs.size();++i) {
-    if(i != currBuff) {
+    if(i != currBuffId()) {
       deleteBuffer(i);
-      if(i < currBuff) setCurrBuff(currBuff - 1);
+      if(i < currBuffId()) setCurrBuff(currBuffId() - 1);
       --i;
     }
   }
@@ -171,18 +160,13 @@ void Editor::killOtherBuffs() {
 
 void Editor::deleteBuffer(int idx) {
   Buffer* buf = buffs[idx];
-  checkForModifiedBuffer(buffs[currBuff]);
+  checkForModifiedBuffer(buffs[currBuffId()]);
   auto& f = buf->getFileName();
   if(!f.empty()) {
     int line = buf->saveCursors()[0].y;
     fileshist.add(f, line);
   }
   buffs.erase(idx);
-}
-
-void Editor::setCurrBuff(int i) {
-  currBuff = i;
-  windows[currWin]->attachBuff(buffs[currBuff]);
 }
 
 void Editor::run() {

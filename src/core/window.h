@@ -7,18 +7,30 @@
 namespace teditor {
 
 class Buffer;
+class Buffers;
 class Editor;
 
 ///@todo: have the concept of current-buffer moved from Editor to this class
 /** Window to draw the contents of an associated buffer */
 class Window {
 public:
-  ///@todo: use full Buffers reference instead of a single buffer
-  /** attach a buffer to this window */
-  void attachBuff(Buffer* b);
+  Window();
 
-  /** returns the currently associated buffer with this window */
-  Buffer& getCurrBuff();
+  /**
+   * @brief attach buffers list to this window. This list should be shared with
+   *  all the other windows being displayed (except for the Window that wraps
+   *  the CmdMsgBar)
+   */
+  void attachBuffs(Buffers* bs);
+
+  /**
+   * @defgroup GetBuff
+   * @{
+   * @brief returns the currently active buffer with this window
+   */
+  Buffer& getBuff();
+  const Buffer& getBuff() const;
+  /** @} */
 
   /**
    * @brief resize the window in case of window size change
@@ -47,8 +59,14 @@ public:
   /** number of lines needed to draw the currrent buffer in this window */
   int totalLinesNeeded() const;
 
+  void incrementCurrBuff();
+  void decrementCurrBuff();
+  int currBuffId() const { return currBuff; }
+  void setCurrBuff(int i) { currBuff = i; }
+
 protected:
-  Buffer* currBuff;
+  Buffers* buffs;  // NOT owned by this class
+  int currBuff;
   Pos2di screenStart, screenDim;
 };
 

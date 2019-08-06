@@ -27,8 +27,8 @@ public:
   Editor(const Args& args_);
   ~Editor();
   void setTitle(const char* ti) { writef("%c]0;%s%c\n", '\033', ti, '\007'); }
-  Buffer& getBuff() { return *buffs[currBuff]; }
-  const Buffer& getBuff() const { return *buffs[currBuff]; }
+  Buffer& getBuff() { return getWindow().getBuff(); }
+  const Buffer& getBuff() const { return getWindow().getBuff(); }
   Window& getWindow() { return *windows[currWin]; }
   const Window& getWindow() const { return *windows[currWin]; }
   Window& getCmBarWindow() { return *windows[0]; }
@@ -59,12 +59,12 @@ public:
   void requestQuitEventLoop() { quitEventLoop = true; }
   void requestQuitPromptLoop() { quitPromptLoop = true; }
   void requestCancelPromptLoop() { cancelPromptLoop = true; }
-  void incrementCurrBuff();
-  void decrementCurrBuff();
+  void incrementCurrBuff() { getWindow().incrementCurrBuff(); }
+  void decrementCurrBuff() { getWindow().decrementCurrBuff(); }
   void switchToBuff(const std::string& name);
   void killCurrBuff();
   void killOtherBuffs();
-  int currBuffId() const { return currBuff; }
+  int currBuffId() const { return getWindow().currBuffId(); }
   int buffSize() const { return (int)buffs.size(); }
   void createScratchBuff(bool switchToIt=false);
   void createReadOnlyBuff(const std::string& name, const std::string& contents,
@@ -79,7 +79,7 @@ public:
 
 private:
   CellBuffer backbuff, frontbuff;
-  int currBuff, currWin;
+  int currWin;
   AttrColor lastfg, lastbg;
   Args args;
   CmdMsgBar* cmBar;
@@ -113,7 +113,7 @@ private:
   const AttrColor& getColor(const std::string& name) const;
   int cmBarHeight() const;
   void deleteBuffer(int idx);
-  void setCurrBuff(int i);
+  void setCurrBuff(int i) { getWindow().setCurrBuff(i); }
 };
 
 }; // end namespace teditor

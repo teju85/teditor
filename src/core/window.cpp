@@ -4,9 +4,23 @@
 
 namespace teditor {
 
-void Window::attachBuff(Buffer* b) { currBuff = b; }
+Window::Window(): buffs(nullptr), currBuff(0), screenStart(), screenDim() {
+}
 
-Buffer& Window::getCurrBuff() { return *currBuff; }
+void Window::attachBuffs(Buffers* bs) { buffs = bs; }
+
+Buffer& Window::getBuff() { return *(buffs->at(currBuff)); }
+const Buffer& Window::getBuff() const { return *(buffs->at(currBuff)); }
+
+void Window::incrementCurrBuff() {
+  ++currBuff;
+  if(currBuff >= (int)buffs->size()) currBuff = 0;
+}
+
+void Window::decrementCurrBuff() {
+  --currBuff;
+  if(currBuff < 0) currBuff = (int)buffs->size() - 1;
+}
 
 void Window::resize(const Pos2di& start, const Pos2di& dim) {
   screenStart = start;
@@ -14,37 +28,39 @@ void Window::resize(const Pos2di& start, const Pos2di& dim) {
 }
 
 Pos2di Window::buffer2screen(const Pos2di& loc) const {
+  auto& buff = getBuff();
   int w = screenDim.x;
   Pos2di ret = screenStart;
-  int relY = loc.y - currBuff->start();
+  int relY = loc.y - buff.start();
   for(int idx=0;idx<relY;++idx)
-    ret.y += currBuff->at(idx).numLinesNeeded(w);
+    ret.y += buff.at(idx).numLinesNeeded(w);
   ret.y += (loc.x / w);
   ret.x += loc.x % w;
   return ret;
 }
 
 Pos2di Window::screen2buffer(const Pos2di& loc) const {
+  auto& buff = getBuff();
   Pos2di rel = {loc.x - screenStart.x, loc.y - screenStart.y};
-  Pos2di res = {0, currBuff->start()};
+  Pos2di res = {0, buff.start()};
   int w = screenDim.x;
   int sy = 0;
   for(;sy<=rel.y;++res.y)
-    sy += currBuff->at(res.y).numLinesNeeded(w);
+    sy += buff.at(res.y).numLinesNeeded(w);
   if(sy > rel.y) --res.y;
-  int dely = rel.y - sy + currBuff->at(res.y).numLinesNeeded(w);
+  int dely = rel.y - sy + buff.at(res.y).numLinesNeeded(w);
   res.x = dely * w + rel.x;
   return res;
 }
 
-void Window::drawBuffer(Editor& ed) { currBuff->drawBuffer(ed); }
+void Window::drawBuffer(Editor& ed) { getBuff().drawBuffer(ed); }
 
 void Window::drawCursor(Editor& ed, const std::string& bg) {
-  currBuff->drawCursor(ed, bg);
+  getBuff().drawCursor(ed, bg);
 }
 
-void Window::drawStatusBar(Editor& ed) { currBuff->drawStatusBar(ed); }
+void Window::drawStatusBar(Editor& ed) { getBuff().drawStatusBar(ed); }
 
-int Window::totalLinesNeeded() const { return currBuff->totalLinesNeeded(); }
+int Window::totalLinesNeeded() const { return getBuff().totalLinesNeeded(); }
 
 } // end namespace teditor
