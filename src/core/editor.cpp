@@ -455,22 +455,24 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
   return ret;
 }
 
+///@todo: support for multiple windows
 void Editor::draw() {
-  auto& buff = getBuff();
+  auto& win = getWindow();
+  auto& cmWin = getCmBarWindow();
   clearBackBuff();
   DEBUG("draw: drawBuffer\n");
-  buff.drawBuffer(*this);
+  win.drawBuffer(*this);
   DEBUG("draw: drawStatusBar\n");
-  buff.drawStatusBar(*this);
+  win.drawStatusBar(*this);
   DEBUG("draw: cmdMsgBar.drawBuffer\n");
-  cmBar.drawBuffer(*this);
+  cmWin.drawBuffer(*this);
   if(cmdMsgBarActive) {
     DEBUG("draw: cmdMsgBar.drawCursor\n");
-    cmBar.drawCursor(*this, "cursorbg");
-    buff.drawCursor(*this, "inactivecursorbg");
+    cmWin.drawCursor(*this, "cursorbg");
+    win.drawCursor(*this, "inactivecursorbg");
   } else {
     DEBUG("draw: drawCursor\n");
-    buff.drawCursor(*this, "cursorbg");
+    win.drawCursor(*this, "cursorbg");
   }
   DEBUG("draw: ended\n");
 }
