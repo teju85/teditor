@@ -31,14 +31,17 @@ std::vector<KeyCmdPair> PromptYesNoKeys::All = {
 
 Editor::Editor(const Args& args_):
   backbuff(), frontbuff(), currBuff(0), currWin(1), lastfg(), lastbg(),
-  args(args_), cmBar(), buffs(), windows(), quitEventLoop(false),
-  quitPromptLoop(false), cancelPromptLoop(false), cmdMsgBarActive(false),
-  copiedStr(), defcMap(), ynMap(),
+  args(args_), cmBar(new CmdMsgBar), buffs(), cmBarArr(), windows(),
+  quitEventLoop(false), quitPromptLoop(false), cancelPromptLoop(false),
+  cmdMsgBarActive(false), copiedStr(), defcMap(), ynMap(),
   fileshist(args.getHistFile(), args.maxFileHistory) {
   DEBUG("Editor: ctor started\n");
+  // This array is here only to make sure we get consistent interface to the
+  // Window API.
+  cmBarArr.push_back(cmBar);
   // first window is always the cmBar window
   windows.push_back(new Window);
-  windows[0]->attachBuff(&cmBar);
+  windows[0]->attachBuff(cmBar);
   DEBUG("Editor: attached cmbar to its window\n");
   // second window starts as the main window which can then further be split
   windows.push_back(new Window);
@@ -71,7 +74,7 @@ void Editor::saveBuffer(Buffer& buf) {
 }
 
 int Editor::cmBarHeight() const {
-  if(cmdMsgBarActive && cmBar.usingChoices()) return args.cmdMsgBarMultiHeight;
+  if(cmdMsgBarActive && cmBar->usingChoices()) return args.cmdMsgBarMultiHeight;
   return args.cmdMsgBarHeight;
 }
 
@@ -383,13 +386,13 @@ std::string Editor::promptEnum(const std::string& msg, OptionMap& opts) {
 std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
                            Choices* choices, const std::string& defVal) {
   selectCmBar();
-  if(kcMap == nullptr) kcMap = &(cmBar.getKeyCmdMap());
-  if(choices != nullptr) cmBar.setChoices(choices);
-  cmBar.setMinLoc((int)msg.size());
+  if(kcMap == nullptr) kcMap = &(cmBar->getKeyCmdMap());
+  if(choices != nullptr) cmBar->setChoices(choices);
+  cmBar->setMinLoc((int)msg.size());
   bufResize(&getBuff());
   quitPromptLoop = cancelPromptLoop = false;
-  cmBar.insert(msg.c_str());
-  if(!defVal.empty()) cmBar.insert(defVal.c_str());
+  cmBar->insert(msg.c_str());
+  if(!defVal.empty()) cmBar->insert(defVal.c_str());
   std::string currKey;
   TrieStatus state = TS_NULL;
   draw();
@@ -417,13 +420,13 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
     draw();
     render();
   }
-  auto ret = cmBar.getFinalChoice();
+  auto ret = cmBar->getFinalChoice();
   if(cancelPromptLoop) ret.clear();
-  cmBar.clear();
-  cmBar.setMinLoc(0);
+  cmBar->clear();
+  cmBar->setMinLoc(0);
   if(choices != nullptr) {
-    choices->setIdx(cmBar.getOptLoc());
-    cmBar.clearChoices();
+    choices->setIdx(cmBar->getOptLoc());
+    cmBar->clearChoices();
   }
   unselectCmBar();
   bufResize(&getBuff());
@@ -459,7 +462,7 @@ void Editor::bufResize(Buffer* buf) {
   sz.y -= ht;
   ///@todo: have the dimensions be solely controlled from Window class
   buf->resize({0, 0}, sz);
-  cmBar.resize({0, sz.y}, {sz.x, ht});
+  cmBar->resize({0, sz.y}, {sz.x, ht});
   ///@todo: add support for multiple windows
   windows[currWin]->resize({0, 0}, sz);
   windows[0]->resize({0, sz.y}, {sz.x, ht});

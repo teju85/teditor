@@ -32,7 +32,7 @@ public:
   Window& getWindow() { return *windows[currWin]; }
   const Window& getWindow() const { return *windows[currWin]; }
   Window& getCmBarWindow() { return *windows[0]; }
-  CmdMsgBar& getCmBar() { return cmBar; }
+  CmdMsgBar& getCmBar() { return *cmBar; }
   Buffer& getMessagesBuff();
   std::string prompt(const std::string& msg, KeyCmdMap* kcMap=nullptr,
                      Choices* choices=nullptr,const std::string& defVal=std::string());
@@ -82,8 +82,8 @@ private:
   int currBuff, currWin;
   AttrColor lastfg, lastbg;
   Args args;
-  CmdMsgBar cmBar;
-  Buffers buffs;
+  CmdMsgBar* cmBar;
+  Buffers buffs, cmBarArr;
   Windows windows;
   bool quitEventLoop, quitPromptLoop, cancelPromptLoop, cmdMsgBarActive;
   Strings copiedStr;
