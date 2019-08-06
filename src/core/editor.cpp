@@ -146,6 +146,7 @@ void Editor::switchToBuff(const std::string& name) {
   }
 }
 
+///@todo: support for multiple windows
 void Editor::killCurrBuff() {
   deleteBuffer(currBuff);
   if(buffs.empty()) {
@@ -157,6 +158,7 @@ void Editor::killCurrBuff() {
   setCurrBuff(i);
 }
 
+///@todo: support for multiple windows
 void Editor::killOtherBuffs() {
   for(int i=0;i<(int)buffs.size();++i) {
     if(i != currBuff) {
