@@ -155,14 +155,13 @@ void Editor::killCurrBuff() {
 }
 
 void Editor::killOtherBuffs() {
-  auto* buf = buffs[currBuff];
-  ///@todo: fixme!!
   for(int i=0;i<(int)buffs.size();++i) {
-    if(i != currBuff) deleteBuffer(i);
+    if(i != currBuff) {
+      deleteBuffer(i);
+      if(i < currBuff) setCurrBuff(currBuff - 1);
+      --i;
+    }
   }
-  buffs.clear();
-  buffs.push_back(buf);
-  setCurrBuff(0);
 }
 
 void Editor::deleteBuffer(int idx) {
