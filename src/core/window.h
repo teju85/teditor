@@ -75,6 +75,7 @@ class Windows : public std::vector<Window*> {
 public:
   Windows();
   ~Windows();
+  int currWinId() const { return currWin; }
 
 private:
   int currWin;
