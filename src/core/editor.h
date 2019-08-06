@@ -14,6 +14,7 @@
 #include "files_hist.h"
 #include "cell_buffer.h"
 #include "cmd_msg_bar.h"
+#include "window.h"
 
 
 namespace teditor {
@@ -29,6 +30,10 @@ public:
   void setTitle(const char* ti) { writef("%c]0;%s%c\n", '\033', ti, '\007'); }
   Buffer& getBuff() { return *buffs[currBuff]; }
   const Buffer& getBuff() const { return *buffs[currBuff]; }
+  ///@todo: support for multiple windows
+  Window& getWindow() { return *windows[1]; }
+  const Window& getWindow() const { return *windows[1]; }
+  Window& getCmBarWindow() { return *windows[0]; }
   CmdMsgBar& getCmBar() { return cmBar; }
   Buffer& getMessagesBuff();
   std::string prompt(const std::string& msg, KeyCmdMap* kcMap=nullptr,
@@ -81,6 +86,7 @@ private:
   Args args;
   CmdMsgBar cmBar;
   std::vector<Buffer*> buffs;
+  std::vector<Window*> windows;
   std::set<std::string> buffNames;
   bool quitEventLoop, quitPromptLoop, cancelPromptLoop, cmdMsgBarActive;
   Strings copiedStr;

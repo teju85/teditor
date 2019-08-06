@@ -31,9 +31,15 @@ std::vector<KeyCmdPair> PromptYesNoKeys::All = {
 
 Editor::Editor(const Args& args_):
   backbuff(), frontbuff(), currBuff(0), lastfg(), lastbg(), args(args_),
-  cmBar(), buffs(), buffNames(), quitEventLoop(false), quitPromptLoop(false),
-  cancelPromptLoop(false), cmdMsgBarActive(false), copiedStr(), defcMap(),
-  ynMap(), fileshist(args.getHistFile(), args.maxFileHistory) {
+  cmBar(), buffs(), windows(), buffNames(), quitEventLoop(false),
+  quitPromptLoop(false), cancelPromptLoop(false), cmdMsgBarActive(false),
+  copiedStr(), defcMap(), ynMap(),
+  fileshist(args.getHistFile(), args.maxFileHistory) {
+  // first window is always the cmBar window
+  windows.push_back(new Window);
+  windows[0]->attachBuff(&cmBar);
+  // second window starts as the main window which can then further be split
+  windows.push_back(new Window);
   auto m = Mode::createMode("text");
   defcMap = m->getColorMap();
   populateKeyMap<PromptYesNoKeys>(ynMap, true);
@@ -43,6 +49,7 @@ Editor::Editor(const Args& args_):
 
 Editor::~Editor() {
   for(auto itr : buffs) deleteBuffer(itr);
+  for(auto itr : windows) delete itr;
   fileshist.prune();
   fileshist.store();
 }
@@ -470,8 +477,12 @@ void Editor::bufResize(Buffer* buf) {
   int ht = cmBarHeight();
   Pos2di sz(term.width(), term.height());
   sz.y -= ht;
+  ///@todo: have the dimensions be solely controlled from Window class
   buf->resize({0, 0}, sz);
   cmBar.resize({0, sz.y}, {sz.x, ht});
+  ///@todo: add support for multiple windows
+  windows[1]->resize({0, 0}, sz);
+  windows[0]->resize({0, sz.y}, {sz.x, ht});
   DEBUG("bufResize: buff-x,y=%d,%d ht=%d\n", sz.x, sz.y, ht);
 }
 
