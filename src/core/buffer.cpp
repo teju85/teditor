@@ -932,4 +932,54 @@ void Buffer::indent() {
   else removeRegion(start, end);
 }
 
+
+Buffers::~Buffers() {
+  for(int i=0;i<(int)size();++i) {
+    erase(i);
+    --i;
+  }
+  buffNames.clear();
+}
+
+void Buffers::clear() {
+  std::vector<Buffer*>::clear();
+  buffNames.clear();
+}
+
+Buffer* Buffers::push_back(const std::string& name) {
+  auto uname = uniquify(name);
+  auto* buf = new Buffer(uname);
+  push_back(buf);
+  return buf;
+}
+
+void Buffers::push_back(Buffer* buf) {
+  std::vector<Buffer*>::push_back(buf);
+  buffNames.insert(buf->bufferName());
+}
+
+void Buffers::erase(int idx) {
+  Buffer* buf = at(idx);
+  buffNames.erase(buf->bufferName());
+  delete buf;
+  std::vector<Buffer*>::erase(begin() + idx);
+}
+
+Strings Buffers::namesList() const {
+  Strings ret;
+  for(const auto* buff : *this) ret.push_back(buff->bufferName());
+  return ret;
+}
+
+std::string Buffers::uniquify(const std::string& name) const {
+  std::string out(name);
+  auto start = buffNames.begin(), end = buffNames.end();
+  int idx = 0;
+  while(std::find(start, end, out) != end) {
+    ++idx;
+    out = name + "_" + num2str(idx);
+  }
+  return out;
+}
+
 } // end namespace teditor

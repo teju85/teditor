@@ -11,6 +11,7 @@
 #include "mode.h"
 #include "pos2d.h"
 #include <stack>
+#include <vector>
 
 
 namespace teditor {
@@ -195,8 +196,8 @@ public:
   Positions saveCursors() const { return copyCursors(locs); }
   /** restore the state of all cursors to the given one */
   void restoreCursors(const Positions& pos);
-  /** cursor at i'th index */
   const Pos2di& cursorAt(int i) const { return locs[i]; }
+  const Positions& cursors() const { return locs; }
   /** @} */
 
   /** length of a given line in this buffer */
@@ -217,6 +218,7 @@ public:
   bool isModified() const { return modified; }
   virtual int getMinStartLoc() const { return 0; }
   std::string dirModeGetFileAtLine(int line);
+  int start() const { return startLine; }
 
   /**
    * @defgroup RegionOps Operations with regions
@@ -234,6 +236,7 @@ public:
   void startRegion() { regions.enable(locs); }
   /** stop the currently active mark (or region) */
   void stopRegion() { regions.clear(); }
+  const Regions& getRegions() const { return regions; }
   /** @} */
 
   void reload();
@@ -384,6 +387,30 @@ protected:
   /** @} */
 
   friend class Editor;
+};
+
+
+/** a list of buffers */
+class Buffers : public std::vector<Buffer*> {
+public:
+  ~Buffers();
+
+  /** create a new buffer with a unique name and push it to the end */
+  Buffer* push_back(const std::string& name);
+
+  void clear();
+  void push_back(Buffer* buf);
+
+  /** list of buffer names, in the order they are found in this object */
+  Strings namesList() const;
+
+  /** erase buffer at the given index */
+  void erase(int idx);
+
+private:
+  std::set<std::string> buffNames;
+
+  std::string uniquify(const std::string& name) const;
 };
 
 }; // end namespace teditor

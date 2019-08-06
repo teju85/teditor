@@ -187,15 +187,6 @@ TEST_CASE("Utils::Extension") {
     REQUIRE("" == extension(""));
 }
 
-TEST_CASE("Utils::UniquifyName") {
-    REQUIRE("scratch" == uniquifyName("scratch", {}));
-    REQUIRE("scratch1" == uniquifyName("scratch", {"scratch", "something"}));
-    REQUIRE("scratch1" == uniquifyName("scratch",
-                                       {"scratch", "something", "scratch2"}));
-    REQUIRE("scratch2" == uniquifyName("scratch",
-                                       {"scratch", "something", "scratch1"}));
-}
-
 TEST_CASE("Utils::CheckOutput") {
     auto out = check_output("cat samples/hello.txt");
     REQUIRE("Hello World!\n" == out.output);

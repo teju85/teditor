@@ -863,4 +863,59 @@ TEST_CASE("Buffer::MultipleUndoRedo1") {
     REQUIRE_FALSE(ml.redo());
 }
 
+TEST_CASE("Buffers") {
+  Buffers buffs;
+  REQUIRE(0 == buffs.size());
+  REQUIRE(buffs.empty());
+  buffs.push_back(new Buffer("test1"));
+  REQUIRE(!buffs.empty());
+  auto list = buffs.namesList();
+  REQUIRE(1 == list.size());
+  REQUIRE("test1" == list[0]);
+  buffs.push_back(new Buffer("test2"));
+  REQUIRE(!buffs.empty());
+  list = buffs.namesList();
+  REQUIRE(2 == list.size());
+  REQUIRE("test1" == list[0]);
+  REQUIRE("test2" == list[1]);
+  buffs.push_back(new Buffer("test3"));
+  REQUIRE(!buffs.empty());
+  list = buffs.namesList();
+  REQUIRE(3 == list.size());
+  REQUIRE("test1" == list[0]);
+  REQUIRE("test2" == list[1]);
+  REQUIRE("test3" == list[2]);
+  buffs.erase(1);
+  list = buffs.namesList();
+  REQUIRE(2 == list.size());
+  REQUIRE("test1" == list[0]);
+  REQUIRE("test3" == list[1]);
+  buffs.clear();
+  REQUIRE(buffs.empty());
+}
+
+TEST_CASE("Buffers::uniquify") {
+  Buffers buffs;
+  auto* buf = buffs.push_back("scratch");
+  REQUIRE("scratch" == buf->bufferName());
+  REQUIRE(1 == buffs.size());
+  buf = buffs.push_back("something");
+  REQUIRE("something" == buf->bufferName());
+  REQUIRE(2 == buffs.size());
+  buf = buffs.push_back("scratch");
+  REQUIRE("scratch_1" == buf->bufferName());
+  REQUIRE(3 == buffs.size());
+  buf = buffs.push_back("scratch");
+  REQUIRE("scratch_2" == buf->bufferName());
+  REQUIRE(4 == buffs.size());
+  buf = buffs.push_back("scratch_4");
+  REQUIRE("scratch_4" == buf->bufferName());
+  REQUIRE(5 == buffs.size());
+  buf = buffs.push_back("scratch");
+  REQUIRE("scratch_3" == buf->bufferName());
+  REQUIRE(6 == buffs.size());
+  buffs.clear();
+  REQUIRE(buffs.empty());
+}
+
 } // end namespace teditor

@@ -189,18 +189,6 @@ std::string tempFileName() {
   return file;
 }
 
-std::string uniquifyName(const std::string& name,
-                         const std::set<std::string>& list) {
-  std::string out(name);
-  auto start=list.begin(), end=list.end();
-  int idx = 0;
-  while(std::find(start, end, out) != end) {
-    ++idx;
-    out = name + num2str(idx);
-  }
-  return out;
-}
-
 std::string findFirstUpwards(const std::string& dir, const std::string& file) {
   if(dir.empty() || file.empty()) return "";
   auto d = dir;

@@ -91,8 +91,6 @@ std::string rel2abs(const std::string& pwd, const std::string& rel);
 std::string basename(const std::string& file);
 std::string dirname(const std::string& file);
 std::string tempFileName();
-std::string uniquifyName(const std::string& name,
-                         const std::set<std::string>& list);
 /** Tries to find the file starting from dir all the way uptill root */
 std::string findFirstUpwards(const std::string& dir, const std::string& file);
 /** get file's extension from its name */

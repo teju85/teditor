@@ -30,35 +30,34 @@ std::vector<KeyCmdPair> PromptYesNoKeys::All = {
 
 
 Editor::Editor(const Args& args_):
-  backbuff(), frontbuff(), currBuff(0), lastfg(), lastbg(), args(args_),
-  cmBar(), buffs(), buffNames(), quitEventLoop(false), quitPromptLoop(false),
-  cancelPromptLoop(false), cmdMsgBarActive(false), copiedStr(), defcMap(),
-  ynMap(), fileshist(args.getHistFile(), args.maxFileHistory) {
+  backbuff(), frontbuff(), currWin(1), lastfg(), lastbg(), args(args_),
+  cmBar(new CmdMsgBar), buffs(), cmBarArr(), windows(), quitEventLoop(false),
+  quitPromptLoop(false), cancelPromptLoop(false), cmdMsgBarActive(false),
+  copiedStr(), defcMap(), ynMap(),
+  fileshist(args.getHistFile(), args.maxFileHistory) {
+  DEBUG("Editor: ctor started\n");
+  // This array is here only to make sure we get consistent interface to the
+  // Window API.
+  cmBarArr.push_back(cmBar);
+  // first window is always the cmBar window
+  windows.push_back(new Window);
+  getCmBarWindow().attachBuffs(&cmBarArr);
+  DEBUG("Editor: attached cmbar to its window\n");
+  // second window starts as the main window which can then further be split
+  windows.push_back(new Window);
+  getWindow().attachBuffs(&buffs);
   auto m = Mode::createMode("text");
   defcMap = m->getColorMap();
   populateKeyMap<PromptYesNoKeys>(ynMap, true);
   resize();
   clearBackBuff();
+  DEBUG("Editor: ctor finished\n");
 }
 
 Editor::~Editor() {
-  for(auto itr : buffs) deleteBuffer(itr);
+  for(auto itr : windows) delete itr;
   fileshist.prune();
   fileshist.store();
-}
-
-void Editor::addFileHistory(const std::string& file, int line)  {
-  fileshist.add(file, line);
-}
-
-Strings Editor::fileHistoryToString() const {
-  return fileshist.toString();
-}
-
-Strings Editor::buffNamesToString() const {
-  Strings ret;
-  for(const auto* buff : buffs) ret.push_back(buff->bufferName());
-  return ret;
 }
 
 void Editor::saveBuffer(Buffer& buf) {
@@ -76,7 +75,7 @@ void Editor::saveBuffer(Buffer& buf) {
 }
 
 int Editor::cmBarHeight() const {
-  if(cmdMsgBarActive && cmBar.usingChoices()) return args.cmdMsgBarMultiHeight;
+  if(cmdMsgBarActive && cmBar->usingChoices()) return args.cmdMsgBarMultiHeight;
   return args.cmdMsgBarHeight;
 }
 
@@ -91,33 +90,25 @@ void Editor::runCmd(const std::string& cmd) {
 }
 
 void Editor::createScratchBuff(bool switchToIt) {
-  auto bName = uniquifyName("*scratch", buffNames);
-  auto* buf = new Buffer(bName);
+  auto* buf = buffs.push_back("*scratch");
   bufResize(buf);
-  buffs.push_back(buf);
-  buffNames.insert(buf->bufferName());
-  if(switchToIt) currBuff = (int)buffs.size() - 1;
+  if(switchToIt) setCurrBuff((int)buffs.size() - 1);
 }
 
 void Editor::createReadOnlyBuff(const std::string& name,
                                 const std::string& contents, bool switchToIt) {
-  auto bName = uniquifyName(name, buffNames);
-  auto* buf = new Buffer(bName);
+  auto* buf = buffs.push_back(name);
   bufResize(buf);
-  buffs.push_back(buf);
-  buffNames.insert(buf->bufferName());
   buf->insert(contents);
   buf->makeReadOnly();
-  if(switchToIt) currBuff = (int)buffs.size() - 1;
+  if(switchToIt) setCurrBuff((int)buffs.size() - 1);
 }
 
-///@todo: uniquify buffer names!
 ///@todo: don't load the same file/dir more than once!
 void Editor::loadFiles() {
   DEBUG("loadFiles: started\n");
-  currBuff = 0;
   if(args.files.empty()) {
-    createScratchBuff();
+    createScratchBuff(true);
     DEBUG("loadFiles: Added default buffer\n");
     return;
   }
@@ -130,73 +121,57 @@ void Editor::load(const std::string& file, int line) {
   bufResize(buf);
   buf->load(file, line);
   buffs.push_back(buf);
-  buffNames.insert(buf->bufferName());
-  currBuff = (int)buffs.size() - 1;
-}
-
-void Editor::incrementCurrBuff() {
-  ++currBuff;
-  if(currBuff >= (int)buffs.size())
-    currBuff = 0;
-}
-
-void Editor::decrementCurrBuff() {
-  --currBuff;
-  if(currBuff < 0)
-    currBuff = (int)buffs.size() - 1;
+  setCurrBuff((int)buffs.size() - 1);
 }
 
 void Editor::switchToBuff(const std::string& name) {
   int idx = 0;
   for(const auto* buff : buffs) {
     if(name == buff->bufferName()) {
-      currBuff = idx;
+      setCurrBuff(idx);
       break;
     }
     ++idx;
   }
 }
 
+///@todo: support for multiple windows
 void Editor::killCurrBuff() {
-  checkForModifiedBuffer(buffs[currBuff]);
-  buffNames.erase(buffs[currBuff]->bufferName());
-  deleteBuffer(buffs[currBuff]);
-  buffs.erase(buffs.begin()+currBuff);
+  deleteBuffer(currBuffId());
   if(buffs.empty()) {
-    createScratchBuff();
-    currBuff = 0;
+    createScratchBuff(true);
     return;
   }
-  if(currBuff >= (int)buffs.size()) currBuff = 0;
+  int i = currBuffId();
+  if(i >= (int)buffs.size()) i = 0;
+  setCurrBuff(i);
 }
 
+///@todo: support for multiple windows
 void Editor::killOtherBuffs() {
-  auto* buf = buffs[currBuff];
   for(int i=0;i<(int)buffs.size();++i) {
-    if(i != currBuff) {
-      checkForModifiedBuffer(buffs[i]);
-      deleteBuffer(buffs[i]);
+    if(i != currBuffId()) {
+      deleteBuffer(i);
+      if(i < currBuffId()) setCurrBuff(currBuffId() - 1);
+      --i;
     }
   }
-  buffs.clear();
-  buffNames.clear();
-  currBuff = 0;
-  buffs.push_back(buf);
-  buffNames.insert(buf->bufferName());
 }
 
-void Editor::deleteBuffer(Buffer* buf) {
+void Editor::deleteBuffer(int idx) {
+  Buffer* buf = buffs[idx];
+  checkForModifiedBuffer(buffs[currBuffId()]);
   auto& f = buf->getFileName();
   if(!f.empty()) {
     int line = buf->saveCursors()[0].y;
-    addFileHistory(f, line);
+    fileshist.add(f, line);
   }
-  delete buf;
+  buffs.erase(idx);
 }
 
 void Editor::run() {
   loadFiles();
-  currBuff = 0;
+  setCurrBuff(0);
   draw();
   render();
   quitEventLoop = false;
@@ -320,7 +295,6 @@ Buffer& Editor::getMessagesBuff() {
   auto* buf1 = new Buffer("*messages");
   bufResize(buf1);
   buffs.push_back(buf1);
-  buffNames.insert(buf1->bufferName());
   return *buf1;
 }
 
@@ -398,13 +372,13 @@ std::string Editor::promptEnum(const std::string& msg, OptionMap& opts) {
 std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
                            Choices* choices, const std::string& defVal) {
   selectCmBar();
-  if(kcMap == nullptr) kcMap = &(cmBar.getKeyCmdMap());
-  if(choices != nullptr) cmBar.setChoices(choices);
-  cmBar.setMinLoc((int)msg.size());
+  if(kcMap == nullptr) kcMap = &(cmBar->getKeyCmdMap());
+  if(choices != nullptr) cmBar->setChoices(choices);
+  cmBar->setMinLoc((int)msg.size());
   bufResize(&getBuff());
   quitPromptLoop = cancelPromptLoop = false;
-  cmBar.insert(msg.c_str());
-  if(!defVal.empty()) cmBar.insert(defVal.c_str());
+  cmBar->insert(msg.c_str());
+  if(!defVal.empty()) cmBar->insert(defVal.c_str());
   std::string currKey;
   TrieStatus state = TS_NULL;
   draw();
@@ -432,35 +406,37 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
     draw();
     render();
   }
-  auto ret = cmBar.getFinalChoice();
+  auto ret = cmBar->getFinalChoice();
   if(cancelPromptLoop) ret.clear();
-  cmBar.clear();
-  cmBar.setMinLoc(0);
+  cmBar->clear();
+  cmBar->setMinLoc(0);
   if(choices != nullptr) {
-    choices->setIdx(cmBar.getOptLoc());
-    cmBar.clearChoices();
+    choices->setIdx(cmBar->getOptLoc());
+    cmBar->clearChoices();
   }
   unselectCmBar();
   bufResize(&getBuff());
   return ret;
 }
 
+///@todo: support for multiple windows
 void Editor::draw() {
-  auto& buff = getBuff();
+  auto& win = getWindow();
+  auto& cmWin = getCmBarWindow();
   clearBackBuff();
   DEBUG("draw: drawBuffer\n");
-  buff.drawBuffer(*this);
+  win.drawBuffer(*this);
   DEBUG("draw: drawStatusBar\n");
-  buff.drawStatusBar(*this);
+  win.drawStatusBar(*this);
   DEBUG("draw: cmdMsgBar.drawBuffer\n");
-  cmBar.drawBuffer(*this);
+  cmWin.drawBuffer(*this);
   if(cmdMsgBarActive) {
     DEBUG("draw: cmdMsgBar.drawCursor\n");
-    cmBar.drawCursor(*this, "cursorbg");
-    buff.drawCursor(*this, "inactivecursorbg");
+    cmWin.drawCursor(*this, "cursorbg");
+    win.drawCursor(*this, "inactivecursorbg");
   } else {
     DEBUG("draw: drawCursor\n");
-    buff.drawCursor(*this, "cursorbg");
+    win.drawCursor(*this, "cursorbg");
   }
   DEBUG("draw: ended\n");
 }
@@ -470,8 +446,12 @@ void Editor::bufResize(Buffer* buf) {
   int ht = cmBarHeight();
   Pos2di sz(term.width(), term.height());
   sz.y -= ht;
+  ///@todo: have the dimensions be solely controlled from Window class
   buf->resize({0, 0}, sz);
-  cmBar.resize({0, sz.y}, {sz.x, ht});
+  cmBar->resize({0, sz.y}, {sz.x, ht});
+  ///@todo: add support for multiple windows
+  getWindow().resize({0, 0}, sz);
+  getCmBarWindow().resize({0, sz.y}, {sz.x, ht});
   DEBUG("bufResize: buff-x,y=%d,%d ht=%d\n", sz.x, sz.y, ht);
 }
 

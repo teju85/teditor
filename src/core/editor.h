@@ -5,7 +5,6 @@
 #include <stdarg.h>
 #include <string>
 #include <vector>
-#include <set>
 #include "args.h"
 #include "logger.h"
 #include "buffer.h"
@@ -14,6 +13,7 @@
 #include "files_hist.h"
 #include "cell_buffer.h"
 #include "cmd_msg_bar.h"
+#include "window.h"
 
 
 namespace teditor {
@@ -27,9 +27,12 @@ public:
   Editor(const Args& args_);
   ~Editor();
   void setTitle(const char* ti) { writef("%c]0;%s%c\n", '\033', ti, '\007'); }
-  Buffer& getBuff() { return *buffs[currBuff]; }
-  const Buffer& getBuff() const { return *buffs[currBuff]; }
-  CmdMsgBar& getCmBar() { return cmBar; }
+  Buffer& getBuff() { return getWindow().getBuff(); }
+  const Buffer& getBuff() const { return getWindow().getBuff(); }
+  Window& getWindow() { return *windows[currWin]; }
+  const Window& getWindow() const { return *windows[currWin]; }
+  Window& getCmBarWindow() { return *windows[0]; }
+  CmdMsgBar& getCmBar() { return *cmBar; }
   Buffer& getMessagesBuff();
   std::string prompt(const std::string& msg, KeyCmdMap* kcMap=nullptr,
                      Choices* choices=nullptr,const std::string& defVal=std::string());
@@ -56,12 +59,12 @@ public:
   void requestQuitEventLoop() { quitEventLoop = true; }
   void requestQuitPromptLoop() { quitPromptLoop = true; }
   void requestCancelPromptLoop() { cancelPromptLoop = true; }
-  void incrementCurrBuff();
-  void decrementCurrBuff();
+  void incrementCurrBuff() { getWindow().incrementCurrBuff(); }
+  void decrementCurrBuff() { getWindow().decrementCurrBuff(); }
   void switchToBuff(const std::string& name);
   void killCurrBuff();
   void killOtherBuffs();
-  int currBuffId() const { return currBuff; }
+  int currBuffId() const { return getWindow().currBuffId(); }
   int buffSize() const { return (int)buffs.size(); }
   void createScratchBuff(bool switchToIt=false);
   void createReadOnlyBuff(const std::string& name, const std::string& contents,
@@ -69,19 +72,19 @@ public:
   void selectCmBar() { cmdMsgBarActive = true; }
   void unselectCmBar() { cmdMsgBarActive = false; }
   const Args& getArgs() const { return args; }
-  Strings fileHistoryToString() const;
-  Strings buffNamesToString() const;
+  Strings fileHistoryToString() const { return fileshist.toString(); }
+  Strings buffNamesToString() const { return buffs.namesList(); }
   void saveBuffer(Buffer& buf);
   key_t getKey() const { return Terminal::getInstance().mk.getKey(); }
 
 private:
   CellBuffer backbuff, frontbuff;
-  int currBuff;
+  int currWin;
   AttrColor lastfg, lastbg;
   Args args;
-  CmdMsgBar cmBar;
-  std::vector<Buffer*> buffs;
-  std::set<std::string> buffNames;
+  CmdMsgBar* cmBar;
+  Buffers buffs, cmBarArr;
+  Windows windows;
   bool quitEventLoop, quitPromptLoop, cancelPromptLoop, cmdMsgBarActive;
   Strings copiedStr;
   ColorMap defcMap;
@@ -109,11 +112,8 @@ private:
   Buffer* getBuff(const std::string& name);
   const AttrColor& getColor(const std::string& name) const;
   int cmBarHeight() const;
-  void loadFileHistory();
-  void storeFileHistory();
-  void pruneFileHistory();
-  void addFileHistory(const std::string& file, int line);
-  void deleteBuffer(Buffer* buf);
+  void deleteBuffer(int idx);
+  void setCurrBuff(int i) { getWindow().setCurrBuff(i); }
 };
 
 }; // end namespace teditor
