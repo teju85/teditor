@@ -395,6 +395,9 @@ class Buffers : public std::vector<Buffer*> {
 public:
   ~Buffers();
 
+  /** create a new buffer with a unique name and push it to the end */
+  Buffer* push_back(const std::string& name);
+
   void clear();
   void push_back(Buffer* buf);
   const std::set<std::string>& names() const { return buffNames; }
@@ -405,6 +408,8 @@ public:
 
 private:
   std::set<std::string> buffNames;
+
+  std::string uniquify(const std::string& name) const;
 };
 
 }; // end namespace teditor

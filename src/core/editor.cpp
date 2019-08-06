@@ -86,25 +86,20 @@ void Editor::runCmd(const std::string& cmd) {
 }
 
 void Editor::createScratchBuff(bool switchToIt) {
-  auto bName = uniquifyName("*scratch", buffs.names());
-  auto* buf = new Buffer(bName);
+  auto* buf = buffs.push_back("*scratch");
   bufResize(buf);
-  buffs.push_back(buf);
   if(switchToIt) setCurrBuff((int)buffs.size() - 1);
 }
 
 void Editor::createReadOnlyBuff(const std::string& name,
                                 const std::string& contents, bool switchToIt) {
-  auto bName = uniquifyName(name, buffs.names());
-  auto* buf = new Buffer(bName);
+  auto* buf = buffs.push_back(name);
   bufResize(buf);
-  buffs.push_back(buf);
   buf->insert(contents);
   buf->makeReadOnly();
   if(switchToIt) setCurrBuff((int)buffs.size() - 1);
 }
 
-///@todo: uniquify buffer names!
 ///@todo: don't load the same file/dir more than once!
 void Editor::loadFiles() {
   DEBUG("loadFiles: started\n");

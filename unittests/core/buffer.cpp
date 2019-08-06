@@ -894,4 +894,28 @@ TEST_CASE("Buffers") {
   REQUIRE(buffs.empty());
 }
 
+TEST_CASE("Buffers::uniquify") {
+  Buffers buffs;
+  auto* buf = buffs.push_back("scratch");
+  REQUIRE("scratch" == buf->bufferName());
+  REQUIRE(1 == buffs.size());
+  buf = buffs.push_back("something");
+  REQUIRE("something" == buf->bufferName());
+  REQUIRE(2 == buffs.size());
+  buf = buffs.push_back("scratch");
+  REQUIRE("scratch_1" == buf->bufferName());
+  REQUIRE(3 == buffs.size());
+  buf = buffs.push_back("scratch");
+  REQUIRE("scratch_2" == buf->bufferName());
+  REQUIRE(4 == buffs.size());
+  buf = buffs.push_back("scratch_4");
+  REQUIRE("scratch_4" == buf->bufferName());
+  REQUIRE(5 == buffs.size());
+  buf = buffs.push_back("scratch");
+  REQUIRE("scratch_3" == buf->bufferName());
+  REQUIRE(6 == buffs.size());
+  buffs.clear();
+  REQUIRE(buffs.empty());
+}
+
 } // end namespace teditor
