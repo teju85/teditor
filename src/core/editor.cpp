@@ -57,10 +57,6 @@ Editor::~Editor() {
   fileshist.store();
 }
 
-Strings Editor::fileHistoryToString() const {
-  return fileshist.toString();
-}
-
 Strings Editor::buffNamesToString() const {
   Strings ret;
   for(const auto* buff : buffs) ret.push_back(buff->bufferName());

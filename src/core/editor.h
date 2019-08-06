@@ -73,7 +73,7 @@ public:
   void selectCmBar() { cmdMsgBarActive = true; }
   void unselectCmBar() { cmdMsgBarActive = false; }
   const Args& getArgs() const { return args; }
-  Strings fileHistoryToString() const;
+  Strings fileHistoryToString() const { return fileshist.toString(); }
   Strings buffNamesToString() const;
   void saveBuffer(Buffer& buf);
   key_t getKey() const { return Terminal::getInstance().mk.getKey(); }
