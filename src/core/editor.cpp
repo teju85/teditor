@@ -160,7 +160,6 @@ void Editor::switchToBuff(const std::string& name) {
 
 void Editor::killCurrBuff() {
   checkForModifiedBuffer(buffs[currBuff]);
-  buffNames.erase(buffs[currBuff]->bufferName());
   deleteBuffer(buffs[currBuff]);
   buffs.erase(buffs.begin()+currBuff);
   if(buffs.empty()) {
@@ -168,7 +167,9 @@ void Editor::killCurrBuff() {
     setCurrBuff(0);
     return;
   }
-  if(currBuff >= (int)buffs.size()) setCurrBuff(0);
+  int i = currBuff;
+  if(i >= (int)buffs.size()) i = 0;
+  setCurrBuff(i);
 }
 
 void Editor::killOtherBuffs() {
@@ -181,12 +182,13 @@ void Editor::killOtherBuffs() {
   }
   buffs.clear();
   buffNames.clear();
-  setCurrBuff(0);
   buffs.push_back(buf);
+  setCurrBuff(0);
   buffNames.insert(buf->bufferName());
 }
 
 void Editor::deleteBuffer(Buffer* buf) {
+  buffNames.erase(buf->bufferName());
   auto& f = buf->getFileName();
   if(!f.empty()) {
     int line = buf->saveCursors()[0].y;
