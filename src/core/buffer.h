@@ -135,11 +135,8 @@ public:
    * @defgroup Draw Functions to draw parts of the buffer
    * @{
    */
-  virtual void drawBuffer(Editor& ed);
+  virtual void draw(Editor& ed);
   void drawCursor(Editor& ed, const std::string& bg);
-  virtual void drawStatusBar(Editor& ed);
-  int drawLine(int y, const std::string& line, Editor& ed, int lineNum,
-               const std::string& fg, const std::string& bg);
   /** @} */
 
   /**
@@ -303,6 +300,15 @@ protected:
   int dirModeFileOffset() const { return 24; }
   Positions copyCursors(const Positions& pos) const;
 
+
+  /**
+   * @defgroup DrawInl Internal draw operations
+   * @{
+   */
+  void drawStatusBar(Editor& ed);
+  int drawLine(int y, const std::string& line, Editor& ed, int lineNum,
+               const std::string& fg, const std::string& bg);
+  /** @} */
 
   /**
    * @defgroup BufferOpsImpl Internal buffer edit operations

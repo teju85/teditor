@@ -53,13 +53,11 @@ Pos2di Window::screen2buffer(const Pos2di& loc) const {
   return res;
 }
 
-void Window::drawBuffer(Editor& ed) { getBuff().drawBuffer(ed); }
+void Window::draw(Editor& ed) { getBuff().draw(ed); }
 
 void Window::drawCursor(Editor& ed, const std::string& bg) {
   getBuff().drawCursor(ed, bg);
 }
-
-void Window::drawStatusBar(Editor& ed) { getBuff().drawStatusBar(ed); }
 
 int Window::totalLinesNeeded() const { return getBuff().totalLinesNeeded(); }
 

@@ -424,12 +424,10 @@ void Editor::draw() {
   auto& win = getWindow();
   auto& cmWin = getCmBarWindow();
   clearBackBuff();
-  DEBUG("draw: drawBuffer\n");
-  win.drawBuffer(*this);
-  DEBUG("draw: drawStatusBar\n");
-  win.drawStatusBar(*this);
-  DEBUG("draw: cmdMsgBar.drawBuffer\n");
-  cmWin.drawBuffer(*this);
+  DEBUG("draw: windows\n");
+  win.draw(*this);
+  DEBUG("draw: cmdMsgBar\n");
+  cmWin.draw(*this);
   if(cmdMsgBarActive) {
     DEBUG("draw: cmdMsgBar.drawCursor\n");
     cmWin.drawCursor(*this, "cursorbg");

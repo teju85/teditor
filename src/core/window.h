@@ -51,9 +51,8 @@ public:
    * @defgroup Draw Functions to draw parts of the associated buffer
    * @{
    */
-  void drawBuffer(Editor& ed);
+  void draw(Editor& ed);
   void drawCursor(Editor& ed, const std::string& bg);
-  void drawStatusBar(Editor& ed);
   /** @} */
 
   /** number of lines needed to draw the currrent buffer in this window */

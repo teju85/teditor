@@ -392,12 +392,13 @@ void Buffer::resetBufferState(int line, const std::string& file) {
   stopRegion();
 }
 
-void Buffer::drawBuffer(Editor& ed) {
+void Buffer::draw(Editor& ed) {
   // draw current buffer
   int h = screenStart.y + screenDim.y;
   int len = length();
   for(int y=screenStart.y,idx=startLine;y<h&&idx<len;++idx)
     y = drawLine(y, lines[idx].get(), ed, idx, "defaultfg", "defaultbg");
+  drawStatusBar(ed);
 }
 
 void Buffer::drawCursor(Editor& ed, const std::string& bg) {

@@ -33,7 +33,7 @@ void CmdMsgBar::resize(const Pos2d<int>& start, const Pos2d<int>& dim) {
   screenDim = dim;
 }
 
-void CmdMsgBar::drawBuffer(Editor& ed) {
+void CmdMsgBar::draw(Editor& ed) {
   // first line is always the cmd prompt!
   int y = drawLine(screenStart.y, lines[0].get(), ed, 0, "cmbarfg", "cmbarbg");
   if(!usingChoices()) return;
