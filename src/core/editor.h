@@ -116,6 +116,7 @@ private:
   const AttrColor& getColor(const std::string& name) const;
   int cmBarHeight() const;
   void deleteBuffer(Buffer* buf);
+  void setCurrBuff(int i);
 };
 
 }; // end namespace teditor

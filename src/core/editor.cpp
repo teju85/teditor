@@ -35,9 +35,11 @@ Editor::Editor(const Args& args_):
   quitPromptLoop(false), cancelPromptLoop(false), cmdMsgBarActive(false),
   copiedStr(), defcMap(), ynMap(),
   fileshist(args.getHistFile(), args.maxFileHistory) {
+  DEBUG("Editor: ctor started\n");
   // first window is always the cmBar window
   windows.push_back(new Window);
   windows[0]->attachBuff(&cmBar);
+  DEBUG("Editor: attached cmbar to its window\n");
   // second window starts as the main window which can then further be split
   windows.push_back(new Window);
   auto m = Mode::createMode("text");
@@ -45,6 +47,7 @@ Editor::Editor(const Args& args_):
   populateKeyMap<PromptYesNoKeys>(ynMap, true);
   resize();
   clearBackBuff();
+  DEBUG("Editor: ctor finished\n");
 }
 
 Editor::~Editor() {
@@ -99,7 +102,7 @@ void Editor::createScratchBuff(bool switchToIt) {
   bufResize(buf);
   buffs.push_back(buf);
   buffNames.insert(buf->bufferName());
-  if(switchToIt) currBuff = (int)buffs.size() - 1;
+  if(switchToIt) setCurrBuff((int)buffs.size() - 1);
 }
 
 void Editor::createReadOnlyBuff(const std::string& name,
@@ -111,16 +114,15 @@ void Editor::createReadOnlyBuff(const std::string& name,
   buffNames.insert(buf->bufferName());
   buf->insert(contents);
   buf->makeReadOnly();
-  if(switchToIt) currBuff = (int)buffs.size() - 1;
+  if(switchToIt) setCurrBuff((int)buffs.size() - 1);
 }
 
 ///@todo: uniquify buffer names!
 ///@todo: don't load the same file/dir more than once!
 void Editor::loadFiles() {
   DEBUG("loadFiles: started\n");
-  currBuff = 0;
   if(args.files.empty()) {
-    createScratchBuff();
+    createScratchBuff(true);
     DEBUG("loadFiles: Added default buffer\n");
     return;
   }
@@ -134,26 +136,26 @@ void Editor::load(const std::string& file, int line) {
   buf->load(file, line);
   buffs.push_back(buf);
   buffNames.insert(buf->bufferName());
-  currBuff = (int)buffs.size() - 1;
+  setCurrBuff((int)buffs.size() - 1);
 }
 
 void Editor::incrementCurrBuff() {
-  ++currBuff;
-  if(currBuff >= (int)buffs.size())
-    currBuff = 0;
+  int i = currBuff + 1;
+  if(i >= (int)buffs.size()) i = 0;
+  setCurrBuff(i);
 }
 
 void Editor::decrementCurrBuff() {
-  --currBuff;
-  if(currBuff < 0)
-    currBuff = (int)buffs.size() - 1;
+  int i = currBuff - 1;
+  if(i < 0) i = (int)buffs.size() - 1;
+  setCurrBuff(i);
 }
 
 void Editor::switchToBuff(const std::string& name) {
   int idx = 0;
   for(const auto* buff : buffs) {
     if(name == buff->bufferName()) {
-      currBuff = idx;
+      setCurrBuff(idx);
       break;
     }
     ++idx;
@@ -167,10 +169,10 @@ void Editor::killCurrBuff() {
   buffs.erase(buffs.begin()+currBuff);
   if(buffs.empty()) {
     createScratchBuff();
-    currBuff = 0;
+    setCurrBuff(0);
     return;
   }
-  if(currBuff >= (int)buffs.size()) currBuff = 0;
+  if(currBuff >= (int)buffs.size()) setCurrBuff(0);
 }
 
 void Editor::killOtherBuffs() {
@@ -183,7 +185,7 @@ void Editor::killOtherBuffs() {
   }
   buffs.clear();
   buffNames.clear();
-  currBuff = 0;
+  setCurrBuff(0);
   buffs.push_back(buf);
   buffNames.insert(buf->bufferName());
 }
@@ -197,9 +199,14 @@ void Editor::deleteBuffer(Buffer* buf) {
   delete buf;
 }
 
+void Editor::setCurrBuff(int i) {
+  currBuff = i;
+  windows[1]->attachBuff(buffs[currBuff]);
+}
+
 void Editor::run() {
   loadFiles();
-  currBuff = 0;
+  setCurrBuff(0);
   draw();
   render();
   quitEventLoop = false;
