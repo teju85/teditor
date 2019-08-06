@@ -41,11 +41,11 @@ Editor::Editor(const Args& args_):
   cmBarArr.push_back(cmBar);
   // first window is always the cmBar window
   windows.push_back(new Window);
-  windows[0]->attachBuffs(&cmBarArr);
+  getCmBarWindow().attachBuffs(&cmBarArr);
   DEBUG("Editor: attached cmbar to its window\n");
   // second window starts as the main window which can then further be split
   windows.push_back(new Window);
-  windows[currWin]->attachBuffs(&buffs);
+  getWindow().attachBuffs(&buffs);
   auto m = Mode::createMode("text");
   defcMap = m->getColorMap();
   populateKeyMap<PromptYesNoKeys>(ynMap, true);
@@ -450,8 +450,8 @@ void Editor::bufResize(Buffer* buf) {
   buf->resize({0, 0}, sz);
   cmBar->resize({0, sz.y}, {sz.x, ht});
   ///@todo: add support for multiple windows
-  windows[currWin]->resize({0, 0}, sz);
-  windows[0]->resize({0, sz.y}, {sz.x, ht});
+  getWindow().resize({0, 0}, sz);
+  getCmBarWindow().resize({0, sz.y}, {sz.x, ht});
   DEBUG("bufResize: buff-x,y=%d,%d ht=%d\n", sz.x, sz.y, ht);
 }
 
