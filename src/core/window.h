@@ -43,6 +43,7 @@ public:
                const std::string& fg, const std::string& bg);
   /** @} */
 
+  /** number of lines needed to draw the currrent buffer in this window */
   int totalLinesNeeded() const;
 
 protected:
