@@ -115,10 +115,6 @@ private:
   Buffer* getBuff(const std::string& name);
   const AttrColor& getColor(const std::string& name) const;
   int cmBarHeight() const;
-  void loadFileHistory();
-  void storeFileHistory();
-  void pruneFileHistory();
-  void addFileHistory(const std::string& file, int line);
   void deleteBuffer(Buffer* buf);
 };
 

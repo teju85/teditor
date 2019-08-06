@@ -54,10 +54,6 @@ Editor::~Editor() {
   fileshist.store();
 }
 
-void Editor::addFileHistory(const std::string& file, int line)  {
-  fileshist.add(file, line);
-}
-
 Strings Editor::fileHistoryToString() const {
   return fileshist.toString();
 }
@@ -196,7 +192,7 @@ void Editor::deleteBuffer(Buffer* buf) {
   auto& f = buf->getFileName();
   if(!f.empty()) {
     int line = buf->saveCursors()[0].y;
-    addFileHistory(f, line);
+    fileshist.add(f, line);
   }
   delete buf;
 }
