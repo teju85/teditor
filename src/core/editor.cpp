@@ -56,12 +56,6 @@ Editor::~Editor() {
   fileshist.store();
 }
 
-Strings Editor::buffNamesToString() const {
-  Strings ret;
-  for(const auto* buff : buffs) ret.push_back(buff->bufferName());
-  return ret;
-}
-
 void Editor::saveBuffer(Buffer& buf) {
   if(!buf.isModified()) {
     CMBAR_MSG(*this, "Nothing to save");

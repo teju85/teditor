@@ -958,4 +958,10 @@ void Buffers::erase(int idx) {
   std::vector<Buffer*>::erase(begin() + idx);
 }
 
+Strings Buffers::namesList() const {
+  Strings ret;
+  for(const auto* buff : *this) ret.push_back(buff->bufferName());
+  return ret;
+}
+
 } // end namespace teditor

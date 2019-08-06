@@ -398,6 +398,7 @@ public:
   void clear();
   void push_back(Buffer* buf);
   const std::set<std::string>& names() const { return buffNames; }
+  Strings namesList() const;
 
   /** erase buffer at the given index */
   void erase(int idx);
