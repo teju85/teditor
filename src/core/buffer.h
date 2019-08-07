@@ -211,7 +211,7 @@ public:
   /** number of lines needed to draw the currrent buffer in this window */
   virtual int totalLinesNeeded(const Pos2di& dim) const;
 
-  void lineUp();
+  virtual void lineUp(const Pos2di& dim);
   virtual void lineDown();
   void lineReset() { startLine = 0; }
   void lineEnd(const Pos2di& start, const Pos2di& dim);

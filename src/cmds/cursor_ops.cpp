@@ -83,8 +83,9 @@ DEF_CMD(PreviousWord, "previous-word",
 DEF_CMD(
   MatchParen, "match-paren", DEF_OP() {
     auto& buff = ed.getBuff();
+    auto& win = ed.getWindow();
     bool isOpen = buff.matchCurrentParen();
-    isOpen? buff.lineUp() : buff.lineDown();
+    isOpen? buff.lineUp(win.dim()) : buff.lineDown();
   },
   DEF_HELP() { return "Jump to matching parenthesis of current one"; });
 

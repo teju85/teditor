@@ -265,7 +265,6 @@ void Buffer::applyInsertOp(OpData& op, bool pushToStack) {
   } else {
     restoreCursors(op.after);
   }
-  lineUp();
 }
 
 void Buffer::applyDeleteOp(OpData& op) {
@@ -329,7 +328,6 @@ void Buffer::resize(const Pos2d<int>& start, const Pos2d<int>& dim) {
   screenDim = dim;
   // last line is kept for status bar for this buffer
   --screenDim.y;
-  lineUp();
 }
 
 void Buffer::load(const std::string& file, int line) {
@@ -659,8 +657,10 @@ int Buffer::totalLinesNeeded(const Pos2di& dim) const {
   return len;
 }
 
-void Buffer::lineUp() {
-  while(totalLinesNeeded(screenDim) > screenDim.y) ++startLine;
+void Buffer::lineUp(const Pos2di& dim) {
+  // -1 for status bar
+  int dimY = dim.y - 1;
+  while(totalLinesNeeded(dim) > dimY) ++startLine;
 }
 
 void Buffer::lineDown() {
@@ -737,7 +737,6 @@ void Buffer::right() {
         --cu.x;
     }
   });
-  lineUp();
 }
 
 void Buffer::down() {
@@ -747,7 +746,6 @@ void Buffer::down() {
       cu.x = std::min(cu.x, lengthOf(cu.y));
     }
   });
-  lineUp();
 }
 
 void Buffer::up() {
@@ -777,7 +775,6 @@ void Buffer::pageDown(int ijump) {
     cu.x = 0;
     cu.y = std::min(length()-1, cu.y+ijump);
   });
-  lineUp();
 }
 
 void Buffer::pageUp(int ijump) {
@@ -799,7 +796,6 @@ void Buffer::nextPara() {
     cu.y = std::min(cu.y, len-1);
     cu.x = 0;
   });
-  lineUp();
 }
 
 void Buffer::previousPara() {
@@ -827,7 +823,6 @@ void Buffer::nextWord() {
       cu.x = line.findFirstNotOf(word, cu.x + 1);
     }
   });
-  lineUp();
 }
 
 void Buffer::previousWord() {

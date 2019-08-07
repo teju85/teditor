@@ -339,11 +339,9 @@ TEST_CASE("Buffer::MatchCurrentParen") {
     ml.right(); // '<'
     bool isOpen = ml.matchCurrentParen();
     REQUIRE(isOpen);
-    isOpen? ml.lineUp() : ml.lineDown();
     REQUIRE(Pos2di(18, 4) == ml.saveCursors()[0]);
     isOpen = ml.matchCurrentParen();
     REQUIRE(!isOpen);
-    isOpen? ml.lineUp() : ml.lineDown();
     REQUIRE(Pos2di(9, 4) == ml.saveCursors()[0]);
 }
 

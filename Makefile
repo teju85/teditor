@@ -111,7 +111,7 @@ clean_all: clean pcre2-clean tree-sitter-clean
 
 debug:
 	$(MAKE) DEBUG=1 -j teditor
-	$(EXE) -v 10000 README.org Makefile LICENSE src/
+	$(EXE) -v 100000 README.org Makefile LICENSE src/
 
 
 stats:

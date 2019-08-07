@@ -66,7 +66,8 @@ public:
   void up();
   void updateChoices();
   int getOptLoc() const { return optLoc; }
-  void lineDown();
+  void lineUp(const Pos2di& dim) override;
+  void lineDown() override;
 
 private:
   /** useful during prompts, so as to not cross into the message itself! */

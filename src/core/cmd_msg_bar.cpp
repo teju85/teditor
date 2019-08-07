@@ -134,7 +134,6 @@ void CmdMsgBar::down() {
     }
   }
   choices->updateMainBuffer(*this);
-  lineUp();
 }
 
 void CmdMsgBar::up() {
@@ -151,9 +150,11 @@ void CmdMsgBar::up() {
   choices->updateMainBuffer(*this);
 }
 
-void CmdMsgBar::lineDown() {
-  startLine = std::min(startLine, optLoc);
+void CmdMsgBar::lineUp(const Pos2di& dim) {
+  while(totalLinesNeeded(dim) > dim.y) ++startLine;
 }
+
+void CmdMsgBar::lineDown() { startLine = std::min(startLine, optLoc); }
 
 } // end namespace teditor
 

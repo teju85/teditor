@@ -29,7 +29,9 @@ void Window::resize(const Pos2di& start, const Pos2di& dim) {
 }
 
 void Window::draw(Editor& ed) {
-  getBuff().draw(ed, *this);
+  auto& buff = getBuff();
+  buff.lineUp(dim());
+  buff.draw(ed, *this);
 }
 
 void Window::drawCursor(Editor& ed, const AttrColor& bg) {
