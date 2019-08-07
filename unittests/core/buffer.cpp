@@ -493,9 +493,9 @@ TEST_CASE("Buffer::cursor") {
         REQUIRE(Pos2di(x, y) == ml.saveCursors()[0]);
         ml.begin();
         REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
-        ml.pageDown(1.f);
+        ml.pageDown(9);
         REQUIRE(Pos2di(0, 9) == ml.saveCursors()[0]);
-        ml.pageUp(1.f);
+        ml.pageUp(9);
         REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
         ml.nextPara();
         REQUIRE(Pos2di(0, 3) == ml.saveCursors()[0]);

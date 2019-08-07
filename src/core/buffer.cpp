@@ -757,8 +757,7 @@ void Buffer::end() {
   lineEnd();
 }
 
-void Buffer::pageDown(float jump) {
-  int ijump = verticalJump(jump);
+void Buffer::pageDown(int ijump) {
   forEachCursor([&ijump, this](Pos2di& cu, size_t idx) {
     cu.x = 0;
     cu.y = std::min(length()-1, cu.y+ijump);
@@ -766,8 +765,7 @@ void Buffer::pageDown(float jump) {
   lineUp();
 }
 
-void Buffer::pageUp(float jump) {
-  int ijump = verticalJump(jump);
+void Buffer::pageUp(int ijump) {
   forEachCursor([&ijump](Pos2di& cu, size_t idx) {
     cu.x = 0;
     cu.y = std::max(0, cu.y-ijump);

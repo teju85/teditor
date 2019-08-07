@@ -37,27 +37,27 @@ DEF_CMD(CursorLineEnd, "cursor-line-end",
         DEF_OP() { ed.getBuff().endOfLine(); },
         DEF_HELP() { return "Go to end of line";});
 
-DEF_CMD(PageDown, "page-down",
-        DEF_OP() {
-            auto& args = ed.getArgs();
-            auto& buf = ed.getBuff();
-            buf.pageDown(args.pageScrollJump);
-        },
-        DEF_HELP() {
-            return "Scroll down by a page. Definition of a page is as given by"
-                " the value of the arg 'pageScrollJump'";
-        });
+DEF_CMD(
+  PageDown, "page-down", DEF_OP() {
+    auto& args = ed.getArgs();
+    auto& buf = ed.getBuff();
+    buf.pageDown(int(args.pageScrollJump * ed.getWindow().dim().y));
+  },
+  DEF_HELP() {
+    return "Scroll down by a page. Definition of a page is as given by the"
+      " value of the arg 'pageScrollJump'";
+  });
 
-DEF_CMD(PageUp, "page-up",
-        DEF_OP() {
-            auto& args = ed.getArgs();
-            auto& buf = ed.getBuff();
-            buf.pageUp(args.pageScrollJump);
-        },
-        DEF_HELP() {
-            return "Scroll up by a page. Definition of a page is as given by"
-                " the value of the arg 'pageScrollJump'";
-        });
+DEF_CMD(
+  PageUp, "page-up", DEF_OP() {
+    auto& args = ed.getArgs();
+    auto& buf = ed.getBuff();
+    buf.pageUp(int(args.pageScrollJump * ed.getWindow().dim().y));
+  },
+  DEF_HELP() {
+    return "Scroll up by a page. Definition of a page is as given by the"
+      " value of the arg 'pageScrollJump'";
+  });
 
 DEF_CMD(NextPara, "next-para",
         DEF_OP() { ed.getBuff().nextPara(); },

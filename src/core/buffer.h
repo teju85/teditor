@@ -160,9 +160,9 @@ public:
   /** go to end of the buffer */
   void end();
   /** scroll down a page */
-  void pageDown(float jump);
+  void pageDown(int ijump);
   /** scroll up a page */
-  void pageUp(float jump);
+  void pageUp(int ijump);
   /** jump to start of next paragraph */
   void nextPara();
   /** jump to start of previous paragraph */
@@ -239,7 +239,6 @@ public:
   void reload();
   const Positions& getRegionLocs() const { return regions.getLocs(); }
   const AttrColor& getColor(const std::string& name) const;
-  int verticalJump(float jump) const { return (int)(jump * screenDim.y); }
   const std::string& getWord() const { return mode->word(); }
   const std::string& modeName() const { return mode->name(); }
   void makeReadOnly();

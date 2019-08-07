@@ -116,6 +116,8 @@ void Windows::draw(Editor& ed, bool cmdMsgBarActive) {
     }
   }
   DEBUG("draw: drawing borders\n");
+  // Note: This should still work with multiple windows, since these colors
+  // are supposed to be universally defined for all modes
   const auto& fg = getWindow().getBuff().getColor("winframefg");
   const auto& bg = getWindow().getBuff().getColor("winframebg");
   for(auto& b : borders) {
