@@ -429,6 +429,7 @@ void Buffer::drawStatusBar(Editor& ed, const Window& win) {
         start.y);
   std::string line(dim.x, ' ');
   int x = start.x;
+  // -1 is for the status bar
   int y = start.y + dim.y - 1;
   const auto& fg = getColor("statusfg");
   const auto& bg = getColor("statusbg");
