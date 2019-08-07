@@ -29,6 +29,16 @@ TEST_CASE("Buffer::KillLine") {
     REQUIRE("for multi-line buffer!" == ml.at(2).get());
   }
 
+  SECTION("partial-line") {
+    for(int i=0;i<4;++i) ml.right();
+    ml.killLine();
+    REQUIRE(4 == ml.length());
+    REQUIRE("for " == ml.at(2).get());
+    ml.undo();
+    REQUIRE(4 == ml.length());
+    REQUIRE("for multi-line buffer!" == ml.at(2).get());
+  }
+
   SECTION("line-end") {
     ml.up();
     ml.endOfLine();
