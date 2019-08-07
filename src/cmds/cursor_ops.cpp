@@ -80,9 +80,13 @@ DEF_CMD(PreviousWord, "previous-word",
         DEF_OP() { ed.getBuff().previousWord(); },
         DEF_HELP() { return "Go to start of previous word"; });
 
-DEF_CMD(MatchParen, "match-paren",
-        DEF_OP() { ed.getBuff().matchCurrentParen(); },
-        DEF_HELP() { return "Jump to matching parenthesis of current one"; });
+DEF_CMD(
+  MatchParen, "match-paren", DEF_OP() {
+    auto& buff = ed.getBuff();
+    bool isOpen = buff.matchCurrentParen();
+    isOpen? buff.lineUp() : buff.lineDown();
+  },
+  DEF_HELP() { return "Jump to matching parenthesis of current one"; });
 
 DEF_CMD(GotoLine, "goto-line",
         DEF_OP() {

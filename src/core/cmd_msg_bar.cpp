@@ -133,8 +133,8 @@ void CmdMsgBar::down() {
       break;
     }
   }
-  lineUp();
   choices->updateMainBuffer(*this);
+  lineUp();
 }
 
 void CmdMsgBar::up() {

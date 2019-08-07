@@ -97,8 +97,11 @@ public:
   bool redo();
   /** @} */
 
-  /** find matching paren at the current location */
-  void matchCurrentParen();
+  /**
+   * @brief find matching paren at the current location
+   * @return true if open-paren was matched, else false
+   */
+  bool matchCurrentParen();
 
   /**
    * @brief resize the buffer in case of window size change

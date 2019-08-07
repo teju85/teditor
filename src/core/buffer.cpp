@@ -556,14 +556,14 @@ void Buffer::addLines(const RemovedLines& rlines) {
   begin();
 }
 
-void Buffer::matchCurrentParen() {
+bool Buffer::matchCurrentParen() {
   bool isOpen;
   forEachCursor([&isOpen, this](Pos2di& cu, size_t i) {
     bool tmp;
     auto loc = matchCurrentParen((int)i, i==0? isOpen : tmp);
     cu = loc;
   });
-  isOpen? lineUp() : lineDown();
+  return isOpen;
 }
 
 Pos2d<int> Buffer::matchCurrentParen(int i, bool& isOpen) {
