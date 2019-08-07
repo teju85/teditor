@@ -148,6 +148,7 @@ void Windows::clearAll() {
     wins.erase(wins.begin() + i);
     --i;
   }
+  borders.clear();
   wins.push_back(w);
   currWin = 1;
 }
