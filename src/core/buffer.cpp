@@ -258,7 +258,6 @@ void Buffer::applyInsertOp(OpData& op, bool pushToStack) {
     auto& str = op.strs[idx];
     for(auto c : str) insert(c, (int)idx);
   });
-  lineUp();
   modified = true;
   if(pushToStack) {
     op.after = saveCursors();
@@ -266,6 +265,7 @@ void Buffer::applyInsertOp(OpData& op, bool pushToStack) {
   } else {
     restoreCursors(op.after);
   }
+  lineUp();
 }
 
 void Buffer::applyDeleteOp(OpData& op) {
