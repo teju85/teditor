@@ -50,12 +50,15 @@ std::vector<KeyCmdPair> ReadOnlyMode::Keys::All = {
     {"F5", "reload-buffer"},
     {"C-D", "add-cursor-down"},
     {"C-U", "add-cursor-up"},
-    {"C-C", "copy-region"},
+    {"M-w", "copy-region"},
     {"M-g", "goto-line"},
     {"C-B C-S", "buffer-switch"},
     {"C-F", "search"},
     {"C-G C-B", "git-branch"},
-    {"F1", "help-command"}
+    {"F1", "help-command"},
+    {"C-X 3", "split-vertically"},
+    {"C-X 0", "clear-all-windows"},
+    {"C-X o", "next-window"}
 };
 
 std::vector<NameColorPair> ReadOnlyMode::Colors::All = {

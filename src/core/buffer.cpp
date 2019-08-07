@@ -392,13 +392,13 @@ void Buffer::resetBufferState(int line, const std::string& file) {
   stopRegion();
 }
 
-void Buffer::draw(Editor& ed) {
+void Buffer::draw(Editor& ed, int currId) {
   // draw current buffer
   int h = screenStart.y + screenDim.y;
   int len = length();
   for(int y=screenStart.y,idx=startLine;y<h&&idx<len;++idx)
     y = drawLine(y, lines[idx].get(), ed, idx, "defaultfg", "defaultbg");
-  drawStatusBar(ed);
+  drawStatusBar(ed, currId);
 }
 
 void Buffer::drawCursor(Editor& ed, const std::string& bg) {
@@ -413,7 +413,7 @@ void Buffer::drawCursor(Editor& ed, const std::string& bg) {
   }
 }
 
-void Buffer::drawStatusBar(Editor& ed) {
+void Buffer::drawStatusBar(Editor& ed, int currId) {
   DEBUG("drawStatusBar: dim=%d,%d start=%d,%d\n", screenDim.x, screenDim.y,
         screenStart.x, screenStart.y);
   std::string line(screenDim.x, ' ');
@@ -430,7 +430,7 @@ void Buffer::drawStatusBar(Editor& ed) {
                          buffName.c_str(), (int)buffName.length());
   // buffer counts
   count += ed.sendStringf(x+count, y, "statusfg", "statusbg",
-                          " <%d/%d> [%s]", ed.currBuffId()+1, ed.buffSize(),
+                          " <%d/%d> [%s]", currId+1, ed.buffSize(),
                           readOnly? "r-" : "rw");
   // multiple cursor counts
   if(cursorCount() > 1) {

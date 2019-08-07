@@ -135,7 +135,7 @@ public:
    * @defgroup Draw Functions to draw parts of the buffer
    * @{
    */
-  virtual void draw(Editor& ed);
+  virtual void draw(Editor& ed, int currId);
   void drawCursor(Editor& ed, const std::string& bg);
   /** @} */
 
@@ -305,7 +305,7 @@ protected:
    * @defgroup DrawInl Internal draw operations
    * @{
    */
-  void drawStatusBar(Editor& ed);
+  void drawStatusBar(Editor& ed, int currId);
   int drawLine(int y, const std::string& line, Editor& ed, int lineNum,
                const std::string& fg, const std::string& bg);
   /** @} */

@@ -50,7 +50,7 @@ public:
   void resize(const Pos2d<int>& start, const Pos2d<int>& dim) override;
   void insert(char c) override;
   void insert(const std::string& str) override;
-  void draw(Editor& ed) override;
+  void draw(Editor& ed, int currId) override;
   void load(const std::string& file, int line=0) override {}
   bool save(const std::string& fName="") override { return false; }
   void clear() override;

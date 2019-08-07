@@ -129,10 +129,10 @@ std::vector<KeyCmdPair> TextMode::Keys::All = {
     {"C-S", "save-buffer"},
     {"C-Q C-T", "kill-this-buffer"},
     {"C-K", "kill-line"},
-    {"C-Z", "command-undo"},
-    {"C-Y", "command-redo"},
-    {"C-V", "paste-region"},
-    {"C-X", "cut-region"},
+    {"C-U", "command-undo"},
+    {"C-R", "command-redo"},
+    {"C-Y", "paste-region"},
+    {"C-W", "cut-region"},
     {"tab", "indent"}
 };
 

@@ -56,10 +56,11 @@ Pos2di Window::screen2buffer(const Pos2di& loc) const {
 
 void Window::draw(Editor& ed) {
   getBuff().resize(screenStart, screenDim);
-  getBuff().draw(ed);
+  getBuff().draw(ed, currBuff);
 }
 
 void Window::drawCursor(Editor& ed, const std::string& bg) {
+  getBuff().resize(screenStart, screenDim);
   getBuff().drawCursor(ed, bg);
 }
 
@@ -103,6 +104,7 @@ void Windows::draw(Editor& ed, bool cmdMsgBarActive) {
     DEBUG("draw: drawCursor\n");
     int i = 0;
     for(auto itr : wins) {
+      DEBUG("draw: currWin=%d i=%d\n", currWin, i);
       if(i != 0)
         itr->drawCursor(ed, i == currWin? "cursorbg" : "inactivecursorbg");
       ++i;
