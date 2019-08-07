@@ -68,7 +68,6 @@ TEST_CASE("Buffer::Buffer2screen") {
   REQUIRE('*' == ml.charAt({0,0}));
   REQUIRE(Pos2di(0, 0) == ml.buffer2screen({0, 0}, start, dim));
   dim = {5, 10};
-  ml.resize(start, dim);
   REQUIRE(2 == ml.totalLinesNeeded(dim));
   REQUIRE(Pos2di(4, 2) == ml.buffer2screen({4, 1}, start, dim));
   REQUIRE(Pos2di(0, 3) == ml.buffer2screen({5, 1}, start, dim));
@@ -85,7 +84,6 @@ TEST_CASE("Window::Screen2buffer") {
   REQUIRE(start ==
           ml.screen2buffer(ml.buffer2screen(start, start, dim), start, dim));
   dim = {5, 10};
-  ml.resize(start, dim);
   REQUIRE(2 == ml.totalLinesNeeded(dim));
   REQUIRE(Pos2di(4, 1) ==
           ml.screen2buffer(ml.buffer2screen({4, 1}, start, dim), start, dim));

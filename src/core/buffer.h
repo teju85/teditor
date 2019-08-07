@@ -103,13 +103,6 @@ public:
    */
   bool matchCurrentParen();
 
-  /**
-   * @brief resize the buffer in case of window size change
-   * @param start screen start location
-   * @param dim screen dimension
-   */
-  virtual void resize(const Pos2d<int>& start, const Pos2d<int>& dim);
-
   /** Load a file/dir into the buffer and optionally jump to a line */
   virtual void load(const std::string& file, int line=0);
 

@@ -47,7 +47,6 @@ protected:
 class CmdMsgBar: public Buffer {
 public:
   CmdMsgBar();
-  void resize(const Pos2d<int>& start, const Pos2d<int>& dim) override;
   void insert(char c) override;
   void insert(const std::string& str) override;
   void draw(Editor& ed, const Window& win) override;

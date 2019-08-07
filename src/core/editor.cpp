@@ -422,9 +422,6 @@ void Editor::bufResize(Buffer* buf) {
   int ht = cmBarHeight();
   Pos2di sz(term.width(), term.height());
   sz.y -= ht;
-  ///@todo: have the dimensions be solely controlled from Window class
-  buf->resize({0, 0}, sz);
-  cmBar->resize({0, sz.y}, {sz.x, ht});
   ///@todo: add support for multiple windows
   getWindow().resize({0, 0}, sz);
   getCmBarWindow().resize({0, sz.y}, {sz.x, ht});

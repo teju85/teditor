@@ -28,12 +28,6 @@ CmdMsgBar::CmdMsgBar(): Buffer(), minLoc(0), choices(), optLoc(0) {
   mode = Mode::createMode("cmbar");
 }
 
-void CmdMsgBar::resize(const Pos2d<int>& start, const Pos2d<int>& dim) {
-  // no status bar!
-  screenStart = start;
-  screenDim = dim;
-}
-
 void CmdMsgBar::draw(Editor& ed, const Window& win) {
   const auto& cmfg = getColor("cmbarfg");
   const auto& cmbg = getColor("cmbarbg");

@@ -19,7 +19,6 @@ TEST_CASE("StringChoices::Test") {
 TEST_CASE("CmdMsgBar::Default") {
     CmdMsgBar cmBar;
     Pos2di dim = {10, 10};
-    cmBar.resize({0, 0}, dim);
     REQUIRE(1 == cmBar.length());
     REQUIRE_FALSE(cmBar.usingChoices());
     cmBar.insert("Test: ");
@@ -49,7 +48,6 @@ TEST_CASE("CmdMsgBar::UsingStringChoices") {
     StringChoices sc(opts);
     CmdMsgBar cmBar;
     Pos2di dim = {10, 10};
-    cmBar.resize({0, 0}, dim);
     REQUIRE(1 == cmBar.length());
     REQUIRE_FALSE(cmBar.usingChoices());
     cmBar.insert("Test: ");

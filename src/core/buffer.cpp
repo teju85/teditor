@@ -323,13 +323,6 @@ std::string Buffer::regionAsStr(const Pos2di& start, const Pos2di& end) const {
   return out;
 }
 
-void Buffer::resize(const Pos2d<int>& start, const Pos2d<int>& dim) {
-  screenStart = start;
-  screenDim = dim;
-  // last line is kept for status bar for this buffer
-  --screenDim.y;
-}
-
 void Buffer::load(const std::string& file, int line) {
   isDir(file.c_str())? loadDir(file) : loadFile(file, line);
   mode = Mode::createMode(Mode::inferMode(file));
