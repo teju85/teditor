@@ -37,4 +37,15 @@ TEST_CASE("Window::Screen2buffer") {
   REQUIRE(Pos2di(9, 2) == w.screen2buffer(w.buffer2screen({9, 2})));
 }
 
+TEST_CASE("Windows::default") {
+  Windows w;
+  REQUIRE(2 == w.size());
+  REQUIRE(!w.empty());
+  REQUIRE(1 == w.currWinId());
+  w.incrementCurrWin();
+  REQUIRE(1 == w.currWinId());
+  w.decrementCurrWin();
+  REQUIRE(1 == w.currWinId());
+}
+
 } // end namespace teditor

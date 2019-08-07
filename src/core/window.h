@@ -71,13 +71,24 @@ protected:
 
 
 /** a list of windows */
-class Windows : public std::vector<Window*> {
+class Windows {
 public:
   Windows();
   ~Windows();
   int currWinId() const { return currWin; }
+  size_t size() const { return wins.size(); }
+  bool empty() const { return wins.empty(); }
+  void incrementCurrWin();
+  void decrementCurrWin();
+  std::vector<Window*>::iterator begin() { return wins.begin(); }
+  std::vector<Window*>::iterator end() { return wins.end(); }
+  std::vector<Window*>::const_iterator begin() const { return wins.begin(); }
+  std::vector<Window*>::const_iterator end() const { return wins.end(); }
+  Window* operator[](int idx) { return wins[idx]; }
+  const Window* operator[](int idx) const { return wins[idx]; }
 
 private:
+  std::vector<Window*> wins;
   int currWin;
 };
 
