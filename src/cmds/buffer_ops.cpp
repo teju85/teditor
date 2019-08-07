@@ -23,9 +23,9 @@ DEF_CMD(CommandRedo, "command-redo",
 DEF_CMD(InsertChar, "insert-char",
         DEF_OP() {
             auto& buf = ed.getBuff();
+            if(buf.isRegionActive()) ed.runCmd("backspace-char");
             auto c = (char)ed.getKey();
             buf.insert(c);
-            if(buf.isRegionActive()) ed.runCmd("backspace-char");
         },
         DEF_HELP() { return "Inserts currently pressed char into buffer."; });
 
