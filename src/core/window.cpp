@@ -2,6 +2,7 @@
 #include "editor.h"
 #include "window.h"
 #include "logger.h"
+#include "terminal.h"
 
 namespace teditor {
 
@@ -50,6 +51,29 @@ Windows::~Windows() {
   for(auto itr : wins) delete itr;
   wins.clear();
   borders.clear();
+}
+
+void Windows::resize(int cmBarHt) {
+  auto& term = Terminal::getInstance();
+  Pos2di sz(term.width(), term.height());
+  sz.y -= cmBarHt;
+  DEBUG("Windows::resize: buff-x,y=%d,%d ht=%d\n", sz.x, sz.y, cmBarHt);
+  // cmbar
+  wins[0]->resize({0, sz.y}, {sz.x, cmBarHt});
+  // rest of the windows
+  screenDim = sz;
+  wins[1]->resize({0, 0}, sz);
+  borders.clear();
+  if(wins.size() == 2) return;
+  ///@todo: update this to support arbitrary splits!
+  // -1 for the border
+  int lWidth = (sz.x - 1) / 2;
+  int rWidth = sz.x - 1 - lWidth;
+  auto start = wins[1]->start();
+  wins[1]->resize(start, {lWidth, sz.y});
+  wins[2]->resize({start.x+lWidth+1, start.y}, {rWidth, sz.y});
+  Border b = {start.y, start.y+sz.y, start.x + lWidth};
+  borders.push_back(b);
 }
 
 void Windows::incrementCurrWin() {

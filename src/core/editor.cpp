@@ -84,15 +84,13 @@ void Editor::runCmd(const std::string& cmd) {
 }
 
 void Editor::createScratchBuff(bool switchToIt) {
-  auto* buf = buffs.push_back("*scratch");
-  bufResize(buf);
+  buffs.push_back("*scratch");
   if(switchToIt) setCurrBuff((int)buffs.size() - 1);
 }
 
 void Editor::createReadOnlyBuff(const std::string& name,
                                 const std::string& contents, bool switchToIt) {
   auto* buf = buffs.push_back(name);
-  bufResize(buf);
   buf->insert(contents);
   buf->makeReadOnly();
   if(switchToIt) setCurrBuff((int)buffs.size() - 1);
@@ -112,7 +110,6 @@ void Editor::loadFiles() {
 
 void Editor::load(const std::string& file, int line) {
   auto* buf = new Buffer;
-  bufResize(buf);
   buf->load(file, line);
   buffs.push_back(buf);
   setCurrBuff((int)buffs.size() - 1);
@@ -272,7 +269,7 @@ void Editor::resize() {
   const auto& defaultbg = getColor("defaultbg");
   backbuff.clear(defaultfg, defaultbg);
   frontbuff.clear(defaultfg, defaultbg);
-  for(auto itr : buffs) bufResize(itr);
+  bufResize();
   clearScreen();
 }
 
@@ -286,7 +283,6 @@ Buffer& Editor::getMessagesBuff() {
   Buffer* buf = getBuff("*messages");
   if(buf != nullptr) return *buf;
   auto* buf1 = new Buffer("*messages");
-  bufResize(buf1);
   buffs.push_back(buf1);
   return *buf1;
 }
@@ -368,7 +364,7 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
   if(kcMap == nullptr) kcMap = &(cmBar->getKeyCmdMap());
   if(choices != nullptr) cmBar->setChoices(choices);
   cmBar->setMinLoc((int)msg.size());
-  bufResize(&getBuff());
+  bufResize();
   quitPromptLoop = cancelPromptLoop = false;
   cmBar->insert(msg.c_str());
   if(!defVal.empty()) cmBar->insert(defVal.c_str());
@@ -408,7 +404,7 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
     cmBar->clearChoices();
   }
   unselectCmBar();
-  bufResize(&getBuff());
+  bufResize();
   return ret;
 }
 
@@ -417,15 +413,9 @@ void Editor::draw() {
   windows.draw(*this, cmdMsgBarActive);
 }
 
-void Editor::bufResize(Buffer* buf) {
-  auto& term = Terminal::getInstance();
+void Editor::bufResize() {
   int ht = cmBarHeight();
-  Pos2di sz(term.width(), term.height());
-  sz.y -= ht;
-  ///@todo: add support for multiple windows
-  getWindow().resize({0, 0}, sz);
-  getCmBarWindow().resize({0, sz.y}, {sz.x, ht});
-  DEBUG("bufResize: buff-x,y=%d,%d ht=%d\n", sz.x, sz.y, ht);
+  windows.resize(ht);
 }
 
 void Editor::render() {

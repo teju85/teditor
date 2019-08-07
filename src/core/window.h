@@ -92,6 +92,7 @@ public:
    */
   bool splitVertically();
   void clearAll();
+  void resize(int cmBarHt);
 
 private:
   std::vector<Window*> wins;

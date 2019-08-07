@@ -12,9 +12,9 @@
 namespace teditor {
 
 Buffer::Buffer(const std::string& name):
-  screenStart(), screenDim(), lines(), startLine(0), modified(false),
-  readOnly(false), buffName(name), fileName(), dirName(), regions(),
-  mode(Mode::createMode("text")), locs(), undoStack(), redoStack() {
+  lines(), startLine(0), modified(false), readOnly(false), buffName(name),
+  fileName(), dirName(), regions(), mode(Mode::createMode("text")), locs(),
+  undoStack(), redoStack() {
   addLine();
   dirName = getpwd();
   locs.push_back(Pos2di(0, 0));

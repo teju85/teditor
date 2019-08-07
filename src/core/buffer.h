@@ -273,7 +273,6 @@ protected:
   typedef std::stack<OpData> OpStack;
 
 
-  Pos2d<int> screenStart, screenDim;
   std::vector<Line> lines;
   int startLine;
   bool modified, readOnly;

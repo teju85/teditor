@@ -109,7 +109,7 @@ private:
   void writef(const char* fmt, ...);
   void draw();
   void loadFiles();
-  void bufResize(Buffer* mlb);
+  void bufResize();
   Buffer* getBuff(const std::string& name);
   const AttrColor& getColor(const std::string& name) const;
   int cmBarHeight() const;
