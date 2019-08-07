@@ -78,6 +78,7 @@ public:
   key_t getKey() const { return Terminal::getInstance().mk.getKey(); }
   bool splitVertically() { return windows.splitVertically(); }
   void clearAllWindows() { return windows.clearAll(); }
+  void incrementCurrWin() { windows.incrementCurrWin(); }
 
 private:
   CellBuffer backbuff, frontbuff;

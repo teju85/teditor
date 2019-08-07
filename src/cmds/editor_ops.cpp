@@ -65,6 +65,10 @@ DEF_CMD(ClearAllWindows, "clear-all-windows",
         DEF_OP() { ed.clearAllWindows(); },
         DEF_HELP() { return "Merge all split windows into one."; });
 
+DEF_CMD(NextWindow, "next-window",
+        DEF_OP() { ed.incrementCurrWin(); },
+        DEF_HELP() { return "Shift focus on the next window."; });
+
 class FileChoices: public StringChoices {
 public:
     FileChoices(const Strings& arr, ChoicesFilter cf=fileStrFind):
