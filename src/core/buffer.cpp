@@ -497,8 +497,8 @@ int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
   return y;
 }
 
-Pos2d<int> Buffer::buffer2screen(const Pos2di& loc, const Pos2di& start,
-                                 const Pos2di& dim) const {
+Pos2di Buffer::buffer2screen(const Pos2di& loc, const Pos2di& start,
+                             const Pos2di& dim) const {
   int w = dim.x;
   Pos2d<int> ret = start;
   int relY = loc.y - startLine;
@@ -507,6 +507,20 @@ Pos2d<int> Buffer::buffer2screen(const Pos2di& loc, const Pos2di& start,
   ret.y += (loc.x / w);
   ret.x += loc.x % w;
   return ret;
+}
+
+Pos2di Buffer::screen2buffer(const Pos2di& loc, const Pos2di& start,
+                             const Pos2di& dim) const {
+  Pos2di rel = {loc.x - start.x, loc.y - start.y};
+  Pos2di res = {0, startLine};
+  int w = dim.x;
+  int sy = 0;
+  for(;sy<=rel.y;++res.y)
+    sy += at(res.y).numLinesNeeded(w);
+  if(sy > rel.y) --res.y;
+  int dely = rel.y - sy + at(res.y).numLinesNeeded(w);
+  res.x = dely * w + rel.x;
+  return res;
 }
 
 RemovedLines Buffer::keepRemoveLines(Pcre& pc, bool keep) {

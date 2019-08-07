@@ -44,14 +44,6 @@ public:
   void resize(const Pos2di& start, const Pos2di& dim);
 
   /**
-   * @defgroup Coordinates convert buffer co-ords to screen and vice versa
-   * @{
-   */
-  Pos2di buffer2screen(const Pos2di& loc) const;
-  Pos2di screen2buffer(const Pos2di& loc) const;
-  /** @} */
-
-  /**
    * @defgroup Draw Functions to draw parts of the associated buffer
    * @{
    */
