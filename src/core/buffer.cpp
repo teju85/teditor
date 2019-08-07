@@ -497,19 +497,6 @@ Pos2d<int> Buffer::buffer2screen(const Pos2d<int>& loc) const {
   return ret;
 }
 
-Pos2d<int> Buffer::screen2buffer(const Pos2d<int>& loc) const {
-  Pos2d<int> rel = {loc.x - screenStart.x, loc.y - screenStart.y};
-  Pos2d<int> res = {0, startLine};
-  int w = screenDim.x;
-  int sy = 0;
-  for(;sy<=rel.y;++res.y)
-    sy += lines[res.y].numLinesNeeded(w);
-  if(sy > rel.y) --res.y;
-  int dely = rel.y - sy + lines[res.y].numLinesNeeded(w);
-  res.x = dely * w + rel.x;
-  return res;
-}
-
 RemovedLines Buffer::keepRemoveLines(Pcre& pc, bool keep) {
   RemovedLines res;
   bool isRegion = isRegionActive();

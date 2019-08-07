@@ -72,18 +72,6 @@ TEST_CASE("Buffer::Buffer2screen") {
     REQUIRE(Pos2di(4, 5) == ml.buffer2screen({9, 2}));
 }
 
-TEST_CASE("Buffer::Screen2buffer") {
-    Buffer ml;
-    setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
-    REQUIRE(4 == ml.length());
-    REQUIRE(1 == ml.totalLinesNeeded());
-    REQUIRE(Pos2di(0, 0) == ml.screen2buffer(ml.buffer2screen({0, 0})));
-    ml.resize({0, 0}, {5, 10});
-    REQUIRE(Pos2di(4, 1) == ml.screen2buffer(ml.buffer2screen({4, 1})));
-    REQUIRE(Pos2di(5, 1) == ml.screen2buffer(ml.buffer2screen({5, 1})));
-    REQUIRE(Pos2di(9, 2) == ml.screen2buffer(ml.buffer2screen({9, 2})));
-}
-
 TEST_CASE("Buffer::Insert") {
     Buffer ml;
     setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");

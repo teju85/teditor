@@ -120,13 +120,7 @@ public:
   const Line& at(int idx) const { return lines[idx]; }
   /** @} */
 
-  /**
-   * @defgroup Coordinates convert buffer co-ords to screen and vice versa
-   * @{
-   */
   Pos2d<int> buffer2screen(const Pos2d<int>& loc) const;
-  Pos2d<int> screen2buffer(const Pos2d<int>& loc) const;
-  /** @} */
 
   /** returns character at a given buffer location */
   char charAt(const Pos2d<int>& pos) const;
