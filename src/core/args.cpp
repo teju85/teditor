@@ -15,7 +15,7 @@ Args::Args(int argc, char** argv):
   orgNotesDir("/cygdrive/c/Devtech/notes"), files(), logLevel(-1),
   cmdMsgBarHeight(1), cmdMsgBarMultiHeight(8), pageScrollJump(0.75f),
   maxFileHistory(20), tabSpaces(4), histFile("history"),
-  browserCmd("cygstart firefox -private-window") {
+  browserCmd("cygstart firefox -private-window"), winSplitChar('|') {
   for(int i=1;i<argc;++i) {
     if(!strcmp(argv[i], "-Q")) {
       quitAfterLoad = true;
@@ -59,9 +59,12 @@ Args::Args(int argc, char** argv):
       ++i;
       ASSERT(i < argc, "'-tab-spaces' option expects an argument!");
       tabSpaces = str2num(argv[i]);
+    } else if(!strcmp(argv[i], "-win-split-char")) {
+      ++i;
+      ASSERT(i < argc, "'-win-split-char' option expects an argument!");
+      winSplitChar = argv[i][0];
     } else {
-      if(argv[i][0] == '-')
-        ASSERT(false, "Invalid arg passed! '%s'", argv[i]);
+      ASSERT(argv[i][0] != '-', "Invalid arg passed! '%s'", argv[i]);
       files.push_back(readFileInfo(argv[i]));
     }
   }

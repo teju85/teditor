@@ -63,7 +63,7 @@ void Window::drawCursor(Editor& ed, const std::string& bg) {
 int Window::totalLinesNeeded() const { return getBuff().totalLinesNeeded(); }
 
 
-Windows::Windows(): wins(), currWin(1) {
+Windows::Windows(): wins(), currWin(1), borders() {
   // first window is always the cmBar window
   wins.push_back(new Window);
   // second window starts as the main window which can then further be split
@@ -73,6 +73,7 @@ Windows::Windows(): wins(), currWin(1) {
 Windows::~Windows() {
   for(auto itr : wins) delete itr;
   wins.clear();
+  borders.clear();
 }
 
 void Windows::incrementCurrWin() {
@@ -104,7 +105,33 @@ void Windows::draw(Editor& ed, bool cmdMsgBarActive) {
       ++i;
     }
   }
+  DEBUG("draw: drawing borders\n");
+  for(auto& b : borders) {
+    for(int i=b.sy;i<b.ey;++i) {
+      ed.sendChar(b.x, i, "winframebg", "winframefg",
+                  ed.getArgs().winSplitChar);
+    }
+  }
   DEBUG("draw: ended\n");
+}
+
+bool Windows::splitVertically() {
+  ///@todo: support multiple splits
+  if(wins.size() == 3) return false;
+  auto* curr = wins[currWin];
+  const auto& start = curr->start();
+  const auto& dim = curr->dim();
+  // -1 for the border
+  int lWidth = (dim.x - 1) / 2;
+  // right window
+  int rWidth = dim.x - 1 - lWidth;
+  Window* w = new Window;
+  curr->resize(start, {lWidth, dim.y});
+  w->resize({start.x+lWidth+1, start.y}, {rWidth, dim.y});
+  wins.insert(wins.begin()+currWin+1, w);
+  Border b = {start.y, start.y+dim.y, start.x + lWidth};
+  borders.push_back(b);
+  return true;
 }
 
 } // end namespace teditor

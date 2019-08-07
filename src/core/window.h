@@ -63,10 +63,19 @@ public:
   int currBuffId() const { return currBuff; }
   void setCurrBuff(int i) { currBuff = i; }
 
+  const Pos2di& start() const { return screenStart; }
+  const Pos2di& dim() const { return screenDim; }
+
 protected:
   Buffers* buffs;  // NOT owned by this class
   int currBuff;
   Pos2di screenStart, screenDim;
+};
+
+
+/** Vertical Border when splitting a window */
+struct Border {
+  int sy, ey, x;
 };
 
 
@@ -82,10 +91,16 @@ public:
   Window* operator[](int idx) { return wins[idx]; }
   const Window* operator[](int idx) const { return wins[idx]; }
   void draw(Editor& ed, bool cmdMsgBarActive);
+  /**
+   * @brief split the window into 2 vertical parts
+   * @return true if split was successful, else false
+   */
+  bool splitVertically();
 
 private:
   std::vector<Window*> wins;
   int currWin;
+  std::vector<Border> borders;
 };
 
 }; // end namespace teditor

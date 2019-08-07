@@ -21,6 +21,7 @@ struct Args {
   float pageScrollJump;
   int maxFileHistory, tabSpaces;
   std::string histFile, browserCmd;
+  char winSplitChar;
 };
 
 } // end namespace teditor
