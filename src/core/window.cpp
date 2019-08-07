@@ -36,8 +36,6 @@ void Window::drawCursor(Editor& ed, const AttrColor& bg) {
   getBuff().drawCursor(ed, bg, *this);
 }
 
-int Window::totalLinesNeeded() const { return getBuff().totalLinesNeeded(); }
-
 
 Windows::Windows(): wins(), currWin(1), borders(), screenDim() {
   // first window is always the cmBar window

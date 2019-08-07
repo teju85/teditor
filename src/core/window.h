@@ -51,9 +51,6 @@ public:
   void drawCursor(Editor& ed, const AttrColor& bg);
   /** @} */
 
-  /** number of lines needed to draw the currrent buffer in this window */
-  int totalLinesNeeded() const;
-
   void incrementCurrBuff();
   void decrementCurrBuff();
   int currBuffId() const { return currBuff; }

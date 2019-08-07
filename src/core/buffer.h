@@ -205,7 +205,9 @@ public:
 
   void indent();
 
+  /** number of lines needed to draw the currrent buffer in this window */
   virtual int totalLinesNeeded() const;
+
   void lineUp();
   virtual void lineDown();
   void lineReset() { startLine = 0; }
