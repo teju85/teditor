@@ -650,28 +650,29 @@ char Buffer::charAt(const Pos2d<int>& pos) const {
   return line.at(pos.x);
 }
 
-int Buffer::totalLinesNeeded() const {
+int Buffer::totalLinesNeeded(const Pos2di& dim) const {
   int end = locs[0].y;
   int len = 0;
   for(int i=startLine;i<=end;++i)
-    len += lines[i].numLinesNeeded(screenDim.x);
+    len += lines[i].numLinesNeeded(dim.x);
   return len;
 }
 
 void Buffer::lineUp() {
-  while(totalLinesNeeded() > screenDim.y) ++startLine;
+  while(totalLinesNeeded(screenDim) > screenDim.y) ++startLine;
 }
 
 void Buffer::lineDown() {
   startLine = std::min(startLine, locs[0].y);
 }
 
-void Buffer::lineEnd() {
-  ///@todo: do not depend on the local screen start/dim
-  auto screen = buffer2screen(locs[0], screenStart, screenDim);
+void Buffer::lineEnd(const Pos2di& start, const Pos2di& dim) {
+  auto screen = buffer2screen(locs[0], start, dim);
   int relY = screen.y - startLine;
-  if(relY < screenDim.y) return;
-  int diff = relY - screenDim.y + 1;
+  // -1 for the status bar
+  int dimY = dim.y - 1;
+  if(relY < dimY) return;
+  int diff = relY - dimY + 1;
   startLine += diff;
 }
 
@@ -768,7 +769,6 @@ void Buffer::end() {
     cu.y = std::max(0, length()-1);
     cu.x = lengthOf(cu.y);
   });
-  lineEnd();
 }
 
 void Buffer::pageDown(int ijump) {

@@ -56,7 +56,7 @@ public:
   void clear() override;
   void setMinLoc(int loc) { minLoc = loc; }
   int getMinStartLoc() const override { return minLoc; }
-  int totalLinesNeeded() const override;
+  int totalLinesNeeded(const Pos2di& dim) const override;
   void setChoices(Choices* ch) { choices = ch; }
   void clearChoices();
   bool usingChoices() const { return choices != nullptr; }

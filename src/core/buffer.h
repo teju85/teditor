@@ -206,12 +206,12 @@ public:
   void indent();
 
   /** number of lines needed to draw the currrent buffer in this window */
-  virtual int totalLinesNeeded() const;
+  virtual int totalLinesNeeded(const Pos2di& dim) const;
 
   void lineUp();
   virtual void lineDown();
   void lineReset() { startLine = 0; }
-  void lineEnd();
+  void lineEnd(const Pos2di& start, const Pos2di& dim);
   virtual bool save(const std::string& fName="");
   const std::string& bufferName() const { return buffName; }
   const std::string& getFileName() const { return fileName; }

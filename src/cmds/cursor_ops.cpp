@@ -25,9 +25,14 @@ DEF_CMD(CursorReset, "cursor-reset",
         DEF_OP() { ed.getBuff().begin(); },
         DEF_HELP() { return "Go to start of the buffer"; });
 
-DEF_CMD(CursorEnd, "cursor-end",
-        DEF_OP() { ed.getBuff().end(); },
-        DEF_HELP() { return "Go to end of the buffer"; });
+DEF_CMD(
+  CursorEnd, "cursor-end", DEF_OP() {
+    auto& buf = ed.getBuff();
+    const auto& w = ed.getWindow();
+    buf.end();
+    buf.lineEnd(w.start(), w.dim());
+  },
+  DEF_HELP() { return "Go to end of the buffer"; });
 
 DEF_CMD(CursorHome, "cursor-home",
         DEF_OP() { ed.getBuff().startOfLine(); },

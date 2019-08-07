@@ -64,12 +64,12 @@ TEST_CASE("Buffer::Buffer2screen") {
   Pos2di dim = {30, 10};
   setupBuff(ml, start, dim, "samples/multiline.txt");
   REQUIRE(4 == ml.length());
-  REQUIRE(1 == ml.totalLinesNeeded());
+  REQUIRE(1 == ml.totalLinesNeeded(dim));
   REQUIRE('*' == ml.charAt({0,0}));
   REQUIRE(Pos2di(0, 0) == ml.buffer2screen({0, 0}, start, dim));
   dim = {5, 10};
   ml.resize(start, dim);
-  REQUIRE(2 == ml.totalLinesNeeded());
+  REQUIRE(2 == ml.totalLinesNeeded(dim));
   REQUIRE(Pos2di(4, 2) == ml.buffer2screen({4, 1}, start, dim));
   REQUIRE(Pos2di(0, 3) == ml.buffer2screen({5, 1}, start, dim));
   REQUIRE(Pos2di(4, 5) == ml.buffer2screen({9, 2}, start, dim));
@@ -81,12 +81,12 @@ TEST_CASE("Window::Screen2buffer") {
   Pos2di dim = {30, 10};
   setupBuff(ml, start, dim, "samples/multiline.txt");
   REQUIRE(4 == ml.length());
-  REQUIRE(1 == ml.totalLinesNeeded());
+  REQUIRE(1 == ml.totalLinesNeeded(dim));
   REQUIRE(start ==
           ml.screen2buffer(ml.buffer2screen(start, start, dim), start, dim));
   dim = {5, 10};
   ml.resize(start, dim);
-  REQUIRE(2 == ml.totalLinesNeeded());
+  REQUIRE(2 == ml.totalLinesNeeded(dim));
   REQUIRE(Pos2di(4, 1) ==
           ml.screen2buffer(ml.buffer2screen({4, 1}, start, dim), start, dim));
   REQUIRE(Pos2di(5, 1) ==

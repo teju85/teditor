@@ -67,12 +67,12 @@ int CmdMsgBar::linesNeeded(const std::string& str, int wid) const {
   return (len + wid - 1) / wid;
 }
 
-int CmdMsgBar::totalLinesNeeded() const {
-  int count = at(0).numLinesNeeded(screenDim.x);
+int CmdMsgBar::totalLinesNeeded(const Pos2di& dim) const {
+  int count = at(0).numLinesNeeded(dim.x);
   if(!usingChoices()) return count;
   const auto str = getStr();
   for(int i=startLine;i<=optLoc;++i)
-    count += linesNeeded(choices->at(i), screenDim.x);
+    count += linesNeeded(choices->at(i), dim.x);
   return count;
 }
 

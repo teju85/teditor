@@ -18,7 +18,8 @@ TEST_CASE("StringChoices::Test") {
 
 TEST_CASE("CmdMsgBar::Default") {
     CmdMsgBar cmBar;
-    cmBar.resize({0, 0}, {10, 10});
+    Pos2di dim = {10, 10};
+    cmBar.resize({0, 0}, dim);
     REQUIRE(1 == cmBar.length());
     REQUIRE_FALSE(cmBar.usingChoices());
     cmBar.insert("Test: ");
@@ -28,7 +29,7 @@ TEST_CASE("CmdMsgBar::Default") {
     REQUIRE(6 == cmBar.getMinStartLoc());
     cmBar.insert('H');
     cmBar.insert('i');
-    REQUIRE(1 == cmBar.totalLinesNeeded());
+    REQUIRE(1 == cmBar.totalLinesNeeded(dim));
     REQUIRE(8 == cmBar.at(0).length());
     REQUIRE("Test: Hi" == cmBar.at(0).get());
     REQUIRE("Hi" == cmBar.getStr());
@@ -47,7 +48,8 @@ TEST_CASE("CmdMsgBar::UsingStringChoices") {
     };
     StringChoices sc(opts);
     CmdMsgBar cmBar;
-    cmBar.resize({0, 0}, {10, 10});
+    Pos2di dim = {10, 10};
+    cmBar.resize({0, 0}, dim);
     REQUIRE(1 == cmBar.length());
     REQUIRE_FALSE(cmBar.usingChoices());
     cmBar.insert("Test: ");
@@ -59,7 +61,7 @@ TEST_CASE("CmdMsgBar::UsingStringChoices") {
     REQUIRE(cmBar.usingChoices());
     cmBar.insert('c');
     cmBar.insert('h');
-    REQUIRE(2 == cmBar.totalLinesNeeded());
+    REQUIRE(2 == cmBar.totalLinesNeeded(dim));
     REQUIRE(8 == cmBar.at(0).length());
     REQUIRE("Test: ch" == cmBar.at(0).get());
     REQUIRE("ch" == cmBar.getStr());
