@@ -54,6 +54,13 @@ DEF_CMD(FindFileHistory, "find-file-history",
                 " to be remembered.";
         });
 
+DEF_CMD(
+  VerticalSplit, "split-vertically", DEF_OP() {
+    auto status = ed.splitVertically();
+    if(!status) MESSAGE(ed, "Window already split vertically");
+  },
+  DEF_HELP() { return "Splits the current window vertically (only once!)."; });
+
 class FileChoices: public StringChoices {
 public:
     FileChoices(const Strings& arr, ChoicesFilter cf=fileStrFind):

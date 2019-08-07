@@ -9,6 +9,7 @@ namespace teditor {
 class Buffer;
 class Buffers;
 class Editor;
+class Windows;
 
 ///@todo: have the concept of current-buffer moved from Editor to this class
 /** Window to draw the contents of an associated buffer */
@@ -70,6 +71,8 @@ protected:
   Buffers* buffs;  // NOT owned by this class
   int currBuff;
   Pos2di screenStart, screenDim;
+
+  friend class Windows;
 };
 
 

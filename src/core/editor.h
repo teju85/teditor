@@ -76,6 +76,7 @@ public:
   Strings buffNamesToString() const { return buffs.namesList(); }
   void saveBuffer(Buffer& buf);
   key_t getKey() const { return Terminal::getInstance().mk.getKey(); }
+  bool splitVertically() { return windows.splitVertically(); }
 
 private:
   CellBuffer backbuff, frontbuff;

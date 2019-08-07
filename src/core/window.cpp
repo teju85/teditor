@@ -54,7 +54,10 @@ Pos2di Window::screen2buffer(const Pos2di& loc) const {
   return res;
 }
 
-void Window::draw(Editor& ed) { getBuff().draw(ed); }
+void Window::draw(Editor& ed) {
+  getBuff().resize(screenStart, screenDim);
+  getBuff().draw(ed);
+}
 
 void Window::drawCursor(Editor& ed, const std::string& bg) {
   getBuff().drawCursor(ed, bg);
@@ -127,6 +130,8 @@ bool Windows::splitVertically() {
   int rWidth = dim.x - 1 - lWidth;
   Window* w = new Window;
   curr->resize(start, {lWidth, dim.y});
+  w->setCurrBuff(curr->currBuffId());
+  w->buffs = curr->buffs;
   w->resize({start.x+lWidth+1, start.y}, {rWidth, dim.y});
   wins.insert(wins.begin()+currWin+1, w);
   Border b = {start.y, start.y+dim.y, start.x + lWidth};
