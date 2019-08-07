@@ -28,6 +28,7 @@ typedef std::vector<RemovedLine> RemovedLines;
 
 
 class Editor;
+class Window;
 
 
 /** Class for representing text files as a vector of lines (aka Buffer) */
@@ -120,7 +121,8 @@ public:
   const Line& at(int idx) const { return lines[idx]; }
   /** @} */
 
-  Pos2d<int> buffer2screen(const Pos2d<int>& loc) const;
+  Pos2d<int> buffer2screen(const Pos2di& loc, const Pos2di& start,
+                           const Pos2di& dim) const;
 
   /** returns character at a given buffer location */
   char charAt(const Pos2d<int>& pos) const;
@@ -129,8 +131,8 @@ public:
    * @defgroup Draw Functions to draw parts of the buffer
    * @{
    */
-  virtual void draw(Editor& ed, int currId);
-  void drawCursor(Editor& ed, const AttrColor& bg);
+  virtual void draw(Editor& ed, const Window& win);
+  void drawCursor(Editor& ed, const AttrColor& bg, const Window& win);
   /** @} */
 
   /**
@@ -298,9 +300,9 @@ protected:
    * @defgroup DrawInl Internal draw operations
    * @{
    */
-  void drawStatusBar(Editor& ed, int currId);
+  void drawStatusBar(Editor& ed, const Window& win);
   int drawLine(int y, const std::string& line, Editor& ed, int lineNum,
-               const AttrColor& fg, const AttrColor& bg);
+               const AttrColor& fg, const AttrColor& bg, const Window &win);
   /** @} */
 
   /**

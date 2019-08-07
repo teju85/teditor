@@ -55,13 +55,11 @@ Pos2di Window::screen2buffer(const Pos2di& loc) const {
 }
 
 void Window::draw(Editor& ed) {
-  getBuff().resize(screenStart, screenDim);
-  getBuff().draw(ed, currBuff);
+  getBuff().draw(ed, *this);
 }
 
 void Window::drawCursor(Editor& ed, const AttrColor& bg) {
-  getBuff().resize(screenStart, screenDim);
-  getBuff().drawCursor(ed, bg);
+  getBuff().drawCursor(ed, bg, *this);
 }
 
 int Window::totalLinesNeeded() const { return getBuff().totalLinesNeeded(); }

@@ -60,16 +60,19 @@ TEST_CASE("Buffer::CharAt") {
 
 TEST_CASE("Buffer::Buffer2screen") {
     Buffer ml;
-    setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
+    Pos2di start = {0, 0};
+    Pos2di dim = {30, 10};
+    setupBuff(ml, start, dim, "samples/multiline.txt");
     REQUIRE(4 == ml.length());
     REQUIRE(1 == ml.totalLinesNeeded());
     REQUIRE('*' == ml.charAt({0,0}));
-    REQUIRE(Pos2di(0, 0) == ml.buffer2screen({0, 0}));
-    ml.resize({0, 0}, {5, 10});
+    REQUIRE(Pos2di(0, 0) == ml.buffer2screen({0, 0}, start, dim));
+    dim = {5, 10};
+    ml.resize(start, dim);
     REQUIRE(2 == ml.totalLinesNeeded());
-    REQUIRE(Pos2di(4, 2) == ml.buffer2screen({4, 1}));
-    REQUIRE(Pos2di(0, 3) == ml.buffer2screen({5, 1}));
-    REQUIRE(Pos2di(4, 5) == ml.buffer2screen({9, 2}));
+    REQUIRE(Pos2di(4, 2) == ml.buffer2screen({4, 1}, start, dim));
+    REQUIRE(Pos2di(0, 3) == ml.buffer2screen({5, 1}, start, dim));
+    REQUIRE(Pos2di(4, 5) == ml.buffer2screen({9, 2}, start, dim));
 }
 
 TEST_CASE("Buffer::Insert") {

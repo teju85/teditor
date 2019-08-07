@@ -1,6 +1,7 @@
 #include "cmd_msg_bar.h"
 #include <string.h>
 #include "mode.h"
+#include "window.h"
 
 
 namespace teditor {
@@ -33,23 +34,25 @@ void CmdMsgBar::resize(const Pos2d<int>& start, const Pos2d<int>& dim) {
   screenDim = dim;
 }
 
-void CmdMsgBar::draw(Editor& ed, int currId) {
+void CmdMsgBar::draw(Editor& ed, const Window& win) {
   const auto& cmfg = getColor("cmbarfg");
   const auto& cmbg = getColor("cmbarbg");
   const auto& cmhfg = getColor("cmbarhighlightfg");
   const auto& cmhbg = getColor("cmbarhighlightbg");
+  const auto& start = win.start();
+  const auto& dim = win.dim();
   // first line is always the cmd prompt!
-  int y = drawLine(screenStart.y, lines[0].get(), ed, 0, cmfg, cmbg);
+  int y = drawLine(start.y, lines[0].get(), ed, 0, cmfg, cmbg, win);
   if(!usingChoices()) return;
   int len = choices->size();
-  int h = screenStart.y + screenDim.y;
+  int h = start.y + dim.y;
   const auto str = getStr();
   for(int idx=startLine;y<h&&idx<len;++idx) {
     const auto& line = choices->at(idx);
     if(!choices->match(line, str)) continue;
     const auto& fg = (idx == optLoc)? cmhfg : cmfg;
     const auto& bg = (idx == optLoc)? cmhbg : cmbg;
-    y = drawLine(y, line, ed, idx, fg, bg);
+    y = drawLine(y, line, ed, idx, fg, bg, win);
   }
 }
 

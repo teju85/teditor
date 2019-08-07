@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include "window.h"
 
 
 namespace teditor {
@@ -392,40 +393,47 @@ void Buffer::resetBufferState(int line, const std::string& file) {
   stopRegion();
 }
 
-void Buffer::draw(Editor& ed, int currId) {
-  // draw current buffer
-  int h = screenStart.y + screenDim.y;
+void Buffer::draw(Editor& ed, const Window& win) {
+  const auto& start = win.start();
+  const auto& dim = win.dim();
+  // draw current buffer (-1 for the status bar)
+  int h = start.y + dim.y - 1;
   int len = length();
   const auto& fg = getColor("defaultfg");
   const auto& bg = getColor("defaultbg");
-  for(int y=screenStart.y,idx=startLine;y<h&&idx<len;++idx)
-    y = drawLine(y, lines[idx].get(), ed, idx, fg, bg);
-  drawStatusBar(ed, currId);
+  for(int y=start.y,idx=startLine;y<h&&idx<len;++idx)
+    y = drawLine(y, lines[idx].get(), ed, idx, fg, bg, win);
+  drawStatusBar(ed, win);
 }
 
-void Buffer::drawCursor(Editor& ed, const AttrColor& bg) {
+void Buffer::drawCursor(Editor& ed, const AttrColor& bg, const Window& win) {
   int n = cursorCount();
+  const auto& start = win.start();
+  const auto& dim = win.dim();
   const auto& fg = getColor("cursorfg");
   for(int i=0;i<n;++i) {
     auto& culoc = locs[i];
     char c = charAt(culoc);
-    auto screenloc = buffer2screen(culoc);
+    auto screenloc = buffer2screen(culoc, start, dim);
     DEBUG("drawCursor: i=%d x,y=%d,%d sloc=%d,%d start=%d\n",
           i, culoc.x, culoc.y, screenloc.x, screenloc.y, startLine);
     ed.sendChar(screenloc.x, screenloc.y, fg, bg, c);
   }
 }
 
-void Buffer::drawStatusBar(Editor& ed, int currId) {
-  DEBUG("drawStatusBar: dim=%d,%d start=%d,%d\n", screenDim.x, screenDim.y,
-        screenStart.x, screenStart.y);
-  std::string line(screenDim.x, ' ');
-  int x = screenStart.x;
-  int y = screenStart.y + screenDim.y;
+void Buffer::drawStatusBar(Editor& ed, const Window& win) {
+  int currId = win.currBuffId();
+  const auto& start = win.start();
+  const auto& dim = win.dim();
+  DEBUG("drawStatusBar: dim=%d,%d start=%d,%d\n", dim.x, dim.y, start.x,
+        start.y);
+  std::string line(dim.x, ' ');
+  int x = start.x;
+  int y = start.y + dim.y;
   const auto& fg = getColor("statusfg");
   const auto& bg = getColor("statusbg");
   const auto& namefg = getColor("statusnamefg");
-  ed.sendString(x, y, fg, bg, line.c_str(), screenDim.x);
+  ed.sendString(x, y, fg, bg, line.c_str(), dim.x);
   const auto& loc = locs[0];
   // modified + linenum
   int count = ed.sendStringf(x, y, fg, bg, " %s [%d:%d]/%d ",
@@ -452,9 +460,12 @@ std::string Buffer::dirModeGetFileAtLine(int line) {
 }
 
 int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
-                     const AttrColor& fg, const AttrColor& bg) {
-  int xStart = screenStart.x;
-  int wid = screenDim.x;
+                     const AttrColor& fg, const AttrColor& bg,
+                     const Window& win) {
+  const auto& st = win.start();
+  const auto& dim = win.dim();
+  int xStart = st.x;
+  int wid = dim.x;
   int start = 0;
   int len = (int)line.size();
   // empty line
@@ -486,9 +497,10 @@ int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
   return y;
 }
 
-Pos2d<int> Buffer::buffer2screen(const Pos2d<int>& loc) const {
-  int w = screenDim.x;
-  Pos2d<int> ret = screenStart;
+Pos2d<int> Buffer::buffer2screen(const Pos2di& loc, const Pos2di& start,
+                                 const Pos2di& dim) const {
+  int w = dim.x;
+  Pos2d<int> ret = start;
   int relY = loc.y - startLine;
   for(int idx=0;idx<relY;++idx)
     ret.y += lines[idx].numLinesNeeded(w);
@@ -641,7 +653,8 @@ void Buffer::lineDown() {
 }
 
 void Buffer::lineEnd() {
-  auto screen = buffer2screen(locs[0]);
+  ///@todo: do not depend on the local screen start/dim
+  auto screen = buffer2screen(locs[0], screenStart, screenDim);
   int relY = screen.y - startLine;
   if(relY < screenDim.y) return;
   int diff = relY - screenDim.y + 1;
