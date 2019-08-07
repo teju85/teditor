@@ -14,19 +14,32 @@ TEST_CASE("Buffer::Location") {
 }
 
 TEST_CASE("Buffer::KillLine") {
-    Buffer ml;
-    setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt", 2);
-    REQUIRE(Pos2di(0, 2) == ml.saveCursors()[0]);
-    REQUIRE("multiline.txt" == ml.bufferName());
+  Buffer ml;
+  setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt", 2);
+  REQUIRE(Pos2di(0, 2) == ml.saveCursors()[0]);
+  REQUIRE("multiline.txt" == ml.bufferName());
+  REQUIRE(4 == ml.length());
+
+  SECTION("full-line") {
+    ml.killLine();
     REQUIRE(4 == ml.length());
-    auto del = ml.killLine();
+    REQUIRE("" == ml.at(2).get());
+    ml.undo();
     REQUIRE(4 == ml.length());
-    REQUIRE(1U == del.size());
-    REQUIRE("for multi-line buffer!" == del[0]);
-    del = ml.killLine();
+    REQUIRE("for multi-line buffer!" == ml.at(2).get());
+  }
+
+  SECTION("line-end") {
+    ml.up();
+    ml.endOfLine();
+    ml.killLine();
     REQUIRE(3 == ml.length());
-    REQUIRE(1U == del.size());
-    REQUIRE("\n" == del[0]);
+    REQUIRE("Testing123for multi-line buffer!" == ml.at(1).get());
+    ml.undo();
+    REQUIRE(4 == ml.length());
+    REQUIRE("Testing123" == ml.at(1).get());
+    REQUIRE("for multi-line buffer!" == ml.at(2).get());
+  }
 }
 
 TEST_CASE("Buffer::BadFile") {

@@ -65,8 +65,8 @@ public:
    * @todo make this private after updating unittests accordingly
    */
   Strings removeRegion(const Positions& start, const Positions& end);
-  /** kills lines at current cursor location onwards and returns them */
-  Strings killLine();
+  /** kills lines at current cursor location onwards */
+  void killLine();
   /** sorts the lines in the regions */
   void sortRegions();
   /**

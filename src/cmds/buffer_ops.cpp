@@ -43,6 +43,10 @@ DEF_CMD(DeleteChar, "delete-char",
                 " will remove it instead";
         });
 
+DEF_CMD(KillLine, "kill-line",
+        DEF_OP() { ed.getBuff().killLine(); },
+        DEF_HELP() { return "Removes the rest of the line"; });
+
 // CMD_UNDO4(SortLines, "sort-lines", Positions after, Positions regs,
 //           Strings del, Positions before) {
 //     if(type == CMD_FRESH && !buf.isRegionActive()) {
@@ -70,26 +74,6 @@ DEF_CMD(DeleteChar, "delete-char",
 //         after = buf.saveCursors();
 //     };
 //     buf.stopRegion();
-// }
-
-// CMD_UNDO2(KillLine, "kill-line", Strings del, Positions locs) {
-//     auto& buf = ed.getBuff();
-//     if(buf.isRegionActive())
-//         buf.stopRegion();
-//     switch(type) {
-//     case CMD_UNDO:
-//         buf.restoreCursors(locs);
-//         buf.insert(del);
-//         buf.restoreCursors(locs);
-//         break;
-//     case CMD_REDO:
-//         buf.restoreCursors(locs);
-//         buf.killLine();
-//         break;
-//     default:
-//         locs = buf.saveCursors();
-//         del = buf.killLine();
-//     };
 // }
 
 // CMD_UNDO2(KeepLines, "keep-lines", RemovedLines lines, std::string regex) {

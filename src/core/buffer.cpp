@@ -219,6 +219,34 @@ void Buffer::clear() {
   clearStack(undoStack);
   clearStack(redoStack);
 }
+
+void Buffer::killLine() {
+  OpData op;
+  op.type = OpDelete;
+  stopRegion();
+  op.before = saveCursors();
+  modified = true;
+  int len = cursorCount();
+  for(int i=0;i<len;++i) {
+    const auto& culoc = locs[i];
+    auto& line = lines.at(culoc.y);
+    if(culoc.x >= line.length()) {
+      if(culoc.y == length()-1) {
+        op.strs.push_back("");
+        continue;
+      }
+      auto& next = lines.at(culoc.y + 1);
+      line.insert(next.get(), culoc.x);
+      lines.erase(lines.begin() + culoc.y + 1);
+      op.strs.push_back("\n");
+    } else {
+      auto str = line.erase(culoc.x, line.length()-culoc.x);
+      op.strs.push_back(str);
+    }
+  }
+  op.after = saveCursors();
+  pushNewOp(op);
+}
 ////// End: Buffer editing //////
 
 
@@ -595,30 +623,6 @@ Pos2d<int> Buffer::matchCurrentParen(int i, bool& isOpen) {
     }
   }
   return culoc;
-}
-
-Strings Buffer::killLine() {
-  Strings del;
-  modified = true;
-  int len = cursorCount();
-  for(int i=0;i<len;++i) {
-    const auto& culoc = locs[i];
-    auto& line = lines.at(culoc.y);
-    if(culoc.x >= line.length()) {
-      if(culoc.y == length()-1) {
-        del.push_back("");
-        continue;
-      }
-      auto& next = lines.at(culoc.y + 1);
-      line.insert(next.get(), culoc.x);
-      lines.erase(lines.begin() + culoc.y + 1);
-      del.push_back("\n");
-    } else {
-      auto str = line.erase(culoc.x, line.length()-culoc.x);
-      del.push_back(str);
-    }
-  }
-  return del;
 }
 
 void Buffer::sortRegions() {
