@@ -40,7 +40,6 @@ TEST_CASE("Window::Screen2buffer") {
 TEST_CASE("Windows::default") {
   Windows w;
   REQUIRE(2 == w.size());
-  REQUIRE(!w.empty());
   REQUIRE(1 == w.currWinId());
   w.incrementCurrWin();
   REQUIRE(1 == w.currWinId());

@@ -1,6 +1,7 @@
 #include "buffer.h"
 #include "editor.h"
 #include "window.h"
+#include "logger.h"
 
 namespace teditor {
 
@@ -82,6 +83,28 @@ void Windows::incrementCurrWin() {
 void Windows::decrementCurrWin() {
   --currWin;
   if(currWin < 1) currWin = wins.size() - 1;
+}
+
+void Windows::draw(Editor& ed, bool cmdMsgBarActive) {
+  DEBUG("draw: windows and cmdMsgBar\n");
+  for(auto itr : wins) itr->draw(ed);
+  if(cmdMsgBarActive) {
+    DEBUG("draw: cmdMsgBar.drawCursor\n");
+    int i = 0;
+    for(auto itr : wins) {
+      itr->drawCursor(ed, i == 0? "cursorbg" : "inactivecursorbg");
+      ++i;
+    }
+  } else {
+    DEBUG("draw: drawCursor\n");
+    int i = 0;
+    for(auto itr : wins) {
+      if(i != 0)
+        itr->drawCursor(ed, i == currWin? "cursorbg" : "inactivecursorbg");
+      ++i;
+    }
+  }
+  DEBUG("draw: ended\n");
 }
 
 } // end namespace teditor
