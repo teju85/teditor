@@ -414,9 +414,11 @@ void Buffer::drawCursor(Editor& ed, const std::string& bg) {
 }
 
 void Buffer::drawStatusBar(Editor& ed) {
+  DEBUG("drawStatusBar: dim=%d,%d start=%d,%d\n", screenDim.x, screenDim.y,
+        screenStart.x, screenStart.y);
   std::string line(screenDim.x, ' ');
   int x = screenStart.x;
-  int y = screenStart.x + screenDim.y;
+  int y = screenStart.y + screenDim.y;
   ed.sendString(x, y, "statusfg", "statusbg", line.c_str(), screenDim.x);
   const auto& loc = locs[0];
   // modified + linenum

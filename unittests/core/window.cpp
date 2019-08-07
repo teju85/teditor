@@ -47,6 +47,16 @@ TEST_CASE("Windows::default") {
   REQUIRE(1 == w.currWinId());
 }
 
+TEST_CASE("Windows::split-and-clear") {
+  Windows w;
+  REQUIRE(2 == w.size());
+  REQUIRE(1 == w.currWinId());
+  REQUIRE(w.splitVertically());
+  REQUIRE(3 == w.size());
+  w.clearAll();
+  REQUIRE(2 == w.size());
+}
+
 TEST_CASE("Windows::splitVertically") {
   Windows w;
   REQUIRE(2 == w.size());

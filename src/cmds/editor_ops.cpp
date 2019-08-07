@@ -61,6 +61,10 @@ DEF_CMD(
   },
   DEF_HELP() { return "Splits the current window vertically (only once!)."; });
 
+DEF_CMD(ClearAllWindows, "clear-all-windows",
+        DEF_OP() { ed.clearAllWindows(); },
+        DEF_HELP() { return "Merge all split windows into one."; });
+
 class FileChoices: public StringChoices {
 public:
     FileChoices(const Strings& arr, ChoicesFilter cf=fileStrFind):

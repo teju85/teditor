@@ -238,6 +238,7 @@ void Editor::writef(const char* fmt, ...) {
 
 int Editor::sendString(int x, int y, const std::string& fg,
                        const std::string& bg, const char* str, int len) {
+  DEBUG("Editor::sendString: x,y=%d,%d len=%d str='%s'\n", x, y, len, str);
   Cell c = {0, getColor(fg), getColor(bg)};
   int count = 0;
   while(count < len) {

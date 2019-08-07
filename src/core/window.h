@@ -24,6 +24,9 @@ public:
    */
   void attachBuffs(Buffers* bs);
 
+  /** copy the current window's buffers and ID to the new window */
+  void copyTo(Window& w) { w.buffs = buffs;  w.currBuff = currBuff; }
+
   /**
    * @defgroup GetBuff
    * @{
@@ -71,8 +74,6 @@ protected:
   Buffers* buffs;  // NOT owned by this class
   int currBuff;
   Pos2di screenStart, screenDim;
-
-  friend class Windows;
 };
 
 
@@ -99,11 +100,13 @@ public:
    * @return true if split was successful, else false
    */
   bool splitVertically();
+  void clearAll();
 
 private:
   std::vector<Window*> wins;
   int currWin;
   std::vector<Border> borders;
+  Pos2di screenDim;
 };
 
 }; // end namespace teditor
