@@ -2,6 +2,7 @@
 #include "buffer.h"
 #include "logger.h"
 #include "cmd_msg_bar.h"
+#include "window.h"
 
 
 namespace teditor {
@@ -12,8 +13,8 @@ bool strFindEmpty(const std::string& line, const std::string& str) {
 }
 
 
-ISearch::ISearch(Buffer& mlb): Choices(strFindEmpty), ml(mlb), curr(),
-                               matches() {
+ISearch::ISearch(Window& w): Choices(strFindEmpty), win(w), ml(w.getBuff()),
+                             curr(), matches() {
 }
 
 std::string ISearch::getFinalStr(int idx, const std::string& str) const {
@@ -55,7 +56,7 @@ void ISearch::searchBuffer() {
 
 void ISearch::updateMainBuffer(CmdMsgBar& cmBar) {
   int loc = cmBar.getOptLoc();
-  ml.gotoLine(loc);
+  ml.gotoLine(loc, win.dim());
 }
 
 void ISearch::searchLine(const std::string& str, std::vector<int>& res) {

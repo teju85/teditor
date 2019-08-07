@@ -235,10 +235,11 @@ DEF_CMD(TextSearch, "search",
                 return;
             }
             auto pos = buf.saveCursors();
-            ISearch is(buf);
+            ISearch is(ed.getWindow());
             is.reset();
             auto ret = ed.prompt("Search: ", nullptr, &is);
-            buf.gotoLine(!ret.empty()? is.getIdx() : pos[0].y);
+            buf.gotoLine(!ret.empty()? is.getIdx() : pos[0].y,
+                         ed.getWindow().dim());
         },
         DEF_HELP() { return "Search and jump to the matching location."; });
 

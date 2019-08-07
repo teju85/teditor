@@ -844,11 +844,11 @@ void Buffer::previousWord() {
   lineDown();
 }
 
-void Buffer::gotoLine(int lineNum) {
+void Buffer::gotoLine(int lineNum, const Pos2di& dim) {
   forEachCursor([lineNum, this](Pos2di& cu, size_t idx) {
     cu.y = std::min(length()-1, std::max(0, lineNum));
   });
-  startLine = std::max(0, lineNum - screenDim.y/2);
+  startLine = std::max(0, lineNum - dim.y/2);
 }
 
 void Buffer::removeDuplicateCursors() {

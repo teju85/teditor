@@ -175,7 +175,7 @@ public:
   /** jump to previous word */
   void previousWord();
   /** goto the specified line number */
-  void gotoLine(int lineNum);
+  void gotoLine(int lineNum, const Pos2di& dim);
   /** @} */
 
   /**

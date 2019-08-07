@@ -165,14 +165,15 @@ TEST_CASE("Buffer::LengthOf") {
 }
 
 TEST_CASE("Buffer::GotoLine") {
-    Buffer ml;
-    setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
-    REQUIRE(21 == ml.length());
-    REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
-    ml.gotoLine(10);
-    REQUIRE(Pos2di(0, 10) == ml.saveCursors()[0]);
-    ml.gotoLine(30);
-    REQUIRE(Pos2di(0, 20) == ml.saveCursors()[0]);
+  Buffer ml;
+  Pos2di dim = {30, 10};
+  setupBuff(ml, {0, 0}, dim, "samples/sample.cxx");
+  REQUIRE(21 == ml.length());
+  REQUIRE(Pos2di(0, 0) == ml.saveCursors()[0]);
+  ml.gotoLine(10, dim);
+  REQUIRE(Pos2di(0, 10) == ml.saveCursors()[0]);
+  ml.gotoLine(30, dim);
+  REQUIRE(Pos2di(0, 20) == ml.saveCursors()[0]);
 }
 
 TEST_CASE("Buffer::SortRegionsEmptyLine") {

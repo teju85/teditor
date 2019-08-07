@@ -83,7 +83,7 @@ DEF_CMD(GotoLine, "goto-line",
         DEF_OP() {
             auto line = ed.prompt("Goto: ");
             int lineNum = str2num(line);
-            ed.getBuff().gotoLine(lineNum);
+            ed.getBuff().gotoLine(lineNum, ed.getWindow().dim());
         },
         DEF_HELP() { return "Jump to the specified line number"; });
 

@@ -11,13 +11,14 @@ namespace teditor {
 
 class Buffer;
 class CmdMsgBar;
+class Window;
 
 /**
  * @brief Incremental search support used by Ctrl-F command
  */
 class ISearch: public Choices {
 public:
-  ISearch(Buffer& mlb);
+  ISearch(Window& w);
 
   const std::string& at(int idx) const;
   int size() const { return ml.length(); }
@@ -35,6 +36,8 @@ public:
   const std::vector<int>& matchesAt(int i) const;
 
 private:
+  /** current window which has this buffer */
+  Window& win;
   /** buffer where to conduct searches */
   Buffer& ml;
   /** current search string */
