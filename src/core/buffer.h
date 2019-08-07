@@ -220,7 +220,6 @@ public:
   bool isModified() const { return modified; }
   virtual int getMinStartLoc() const { return 0; }
   std::string dirModeGetFileAtLine(int line);
-  int start() const { return startLine; }
 
   /**
    * @defgroup RegionOps Operations with regions
