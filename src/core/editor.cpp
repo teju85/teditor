@@ -30,7 +30,7 @@ std::vector<KeyCmdPair> PromptYesNoKeys::All = {
 
 
 Editor::Editor(const Args& args_):
-  backbuff(), frontbuff(), currWin(1), lastfg(), lastbg(), args(args_),
+  backbuff(), frontbuff(), lastfg(), lastbg(), args(args_),
   cmBar(new CmdMsgBar), buffs(), cmBarArr(), windows(), quitEventLoop(false),
   quitPromptLoop(false), cancelPromptLoop(false), cmdMsgBarActive(false),
   copiedStr(), defcMap(), ynMap(),
@@ -236,10 +236,10 @@ void Editor::writef(const char* fmt, ...) {
   Terminal::getInstance().puts(buf);
 }
 
-int Editor::sendString(int x, int y, const std::string& fg,
-                       const std::string& bg, const char* str, int len) {
+int Editor::sendString(int x, int y, const AttrColor& fg,
+                       const AttrColor& bg, const char* str, int len) {
   DEBUG("Editor::sendString: x,y=%d,%d len=%d str='%s'\n", x, y, len, str);
-  Cell c = {0, getColor(fg), getColor(bg)};
+  Cell c = {0, fg, bg};
   int count = 0;
   while(count < len) {
     count += Utf8::char2unicode(&c.ch, str+count);
@@ -249,15 +249,15 @@ int Editor::sendString(int x, int y, const std::string& fg,
   return count;
 }
 
-int Editor::sendChar(int x, int y, const std::string& fg, const std::string& bg,
+int Editor::sendChar(int x, int y, const AttrColor& fg, const AttrColor& bg,
                      char c) {
-  Cell ce = {(Chr)c, getColor(fg), getColor(bg)};
+  Cell ce = {(Chr)c, fg, bg};
   sendCell(x, y, ce);
   return 1;
 }
 
-int Editor::sendStringf(int x, int y, const std::string& fg,
-                        const std::string& bg, const char* fmt, ...) {
+int Editor::sendStringf(int x, int y, const AttrColor& fg,
+                        const AttrColor& bg, const char* fmt, ...) {
   va_list vl;
   va_start(vl, fmt);
   std::string buf = format(fmt, vl);

@@ -29,8 +29,8 @@ public:
   void setTitle(const char* ti) { writef("%c]0;%s%c\n", '\033', ti, '\007'); }
   Buffer& getBuff() { return getWindow().getBuff(); }
   const Buffer& getBuff() const { return getWindow().getBuff(); }
-  Window& getWindow() { return *windows[currWin]; }
-  const Window& getWindow() const { return *windows[currWin]; }
+  Window& getWindow() { return windows.getWindow(); }
+  const Window& getWindow() const { return windows.getWindow(); }
   Window& getCmBarWindow() { return *windows[0]; }
   CmdMsgBar& getCmBar() { return *cmBar; }
   Buffer& getMessagesBuff();
@@ -46,11 +46,10 @@ public:
   const Strings& copyData() const { return copiedStr; }
   void setCopyData(const Strings& in) { copiedStr = in; }
 
-  int sendChar(int x, int y, const std::string& fg, const std::string& bg,
-               char c);
-  int sendString(int x, int y, const std::string& fg, const std::string& bg,
+  int sendChar(int x, int y, const AttrColor& fg, const AttrColor& bg, char c);
+  int sendString(int x, int y, const AttrColor& fg, const AttrColor& bg,
                  const char* str, int len);
-  int sendStringf(int x, int y, const std::string& fg, const std::string& bg,
+  int sendStringf(int x, int y, const AttrColor& fg, const AttrColor& bg,
                   const char* fmt, ...);
   void setColors(AttrColor fg, AttrColor bg);
   void writeCursor(int x, int y);
@@ -82,7 +81,6 @@ public:
 
 private:
   CellBuffer backbuff, frontbuff;
-  int currWin;
   AttrColor lastfg, lastbg;
   Args args;
   CmdMsgBar* cmBar;

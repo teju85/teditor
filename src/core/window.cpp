@@ -59,7 +59,7 @@ void Window::draw(Editor& ed) {
   getBuff().draw(ed, currBuff);
 }
 
-void Window::drawCursor(Editor& ed, const std::string& bg) {
+void Window::drawCursor(Editor& ed, const AttrColor& bg) {
   getBuff().resize(screenStart, screenDim);
   getBuff().drawCursor(ed, bg);
 }
@@ -97,7 +97,9 @@ void Windows::draw(Editor& ed, bool cmdMsgBarActive) {
     DEBUG("draw: cmdMsgBar.drawCursor\n");
     int i = 0;
     for(auto itr : wins) {
-      itr->drawCursor(ed, i == 0? "cursorbg" : "inactivecursorbg");
+      const auto& bg = itr->getBuff().getColor("cursorbg");
+      const auto& ibg = itr->getBuff().getColor("inactivecursorbg");
+      itr->drawCursor(ed, i == 0? bg : ibg);
       ++i;
     }
   } else {
@@ -105,17 +107,20 @@ void Windows::draw(Editor& ed, bool cmdMsgBarActive) {
     int i = 0;
     for(auto itr : wins) {
       DEBUG("draw: currWin=%d i=%d\n", currWin, i);
-      if(i != 0)
-        itr->drawCursor(ed, i == currWin? "cursorbg" : "inactivecursorbg");
+      if(i != 0) {
+        const auto& bg = itr->getBuff().getColor("cursorbg");
+        const auto& ibg = itr->getBuff().getColor("inactivecursorbg");
+        itr->drawCursor(ed, i == currWin? bg : ibg);
+      }
       ++i;
     }
   }
   DEBUG("draw: drawing borders\n");
+  const auto& fg = getWindow().getBuff().getColor("winframefg");
+  const auto& bg = getWindow().getBuff().getColor("winframebg");
   for(auto& b : borders) {
-    for(int i=b.sy;i<b.ey;++i) {
-      ed.sendChar(b.x, i, "winframebg", "winframefg",
-                  ed.getArgs().winSplitChar);
-    }
+    for(int i=b.sy;i<b.ey;++i)
+      ed.sendChar(b.x, i, bg, fg, ed.getArgs().winSplitChar);
   }
   DEBUG("draw: ended\n");
 }

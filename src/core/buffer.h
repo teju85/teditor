@@ -136,7 +136,7 @@ public:
    * @{
    */
   virtual void draw(Editor& ed, int currId);
-  void drawCursor(Editor& ed, const std::string& bg);
+  void drawCursor(Editor& ed, const AttrColor& bg);
   /** @} */
 
   /**
@@ -307,7 +307,7 @@ protected:
    */
   void drawStatusBar(Editor& ed, int currId);
   int drawLine(int y, const std::string& line, Editor& ed, int lineNum,
-               const std::string& fg, const std::string& bg);
+               const AttrColor& fg, const AttrColor& bg);
   /** @} */
 
   /**

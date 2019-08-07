@@ -34,8 +34,12 @@ void CmdMsgBar::resize(const Pos2d<int>& start, const Pos2d<int>& dim) {
 }
 
 void CmdMsgBar::draw(Editor& ed, int currId) {
+  const auto& cmfg = getColor("cmbarfg");
+  const auto& cmbg = getColor("cmbarbg");
+  const auto& cmhfg = getColor("cmbarhighlightfg");
+  const auto& cmhbg = getColor("cmbarhighlightbg");
   // first line is always the cmd prompt!
-  int y = drawLine(screenStart.y, lines[0].get(), ed, 0, "cmbarfg", "cmbarbg");
+  int y = drawLine(screenStart.y, lines[0].get(), ed, 0, cmfg, cmbg);
   if(!usingChoices()) return;
   int len = choices->size();
   int h = screenStart.y + screenDim.y;
@@ -43,8 +47,8 @@ void CmdMsgBar::draw(Editor& ed, int currId) {
   for(int idx=startLine;y<h&&idx<len;++idx) {
     const auto& line = choices->at(idx);
     if(!choices->match(line, str)) continue;
-    const char* fg = (idx == optLoc)? "cmbarhighlightfg" : "cmbarfg";
-    const char* bg = (idx == optLoc)? "cmbarhighlightbg" : "cmbarbg";
+    const auto& fg = (idx == optLoc)? cmhfg : cmfg;
+    const auto& bg = (idx == optLoc)? cmhbg : cmbg;
     y = drawLine(y, line, ed, idx, fg, bg);
   }
 }

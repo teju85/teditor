@@ -56,7 +56,7 @@ public:
    * @{
    */
   void draw(Editor& ed);
-  void drawCursor(Editor& ed, const std::string& bg);
+  void drawCursor(Editor& ed, const AttrColor& bg);
   /** @} */
 
   /** number of lines needed to draw the currrent buffer in this window */
@@ -88,6 +88,8 @@ class Windows {
 public:
   Windows();
   ~Windows();
+  Window& getWindow() { return *wins[currWin]; }
+  const Window& getWindow() const { return *wins[currWin]; }
   int currWinId() const { return currWin; }
   size_t size() const { return wins.size(); }
   void incrementCurrWin();

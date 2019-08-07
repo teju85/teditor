@@ -396,20 +396,23 @@ void Buffer::draw(Editor& ed, int currId) {
   // draw current buffer
   int h = screenStart.y + screenDim.y;
   int len = length();
+  const auto& fg = getColor("defaultfg");
+  const auto& bg = getColor("defaultbg");
   for(int y=screenStart.y,idx=startLine;y<h&&idx<len;++idx)
-    y = drawLine(y, lines[idx].get(), ed, idx, "defaultfg", "defaultbg");
+    y = drawLine(y, lines[idx].get(), ed, idx, fg, bg);
   drawStatusBar(ed, currId);
 }
 
-void Buffer::drawCursor(Editor& ed, const std::string& bg) {
+void Buffer::drawCursor(Editor& ed, const AttrColor& bg) {
   int n = cursorCount();
+  const auto& fg = getColor("cursorfg");
   for(int i=0;i<n;++i) {
     auto& culoc = locs[i];
     char c = charAt(culoc);
     auto screenloc = buffer2screen(culoc);
     DEBUG("drawCursor: i=%d x,y=%d,%d sloc=%d,%d start=%d\n",
           i, culoc.x, culoc.y, screenloc.x, screenloc.y, startLine);
-    ed.sendChar(screenloc.x, screenloc.y, "cursorfg", bg, c);
+    ed.sendChar(screenloc.x, screenloc.y, fg, bg, c);
   }
 }
 
@@ -419,27 +422,27 @@ void Buffer::drawStatusBar(Editor& ed, int currId) {
   std::string line(screenDim.x, ' ');
   int x = screenStart.x;
   int y = screenStart.y + screenDim.y;
-  ed.sendString(x, y, "statusfg", "statusbg", line.c_str(), screenDim.x);
+  const auto& fg = getColor("statusfg");
+  const auto& bg = getColor("statusbg");
+  const auto& namefg = getColor("statusnamefg");
+  ed.sendString(x, y, fg, bg, line.c_str(), screenDim.x);
   const auto& loc = locs[0];
   // modified + linenum
-  int count = ed.sendStringf(x, y, "statusfg", "statusbg",
-                             " %s [%d:%d]/%d ", modified? "**" : "  ",
-                             loc.y, loc.x, length());
+  int count = ed.sendStringf(x, y, fg, bg, " %s [%d:%d]/%d ",
+                             modified? "**" : "  ", loc.y, loc.x, length());
   // buffer name
-  count += ed.sendString(x+count, y, "statusnamefg", "statusbg",
-                         buffName.c_str(), (int)buffName.length());
+  count += ed.sendString(x+count, y, namefg, bg, buffName.c_str(),
+                         (int)buffName.length());
   // buffer counts
-  count += ed.sendStringf(x+count, y, "statusfg", "statusbg",
-                          " <%d/%d> [%s]", currId+1, ed.buffSize(),
-                          readOnly? "r-" : "rw");
+  count += ed.sendStringf(x+count, y, fg, bg, " <%d/%d> [%s]", currId+1,
+                          ed.buffSize(), readOnly? "r-" : "rw");
   // multiple cursor counts
   if(cursorCount() > 1) {
-    count += ed.sendStringf(x+count, y, "statusfg", "statusbg",
-                            " mc:%d", cursorCount());
+    count += ed.sendStringf(x+count, y, fg, bg, " mc:%d", cursorCount());
   }
   // mode
-  count += ed.sendStringf(x+count, y, "statusfg", "statusbg",
-                          " [mode=%s]", mode->name().c_str());
+  count += ed.sendStringf(x+count, y, fg, bg, " [mode=%s]",
+                          mode->name().c_str());
 }
 
 std::string Buffer::dirModeGetFileAtLine(int line) {
@@ -449,7 +452,7 @@ std::string Buffer::dirModeGetFileAtLine(int line) {
 }
 
 int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
-                     const std::string& fg, const std::string& bg) {
+                     const AttrColor& fg, const AttrColor& bg) {
   int xStart = screenStart.x;
   int wid = screenDim.x;
   int start = 0;
@@ -469,10 +472,11 @@ int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
     for(int i=0;i<count;++i) {
       // under the highlighted region
       auto c = str[start + i];
-      if(regions.isInside(lineNum, start+i, locs))
-        ed.sendChar(xStart+i, y, "highlightfg", "highlightbg", c);
-      else if(isD)
-        ed.sendChar(xStart+i, y, "dirfg", bg, c);
+      if(regions.isInside(lineNum, start+i, locs)) {
+        ed.sendChar(xStart+i, y, getColor("highlightfg"),
+                    getColor("highlightbg"), c);
+      } else if(isD)
+        ed.sendChar(xStart+i, y, getColor("dirfg"), bg, c);
       else
         ed.sendChar(xStart+i, y, fg, bg, c);
     }
