@@ -220,9 +220,9 @@ void Buffer::clear() {
   clearStack(redoStack);
 }
 
-Strings Buffer::killLine() {
+Strings Buffer::killLine(bool pushToStack) {
   OpData op;
-  op.type = OpDelete;
+  op.type = OpKillLine;
   stopRegion();
   op.before = saveCursors();
   modified = true;
@@ -245,7 +245,7 @@ Strings Buffer::killLine() {
     }
   }
   op.after = saveCursors();
-  pushNewOp(op);
+  if(pushToStack) pushNewOp(op);
   return op.strs;
 }
 ////// End: Buffer editing //////
@@ -257,7 +257,7 @@ bool Buffer::undo() {
   auto& top = undoStack.top();
   if(top.type == OpInsert) {
     applyDeleteOp(top);
-  } else if(top.type == OpDelete) {
+  } else if(top.type == OpDelete || top.type == OpKillLine) {
     applyInsertOp(top, false);
   }
   redoStack.push(top);
@@ -272,6 +272,9 @@ bool Buffer::redo() {
     applyInsertOp(top, false);
   } else if(top.type == OpDelete) {
     applyDeleteOp(top);
+  } else if(top.type == OpKillLine) {
+    restoreCursors(top.before);
+    killLine(false);
   }
   undoStack.push(top);
   redoStack.pop();

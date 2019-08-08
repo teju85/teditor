@@ -29,6 +29,9 @@ TEST_CASE("Buffer::KillLine") {
     ml.undo();
     REQUIRE(4 == ml.length());
     REQUIRE("for multi-line buffer!" == ml.at(2).get());
+    ml.redo();
+    REQUIRE(4 == ml.length());
+    REQUIRE("" == ml.at(2).get());
   }
 
   SECTION("partial-line") {
@@ -41,6 +44,9 @@ TEST_CASE("Buffer::KillLine") {
     ml.undo();
     REQUIRE(4 == ml.length());
     REQUIRE("for multi-line buffer!" == ml.at(2).get());
+    ml.redo();
+    REQUIRE(4 == ml.length());
+    REQUIRE("for " == ml.at(2).get());
   }
 
   SECTION("line-end") {
@@ -55,6 +61,9 @@ TEST_CASE("Buffer::KillLine") {
     REQUIRE(4 == ml.length());
     REQUIRE("Testing123" == ml.at(1).get());
     REQUIRE("for multi-line buffer!" == ml.at(2).get());
+    ml.redo();
+    REQUIRE(3 == ml.length());
+    REQUIRE("Testing123for multi-line buffer!" == ml.at(1).get());
   }
 }
 

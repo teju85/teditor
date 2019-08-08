@@ -66,7 +66,7 @@ public:
    */
   Strings removeRegion(const Positions& start, const Positions& end);
   /** kills lines at current cursor location onwards */
-  Strings killLine();
+  Strings killLine(bool pushToStack=true);
   /** sorts the lines in the regions */
   void sortRegions();
   /**
@@ -250,6 +250,8 @@ protected:
     OpInsert = 0,
     /** backspace operation */
     OpDelete,
+    /** deleting the rest of the line */
+    OpKillLine
   };
 
 
