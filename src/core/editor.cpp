@@ -283,6 +283,7 @@ Buffer& Editor::getMessagesBuff() {
   Buffer* buf = getBuff("*messages");
   if(buf != nullptr) return *buf;
   buf = new Buffer("*messages", true);
+  buf->makeReadOnly();
   buffs.push_back(buf);
   return *buf;
 }
