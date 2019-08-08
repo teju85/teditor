@@ -220,7 +220,7 @@ void Buffer::clear() {
   clearStack(redoStack);
 }
 
-void Buffer::killLine() {
+Strings Buffer::killLine() {
   OpData op;
   op.type = OpDelete;
   stopRegion();
@@ -246,6 +246,7 @@ void Buffer::killLine() {
   }
   op.after = saveCursors();
   pushNewOp(op);
+  return op.strs;
 }
 ////// End: Buffer editing //////
 

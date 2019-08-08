@@ -21,7 +21,9 @@ TEST_CASE("Buffer::KillLine") {
   REQUIRE(4 == ml.length());
 
   SECTION("full-line") {
-    ml.killLine();
+    auto del = ml.killLine();
+    REQUIRE(1 == del.size());
+    REQUIRE("for multi-line buffer!" == del[0]);
     REQUIRE(4 == ml.length());
     REQUIRE("" == ml.at(2).get());
     ml.undo();
@@ -31,7 +33,9 @@ TEST_CASE("Buffer::KillLine") {
 
   SECTION("partial-line") {
     for(int i=0;i<4;++i) ml.right();
-    ml.killLine();
+    auto del = ml.killLine();
+    REQUIRE(1 == del.size());
+    REQUIRE("multi-line buffer!" == del[0]);
     REQUIRE(4 == ml.length());
     REQUIRE("for " == ml.at(2).get());
     ml.undo();
@@ -42,7 +46,9 @@ TEST_CASE("Buffer::KillLine") {
   SECTION("line-end") {
     ml.up();
     ml.endOfLine();
-    ml.killLine();
+    auto del = ml.killLine();
+    REQUIRE(1 == del.size());
+    REQUIRE("\n" == del[0]);
     REQUIRE(3 == ml.length());
     REQUIRE("Testing123for multi-line buffer!" == ml.at(1).get());
     ml.undo();

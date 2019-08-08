@@ -66,7 +66,7 @@ public:
    */
   Strings removeRegion(const Positions& start, const Positions& end);
   /** kills lines at current cursor location onwards */
-  void killLine();
+  Strings killLine();
   /** sorts the lines in the regions */
   void sortRegions();
   /**
