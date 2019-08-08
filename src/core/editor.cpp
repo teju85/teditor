@@ -282,9 +282,9 @@ void Editor::clearBackBuff() {
 Buffer& Editor::getMessagesBuff() {
   Buffer* buf = getBuff("*messages");
   if(buf != nullptr) return *buf;
-  auto* buf1 = new Buffer("*messages");
-  buffs.push_back(buf1);
-  return *buf1;
+  buf = new Buffer("*messages", true);
+  buffs.push_back(buf);
+  return *buf;
 }
 
 Buffer* Editor::getBuff(const std::string& name) {

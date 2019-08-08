@@ -11,10 +11,10 @@
 
 namespace teditor {
 
-Buffer::Buffer(const std::string& name):
+Buffer::Buffer(const std::string& name, bool noUndoRedo):
   lines(), startLine(0), modified(false), readOnly(false), buffName(name),
   fileName(), dirName(), regions(), mode(Mode::createMode("text")), locs(),
-  undoStack(), redoStack() {
+  undoStack(), redoStack(), disableStack(noUndoRedo) {
   addLine();
   dirName = getpwd();
   locs.push_back(Pos2di(0, 0));
@@ -312,8 +312,10 @@ void Buffer::applyDeleteOp(OpData& op) {
 }
 
 void Buffer::pushNewOp(OpData& op) {
-  clearStack(redoStack);
-  undoStack.push(op);
+  if(!disableStack) {
+    clearStack(redoStack);
+    undoStack.push(op);
+  }
 }
 
 void Buffer::clearStack(OpStack& st) {

@@ -34,7 +34,7 @@ class Window;
 /** Class for representing text files as a vector of lines (aka Buffer) */
 class Buffer {
 public:
-  Buffer(const std::string& name="");
+  Buffer(const std::string& name="", bool noUndoRedo=false);
   virtual ~Buffer() {}
 
   /**
@@ -288,6 +288,8 @@ protected:
   OpStack undoStack;
   /** stack of operations for redo */
   OpStack redoStack;
+  /** whether to disable undo/redo stack for this buffer */
+  bool disableStack;
 
 
   void addLine() { lines.push_back(Line()); }
