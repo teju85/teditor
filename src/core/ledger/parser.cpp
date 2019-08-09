@@ -7,7 +7,7 @@ Parser::Parser(const Buffer& b):
   trans(), accts(),
   accState(), accRx("^account\\s+(\\S+)"), accDescRx("^  description\\s+(.*)"),
   accAliasRx("^  alias\\s+(\\S+)"),
-  traRx("^(\\d+/\\d+/\\d+)\\s+(.*)"), traOpRx("^  (\\S+)\\s+([0-9-.]+)") {
+  traRx("^(\\d+/\\d+/\\d+)\\s+(.*)"), traOpRx("^  (\\S+)\\s+(-?\\d+[.]?(\\d+)?)") {
   accState.clear();
   parse(b);
 }
