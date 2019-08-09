@@ -124,8 +124,8 @@ TEST_CASE("Transaction") {
   REQUIRE(8 == d.month);
   REQUIRE(9 == d.day);
   SECTION("one credit and debit") {
-    t.addCredit("a1", 10.0);
-    t.addDebit("a2", -10.0);
+    t.add("a1", 10.0);
+    t.add("a2", -10.0);
     t.updateAccounts(acc);
     REQUIRE(2 == acc.size());
     REQUIRE(1000 == acc.find("a1").rawBalance());
@@ -136,8 +136,8 @@ TEST_CASE("Transaction") {
     REQUIRE(0.0 == t.balance());
   }
   SECTION("one credit and default debit") {
-    t.addCredit("a1", 10.0);
-    t.addDebit("a2");
+    t.add("a1", 10.0);
+    t.add("a2");
     t.updateAccounts(acc);
     REQUIRE(2 == acc.size());
     REQUIRE(1000 == acc.find("a1").rawBalance());
@@ -148,9 +148,9 @@ TEST_CASE("Transaction") {
     REQUIRE(0.0 == t.balance());
   }
   SECTION("multiple credits and debit") {
-    t.addCredit("a1", 10.0);
-    t.addCredit("a2", 12.1);
-    t.addDebit("a3", -22.1);
+    t.add("a1", 10.0);
+    t.add("a2", 12.1);
+    t.add("a3", -22.1);
     t.updateAccounts(acc);
     REQUIRE(3 == acc.size());
     REQUIRE(1000 == acc.find("a1").rawBalance());
@@ -163,9 +163,9 @@ TEST_CASE("Transaction") {
     REQUIRE(0.0 == t.balance());
   }
   SECTION("multiple credits and default debit") {
-    t.addCredit("a1", 10.0);
-    t.addCredit("a2", 12.1);
-    t.addDebit("a3");
+    t.add("a1", 10.0);
+    t.add("a2", 12.1);
+    t.add("a3");
     t.updateAccounts(acc);
     REQUIRE(3 == acc.size());
     REQUIRE(1000 == acc.find("a1").rawBalance());
@@ -178,10 +178,10 @@ TEST_CASE("Transaction") {
     REQUIRE(0.0 == t.balance());
   }
   SECTION("multiple credits and multiple debits") {
-    t.addCredit("a1", 10.0);
-    t.addCredit("a2", 12.1);
-    t.addDebit("a3", -12.0);
-    t.addDebit("a4", -10.1);
+    t.add("a1", 10.0);
+    t.add("a2", 12.1);
+    t.add("a3", -12.0);
+    t.add("a4", -10.1);
     t.updateAccounts(acc);
     REQUIRE(4 == acc.size());
     REQUIRE(1000 == acc.find("a1").rawBalance());
@@ -196,10 +196,10 @@ TEST_CASE("Transaction") {
     REQUIRE(0.0 == t.balance());
   }
   SECTION("incorrect") {
-    t.addCredit("a1", 10.0);
-    t.addCredit("a2", 12.1);
-    t.addDebit("a3", -10.0);
-    t.addDebit("a4", -10.1);
+    t.add("a1", 10.0);
+    t.add("a2", 12.1);
+    t.add("a3", -10.0);
+    t.add("a4", -10.1);
     t.updateAccounts(acc);
     REQUIRE(4 == acc.size());
     REQUIRE(1000 == acc.find("a1").rawBalance());

@@ -1,0 +1,51 @@
+# Glossary:
+#   . Expenses:     where money goes
+#   . Assets:       where money sits
+#   . Income:       where money comes from
+#   . Liabilities:  money you owe
+#   . Equity:       the real value of your property
+
+
+# frequent accounts
+account Assets:Cash
+  description Cash in-hand
+  alias       Cash
+
+account Assets:Bank1:JointSB
+  description Our joint SB acount
+  alias       Bank1
+# no space between successive account definitions is also valid!
+account Assets:Bank2:SB
+  description SB acount used for purchases
+  alias       Bank2
+  alias       DefaultBank
+
+
+2018/8/4 Opening
+  Cash                                   1030
+  Bank1                                  4089.64
+  Bank2                                 10000
+  Assets:Investments:PF                100000
+  Liabilities:Bank2:CreditCard         -12325.94
+  Equity:OpeningBalances
+
+2018/8/5 Gas Station
+  Expenses:Auto:TireRepair                700
+  Cash
+
+2018/8/6 Hospital
+  Expenses:Medical:BabyVaccination       8594
+  Bank1
+
+2018/9/7 Reliance Fresh
+  Expenses:Food:Groceries                1872.09
+  Expenses:Food:DryFruits                1031
+  Bank1
+
+2018/9/8 LIC
+  Assets:Investments:LIC                13600.01
+  Bank1
+
+2018/9/9 Amazon
+  Expenses:Books:Wife                    5550.5
+  Liabilities:Bank2:CreditCard

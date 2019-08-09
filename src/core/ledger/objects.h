@@ -90,26 +90,21 @@ typedef std::vector<AccInfo> AccountsInfo;
 class Transaction {
 public:
   Transaction(const std::string& dateStr, const std::string& n):
-    nam(n), dat(dateStr), credits(), debits() {}
+    nam(n), dat(dateStr), accts() {}
 
-  void addCredit(const std::string& acct, double val) {
-    credits.push_back(AccInfo(acct, int64_t(val * 100.0)));
-  }
-
-  void addDebit(const std::string& acct, double val) {
-    debits.push_back(AccInfo(acct, int64_t(val * 100.0)));
+  void add(const std::string& acct, double val) {
+    accts.push_back(AccInfo(acct, int64_t(val * 100.0)));
   }
 
   /** default debit account which is the remaining of all the other credits */
-  void addDebit(const std::string& acct) {
+  void add(const std::string& acct) {
     int64_t val = 0;
-    for(const auto& c : credits) val += c.second;
-    debits.push_back(AccInfo(acct, -val));
+    for(const auto& a : accts) val += a.second;
+    accts.push_back(AccInfo(acct, -val));
   }
 
   void updateAccounts(Accounts& acc) {
-    for(const auto& c : credits) acc.find(c.first) += c.second;
-    for(const auto& d : debits) acc.find(d.first) += d.second;
+    for(const auto& a : accts) acc.find(a.first) += a.second;
   }
 
   const std::string& name() const { return nam; }
@@ -118,8 +113,7 @@ public:
   /** total of all credits/debits. On a correct transaction, this must be 0 */
   int64_t rawBalance() const {
     int64_t val = 0;
-    for(const auto& c : credits) val += c.second;
-    for(const auto& d : debits) val += d.second;
+    for(const auto& a : accts) val += a.second;
     return val;
   }
 
@@ -128,8 +122,10 @@ public:
 private:
   std::string nam;
   Date dat;
-  AccountsInfo credits, debits;
+  AccountsInfo accts;
 };
+
+typedef std::vector<Transaction> Transactions;
 
 } // end namespace ledger
 } // end namespace teditor
