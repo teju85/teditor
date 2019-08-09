@@ -147,6 +147,13 @@ float str2real(const std::string& str) {
   return out;
 }
 
+double str2double(const std::string& str) {
+  std::stringstream ss(str);
+  double out = -1.0;
+  ss >> out;
+  return out;
+}
+
 std::string getpwd() {
   char cwd[2048];
   (void)getcwd(cwd, 2048);

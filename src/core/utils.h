@@ -85,6 +85,7 @@ Strings split(const std::string &s, char delim);
 std::string num2str(int num);
 int str2num(const std::string& str);
 float str2real(const std::string& str);
+double str2double(const std::string& str);
 
 std::string getpwd();
 std::string rel2abs(const std::string& pwd, const std::string& rel);

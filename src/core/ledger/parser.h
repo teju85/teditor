@@ -32,6 +32,7 @@ private:
   Accounts accts;
   AccState accState;
   Pcre accRx, accDescRx, accAliasRx;
+  Pcre traRx, traOpRx;
 
   void parse(const Buffer& b);
 };

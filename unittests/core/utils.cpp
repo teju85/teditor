@@ -110,6 +110,18 @@ TEST_CASE("Utils::Str2Num") {
     REQUIRE(0 == str2num("fdsr324"));
 }
 
+TEST_CASE("Utils::Str2Real") {
+    REQUIRE(123.f == str2real("123."));
+    REQUIRE(-123.f == str2real("-123"));
+    REQUIRE(0 == str2real("fdsr324"));
+}
+
+TEST_CASE("Utils::Str2Double") {
+    REQUIRE(123.0 == str2double("123."));
+    REQUIRE(-123.0 == str2double("-123"));
+    REQUIRE(0 == str2double("fdsr324"));
+}
+
 TEST_CASE("Utils::Split") {
     std::vector<std::string> vec = split("abc:def:ghi", ':');
     REQUIRE(3U == vec.size());

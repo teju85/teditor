@@ -6,7 +6,8 @@ namespace ledger {
 Parser::Parser(const Buffer& b):
   trans(), accts(),
   accState(), accRx("^account\\s+(\\S+)"), accDescRx("^  description\\s+(.*)"),
-  accAliasRx("^  alias\\s+(\\S+)") {
+  accAliasRx("^  alias\\s+(\\S+)"),
+  traRx("^(\\d+/\\d+/\\d+)\\s+(.*)"), traOpRx("^  (\\S+)\\s+([0-9-.]+)") {
   accState.clear();
   parse(b);
 }
@@ -39,6 +40,22 @@ void Parser::parse(const Buffer& b) {
       }
       continue;
     } // end account definition
+    // transactions
+    auto mTra = traRx.find(str);
+    if(!mTra.empty()) {
+      Transaction tr(mTra.get(1), mTra.get(2));
+      while(true) {
+        ++line;
+        const auto& s = b.at(line).get();
+        auto m = traOpRx.find(s);
+        if(m.empty()) {
+          --line;
+          trans.push_back(tr);
+          break;
+        }
+        tr.add(m.get(1), str2double(m.get(2)));
+      }
+    } // end transactions
   }
 }
 
