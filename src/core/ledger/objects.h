@@ -28,7 +28,8 @@ public:
 
   const std::string& name() const { return nam; }
   const std::string& desc() const { return descr; }
-  int64_t balance() const { return bal; }
+  int64_t rawBalance() const { return bal; }
+  double balance() const { return rawBalance() / 100.0; }
 
   bool isAnAlias(const std::string& a) const {
     return alias.find(a) != alias.end();
@@ -115,12 +116,14 @@ public:
   const Date& date() const { return dat; }
 
   /** total of all credits/debits. On a correct transaction, this must be 0 */
-  int64_t balance() const {
+  int64_t rawBalance() const {
     int64_t val = 0;
     for(const auto& c : credits) val += c.second;
     for(const auto& d : debits) val += d.second;
     return val;
   }
+
+  double balance() const { return rawBalance() / 100.0; }
 
 private:
   std::string nam;

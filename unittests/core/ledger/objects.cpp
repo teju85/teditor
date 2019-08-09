@@ -7,7 +7,8 @@ namespace ledger {
 
 TEST_CASE("Account::onlyName") {
   Account acc("Acc");
-  REQUIRE(0 == acc.balance());
+  REQUIRE(0.0 == acc.balance());
+  REQUIRE(0 == acc.rawBalance());
   REQUIRE("" == acc.desc());
   REQUIRE("Acc" == acc.name());
   REQUIRE(!acc.isAnAlias("alias"));
@@ -15,16 +16,20 @@ TEST_CASE("Account::onlyName") {
   REQUIRE(acc.isAnAlias("alias"));
   REQUIRE(!acc.isAnAlias("anotherAlias"));
   acc += 1.0;
-  REQUIRE(100 == acc.balance());
+  REQUIRE(100 == acc.rawBalance());
+  REQUIRE(1.0 == acc.balance());
   acc += -10.0;
-  REQUIRE(-900 == acc.balance());
+  REQUIRE(-900 == acc.rawBalance());
+  REQUIRE(-9.0 == acc.balance());
   acc += 0.2;
-  REQUIRE(-880 == acc.balance());
+  REQUIRE(-880 == acc.rawBalance());
+  REQUIRE(-8.80== acc.balance());
 }
 
 TEST_CASE("Account::name-and-desc") {
   Account acc("Acc", "Description");
-  REQUIRE(0 == acc.balance());
+  REQUIRE(0 == acc.rawBalance());
+  REQUIRE(0.0 == acc.balance());
   REQUIRE("Description" == acc.desc());
   REQUIRE("Acc" == acc.name());
   REQUIRE(!acc.isAnAlias("alias"));
@@ -36,7 +41,8 @@ TEST_CASE("Account::name-and-desc") {
 TEST_CASE("Account::name-and-desc-and-aliases") {
   Aliases as = {"alias", "alias1"};
   Account acc("Acc", "Description", as);
-  REQUIRE(0 == acc.balance());
+  REQUIRE(0 == acc.rawBalance());
+  REQUIRE(0.0 == acc.balance());
   REQUIRE("Description" == acc.desc());
   REQUIRE("Acc" == acc.name());
   REQUIRE(acc.isAnAlias("alias"));
@@ -56,13 +62,15 @@ TEST_CASE("Accounts") {
   auto& a = acc.find("a1");
   REQUIRE("a1" == a.name());
   a += 2.0;
-  REQUIRE(200 == acc.find("a1").balance());
+  REQUIRE(200 == acc.find("a1").rawBalance());
+  REQUIRE(2.0 == acc.find("a1").balance());
   REQUIRE(2 == acc.size());
   // new account
   auto& b = acc.find("a3");
   REQUIRE(3 == acc.size());
   REQUIRE("a3" == b.name());
-  REQUIRE(0 == b.balance());
+  REQUIRE(0 == b.rawBalance());
+  REQUIRE(0.0 == b.balance());
 }
 
 TEST_CASE("Date") {
@@ -120,18 +128,24 @@ TEST_CASE("Transaction") {
     t.addDebit("a2", -10.0);
     t.updateAccounts(acc);
     REQUIRE(2 == acc.size());
-    REQUIRE(1000 == acc.find("a1").balance());
-    REQUIRE(-1000 == acc.find("a2").balance());
-    REQUIRE(0 == t.balance());
+    REQUIRE(1000 == acc.find("a1").rawBalance());
+    REQUIRE(10.0 == acc.find("a1").balance());
+    REQUIRE(-1000 == acc.find("a2").rawBalance());
+    REQUIRE(-10.0 == acc.find("a2").balance());
+    REQUIRE(0 == t.rawBalance());
+    REQUIRE(0.0 == t.balance());
   }
   SECTION("one credit and default debit") {
     t.addCredit("a1", 10.0);
     t.addDebit("a2");
     t.updateAccounts(acc);
     REQUIRE(2 == acc.size());
-    REQUIRE(1000 == acc.find("a1").balance());
-    REQUIRE(-1000 == acc.find("a2").balance());
-    REQUIRE(0 == t.balance());
+    REQUIRE(1000 == acc.find("a1").rawBalance());
+    REQUIRE(10.0 == acc.find("a1").balance());
+    REQUIRE(-1000 == acc.find("a2").rawBalance());
+    REQUIRE(-10.0 == acc.find("a2").balance());
+    REQUIRE(0 == t.rawBalance());
+    REQUIRE(0.0 == t.balance());
   }
   SECTION("multiple credits and debit") {
     t.addCredit("a1", 10.0);
@@ -139,10 +153,14 @@ TEST_CASE("Transaction") {
     t.addDebit("a3", -22.1);
     t.updateAccounts(acc);
     REQUIRE(3 == acc.size());
-    REQUIRE(1000 == acc.find("a1").balance());
-    REQUIRE(1210 == acc.find("a2").balance());
-    REQUIRE(-2210 == acc.find("a3").balance());
-    REQUIRE(0 == t.balance());
+    REQUIRE(1000 == acc.find("a1").rawBalance());
+    REQUIRE(10.0 == acc.find("a1").balance());
+    REQUIRE(1210 == acc.find("a2").rawBalance());
+    REQUIRE(12.1 == acc.find("a2").balance());
+    REQUIRE(-2210 == acc.find("a3").rawBalance());
+    REQUIRE(-22.1 == acc.find("a3").balance());
+    REQUIRE(0 == t.rawBalance());
+    REQUIRE(0.0 == t.balance());
   }
   SECTION("multiple credits and default debit") {
     t.addCredit("a1", 10.0);
@@ -150,10 +168,14 @@ TEST_CASE("Transaction") {
     t.addDebit("a3");
     t.updateAccounts(acc);
     REQUIRE(3 == acc.size());
-    REQUIRE(1000 == acc.find("a1").balance());
-    REQUIRE(1210 == acc.find("a2").balance());
-    REQUIRE(-2210 == acc.find("a3").balance());
-    REQUIRE(0 == t.balance());
+    REQUIRE(1000 == acc.find("a1").rawBalance());
+    REQUIRE(10.0 == acc.find("a1").balance());
+    REQUIRE(1210 == acc.find("a2").rawBalance());
+    REQUIRE(12.1 == acc.find("a2").balance());
+    REQUIRE(-2210 == acc.find("a3").rawBalance());
+    REQUIRE(-22.1 == acc.find("a3").balance());
+    REQUIRE(0 == t.rawBalance());
+    REQUIRE(0.0 == t.balance());
   }
   SECTION("multiple credits and multiple debits") {
     t.addCredit("a1", 10.0);
@@ -162,11 +184,16 @@ TEST_CASE("Transaction") {
     t.addDebit("a4", -10.1);
     t.updateAccounts(acc);
     REQUIRE(4 == acc.size());
-    REQUIRE(1000 == acc.find("a1").balance());
-    REQUIRE(1210 == acc.find("a2").balance());
-    REQUIRE(-1200 == acc.find("a3").balance());
-    REQUIRE(-1010 == acc.find("a4").balance());
-    REQUIRE(0 == t.balance());
+    REQUIRE(1000 == acc.find("a1").rawBalance());
+    REQUIRE(10.0 == acc.find("a1").balance());
+    REQUIRE(1210 == acc.find("a2").rawBalance());
+    REQUIRE(12.1 == acc.find("a2").balance());
+    REQUIRE(-1200 == acc.find("a3").rawBalance());
+    REQUIRE(-12.0 == acc.find("a3").balance());
+    REQUIRE(-1010 == acc.find("a4").rawBalance());
+    REQUIRE(-10.1 == acc.find("a4").balance());
+    REQUIRE(0 == t.rawBalance());
+    REQUIRE(0.0 == t.balance());
   }
   SECTION("incorrect") {
     t.addCredit("a1", 10.0);
@@ -175,11 +202,16 @@ TEST_CASE("Transaction") {
     t.addDebit("a4", -10.1);
     t.updateAccounts(acc);
     REQUIRE(4 == acc.size());
-    REQUIRE(1000 == acc.find("a1").balance());
-    REQUIRE(1210 == acc.find("a2").balance());
-    REQUIRE(-1000 == acc.find("a3").balance());
-    REQUIRE(-1010 == acc.find("a4").balance());
-    REQUIRE(200 == t.balance());
+    REQUIRE(1000 == acc.find("a1").rawBalance());
+    REQUIRE(10.0 == acc.find("a1").balance());
+    REQUIRE(1210 == acc.find("a2").rawBalance());
+    REQUIRE(12.1 == acc.find("a2").balance());
+    REQUIRE(-1000 == acc.find("a3").rawBalance());
+    REQUIRE(-10.0 == acc.find("a3").balance());
+    REQUIRE(-1010 == acc.find("a4").rawBalance());
+    REQUIRE(-10.1 == acc.find("a4").balance());
+    REQUIRE(200 == t.rawBalance());
+    REQUIRE(2.0 == t.balance());
   }
 }
 
