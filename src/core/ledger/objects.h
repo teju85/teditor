@@ -52,8 +52,11 @@ private:
 class Accounts: public std::vector<Account> {
 public:
   Account& find(const std::string& a) {
-    for(size_t i=0;i<size();++i)
-      if(at(i).name() == a) return at(i);
+    for(size_t i=0;i<size();++i) {
+      auto& itr = at(i);
+      if(itr.name() == a) return itr;
+      if(itr.isAnAlias(a)) return itr;
+    }
     push_back(Account(a));
     return back();
   }

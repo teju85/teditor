@@ -7,11 +7,13 @@
 namespace teditor {
 namespace ledger {
 
-/** Helper class to parse the ledger from a buffer */
+/**
+ * Poor man's ledger parser from a buffer!
+ * Currently it is just a hacky collection of Pcre2 regex's
+ */
 class Parser {
 public:
   Parser(const Buffer& b);
-  ~Parser();
 
   const Transactions& transactions() const { return trans; }
   const Accounts& accounts() const { return accts; }
@@ -32,7 +34,7 @@ private:
   Accounts accts;
   AccState accState;
   Pcre accRx, accDescRx, accAliasRx;
-  Pcre traRx, traOpRx;
+  Pcre traRx, traOpRx, traOpDefRx;
 
   void parse(const Buffer& b);
 };
