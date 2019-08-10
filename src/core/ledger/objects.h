@@ -80,6 +80,22 @@ struct Date {
     } else return day <= 30;
   }
 
+  bool operator<(const Date& d) const {
+    if(year < d.year) return true;
+    if(year > d.year) return false;
+    if(month < d.month) return true;
+    if(month > d.month) return false;
+    return day < d.day;
+  }
+
+  bool operator==(const Date& d) const {
+    return year == d.year && month == d.month && day == d.day;
+  }
+
+  bool operator<=(const Date& d) const {
+    return *this < d || *this == d;
+  }
+
   int year, month, day;
 };
 

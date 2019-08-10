@@ -20,6 +20,9 @@ public:
    */
   Accounts topAccounts() const;
 
+  /** earliest and latest transaction dates */
+  void minmaxDates(Date& min, Date& max) const;
+
   void showTopAccounts(Buffer& buf) const;
 
 private:

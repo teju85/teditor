@@ -114,6 +114,60 @@ TEST_CASE("Date") {
   }
 }
 
+TEST_CASE("Date::<") {
+  Date d1("2019/08/09");
+  Date d2("2019/08/09");
+  Date d3("2019/08/08");
+  Date d4("2019/08/10");
+  Date d5("2019/07/09");
+  Date d6("2019/09/09");
+  Date d7("2018/08/09");
+  Date d8("2020/08/09");
+  REQUIRE(!(d1 < d2));
+  REQUIRE(!(d1 < d3));
+  REQUIRE(d1 < d4);
+  REQUIRE(!(d1 < d5));
+  REQUIRE(d1 < d6);
+  REQUIRE(!(d1 < d7));
+  REQUIRE(d1 < d8);
+}
+
+TEST_CASE("Date::==") {
+  Date d1("2019/08/09");
+  Date d2("2019/08/09");
+  Date d3("2019/08/08");
+  Date d4("2019/08/10");
+  Date d5("2019/07/09");
+  Date d6("2019/09/09");
+  Date d7("2018/08/09");
+  Date d8("2020/08/09");
+  REQUIRE(d1 == d2);
+  REQUIRE(!(d1 == d3));
+  REQUIRE(!(d1 == d4));
+  REQUIRE(!(d1 == d5));
+  REQUIRE(!(d1 == d6));
+  REQUIRE(!(d1 == d7));
+  REQUIRE(!(d1 == d8));
+}
+
+TEST_CASE("Date::<=") {
+  Date d1("2019/08/09");
+  Date d2("2019/08/09");
+  Date d3("2019/08/08");
+  Date d4("2019/08/10");
+  Date d5("2019/07/09");
+  Date d6("2019/09/09");
+  Date d7("2018/08/09");
+  Date d8("2020/08/09");
+  REQUIRE(d1 <= d2);
+  REQUIRE(!(d1 <= d3));
+  REQUIRE(d1 <= d4);
+  REQUIRE(!(d1 <= d5));
+  REQUIRE(d1 <= d6);
+  REQUIRE(!(d1 <= d7));
+  REQUIRE(d1 <= d8);
+}
+
 TEST_CASE("Transaction") {
   Accounts acc;
   REQUIRE(0 == acc.size());
