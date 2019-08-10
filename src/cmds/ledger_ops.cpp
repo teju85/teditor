@@ -10,16 +10,14 @@ namespace ops {
 
 DEF_CMD(
   Ledger, "ledger", DEF_OP() {
-    ed.getLedgerBuff();
+    auto& buf = ed.getLedgerBuff();
+    Buffer tmp;
+    tmp.load(ed.getArgs().getLedgerFile());
+    Evaluate eval(tmp);
+    eval.showTopAccounts(buf);
+    ed.switchToBuff("*ledger");
   },
   DEF_HELP() { return "Starts ledger-mode buffer, if not already done."; });
-
-DEF_CMD(
-  Reload, "ledger-reload", DEF_OP() {
-    auto& buf = ed.getLedgerBuff();
-    buf.clear();
-  },
-  DEF_HELP() { return "Recomputes ledger data and refreshes the buffer."; });
 
 } // end namespace ops
 } // end namespace ledger

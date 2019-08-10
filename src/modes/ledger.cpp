@@ -26,7 +26,7 @@ REGISTER_MODE(LedgerMode, "ledger");
 
 
 std::vector<KeyCmdPair> LedgerMode::Keys::All = {
-  {"F5", "ledger-reload"},
+  {"F5", "ledger"},
 };
 
 std::vector<NameColorPair> LedgerMode::Colors::All = {

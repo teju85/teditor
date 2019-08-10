@@ -20,6 +20,8 @@ public:
    */
   Accounts topAccounts() const;
 
+  void showTopAccounts(Buffer& buf) const;
+
 private:
   Parser p;
 };
