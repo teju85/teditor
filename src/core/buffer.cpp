@@ -359,7 +359,7 @@ std::string Buffer::regionAsStr(const Pos2di& start, const Pos2di& end) const {
 
 void Buffer::load(const std::string& file, int line) {
   isDir(file.c_str())? loadDir(file) : loadFile(file, line);
-  mode = Mode::createMode(Mode::inferMode(file));
+  setMode(Mode::createMode(Mode::inferMode(file)));
 }
 
 void Buffer::reload() {
@@ -368,7 +368,7 @@ void Buffer::reload() {
 }
 
 void Buffer::makeReadOnly() {
-  mode = Mode::createMode("ro");
+  setMode(Mode::createMode("ro"));
   modified = false;
   clearStack(undoStack);
   clearStack(redoStack);

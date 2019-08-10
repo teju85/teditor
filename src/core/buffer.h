@@ -242,6 +242,7 @@ public:
   const std::string& getWord() const { return mode->word(); }
   const std::string& modeName() const { return mode->name(); }
   void makeReadOnly();
+  void setMode(ModePtr m) { mode = m; }
 
 protected:
   /** the operation type */

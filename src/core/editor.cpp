@@ -288,6 +288,15 @@ Buffer& Editor::getMessagesBuff() {
   return *buf;
 }
 
+Buffer& Editor::getLedgerBuff() {
+  Buffer* buf = getBuff("*ledger");
+  if(buf != nullptr) return *buf;
+  buf = new Buffer("*ledger", true);
+  buf->setMode(Mode::createMode("ledger"));
+  buffs.push_back(buf);
+  return *buf;
+}
+
 Buffer* Editor::getBuff(const std::string& name) {
   for(auto itr : buffs)
     if(itr->bufferName() == name) return itr;
