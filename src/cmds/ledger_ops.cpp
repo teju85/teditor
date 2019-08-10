@@ -1,10 +1,12 @@
 #include "core/editor.h"
 #include "core/command.h"
 #include "core/isearch.h"
+#include "core/ledger/evaluate.h"
 
 
 namespace teditor {
-namespace LedgerOps {
+namespace ledger {
+namespace ops {
 
 DEF_CMD(
   Ledger, "ledger", DEF_OP() {
@@ -19,5 +21,6 @@ DEF_CMD(
   },
   DEF_HELP() { return "Recomputes ledger data and refreshes the buffer."; });
 
-} // end namespace LedgerOps
+} // end namespace ops
+} // end namespace ledger
 } // end namespace teditor
