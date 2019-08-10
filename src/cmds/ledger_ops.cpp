@@ -19,6 +19,17 @@ DEF_CMD(
   },
   DEF_HELP() { return "Starts ledger-mode buffer, if not already done."; });
 
+DEF_CMD(
+  LedgerAll, "ledger-all", DEF_OP() {
+    auto& buf = ed.getLedgerBuff();
+    Buffer tmp;
+    tmp.load(ed.getArgs().getLedgerFile());
+    Evaluate eval(tmp);
+    eval.showAllAccounts(buf);
+    ed.switchToBuff("*ledger");
+  },
+  DEF_HELP() { return "Shows all account transaction summary."; });
+
 } // end namespace ops
 } // end namespace ledger
 } // end namespace teditor

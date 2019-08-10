@@ -126,6 +126,16 @@ Strings split(const std::string &str, char delim) {
   return res;
 }
 
+std::string join(const Strings &s, char delim, int start, int end) {
+  std::string ret;
+  if(end < 0) end = (int)s.size();
+  for(int i=start;i<end;++i) {
+    if(i > start) ret += delim;
+    ret += s[i];
+  }
+  return ret;
+}
+
 std::string num2str(int num) {
   std::stringstream ss;
   ss << num;

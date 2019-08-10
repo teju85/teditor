@@ -147,6 +147,12 @@ TEST_CASE("Utils::Split") {
     REQUIRE("def" == vec[2]);
 }
 
+TEST_CASE("Utils::Join") {
+  auto tokens = split("abc:def:ghi", ':');
+  REQUIRE("abc.def.ghi" == join(tokens, '.'));
+  REQUIRE("def.ghi" == join(tokens, '.', 1));
+}
+
 TEST_CASE("Utils::isAbs") {
   REQUIRE(!isAbs(""));
   REQUIRE(!isAbs("test"));

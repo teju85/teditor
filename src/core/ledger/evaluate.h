@@ -20,10 +20,14 @@ public:
    */
   Accounts topAccounts() const;
 
+  /** Computes balances of the top-level accounts as well as all accounts */
+  Accounts allAccounts() const;
+
   /** earliest and latest transaction dates */
   void minmaxDates(Date& min, Date& max) const;
 
   void showTopAccounts(Buffer& buf) const;
+  void showAllAccounts(Buffer& buf) const;
 
 private:
   Parser p;

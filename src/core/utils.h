@@ -81,6 +81,7 @@ Strings slurpToArr(const std::string& file);
 
 bool startsWith(const char* s1, int len, const char* s2);
 Strings split(const std::string &s, char delim);
+std::string join(const Strings& s, char delim, int start=0, int end=-1);
 
 std::string num2str(int num);
 int str2num(const std::string& str);
