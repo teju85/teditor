@@ -160,6 +160,10 @@ std::string getpwd() {
   return std::string(cwd);
 }
 
+bool isAbs(const std::string& file) {
+  return !file.empty() && file[0] == '/';
+}
+
 std::string rel2abs(const std::string& pwd, const std::string& rel) {
   char abs[2048];
   auto currCwd = getpwd();

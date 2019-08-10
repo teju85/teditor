@@ -147,6 +147,12 @@ TEST_CASE("Utils::Split") {
     REQUIRE("def" == vec[2]);
 }
 
+TEST_CASE("Utils::isAbs") {
+  REQUIRE(!isAbs(""));
+  REQUIRE(!isAbs("test"));
+  REQUIRE(isAbs("/home"));
+}
+
 TEST_CASE("Utils::Rel2Abs") {
     std::string pwd = getpwd();
     REQUIRE(pwd+"/README.org" == rel2abs(".", "README.org"));

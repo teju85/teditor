@@ -8,15 +8,14 @@ namespace LedgerOps {
 
 DEF_CMD(
   Ledger, "ledger", DEF_OP() {
-    ///@todo
-    //auto& buf = ed.getLedgerBuff();
+    ed.getLedgerBuff();
   },
   DEF_HELP() { return "Starts ledger-mode buffer, if not already done."; });
 
 DEF_CMD(
   Reload, "ledger-reload", DEF_OP() {
-    ///@todo
-    //auto& buf = ed.getLedgerBuff();
+    auto& buf = ed.getLedgerBuff();
+    buf.clear();
   },
   DEF_HELP() { return "Recomputes ledger data and refreshes the buffer."; });
 

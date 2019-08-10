@@ -88,6 +88,7 @@ float str2real(const std::string& str);
 double str2double(const std::string& str);
 
 std::string getpwd();
+bool isAbs(const std::string& file);
 std::string rel2abs(const std::string& pwd, const std::string& rel);
 std::string basename(const std::string& file);
 std::string dirname(const std::string& file);

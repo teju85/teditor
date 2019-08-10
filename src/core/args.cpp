@@ -10,11 +10,16 @@ std::string Args::wrtHomeFolder(const std::string& s) const {
   return homeFolder + '/' + s;
 }
 
+std::string Args::getFile(const std::string& f) const {
+  if(isAbs(f)) return f;
+  return wrtHomeFolder(f);
+}
+
 Args::Args(int argc, char** argv):
   quitAfterLoad(false), ttyFile("/dev/tty"), homeFolder("$HOME/.teditor"),
-  orgNotesDir("/cygdrive/c/Devtech/notes"), files(), logLevel(-1),
-  cmdMsgBarHeight(1), cmdMsgBarMultiHeight(8), pageScrollJump(0.75f),
-  maxFileHistory(20), tabSpaces(4), histFile("history"),
+  ledgerFile("ledger.lg"), orgNotesDir("/cygdrive/c/Devtech/notes"), files(),
+  logLevel(-1), cmdMsgBarHeight(1), cmdMsgBarMultiHeight(8),
+  pageScrollJump(0.75f), maxFileHistory(20), tabSpaces(4), histFile("history"),
   browserCmd("cygstart firefox -private-window"), winSplitChar('|') {
   for(int i=1;i<argc;++i) {
     if(!strcmp(argv[i], "-Q")) {
@@ -31,6 +36,10 @@ Args::Args(int argc, char** argv):
       ++i;
       ASSERT(i < argc, "'-home' option expects an argument!");
       homeFolder = argv[i];
+    } else if(!strcmp(argv[i], "-ledger-file")) {
+      ++i;
+      ASSERT(i < argc, "'-ledger-file' expects an argument!");
+      ledgerFile = argv[i];
     } else if(!strcmp(argv[i], "-org-notes-dir")) {
       ++i;
       ASSERT(i < argc, "'-org-notes-dir' option expects an argument!");
