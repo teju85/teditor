@@ -9,6 +9,7 @@
 #include <vector>
 #include <unordered_map>
 #include <signal.h>
+#include "file_utils.h"
 // Note:
 //   Most stuff here related to terminfo usage is shamelessly borrowed from
 // github.com/nsf/termbox. (Thanks!)

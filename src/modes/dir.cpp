@@ -1,5 +1,6 @@
 #include "readonly.h"
 #include "core/buffer.h"
+#include "core/file_utils.h"
 
 
 namespace teditor {

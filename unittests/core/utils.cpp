@@ -1,4 +1,5 @@
 #include "core/utils.h"
+#include "core/file_utils.h"
 #include <sys/time.h>
 #include <time.h>
 #include "catch.hpp"

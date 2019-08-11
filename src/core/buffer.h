@@ -12,7 +12,7 @@
 #include "pos2d.h"
 #include <stack>
 #include <vector>
-
+#include <set>
 
 namespace teditor {
 
