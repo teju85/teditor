@@ -42,9 +42,7 @@ void makeDir(const std::string& d) {
   ASSERT(ret >= 0, "makeDir: '%s' failed!", d.c_str());
 }
 
-bool isRemote(const char* f) {
-  return !strncmp(f, "/ssh:", 5);
-}
+bool isRemote(const char* f) { return !strncmp(f, "/ssh:", 5); }
 
 std::string slurp(const char* file) {
   FILE *f = fopen(file, "rb");
@@ -82,9 +80,7 @@ std::string getpwd() {
   return std::string(cwd);
 }
 
-bool isAbs(const std::string& file) {
-  return !file.empty() && file[0] == '/';
-}
+bool isAbs(const std::string& file) { return !file.empty() && file[0] == '/'; }
 
 std::string rel2abs(const std::string& pwd, const std::string& rel) {
   char abs[2048];
