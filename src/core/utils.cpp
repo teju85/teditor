@@ -123,31 +123,49 @@ CmdStatus check_output(const std::string& cmd) {
     return ret;
   }
   const int MaxBuff = 8192;
-  int pfd[2];
-  int status = pipe(pfd);
+  int out_fd[2], err_fd[2];
+  int status = pipe(out_fd);
   ASSERT(status >= 0, "Pipe failed for command '%s' [status=%d]!",
          cmd.c_str(), status);
+  status = pipe(err_fd);
+  if(status < 0) {
+    close(out_fd[0]);
+    close(out_fd[1]);
+    ASSERT(false, "Pipe failed for command '%s' [status=%d]!",
+           cmd.c_str(), status);
+  }
   int pid = fork();
   if(pid < 0) {
     ASSERT(false, "Fork failed for command '%s'!", cmd.c_str());
+    close(out_fd[0]);
+    close(out_fd[1]);
+    close(err_fd[0]);
+    close(err_fd[1]);
   } else if(pid == 0) {
     // child
-    close(pfd[0]);
-    dup2(pfd[1], STDOUT_FILENO);
-    dup2(pfd[1], STDERR_FILENO);
+    close(out_fd[0]);
+    close(err_fd[0]);
+    dup2(out_fd[1], STDOUT_FILENO);
+    dup2(err_fd[1], STDERR_FILENO);
     execlp("/bin/bash", "-i", "-c", cmd.c_str(), NULL);
     exit(-1);
   } else {
     // parent
-    close(pfd[1]);
+    close(out_fd[1]);
+    close(err_fd[1]);
   }
   char buf[MaxBuff];
   int nread;
-  while((nread = read(pfd[0], buf, MaxBuff)) > 0)
+  ret.output.clear();
+  while((nread = read(out_fd[0], buf, MaxBuff)) > 0)
     ret.output += std::string(buf, nread);
+  ret.error.clear();
+  while((nread = read(err_fd[0], buf, MaxBuff)) > 0)
+    ret.error += std::string(buf, nread);
   waitpid(pid, &status, WUNTRACED);
   ret.status = WEXITSTATUS(status);
-  close(pfd[0]);
+  close(out_fd[0]);
+  close(err_fd[1]);
   return ret;
 }
 

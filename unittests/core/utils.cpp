@@ -215,9 +215,11 @@ TEST_CASE("Utils::Extension") {
 TEST_CASE("Utils::CheckOutput") {
     auto out = check_output("cat samples/hello.txt");
     REQUIRE("Hello World!\n" == out.output);
+    REQUIRE("" == out.error);
     REQUIRE(0 == out.status);
     out = check_output("something");
-    REQUIRE("-i: something: command not found\n" == out.output);
+    REQUIRE("-i: something: command not found\n" == out.error);
+    REQUIRE("" == out.output);
     REQUIRE(0 != out.status);
 }
 

@@ -78,7 +78,7 @@ std::string gitBranchName(const std::string& dir);
 
 
 struct CmdStatus {
-  std::string output;
+  std::string output, error;
   int status;
 };
 
