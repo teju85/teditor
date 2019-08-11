@@ -117,20 +117,41 @@ DEF_CMD(RunCommand, "run-command",
                 " and runs it.";
         });
 
-DEF_CMD(ShellCommand, "shell-command",
-        DEF_OP() {
-            auto cmd = ed.prompt("Shell Command: ");
-            if(!cmd.empty()) {
-                auto res = check_output(cmd);
-                MESSAGE(ed, "Shell Command: %s (exit-status=%d)\nOutput: %s",
-                        cmd.c_str(), res.status, res.output.c_str());
-            }
-        },
-        DEF_HELP() {
-            return "Prompts user to type in a shell command to run. The current"
-                " working dir for running this command will be the same as that"
-                " of the current buffer.";
-        });
+DEF_CMD(
+  ShellCommand, "shell-command", DEF_OP() {
+    auto cmd = ed.prompt("Shell Command: ");
+    if(!cmd.empty()) {
+      auto res = check_output(cmd);
+      MESSAGE(ed, "Shell Command: %s (exit-status=%d)\nOutput: %s\nError: %s\n",
+              cmd.c_str(), res.status, res.output.c_str(), res.error.c_str());
+    }
+  },
+  DEF_HELP() {
+    return "Prompts user to type in a shell command to run. The current working"
+      " dir for this command will be the same as that of the current buffer.";
+  });
+
+DEF_CMD(
+  RemoteShellCommand, "remote-shell-command", DEF_OP() {
+    auto host = ed.prompt("Remote Host: ");
+    auto cmd = ed.prompt("Shell Command: ");
+    CmdStatus res;
+    if(host.empty()) {
+      res = check_output(cmd);
+    } else if(!cmd.empty()) {
+      res = check_output(cmd, host);
+    } else {
+      return;
+    }
+    MESSAGE(ed, "Shell Command: %s (exit-status=%d)\nOutput: %s\nError: %s\n",
+            cmd.c_str(), res.status, res.output.c_str(), res.error.c_str());
+  },
+  DEF_HELP() {
+    return "Prompts user to type in a shell command to be run on a remote host."
+      " The current working dir for running this command will be the same as"
+      " that of the current buffer, if host is not specified, else it is the"
+      " default dir while opening shell on that remote host.";
+  });
 
 DEF_CMD(LaunchExplorer, "open-explorer",
         DEF_OP() { check_output("cygstart " + ed.getBuff().pwd()); },
