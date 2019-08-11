@@ -27,6 +27,7 @@ Accounts Evaluate::allAccounts() const {
       all.find(tokensj[0]) += aj.rawBalance();
       auto joined = "  " + join(tokensj, ':', 1);
       all.find(joined) += aj.rawBalance();
+      break;
     }
   }
   return all;
@@ -63,7 +64,7 @@ void Evaluate::showTopAccounts(Buffer& buf) const {
   }
   buf.insert("------------------------------\n");
   auto valStr = format("%.2lf", total);
-  buf.insert(format("%12s  %-16s\n", valStr.c_str(), "total"));
+  buf.insert(format("%12s  %-16s\n", valStr.c_str(), "Total"));
 }
 
 void Evaluate::showAllAccounts(Buffer& buf) const {
