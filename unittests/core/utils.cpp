@@ -213,14 +213,18 @@ TEST_CASE("Utils::Extension") {
 }
 
 TEST_CASE("Utils::CheckOutput") {
-    auto out = check_output("cat samples/hello.txt");
-    REQUIRE("Hello World!\n" == out.output);
-    REQUIRE("" == out.error);
-    REQUIRE(0 == out.status);
-    out = check_output("something");
-    REQUIRE("-i: something: command not found\n" == out.error);
-    REQUIRE("" == out.output);
-    REQUIRE(0 != out.status);
+  auto out = check_output("cat samples/hello.txt");
+  REQUIRE("Hello World!\n" == out.output);
+  REQUIRE("" == out.error);
+  REQUIRE(0 == out.status);
+  out = check_output("something");
+  REQUIRE("-i: something: command not found\n" == out.error);
+  REQUIRE("" == out.output);
+  REQUIRE(0 != out.status);
+  out = check_output("echo Error 1>&2; echo Output");
+  REQUIRE("Output\n" == out.output);
+  REQUIRE("Error\n" == out.error);
+  REQUIRE(0 == out.status);
 }
 
 TEST_CASE("Utils::FilePerm") {

@@ -83,6 +83,8 @@ struct CmdStatus {
 };
 
 CmdStatus check_output(const std::string& cmd);
+/** run the given command on the remote host and return its output */
+CmdStatus check_output(const std::string& cmd, const std::string& host);
 
 /** @brief Hexify the input url */
 std::string urlHexify(const std::string& url);

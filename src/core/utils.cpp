@@ -169,6 +169,11 @@ CmdStatus check_output(const std::string& cmd) {
   return ret;
 }
 
+CmdStatus check_output(const std::string& cmd, const std::string& host) {
+  std::string sshCmd = "ssh " + host + " " + cmd;
+  return check_output(sshCmd);
+}
+
 
 std::string urlHexify(const std::string& url) {
   std::string ret;
