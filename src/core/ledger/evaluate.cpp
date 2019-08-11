@@ -16,11 +16,18 @@ Accounts Evaluate::topAccounts() const {
 
 Accounts Evaluate::allAccounts() const {
   Accounts all;
-  for(const auto& a : p.accounts()) {
-    auto tokens = split(a.name(), ':');
-    all.find(tokens[0]) += a.rawBalance();
-    auto joined = "  " + join(tokens, ':', 1);
-    all.find(joined) += a.rawBalance();
+  const auto& accts = p.accounts();
+  for(int i=0;i<(int)accts.size();++i) {
+    const auto& ai = accts[i];
+    auto tokensi = split(ai.name(), ':');
+    for(int j=i;j<(int)accts.size();++j) {
+      const auto& aj = accts[j];
+      auto tokensj = split(aj.name(), ':');
+      if(tokensi[0] != tokensj[0]) continue;
+      all.find(tokensj[0]) += aj.rawBalance();
+      auto joined = "  " + join(tokensj, ':', 1);
+      all.find(joined) += aj.rawBalance();
+    }
   }
   return all;
 }
