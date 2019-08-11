@@ -1,6 +1,6 @@
 #include "evaluate.h"
 #include "core/utils.h"
-#include <set>
+#include <map>
 
 namespace teditor {
 namespace ledger {
@@ -15,20 +15,20 @@ Accounts Evaluate::topAccounts() const {
 }
 
 Accounts Evaluate::allAccounts() const {
+  std::map<std::string, Accounts> tmp;
   Accounts all;
   const auto& accts = p.accounts();
   for(int i=0;i<(int)accts.size();++i) {
-    const auto& ai = accts[i];
-    auto tokensi = split(ai.name(), ':');
-    for(int j=i;j<(int)accts.size();++j) {
-      const auto& aj = accts[j];
-      auto tokensj = split(aj.name(), ':');
-      if(tokensi[0] != tokensj[0]) continue;
-      all.find(tokensj[0]) += aj.rawBalance();
-      auto joined = "  " + join(tokensj, ':', 1);
-      all.find(joined) += aj.rawBalance();
-      break;
-    }
+    const auto& a = accts[i];
+    auto tokens = split(a.name(), ':');
+    if(tmp.find(tokens[0]) == tmp.end()) tmp[tokens[0]] = Accounts();
+    auto& currAccts = tmp[tokens[0]];
+    currAccts.find(tokens[0]) += a.rawBalance();
+    auto joined = "  " + join(tokens, ':', 1);
+    currAccts.find(joined) += a.rawBalance();
+  }
+  for(const auto& itr : tmp) {
+    for(const auto& a : itr.second) all.find(a.name()) += a.rawBalance();
   }
   return all;
 }
