@@ -44,35 +44,31 @@ void makeDir(const std::string& d) {
 
 bool isRemote(const char* f) { return !strncmp(f, "/ssh:", 5); }
 
-std::string slurp(const char* file) {
-  FILE *f = fopen(file, "rb");
-  ASSERT(f, "Failed to open file '%s'!", file);
+std::string slurp(const std::string& file) {
+  FILE *f = fopen(file.c_str(), "rb");
+  ASSERT(f, "Failed to open file '%s'!", file.c_str());
   struct stat st;
   bool status = fstat(fileno(f), &st) == 0;
   if(!status) fclose(f);
-  ASSERT(status, "Failed to fstat file '%s'!", file);
+  ASSERT(status, "Failed to fstat file '%s'!", file.c_str());
   auto len = static_cast<size_t>(st.st_size);
   std::string data(len, '\0');
   status = fread(&(data[0]), 1, st.st_size, f) == len;
   if(!status) fclose(f);
-  ASSERT(status, "Failed to fread file '%s'!", file);
+  ASSERT(status, "Failed to fread file '%s'!", file.c_str());
   fclose(f);
   return data;
 }
 
-std::string slurp(const std::string& file) { return slurp(file.c_str()); }
-
-Strings slurpToArr(const char* file) {
+Strings slurpToArr(const std::string& file) {
   Strings ret;
   std::fstream fp;
-  fp.open(file, std::fstream::in);
-  ASSERT(fp.is_open(), "Failed to open file '%s'!", file);
+  fp.open(file.c_str(), std::fstream::in);
+  ASSERT(fp.is_open(), "Failed to open file '%s'!", file.c_str());
   std::string currLine;
   while(std::getline(fp, currLine, '\n')) ret.push_back(currLine);
   return ret;
 }
-
-Strings slurpToArr(const std::string& file) { return slurpToArr(file.c_str()); }
 
 std::string getpwd() {
   char cwd[2048];

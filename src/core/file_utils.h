@@ -15,9 +15,7 @@ void makeDir(const std::string& d);
 
 bool isRemote(const char* f);
 
-std::string slurp(const char* file);
 std::string slurp(const std::string& file);
-Strings slurpToArr(const char* file);
 Strings slurpToArr(const std::string& file);
 
 std::string getpwd();
