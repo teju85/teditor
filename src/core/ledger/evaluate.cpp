@@ -44,11 +44,7 @@ void Evaluate::minmaxDates(Date& min, Date& max) const {
 }
 
 void Evaluate::showTopAccounts(Buffer& buf) const {
-  buf.clear();
-  buf.insert("############################################################\n"
-             "            Welcome to your personal ledger!\n"
-             "############################################################\n"
-             "\n");
+  printHeader(buf);
   Date min("0/0/0"), max("0/0/0");
   minmaxDates(min, max);
   auto s = format("### Dates: %d/%d/%d to %d/%d/%d ###\n\n",
@@ -68,11 +64,7 @@ void Evaluate::showTopAccounts(Buffer& buf) const {
 }
 
 void Evaluate::showAllAccounts(Buffer& buf) const {
-  buf.clear();
-  buf.insert("############################################################\n"
-             "            Welcome to your personal ledger!\n"
-             "############################################################\n"
-             "\n");
+  printHeader(buf);
   Date min("0/0/0"), max("0/0/0");
   minmaxDates(min, max);
   auto s = format("### Dates: %d/%d/%d to %d/%d/%d ###\n\n",
@@ -90,6 +82,14 @@ void Evaluate::showAllAccounts(Buffer& buf) const {
   buf.insert("------------------------------\n");
   auto valStr = format("%.2lf", total);
   buf.insert(format("%12s  %-16s\n", valStr.c_str(), "total"));
+}
+
+void Evaluate::printHeader(Buffer& buf) const {
+  buf.clear();
+  buf.insert("############################################################\n"
+             "            Welcome to your personal ledger!\n"
+             "############################################################\n"
+             "\n");
 }
 
 } // end namespace ledger

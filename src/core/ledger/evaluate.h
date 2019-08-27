@@ -31,6 +31,8 @@ public:
 
 private:
   Parser p;
+
+  void printHeader(Buffer& buf) const;
 };
 
 } // end namespace ledger
