@@ -9,7 +9,7 @@ namespace teditor {
 // a Unicode character
 typedef uint32_t Chr;
 
-// a conceptual entity on the terminal screen
+/** a conceptual entity on the terminal screen */
 struct Cell {
   Chr ch;
   AttrColor fg, bg;
@@ -23,6 +23,7 @@ struct Cell {
 bool operator==(const Cell& a, const Cell& b);
 
 
+/** list of cells */
 class CellBuffer {
 public:
   CellBuffer(int w=0, int h=0);

@@ -82,10 +82,8 @@ public:
    */
   void add(const NameColorPair& ncp);
 
-  /** get the color for a given name */
   const AttrColor& get(const std::string& name) const;
 
-  /** clear the contents of this map to populate it afresh */
   void clear() { colors.clear(); }
 
   /** convert attribute/color description into AttrColor */

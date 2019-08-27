@@ -46,7 +46,6 @@ Strings allCmdNames();
 /** @} */
 
 
-/** helper class to register the command into the command database */
 struct RegisterCmd {
   RegisterCmd(const std::string& cmd, OperateFunc op, HelpFunc help=nullptr) {
     registerCmd(cmd, std::make_pair(op, help));

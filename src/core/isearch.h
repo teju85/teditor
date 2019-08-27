@@ -43,7 +43,7 @@ private:
   /** current search string */
   std::string curr;
   /** line number v/s list of matches */
-  std::unordered_map<int, std::vector<int> > matches;
+  std::unordered_map<int, std::vector<int>> matches;
 
   void searchBuffer();
   void searchLine(const std::string& str, std::vector<int>& res);

@@ -406,15 +406,14 @@ public:
 
   /** create a new buffer with a unique name and push it to the end */
   Buffer* push_back(const std::string& name);
+  void push_back(Buffer* buf);
 
   void clear();
-  void push_back(Buffer* buf);
+  void erase(int idx);
 
   /** list of buffer names, in the order they are found in this object */
   Strings namesList() const;
 
-  /** erase buffer at the given index */
-  void erase(int idx);
 
 private:
   std::set<std::string> buffNames;
