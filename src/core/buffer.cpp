@@ -946,8 +946,7 @@ void Buffer::indent() {
       add = false;
     }
   });
-  if(add) insert(strs);
-  else removeRegion(start, end);
+  add ? insert(strs) : (void)removeRegion(start, end);
 }
 
 
