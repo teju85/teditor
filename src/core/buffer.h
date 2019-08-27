@@ -356,7 +356,7 @@ protected:
 
 
   /**
-   * @defgroup CursorOps Internal cursor operation details
+   * @defgroup CursorOpsInl Internal cursor operation details
    * @{
    */
   /** remove cursors that are on the same location */

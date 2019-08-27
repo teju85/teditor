@@ -90,7 +90,7 @@ typedef Pos2d<int> Pos2di;
 class Positions: public std::vector<Pos2di> {
 public:
   /**
-   * @defgroup Constructors
+   * @defgroup Ctors Constructors
    * @{
    */
   Positions(): std::vector<Pos2di>() {}

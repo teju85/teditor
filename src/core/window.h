@@ -28,7 +28,7 @@ public:
   void copyTo(Window& w) { w.buffs = buffs;  w.currBuff = currBuff; }
 
   /**
-   * @defgroup GetBuff
+   * @defgroup GetBuff Get buffer
    * @{
    * @brief returns the currently active buffer with this window
    */
@@ -44,7 +44,7 @@ public:
   void resize(const Pos2di& start, const Pos2di& dim);
 
   /**
-   * @defgroup Draw Functions to draw parts of the associated buffer
+   * @defgroup DrawWin Functions to draw parts of the associated buffer
    * @{
    */
   void draw(Editor& ed);
