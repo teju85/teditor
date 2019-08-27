@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <string>
 #include <stdexcept>
 #include <time.h>
@@ -39,13 +40,12 @@ std::string format(const char* fmt, va_list& vl);
 
 
 /** short-form for vector of strings */
-  typedef std::vector<std::string> Strings;
+typedef std::vector<std::string> Strings;
 
 /** whether all the strings internally are empty or not */
 inline bool allStringsEmpty(const Strings& strs) {
-  for(const auto& str : strs)
-    if(!str.empty()) return false;
-  return true;
+  return std::all_of(strs.begin(), strs.end(),
+                     [](const std::string& s) { return s.empty(); });
 }
 
 /** whether the 2 vectors are same */
@@ -58,7 +58,6 @@ bool same(const std::vector<T>& s1, const std::vector<T>& s2) {
 
 bool operator>(const struct timeval& ta, const struct timeval& tb);
 
-std::string env(const char* s);
 std::string env(const std::string& s);
 std::string expandEnvVars(const std::string& str, const Strings& vars);
 

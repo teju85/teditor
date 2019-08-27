@@ -12,7 +12,7 @@
 #include "pos2d.h"
 #include <stack>
 #include <vector>
-#include <set>
+#include <unordered_set>
 
 namespace teditor {
 
@@ -416,7 +416,7 @@ public:
 
 
 private:
-  std::set<std::string> buffNames;
+  std::unordered_set<std::string> buffNames;
 
   std::string uniquify(const std::string& name) const;
 };

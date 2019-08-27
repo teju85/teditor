@@ -37,13 +37,9 @@ bool operator>(const struct timeval& ta, const struct timeval& tb) {
   return false;
 }
 
-std::string env(const char* s) {
-  auto* val = getenv(s);
-  return val == nullptr? "" : val;
-}
-
 std::string env(const std::string& s) {
-  return env(s.c_str());
+  auto* val = getenv(s.c_str());
+  return val == nullptr? "" : val;
 }
 
 bool startsWith(const char* s1, int len1, const char* s2) {
@@ -204,9 +200,7 @@ bool isCloseParen(char c) {
   return (c == ')') || (c == '}') || (c == ']') || (c == '>');
 }
 
-bool isParen(char c) {
-  return isOpenParen(c) || isCloseParen(c);
-}
+bool isParen(char c) { return isOpenParen(c) || isCloseParen(c); }
 
 char getMatchingParen(char c) {
   switch(c) {
