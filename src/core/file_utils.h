@@ -13,7 +13,14 @@ bool isReadOnly(const char* f);
 bool dirExists(const std::string& f);
 void makeDir(const std::string& d);
 
-bool isRemote(const char* f);
+/** container to hold remote file/dir info */
+struct Remote {
+  std::string host, file;
+
+  Remote(const std::string& f);
+};
+
+bool isRemote(const std::string& f);
 
 std::string slurp(const std::string& file);
 Strings slurpToArr(const std::string& file);
@@ -42,6 +49,7 @@ typedef std::vector<FilePerm> Files;
 
 Files listDir(const std::string& dir);
 Strings listDirRel(const std::string& dir);
+std::string listRemoteDir(const std::string& dir);
 
 void copyFile(const std::string& in, const std::string& out);
 

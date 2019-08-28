@@ -375,14 +375,21 @@ void Buffer::makeReadOnly() {
 }
 
 void Buffer::loadDir(const std::string& dir) {
-  Files fs = listDir(dir);
-  auto first = rel2abs(pwd(), dir);
-  lines.back().append(first);
-  for(const auto& f : fs) {
-    auto fname = isCurrentOrParentDir(f.name)? f.name : basename(f.name);
-    auto buff = format("  %10.10s  %8lu  %s", f.perms, f.size, fname.c_str());
-    addLine();
-    lines.back().append(buff);
+  std::string first;
+  if(!isRemote(dir)) {
+    Files fs = listDir(dir);
+    first = rel2abs(pwd(), dir);
+    lines.back().append(first);
+    for(const auto& f : fs) {
+      auto fname = isCurrentOrParentDir(f.name)? f.name : basename(f.name);
+      auto buff = format("  %10.10s  %8lu  %s", f.perms, f.size, fname.c_str());
+      addLine();
+      lines.back().append(buff);
+    }
+  } else {
+    first = dir;
+    lines.back().append(dir);
+    insert(listRemoteDir(dir));
   }
   resetBufferState(0, first);
   begin();

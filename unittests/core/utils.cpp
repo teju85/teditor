@@ -337,4 +337,12 @@ TEST_CASE("Utils::urlHexify") {
   REQUIRE(urlHexify("testing c") == "testing%20c");
 }
 
+TEST_CASE("Remote") {
+  Remote r("/ssh:host:/full/path");
+  REQUIRE(r.host == "host");
+  REQUIRE(r.file == "/full/path");
+  REQUIRE_THROWS_AS(Remote("/fsdfds:fdsfd:rerw"), std::runtime_error);
+  REQUIRE_THROWS_AS(Remote("/ssh:fdsf"), std::runtime_error);
+}
+
 } // end namespace teditor

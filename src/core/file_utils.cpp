@@ -42,7 +42,16 @@ void makeDir(const std::string& d) {
   ASSERT(ret >= 0, "makeDir: '%s' failed!", d.c_str());
 }
 
-bool isRemote(const char* f) { return !strncmp(f, "/ssh:", 5); }
+Remote::Remote(const std::string& f) {
+  auto tokens = split(f, ':');
+  ASSERT(tokens.size() == 3 && tokens[0] == "/ssh",
+         "Remote file syntax must be '%s'. [%s]", "/ssh:<host>:<abspath>",
+         f.c_str());
+  host = tokens[1];
+  file = tokens[2];
+}
+
+bool isRemote(const std::string& f) { return !strncmp(f.c_str(), "/ssh:", 5); }
 
 std::string slurp(const std::string& file) {
   FILE *f = fopen(file.c_str(), "rb");
@@ -226,6 +235,16 @@ bool fileStrFind(const std::string& line, const std::string& str) {
 
 bool isCurrentOrParentDir(const std::string& dir) {
   return dir == "." || dir == "..";
+}
+
+std::string listRemoteDir(const std::string& dir) {
+  if(!isRemote(dir)) return "";
+  Remote r(dir);
+  auto cmd = format("ssh %s /bin/bash -c '\"cd %s && ls -a |"
+                    " xargs stat --format \\\"  %A  %8s  %n\\\"\"'",
+                    r.host.c_str(), r.file.c_str());
+  auto out = check_output(cmd);
+  return out.output;
 }
 
 } // end namespace teditor
