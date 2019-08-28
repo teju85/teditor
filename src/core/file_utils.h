@@ -7,10 +7,9 @@
 
 namespace teditor {
 
-bool isDir(const char* f);
-bool isFile(const char* f);
+bool isDir(const std::string& f);
+bool isFile(const std::string& f);
 bool isReadOnly(const char* f);
-bool dirExists(const std::string& f);
 void makeDir(const std::string& d);
 
 /** container to hold remote file/dir info */

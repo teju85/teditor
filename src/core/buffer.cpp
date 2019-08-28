@@ -358,7 +358,7 @@ std::string Buffer::regionAsStr(const Pos2di& start, const Pos2di& end) const {
 }
 
 void Buffer::load(const std::string& file, int line) {
-  isDir(file.c_str())? loadDir(file) : loadFile(file, line);
+  isDir(file)? loadDir(file) : loadFile(file, line);
   setMode(Mode::createMode(Mode::inferMode(file)));
 }
 
@@ -420,7 +420,7 @@ void Buffer::resetBufferState(int line, const std::string& file) {
   modified = false;
   readOnly = isReadOnly(file.c_str());
   fileName = file;
-  dirName = isDir(file.c_str())? file : dirname(file);
+  dirName = isDir(file)? file : dirname(file);
   buffName = basename(file);
   stopRegion();
 }
@@ -508,7 +508,7 @@ int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
   if(isD) {
     auto file = dirModeGetFileAtLine(lineNum);
     file =  getFileName() + '/' + file;
-    isD = isDir(file.c_str());
+    isD = isDir(file);
   }
   while(start < len) {
     int diff = len - start;

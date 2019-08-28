@@ -16,29 +16,49 @@
 
 namespace teditor {
 
-bool isDir(const char* f) {
-  struct stat st;
-  if(stat(f, &st) != 0) return false;
-  return S_ISDIR(st.st_mode);
+std::string remoteFileType(const std::string& f) {
+  Remote r(f);
+  auto cmd = format("ssh %s /bin/bash -c \"file %s | sed -e 's/.*: //'\"",
+                    r.host, r.file);
+  auto out = check_output(cmd);
+  return out.output;
 }
 
-bool isFile(const char* f) {
-  struct stat st;
-  if(stat(f, &st) != 0) return false;
-  return S_ISREG(st.st_mode);
+bool isDir(const std::string& f) {
+  if(!isRemote(f)) {
+    struct stat st;
+    if(stat(f.c_str(), &st) != 0) return false;
+    return S_ISDIR(st.st_mode);
+  }
+  return remoteFileType(f) == "directory";
+}
+
+bool isFile(const std::string& f) {
+  if(!isRemote(f)) {
+    struct stat st;
+    if(stat(f.c_str(), &st) != 0) return false;
+    return S_ISREG(st.st_mode);
+  }
+  return remoteFileType(f) != "directory";
 }
 
 bool isReadOnly(const char* f) {
-  return (access(f, R_OK) == 0) && (access(f, W_OK) < 0);
+  return access(f, R_OK) == 0 && access(f, W_OK) < 0;
 }
 
-bool dirExists(const std::string& f) {
-  return !isFile(f.c_str()) && isDir(f.c_str());
-}
+bool dirExists(const std::string& f) { return isDir(f) && !isFile(f); }
 
 void makeDir(const std::string& d) {
   if(dirExists(d)) return;
-  int ret = mkdir(d.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+  int ret = -1;
+  if(!isRemote(d)) {
+    ret = mkdir(d.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+  } else {
+    Remote r(d);
+    auto cmd = format("ssh %s mkdir %s", r.host, r.file);
+    auto out = check_output(cmd);
+    ret = out.status;
+  }
   ASSERT(ret >= 0, "makeDir: '%s' failed!", d.c_str());
 }
 
@@ -128,11 +148,11 @@ std::string findFirstUpwards(const std::string& dir, const std::string& file) {
   auto d = dir;
   if(d.back() == '/') d.pop_back();
   auto f = d + '/' + file;
-  if(isFile(f.c_str()) || isDir(f.c_str())) return f;
+  if(isFile(f) || isDir(f)) return f;
   while(!d.empty() && d != "/") {
     d = dirname(d);
     f = d + '/' + file;
-    if(isFile(f.c_str()) || isDir(f.c_str())) return f;
+    if(isFile(f) || isDir(f)) return f;
   }
   return "";
 }

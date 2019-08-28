@@ -9,34 +9,32 @@ namespace teditor {
 /** dir mode */
 class DirMode: public ReadOnlyMode {
 public:
-    DirMode(): ReadOnlyMode("dir") {
-        populateKeyMap<DirMode::Keys>(getKeyCmdMap());
-        populateColorMap<DirMode::Colors>(getColorMap());
-    }
+  DirMode(): ReadOnlyMode("dir") {
+    populateKeyMap<DirMode::Keys>(getKeyCmdMap());
+    populateColorMap<DirMode::Colors>(getColorMap());
+  }
 
-    static Mode* create() { return new DirMode; }
+  static Mode* create() { return new DirMode; }
 
-    static bool modeCheck(const std::string& file) {
-        return isDir(file.c_str());
-    }
+  static bool modeCheck(const std::string& file) { return isDir(file); }
 
 private:
-    struct Keys { static std::vector<KeyCmdPair> All; };
-    struct Colors { static std::vector<NameColorPair> All; };
+  struct Keys { static std::vector<KeyCmdPair> All; };
+  struct Colors { static std::vector<NameColorPair> All; };
 };
 
 REGISTER_MODE(DirMode, "dir");
 
 
 std::vector<KeyCmdPair> DirMode::Keys::All = {
-    {"c",      "dirmode-copy-file"},
-    {"r",      "dirmode-rename-file"},
-    {"d",      "dirmode-delete-file"},
-    {"enter",  "dirmode-open-file"}
+  {"c",      "dirmode-copy-file"},
+  {"r",      "dirmode-rename-file"},
+  {"d",      "dirmode-delete-file"},
+  {"enter",  "dirmode-open-file"}
 };
 
 std::vector<NameColorPair> DirMode::Colors::All = {
-    {"dirfg", "Blue"}
+  {"dirfg", "Blue"}
 };
 
 

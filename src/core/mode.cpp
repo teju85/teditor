@@ -26,7 +26,7 @@ Strings allModeNames() {
 std::string Mode::inferMode(const std::string& file) {
   auto& i = infers();
   // special case for directories
-  if(isDir(file.c_str())) return "dir";
+  if(isDir(file)) return "dir";
   for(const auto itr : i)
     if(itr.second(file)) return itr.first;
   // default mode

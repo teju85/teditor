@@ -30,7 +30,7 @@ DEF_CMD(
     if(isCurrentOrParentDir(file) || file.empty()) return;
     file = rel2abs(dir, file);
     ///@todo: support copying directories
-    if(!isFile(file.c_str())) return;
+    if(!isFile(file)) return;
     auto dst = ed.prompt("Dst file: ");
     dst = rel2abs(dir, dst);
     if(!dst.empty()) {
