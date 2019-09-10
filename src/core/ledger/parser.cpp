@@ -1,4 +1,5 @@
 #include <fstream>
+#include <map>
 #include "parser.h"
 
 namespace teditor {
@@ -76,6 +77,42 @@ void Parser::reload() {
   accts.clear();
   accState.clear();
   parse(file);
+}
+
+Accounts Parser::topAccounts() const {
+  Accounts topAccts;
+  for(const auto& a : accts) {
+    auto tokens = split(a.name(), ':');
+    topAccts.find(tokens[0]) += a.rawBalance();
+  }
+  return topAccts;
+}
+
+Accounts Parser::allAccounts() const {
+  std::map<std::string, Accounts> tmp;
+  Accounts all;
+  for(int i=0;i<(int)accts.size();++i) {
+    const auto& a = accts[i];
+    auto tokens = split(a.name(), ':');
+    if(tmp.find(tokens[0]) == tmp.end()) tmp[tokens[0]] = Accounts();
+    auto& currAccts = tmp[tokens[0]];
+    currAccts.find(tokens[0]) += a.rawBalance();
+    auto joined = "  " + join(tokens, ':', 1);
+    currAccts.find(joined) += a.rawBalance();
+  }
+  for(const auto& itr : tmp) {
+    for(const auto& a : itr.second) all.find(a.name()) += a.rawBalance();
+  }
+  return all;
+}
+
+void Parser::minmaxDates(Date& min, Date& max) const {
+  bool first = true;
+  for(const auto& t : trans) {
+    if(first || t.date() < min) min = t.date();
+    if(first || max < t.date()) max = t.date();
+    first = false;
+  }
 }
 
 } // end namespace ledger

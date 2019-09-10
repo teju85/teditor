@@ -18,6 +18,20 @@ public:
   const Transactions& transactions() const { return trans; }
   const Accounts& accounts() const { return accts; }
 
+  /**
+   * @brief Computes balances of only the top-level accounts.
+   * Top-level account is the account name that preceeds the first ':' in
+   * all of the accounts in the ledger. Eg: top-level account of
+   * 'Expenses:Medical:Vaccination' is 'Expenses'.
+   */
+  Accounts topAccounts() const;
+
+  /** Computes balances of the top-level accounts as well as all accounts */
+  Accounts allAccounts() const;
+
+  /** earliest and latest transaction dates */
+  void minmaxDates(Date& min, Date& max) const;
+
 private:
   struct AccState {
     std::string name, desc;
