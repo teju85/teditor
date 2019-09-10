@@ -11,9 +11,7 @@ namespace ops {
 DEF_CMD(
   Ledger, "ledger", DEF_OP() {
     auto& buf = ed.getLedgerBuff();
-    Buffer tmp;
-    tmp.load(ed.getArgs().getLedgerFile());
-    Evaluate eval(tmp);
+    Evaluate eval(ed.getArgs().getLedgerFile());
     eval.showTopAccounts(buf);
     ed.switchToBuff("*ledger");
   },
@@ -22,9 +20,7 @@ DEF_CMD(
 DEF_CMD(
   LedgerAll, "ledger-all", DEF_OP() {
     auto& buf = ed.getLedgerBuff();
-    Buffer tmp;
-    tmp.load(ed.getArgs().getLedgerFile());
-    Evaluate eval(tmp);
+    Evaluate eval(ed.getArgs().getLedgerFile());
     eval.showAllAccounts(buf);
     ed.switchToBuff("*ledger");
   },

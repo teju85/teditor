@@ -1,22 +1,26 @@
+#include <fstream>
 #include "parser.h"
 
 namespace teditor {
 namespace ledger {
 
-Parser::Parser(const Buffer& b):
-  trans(), accts(),
+Parser::Parser(const std::string& f):
+  file(f), trans(), accts(),
   accState(), accRx("^account\\s+(\\S+)"), accDescRx("^  description\\s+(.*)"),
   accAliasRx("^  alias\\s+(\\S+)"),
   traRx("^(\\d+/\\d+/\\d+)\\s+(.*)"),
   traOpRx("^  (\\S+)\\s+(-?\\d+[.]?(\\d+)?)"), traOpDefRx("^  (\\S+)$") {
   accState.clear();
-  parse(b);
+  parse(file);
 }
 
-void Parser::parse(const Buffer& b) {
-  int len = b.length();
-  for(int line=0;line<len;++line) {
-    const auto& str = b.at(line).get();
+void Parser::parse(const std::string& f) {
+  std::fstream fp;
+  fp.open(f.c_str(), std::fstream::in);
+  ASSERT(fp.is_open(), "Failed to read ledger file '%s'", f.c_str());
+  std::string str;
+  size_t line;
+  while(std::getline(fp, str)) {
     // empty line or comments
     if(str.empty() || str[0] == '#') continue;
     // account definition
@@ -25,7 +29,8 @@ void Parser::parse(const Buffer& b) {
       accState.name = mAcc.get(1);
       while(true) {
         ++line;
-        const auto& s = b.at(line).get();
+        std::string s;
+        std::getline(fp, s);
         auto m1 = accDescRx.find(s);
         auto m2 = accAliasRx.find(s);
         if(!m1.empty()) {
@@ -47,7 +52,8 @@ void Parser::parse(const Buffer& b) {
       Transaction tr(mTra.get(1), mTra.get(2));
       while(true) {
         ++line;
-        const auto& s = b.at(line).get();
+        std::string s;
+        std::getline(fp, s);
         auto m1 = traOpRx.find(s);
         auto m2 = traOpDefRx.find(s);
         if(!m1.empty()) {
@@ -61,8 +67,15 @@ void Parser::parse(const Buffer& b) {
         }
       }
     } // end transactions
-  }
+  } // end while
   for(auto& t : trans) t.updateAccounts(accts);
+}
+
+void Parser::reload() {
+  trans.clear();
+  accts.clear();
+  accState.clear();
+  parse(file);
 }
 
 } // end namespace ledger

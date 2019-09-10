@@ -6,9 +6,7 @@ namespace teditor {
 namespace ledger {
 
 TEST_CASE("Evaluate::topAccounts") {
-  Buffer buf;
-  buf.load("samples/ledger/sample.lg");
-  Evaluate e(buf);
+  Evaluate e("samples/ledger/sample.lg");
   auto top = e.topAccounts();
   REQUIRE(4 == top.size());
   int64_t bal = 0;
@@ -17,9 +15,7 @@ TEST_CASE("Evaluate::topAccounts") {
 }
 
 TEST_CASE("Evaluate::minMaxDates") {
-  Buffer buf;
-  buf.load("samples/ledger/sample.lg");
-  Evaluate e(buf);
+  Evaluate e("samples/ledger/sample.lg");
   Date min("0/0/0"), max("0/0/0");
   e.minmaxDates(min, max);
   REQUIRE(Date("2018/8/4") == min);

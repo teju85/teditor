@@ -10,7 +10,7 @@ namespace ledger {
 /** Evaluate ledger balance and registers after parsing the input file */
 class Evaluate {
 public:
-  Evaluate(const Buffer& buf): p(buf) {}
+  Evaluate(const std::string& f): p(f) {}
 
   /**
    * @brief Computes balances of only the top-level accounts.
