@@ -15,6 +15,7 @@ Very minimal set of pre-reqs are needed for this project.
 1. curl - for downloading from web
 2. mintty - for running the editor
 3. git - to run git commands from inside the editor
+4. ssh - for launching remote commands
 * Download and Build
 Currently, only been tested on cygwin with xterm-256.
 #+BEGIN_SRC bash
