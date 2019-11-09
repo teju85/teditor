@@ -824,13 +824,20 @@ void Buffer::previousPara() {
 void Buffer::nextWord() {
   const auto& word = getWord();
   forEachCursor([word, this](Pos2di& cu, size_t idx) {
-    const auto& line = at(cu.y);
-    if(cu.x >= line.length()) {
-      if(cu.y >= length()-1) return;
-      ++cu.y;
-      cu.x = 0;
-    } else {
+    while (true) {
+      const auto& line = at(cu.y);
+      if (cu.x >= line.length()) {
+        if (cu.y >= length() - 1) break;
+        ++cu.y;
+        cu.x = 0;
+        continue;
+      }
+      if (word.find(line.at(cu.x)) == std::string::npos) {
+        ++cu.x;
+        continue;
+      }
       cu.x = line.findFirstNotOf(word, cu.x + 1);
+      break;
     }
   });
 }
@@ -838,13 +845,20 @@ void Buffer::nextWord() {
 void Buffer::previousWord() {
   const auto& word = getWord();
   forEachCursor([word, this](Pos2di& cu, size_t idx) {
-    if(cu.x <= 0) {
-      if(cu.y <= 0) return;
-      --cu.y;
-      cu.x = lengthOf(cu.y);
-    } else {
+    while (true) {
       const auto& line = at(cu.y);
+      if (cu.x <= 0) {
+        if (cu.y <= 0) return;
+        --cu.y;
+        cu.x = lengthOf(cu.y);
+        continue;
+      }
+      if (word.find(line.at(cu.x)) == std::string::npos) {
+        --cu.x;
+        continue;
+      }
       cu.x = line.findLastNotOf(word, cu.x - 1);
+      break;
     }
   });
   lineDown();
