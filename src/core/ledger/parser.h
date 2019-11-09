@@ -23,11 +23,17 @@ public:
    * Top-level account is the account name that preceeds the first ':' in
    * all of the accounts in the ledger. Eg: top-level account of
    * 'Expenses:Medical:Vaccination' is 'Expenses'.
+   * @param sort whether to sort the output before returning
+   * @return the accounts
    */
-  Accounts topAccounts() const;
+  Accounts topAccounts(bool sort = true) const;
 
-  /** Computes balances of the top-level accounts as well as all accounts */
-  Accounts allAccounts() const;
+  /**
+   * @brief Computes balances of the top-level accounts as well as all accounts
+   * @param sort whether to sort the output before returning
+   * @return all the accounts
+   */
+  Accounts allAccounts(bool sort = true) const;
 
   /** earliest and latest transaction dates */
   void minmaxDates(Date& min, Date& max) const;

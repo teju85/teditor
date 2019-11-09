@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <fstream>
 #include <map>
 #include "parser.h"
@@ -79,16 +80,22 @@ void Parser::reload() {
   parse(file);
 }
 
-Accounts Parser::topAccounts() const {
+Accounts Parser::topAccounts(bool sort) const {
   Accounts topAccts;
   for(const auto& a : accts) {
     auto tokens = split(a.name(), ':');
     topAccts.find(tokens[0]) += a.rawBalance();
   }
+  if (sort) {
+    std::sort(topAccts.begin(), topAccts.end(),
+              [](const Account& a, const Account& b) {
+                return a.name().compare(b.name()) <= 0;
+              });
+  }
   return topAccts;
 }
 
-Accounts Parser::allAccounts() const {
+Accounts Parser::allAccounts(bool sort) const {
   std::map<std::string, Accounts> tmp;
   Accounts all;
   for(int i=0;i<(int)accts.size();++i) {
@@ -100,7 +107,17 @@ Accounts Parser::allAccounts() const {
     auto joined = "  " + join(tokens, ':', 1);
     currAccts.find(joined) += a.rawBalance();
   }
-  for(const auto& itr : tmp) {
+  for(auto& itr : tmp) {
+    if (sort) {
+      std::sort(itr.second.begin(), itr.second.end(),
+                [](const Account& a, const Account& b) {
+                  const auto& an = a.name();
+                  const auto& bn = b.name();
+                  if (an[0] == ' ' && bn[0] != ' ') return false;
+                  if (an[0] != ' ' && bn[0] == ' ') return true;
+                  return an.compare(bn) <= 0;
+                });
+    }
     for(const auto& a : itr.second) all.find(a.name()) += a.rawBalance();
   }
   return all;
