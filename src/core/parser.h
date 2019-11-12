@@ -16,7 +16,7 @@ public:
    */
   Parser(const std::string& lang);
 
-  ~Parser();
+  ~Parser() { ts_parser_delete(tsp); }
 
   class Tree;
 
@@ -35,13 +35,13 @@ public:
     Node operator[](int idx);
 
     /** node type as a string*/
-    std::string type() const;
+    std::string type() const { return std::string(ts_node_type(node)); }
 
     /** number of child nodes of this node */
-    int childCount() const;
+    int childCount() const { return ts_node_child_count(node); }
 
     /** number of named childnodes of this node */
-    int namedChildCount() const;
+    int namedChildCount() const { return ts_node_named_child_count(node); }
 
     /** returns the syntax-tree as an S-expression */
     std::string nodeString() const;
@@ -58,7 +58,7 @@ public:
   class Tree {
   public:
     Tree(): tree(nullptr) {}
-    ~Tree();
+    ~Tree() { if(tree != nullptr) ts_tree_delete(tree); }
 
     /** copy the tree (mostly to be used for thread-safe reasons) */
     void copy(Tree& out) const;
@@ -76,6 +76,6 @@ public:
 private:
   /** the parser */
   TSParser* tsp;
-};
+}; // end class Parser
 
 }; // end namespace teditor
