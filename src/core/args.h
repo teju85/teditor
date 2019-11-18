@@ -15,10 +15,9 @@ struct Args {
   std::string getHistFile() const { return getFile(histFile); }
   std::string getLedgerFile() const { return getFile(ledgerFile); }
 
-  bool quitAfterLoad;
   std::string ttyFile, homeFolder, ledgerFile, orgNotesDir;
   std::vector<FileInfo> files;
-  int logLevel, cmdMsgBarHeight, cmdMsgBarMultiHeight;
+  int cmdMsgBarHeight, cmdMsgBarMultiHeight;
   float pageScrollJump;
   int maxFileHistory, tabSpaces;
   std::string histFile, browserCmd;

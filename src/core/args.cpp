@@ -16,19 +16,13 @@ std::string Args::getFile(const std::string& f) const {
 }
 
 Args::Args(int argc, char** argv):
-  quitAfterLoad(false), ttyFile("/dev/tty"), homeFolder("$HOME/.teditor"),
+  ttyFile("/dev/tty"), homeFolder("$HOME/.teditor"),
   ledgerFile("ledger.lg"), orgNotesDir("/cygdrive/c/Devtech/notes"), files(),
-  logLevel(-1), cmdMsgBarHeight(1), cmdMsgBarMultiHeight(8),
+  cmdMsgBarHeight(1), cmdMsgBarMultiHeight(8),
   pageScrollJump(0.75f), maxFileHistory(20), tabSpaces(4), histFile("history"),
   browserCmd("cygstart firefox -private-window"), winSplitChar('|') {
   for(int i=1;i<argc;++i) {
-    if(!strcmp(argv[i], "-Q")) {
-      quitAfterLoad = true;
-    } else if(!strcmp(argv[i], "-v")) {
-      ++i;
-      ASSERT(i < argc, "'-v' option expects an argument!");
-      logLevel = str2num(argv[i]);
-    } else if(!strcmp(argv[i], "-tty")) {
+    if(!strcmp(argv[i], "-tty")) {
       ++i;
       ASSERT(i < argc, "'-tty' option expects an argument!");
       ttyFile = argv[i];
@@ -77,7 +71,6 @@ Args::Args(int argc, char** argv):
       files.push_back(readFileInfo(argv[i]));
     }
   }
-  Logger::setLevel(logLevel);
   homeFolder = expandEnvVars(homeFolder);
   makeDir(homeFolder);
 }
