@@ -254,6 +254,7 @@ void Buffer::insertImpl(char c) {
   }
   auto& line = lines[cu.y];
   line.insert(c, cu.x);
+  right();
 }
 
 void Buffer::applyDeleteOp(OpData& op) {
