@@ -39,9 +39,11 @@ std::string Buffer::removeAndCopy() {
   OpData op;
   op.type = OpDelete;
   if(!isRegionActive()) return op.str;
-  ///@todo: what if 'before' is after 'after'!?
-  op.before = region;
-  op.after = cu;
+  // re-arrange the region to have cursor come after the start
+  Point small, big;
+  cu.find(small, big, region);
+  op.before = small;
+  op.after = big;
   op.str = removeRegion(op.before, op.after);
   cu = op.before;
   stopRegion();
