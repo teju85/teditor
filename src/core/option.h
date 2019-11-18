@@ -18,7 +18,8 @@ class Option {
     Boolean,
     Integer,
     Real,
-    String
+    String,
+    Char
   };  // enum Type
 
   /**
@@ -51,6 +52,11 @@ class Option {
   }
 
   std::string getStr() const;
+
+  char getChar() const {
+    ASSERT(type == Char, "Option '%s' is not Char!", name.c_str());
+    return value[0];
+  }
   /** @} */
 
   /**

@@ -15,7 +15,8 @@ TEST_CASE("Option::Test") {
 
 TEST_CASE("Option::ExpandOptions") {
   parseArgs(0, nullptr);
-  REQUIRE(expandEnvVars("$HOME/.teditor/rcfile") == Option::get("rc").getStr());
+  REQUIRE(expandEnvVars("$HOME/.teditor/org") ==
+          Option::get("orgNotesDir").getStr());
 }
 
 } // end namespace teditor
