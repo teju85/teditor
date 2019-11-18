@@ -1,6 +1,5 @@
 #include "core/utils.h"
 #include <cstdio>
-#include "core/args.h"
 #include "core/editor.h"
 #include "core/terminal.h"
 #include "core/logger.h"
@@ -14,11 +13,9 @@ int main(int argc, char** argv) {
     SingletonHandler<Logger, std::string> shl("debug.log");
     std::vector<FileInfo> files;
     if (!parseArgs(argc, argv, files)) return 0;
-    Args args(0, nullptr);
-    args.files = files;
     SingletonHandler<Terminal, std::string> term(Option::get("tty").getStr());
     {
-      std::shared_ptr<Editor> ed(new Editor(args));
+      std::shared_ptr<Editor> ed(new Editor(files));
       ed->run();
     }
     DEBUG("Editor: dtor finished\n");

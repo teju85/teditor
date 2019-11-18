@@ -1,6 +1,6 @@
 #include "core/editor.h"
 #include "core/command.h"
-
+#include "core/option.h"
 
 namespace teditor {
 namespace CursorOps {
@@ -44,9 +44,9 @@ DEF_CMD(CursorLineEnd, "cursor-line-end",
 
 DEF_CMD(
   PageDown, "page-down", DEF_OP() {
-    auto& args = ed.getArgs();
+    auto jump = Option::get("pageScrollJump").getReal();
     auto& buf = ed.getBuff();
-    buf.pageDown(int(args.pageScrollJump * ed.getWindow().dim().y));
+    buf.pageDown(int(jump * ed.getWindow().dim().y));
   },
   DEF_HELP() {
     return "Scroll down by a page. Definition of a page is as given by the"
@@ -55,9 +55,9 @@ DEF_CMD(
 
 DEF_CMD(
   PageUp, "page-up", DEF_OP() {
-    auto& args = ed.getArgs();
+    auto jump = Option::get("pageScrollJump").getReal();
     auto& buf = ed.getBuff();
-    buf.pageUp(int(args.pageScrollJump * ed.getWindow().dim().y));
+    buf.pageUp(int(jump * ed.getWindow().dim().y));
   },
   DEF_HELP() {
     return "Scroll up by a page. Definition of a page is as given by the"

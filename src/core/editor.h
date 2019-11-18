@@ -5,7 +5,6 @@
 #include <stdarg.h>
 #include <string>
 #include <vector>
-#include "args.h"
 #include "logger.h"
 #include "buffer.h"
 #include "keys.h"
@@ -14,7 +13,7 @@
 #include "cell_buffer.h"
 #include "cmd_msg_bar.h"
 #include "window.h"
-
+#include "file_utils.h"
 
 namespace teditor {
 
@@ -24,7 +23,7 @@ typedef std::unordered_map<std::string, std::string> OptionMap;
 
 class Editor {
 public:
-  Editor(const Args& args_);
+  Editor(const std::vector<FileInfo>& _files);
   ~Editor();
   void setTitle(const char* ti) { writef("%c]0;%s%c\n", '\033', ti, '\007'); }
   Buffer& getBuff() { return getWindow().getBuff(); }
@@ -71,7 +70,6 @@ public:
                           bool switchToIt=false);
   void selectCmBar() { cmdMsgBarActive = true; }
   void unselectCmBar() { cmdMsgBarActive = false; }
-  const Args& getArgs() const { return args; }
   Strings fileHistoryToString() const { return fileshist.toString(); }
   Strings buffNamesToString() const { return buffs.namesList(); }
   void saveBuffer(Buffer& buf);
@@ -83,7 +81,6 @@ public:
 private:
   CellBuffer backbuff, frontbuff;
   AttrColor lastfg, lastbg;
-  Args args;
   CmdMsgBar* cmBar;
   Buffers buffs, cmBarArr;
   Windows windows;
@@ -91,6 +88,7 @@ private:
   std::string copiedStr;
   ColorMap defcMap;
   KeyCmdMap ynMap;
+  std::vector<FileInfo> files;
   FilesHist fileshist;
 
   /**

@@ -3,6 +3,7 @@
 #include "window.h"
 #include "logger.h"
 #include "terminal.h"
+#include "option.h"
 
 namespace teditor {
 
@@ -118,7 +119,7 @@ void Windows::draw(Editor& ed, bool cmdMsgBarActive) {
   const auto& bg = getWindow().getBuff().getColor("winframebg");
   for(auto& b : borders) {
     for(int i=b.sy;i<b.ey;++i)
-      ed.sendChar(b.x, i, bg, fg, ed.getArgs().winSplitChar);
+      ed.sendChar(b.x, i, bg, fg, Option::get("winSplitChar").getChar());
   }
   DEBUG("draw: ended\n");
 }

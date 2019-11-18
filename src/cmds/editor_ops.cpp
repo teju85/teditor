@@ -1,6 +1,6 @@
 #include "core/editor.h"
 #include "core/command.h"
-
+#include "core/option.h"
 
 namespace teditor {
 namespace EditorOps {
@@ -136,10 +136,9 @@ DEF_CMD(LaunchExplorer, "open-explorer",
 DEF_CMD(
   LaunchBrowser, "browser", DEF_OP() {
     auto& buf = ed.getBuff();
-    auto& args = ed.getArgs();
     std::string url;
     if(buf.isRegionActive()) url = buf.regionAsStr()[0];
-    check_output(args.browserCmd + " '" + url + "'");
+    check_output(Option::get("browserCmd").getStr() + " '" + url + "'");
   },
   DEF_HELP() {
     return "Opens the url pointed by the current active region in the browser."
@@ -156,10 +155,9 @@ DEF_CMD(
     opts["nvsearch"] = "https://nvsearch.nvidia.com/Pages/results.aspx?k=%s";
     opts["stock"] = "https://duckduckgo.com/?q=%s&t=ffab&ia=stock";
     opts["youtube"] = "https://www.youtube.com/results?search_query=%s";
-    auto& args = ed.getArgs();
     auto command = ed.promptEnum("Search:", opts);
     if(command.empty()) return;
-    command = args.browserCmd + " '" + command + "'";
+    command = Option::get("browserCmd").getStr() + " '" + command + "'";
     // we'll only look at first cursor!
     auto query = ed.getBuff().regionAsStr();
     if (query.empty()) query = ed.prompt("Query: ");
@@ -219,8 +217,7 @@ DEF_CMD(IndentLine, "indent",
 
 DEF_CMD(
   OrgNotesDir, "org-notes-dir", DEF_OP() {
-    const auto& args = ed.getArgs();
-    ed.load(args.orgNotesDir, 0);
+    ed.load(Option::get("orgNotesDir").getStr(), 0);
   },
   DEF_HELP() {
     return "Loads the dir containing all org files. The dir can be"

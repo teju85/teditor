@@ -29,13 +29,12 @@ std::vector<KeyCmdPair> PromptYesNoKeys::All = {
 };
 
 
-Editor::Editor(const Args& args_):
-  backbuff(), frontbuff(), lastfg(), lastbg(), args(args_),
-  cmBar(new CmdMsgBar), buffs(), cmBarArr(), windows(), quitEventLoop(false),
-  quitPromptLoop(false), cancelPromptLoop(false), cmdMsgBarActive(false),
-  copiedStr(), defcMap(), ynMap(),
-  fileshist(Option::get("histFile").getStr(),
-            Option::get("maxHistory").getInt()) {
+Editor::Editor(const std::vector<FileInfo>& _files):
+  backbuff(), frontbuff(), lastfg(), lastbg(), cmBar(new CmdMsgBar), buffs(),
+  cmBarArr(), windows(), quitEventLoop(false), quitPromptLoop(false),
+  cancelPromptLoop(false), cmdMsgBarActive(false), copiedStr(), defcMap(),
+  ynMap(), files(_files), fileshist(Option::get("histFile").getStr(),
+                                    Option::get("maxHistory").getInt()) {
   DEBUG("Editor: ctor started\n");
   // This array is here only to make sure we get consistent interface to the
   // Window API.
@@ -51,8 +50,10 @@ Editor::Editor(const Args& args_):
 }
 
 Editor::~Editor() {
+  DEBUG("Editor: dtor started\n");
   fileshist.prune();
   fileshist.store();
+  DEBUG("Editor: dtor finished\n");
 }
 
 void Editor::saveBuffer(Buffer& buf) {
@@ -70,8 +71,9 @@ void Editor::saveBuffer(Buffer& buf) {
 }
 
 int Editor::cmBarHeight() const {
-  if(cmdMsgBarActive && cmBar->usingChoices()) return args.cmdMsgBarMultiHeight;
-  return args.cmdMsgBarHeight;
+  if(cmdMsgBarActive && cmBar->usingChoices())
+    return Option::get("cmBar::multiheight").getInt();
+  return Option::get("cmBar::height").getInt();
 }
 
 const AttrColor& Editor::getColor(const std::string& name) const {
@@ -100,12 +102,12 @@ void Editor::createReadOnlyBuff(const std::string& name,
 ///@todo: don't load the same file/dir more than once!
 void Editor::loadFiles() {
   DEBUG("loadFiles: started\n");
-  if(args.files.empty()) {
+  if(files.empty()) {
     createScratchBuff(true);
     DEBUG("loadFiles: Added default buffer\n");
     return;
   }
-  for(auto& f : args.files) load(f.first, f.second);
+  for(auto& f : files) load(f.first, f.second);
   DEBUG("loadFiles: ended\n");
 }
 
