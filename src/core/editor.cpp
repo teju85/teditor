@@ -15,7 +15,7 @@
 #include <algorithm>
 #include "mode.h"
 #include "key_cmd_map.h"
-
+#include "option.h"
 
 namespace teditor {
 
@@ -34,7 +34,8 @@ Editor::Editor(const Args& args_):
   cmBar(new CmdMsgBar), buffs(), cmBarArr(), windows(), quitEventLoop(false),
   quitPromptLoop(false), cancelPromptLoop(false), cmdMsgBarActive(false),
   copiedStr(), defcMap(), ynMap(),
-  fileshist(args.getHistFile(), args.maxFileHistory) {
+  fileshist(Option::get("histFile").getStr(),
+            Option::get("maxHistory").getInt()) {
   DEBUG("Editor: ctor started\n");
   // This array is here only to make sure we get consistent interface to the
   // Window API.

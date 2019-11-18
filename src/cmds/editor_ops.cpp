@@ -48,9 +48,9 @@ DEF_CMD(
   DEF_HELP() {
     return "Opens a prompt with a list of previously opened files for a"
       " speedier finding of a file. History file is always stored at"
-      " $homeFolder/history. The arg 'homeFolder' can be customized"
+      " '<homeFolder>/history'. The option 'homeFolder' can be customized"
       " as it is the folder which has all teditor related settings."
-      " The arg maxFileHistory controls the amount of previous files"
+      " The option 'maxFileHistory' controls the amount of previous files"
       " to be remembered.";
   });
 
