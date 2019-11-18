@@ -4,7 +4,6 @@
 #include <memory>
 #include <string.h>
 #include "logger.h"
-#include "file_utils.h"
 
 namespace teditor {
 
@@ -117,8 +116,17 @@ void registerAllOptions() {
 }
 
 void parseRcFile(const std::string& rc) {
-  ASSERT(isFile(rc), "Input rc file '%s' does not exist", rc.c_str());
-  ///@todo: parse the rc file
+  std::fstream fp;
+  fp.open(rc.c_str(), std::fstream::in);
+  ASSERT(fp.is_open(), "Failed to open the input rc file '%s' for reading",
+         rc.c_str());
+  std::string currLine;
+  while(std::getline(fp, currLine, '\n')) {
+    if (currLine.empty()) continue;
+    if (currLine[0] == '#') continue;
+    ///@todo: parse the rc file
+  }
+  fp.close();
 }
 
 std::vector<FileInfo> parseArgs(int argc, char** argv) {
