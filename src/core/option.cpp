@@ -4,6 +4,7 @@
 #include <memory>
 #include <string.h>
 #include "logger.h"
+#include "file_utils.h"
 
 namespace teditor {
 
@@ -115,6 +116,11 @@ void registerAllOptions() {
               Option::Type::Char);
 }
 
+void parseRcFile(const std::string& rc) {
+  ASSERT(isFile(rc), "Input rc file '%s' does not exist", rc.c_str());
+  ///@todo: parse the rc file
+}
+
 std::vector<FileInfo> parseArgs(int argc, char** argv) {
   registerAllOptions();
   std::vector<FileInfo> files;
@@ -128,7 +134,7 @@ std::vector<FileInfo> parseArgs(int argc, char** argv) {
     } else if(!strcmp(argv[i], "-rc")) {
       ++i;
       ASSERT(i < argc, "'-rc' option expects an argument!");
-      ///@todo: parse the rc file
+      parseRcFile(argv[i]);
     } else {
       ASSERT(argv[i][0] != '-', "Invalid arg passed! '%s'", argv[i]);
       files.push_back(readFileInfo(argv[i]));
