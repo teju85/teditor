@@ -5,8 +5,8 @@
 namespace teditor {
 
 TEST_CASE("Pos2d") {
-    Pos2di a = {10, 10};
-    Pos2di b = {0, 0};
+    Point a = {10, 10};
+    Point b = {0, 0};
     REQUIRE(a > b);
     REQUIRE(a >= b);
     REQUIRE_FALSE(a == b);
@@ -43,9 +43,9 @@ TEST_CASE("Pos2d") {
 }
 
 TEST_CASE("Pos2d::find") {
-    Pos2di a = {10, 10};
-    Pos2di b = {0, 0};
-    Pos2di start, end;
+    Point a = {10, 10};
+    Point b = {0, 0};
+    Point start, end;
     REQUIRE(1 == a.find(start, end, b));
     REQUIRE(start == b);
     REQUIRE(end == a);
@@ -67,80 +67,12 @@ TEST_CASE("Pos2d::find") {
     REQUIRE(end == b);
 }
 
-TEST_CASE("Positions::==") {
-    Positions a = {
-        {10, 10},
-        {3, 2}
-    };
-    Positions b;
-    REQUIRE(a == a);
-    REQUIRE_FALSE(a == b);
-    REQUIRE_FALSE(b == a);
-    b = {
-        {2, 3}
-    };
-    REQUIRE_FALSE(b == a);
-    b.push_back({1, 2});
-    REQUIRE_FALSE(b == a);
-    Positions c(a);
-    REQUIRE(c == a);
-}
-
-TEST_CASE("Positions::added1") {
-    Positions a = {
-        {2, 3},
-        {8, 3},
-        {6, 4}
-    };
-    Strings chars = {"abc\ndef", "ghij\nkl", "mno"};
-    a.added(chars);
-    Positions expected = {
-        {3, 4},
-        {2, 5},
-        {9, 6}
-    };
-    REQUIRE(a == expected);
-}
-
-TEST_CASE("Positions::added2") {
-    Positions a = {
-        {2, 3},
-        {8, 3},
-        {6, 4}
-    };
-    std::string chars = "abc\ndef";
-    a.added(chars);
-    Positions expected = {
-        {3, 4},
-        {3, 5},
-        {3, 7}
-    };
-    REQUIRE(a == expected);
-}
-
-TEST_CASE("Regions") {
-    Positions locs = {
-        {2, 3},
-        {8, 3},
-        {6, 4}
-    };
-    Regions regs;
-    Positions locs2 = {
-        {5, 3},
-        {10, 3},
-        {12, 4}
-    };
-    REQUIRE(regs.empty());
-    REQUIRE_FALSE(regs.isInside(3, 4, locs));
-    REQUIRE_FALSE(regs.isInside(3, 9, locs));
-    REQUIRE_FALSE(regs.isInside(4, 10, locs));
-    regs.enable(locs2);
-    REQUIRE_FALSE(regs.empty());
-    REQUIRE(regs.isInside(3, 4, locs));
-    REQUIRE(regs.isInside(3, 9, locs));
-    REQUIRE(regs.isInside(4, 10, locs));
-    regs.clear();
-    REQUIRE(regs.empty());
+TEST_CASE("Pos2d::isInside") {
+  Point cu(2, 3);
+  Point reg(-1, -1);
+  REQUIRE_FALSE(reg.isInside(3, 4, cu));
+  reg = {5, 3};
+  REQUIRE(reg.isInside(3, 4, cu));
 }
 
 } // end namespace teditor
