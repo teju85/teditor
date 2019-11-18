@@ -58,10 +58,8 @@ void Buffer::remove(bool removeCurrent) {
     // re-arrange the region to have cursor come after the start
     Point small, big;
     cu.find(small, big, region);
-    region = small;
-    cu = big;
-    op.before = region;
-    op.after = cu;
+    op.before = small;
+    op.after = big;
     op.str = removeRegion(op.before, op.after);
     cu = op.before;
     stopRegion();
