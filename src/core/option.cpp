@@ -161,6 +161,7 @@ bool parseArgs(int argc, char** argv, std::vector<FileInfo>& files) {
       parseRcFile(argv[i]);
     } else if(!strcmp(argv[i], "-v")) {
       printf("teditor version %s\n", TEDITOR_VERSION_INFO);
+      return false;
     } else {
       ASSERT(argv[i][0] != '-', "Invalid arg passed! '%s'", argv[i]);
       files.push_back(readFileInfo(argv[i]));
