@@ -61,7 +61,7 @@ int CmdMsgBar::linesNeeded(const std::string& str, int wid) const {
   return (len + wid - 1) / wid;
 }
 
-int CmdMsgBar::totalLinesNeeded(const Pos2di& dim) const {
+int CmdMsgBar::totalLinesNeeded(const Point& dim) const {
   int count = at(0).numLinesNeeded(dim.x);
   if(!usingChoices()) return count;
   const auto str = getStr();
@@ -141,7 +141,7 @@ void CmdMsgBar::up() {
   choices->updateMainBuffer(*this);
 }
 
-void CmdMsgBar::lineUp(const Pos2di& dim) {
+void CmdMsgBar::lineUp(const Point& dim) {
   while(totalLinesNeeded(dim) > dim.y) ++startLine;
 }
 

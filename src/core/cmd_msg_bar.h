@@ -55,7 +55,7 @@ public:
   void clear() override;
   void setMinLoc(int loc) { minLoc = loc; }
   int getMinStartLoc() const override { return minLoc; }
-  int totalLinesNeeded(const Pos2di& dim) const override;
+  int totalLinesNeeded(const Point& dim) const override;
   void setChoices(Choices* ch) { choices = ch; }
   void clearChoices();
   bool usingChoices() const { return choices != nullptr; }
@@ -65,7 +65,7 @@ public:
   void up();
   void updateChoices();
   int getOptLoc() const { return optLoc; }
-  void lineUp(const Pos2di& dim) override;
+  void lineUp(const Point& dim) override;
   void lineDown() override;
 
 private:
