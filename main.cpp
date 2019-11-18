@@ -21,7 +21,6 @@ int main(int argc, char** argv) {
       std::shared_ptr<Editor> ed(new Editor(args));
       ed->run();
     }
-    DEBUG("Exited Editor::run loop...\n");
     DEBUG("Editor: dtor finished\n");
     DEBUG("Closing teditor\n");
     return 0;
