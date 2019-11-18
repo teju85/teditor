@@ -71,16 +71,14 @@ int CmdMsgBar::totalLinesNeeded(const Pos2di& dim) const {
 }
 
 void CmdMsgBar::insert(const std::string& str) {
-  auto& culoc = locs[0];
-  lines[0].insert(str, culoc.x);
-  culoc.x += (int)str.size();
+  lines[0].insert(str, cu.x);
+  cu.x += (int)str.size();
 }
 
 // always insert on the first line!
 void CmdMsgBar::insert(char c) {
-  auto& culoc = locs[0];
-  lines[0].insert(c, culoc.x);
-  ++culoc.x;
+  lines[0].insert(c, cu.x);
+  ++cu.x;
   if(!usingChoices()) return;
   updateChoices();
   // then jump to the first matching option at this point!
@@ -105,10 +103,9 @@ void CmdMsgBar::updateChoices() {
 }
 
 void CmdMsgBar::clear() {
-  auto& culoc = locs[0];
-  auto& line = lines[culoc.y];
+  auto& line = lines[cu.y];
   line.erase(0, line.length());
-  culoc = {0, 0};
+  cu = {0, 0};
   lineReset();
 }
 

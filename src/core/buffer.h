@@ -21,9 +21,9 @@ struct RemovedLine {
   /** the removed line */
   std::string str;
   /** from where it was removed */
-  Pos2d<int> pos;
+  Point pos;
 };
-/** vector of removed lines */
+/** list of removed lines */
 typedef std::vector<RemovedLine> RemovedLines;
 
 
@@ -41,34 +41,29 @@ public:
    * @defgroup BufferEdit Various of editing chars in the buffer
    * @{
    */
-  /** insert a character at all current cursor locations */
+  /** insert a character at the current cursor location */
   virtual void insert(char c);
-  /**
-   * insert strings, each at a given cursor location. For this to work, one
-   * should pass as many strings as there are cursors!
-   */
-  void insert(const Strings& strs);
-  /** insert a string at all current cursor locations */ 
-  virtual void insert(const std::string& buf);
+  /** insert a string at the current cursor location */ 
+  virtual void insert(const std::string& str);
   /**
    * @brief main remove method
    * @param removeCurrent whether to remove the current char over the cursor
    */
   void remove(bool removeCurrent=false);
   /** remove a region and return its contents to be copied to clipboard */
-  Strings removeAndCopy();
+  std::string removeAndCopy();
   /**
-   * @brief removes regions between start and end
-   * @param start list of region starts
-   * @param end list of region ends
-   * @return list of deleted regions
+   * @brief removes region between start and end
+   * @param start start of the region
+   * @param end end of the region
+   * @return string present in the deleted region
    * @todo make this private after updating unittests accordingly
    */
-  Strings removeRegion(const Positions& start, const Positions& end);
+  std::string removeRegion(const Point& start, const Point& end);
   /** kills lines at current cursor location onwards */
-  Strings killLine(bool pushToStack=true);
-  /** sorts the lines in the regions */
-  void sortRegions();
+  std::string killLine(bool pushToStack=true);
+  /** sorts the lines in the region */
+  void sortRegion();
   /**
    * @brief Keep/Remove lines that match the input regex.
    * @param pc the regular expression that needs to be matched
@@ -121,31 +116,31 @@ public:
    * @defgroup Coordinates convert buffer co-ords to screen and vice versa
    * @{
    */
-  Pos2di buffer2screen(const Pos2di& loc, const Pos2di& start,
-                       const Pos2di& dim) const;
-  Pos2di screen2buffer(const Pos2di& loc, const Pos2di& start,
-                       const Pos2di& dim) const;
+  Point buffer2screen(const Point& loc, const Point& start,
+                      const Point& dim) const;
+  Point screen2buffer(const Point& loc, const Point& start,
+                       const Point& dim) const;
   /** @} */
 
   /** returns character at a given buffer location */
-  char charAt(const Pos2d<int>& pos) const;
+  char charAt(const Point& pos) const;
 
   /**
    * @defgroup Draw Functions to draw parts of the buffer
    * @{
    */
   virtual void draw(Editor& ed, const Window& win);
-  void drawCursor(Editor& ed, const AttrColor& bg, const Window& win);
+  void drawPoint(Editor& ed, const AttrColor& bg, const Window& win);
   /** @} */
 
   /**
-   * @defgroup CursorMovements All methods for moving cursor
+   * @defgroup PointMovements All methods for moving cursor
    * @{
    */
   /** move to begining of line */
-  void startOfLine();
+  void startOfLine() { cu.x = getMinStartLoc(); }
   /** move to end of line */
-  void endOfLine();
+  void endOfLine() { cu.x = lengthOf(cu.y); }
   /** move left */
   void left();
   /** move right */
@@ -171,43 +166,47 @@ public:
   /** jump to previous word */
   void previousWord();
   /** goto the specified line number */
-  void gotoLine(int lineNum, const Pos2di& dim);
+  void gotoLine(int lineNum, const Point& dim);
   /** @} */
 
   /**
-   * @defgroup CursorOps Cursor related operations
+   * @defgroup PointOps Point related operations
    * @{
    */
-  /** add a cursor from back */
-  void addCursorFromBack(const Pos2di& pos);
-  /** add a cursor from front */
-  void addCursorFromFront(const Pos2di& pos);
-  /** clear all cursors except the first one */
-  void clearAllCursorsButFirst();
-  /** cursor count */
-  int cursorCount() const { return (int)locs.size(); }
   /** checks if there are any cursors on the given line */
-  bool hasCursorOn(int line) const;
-  /** save the current state of all cursors */
-  Positions saveCursors() const { return copyCursors(locs); }
-  /** restore the state of all cursors to the given one */
-  void restoreCursors(const Positions& pos);
-  const Pos2di& cursorAt(int i) const { return locs[i]; }
-  const Positions& cursors() const { return locs; }
+  bool hasPointOn(int line) const { return line == cu.y; }
+  const Point& getPoint() const { return cu; }
+  void setPoint(const Point& p) { cu = p; }
+  /** @} */
+
+  /**
+   * @defgroup RegionOps Operations with regions
+   * @{
+   */
+  /** checks if there's an active region */
+  bool isRegionActive() const { return region != Point(-1, -1); }
+  /** Returns the string that represents the currently highlighted region */
+  std::string regionAsStr() const;
+  /** start a mark (or region) */
+  void startRegion() { region = cu; }
+  /** stop the currently active mark (or region) */
+  void stopRegion() { region = Point(-1, -1); }
+  const Point& getRegion() const { return region; }
   /** @} */
 
   /** length of a given line in this buffer */
   int lengthOf(int i) const { return lines[i].length(); }
 
+  /** indent the current line */
   void indent();
 
   /** number of lines needed to draw the currrent buffer in this window */
-  virtual int totalLinesNeeded(const Pos2di& dim) const;
+  virtual int totalLinesNeeded(const Point& dim) const;
 
-  virtual void lineUp(const Pos2di& dim);
+  virtual void lineUp(const Point& dim);
   virtual void lineDown();
   void lineReset() { startLine = 0; }
-  void lineEnd(const Pos2di& start, const Pos2di& dim);
+  void lineEnd(const Point& start, const Point& dim);
   virtual bool save(const std::string& fName="");
   const std::string& bufferName() const { return buffName; }
   const std::string& getFileName() const { return fileName; }
@@ -217,27 +216,7 @@ public:
   virtual int getMinStartLoc() const { return 0; }
   std::string dirModeGetFileAtLine(int line);
 
-  /**
-   * @defgroup RegionOps Operations with regions
-   * @{
-   */
-  /** checks if there's an active region */
-  bool isRegionActive() const { return !regions.empty(); }
-  /**
-   * Return the string that represents the currently highlighted region. In
-   * case of multiple-cursors, this will return one such string for each
-   * region
-   */
-  Strings regionAsStr() const;
-  /** start a mark (or region) */
-  void startRegion() { regions.enable(locs); }
-  /** stop the currently active mark (or region) */
-  void stopRegion() { regions.clear(); }
-  const Regions& getRegions() const { return regions; }
-  /** @} */
-
   void reload();
-  const Positions& getRegionLocs() const { return regions.getLocs(); }
   const AttrColor& getColor(const std::string& name) const;
   const std::string& getWord() const { return mode->word(); }
   const std::string& modeName() const { return mode->name(); }
@@ -262,11 +241,11 @@ protected:
    */
   struct OpData {
     /** from where the operation started */
-    Positions before;
+    Point before;
     /** till where the operation was performed */
-    Positions after;
+    Point after;
     /** characters that were inserted/deleted in the above range */
-    Strings strs;
+    std::string str;
     /** type of operation */
     OpType type;
   }; // end class OpData
@@ -280,11 +259,12 @@ protected:
   int startLine;
   bool modified, readOnly;
   std::string buffName, fileName, dirName;
-  Regions regions;
+  /** start of a region */
+  Point region;
   ///@todo: support applying multiple modes
   ModePtr mode;
-  /** cursor(s) */
-  Positions locs;
+  /** cursor */
+  Point cu;
   /** stack of operations for undo */
   OpStack undoStack;
   /** stack of operations for redo */
@@ -293,15 +273,15 @@ protected:
   bool disableStack;
 
 
+  void insertImpl(char c);
   void addLine() { lines.push_back(Line()); }
   void resetBufferState(int line, const std::string& file);
   KeyCmdMap& getKeyCmdMap() { return mode->getKeyCmdMap(); }
   void loadFile(const std::string& file, int line);
   void loadDir(const std::string& dir);
-  std::string removeFrom(const Pos2d<int>& start, const Pos2d<int>& end);
-  Pos2d<int> matchCurrentParen(int i, bool& isOpen);
+  std::string removeFrom(const Point& start, const Point& end);
+  Point matchCurrentParen(bool& isOpen);
   int dirModeFileOffset() const { return 24; }
-  Positions copyCursors(const Positions& pos) const;
 
 
   /**
@@ -317,12 +297,10 @@ protected:
    * @defgroup BufferOpsImpl Internal buffer edit operations
    * @{
    */
-  /** insert a character at the given cursor count */
-  void insert(char c, size_t i);
   /** for deleting a char using backspace */
-  Strings removeChar();
+  std::string removeChar();
   /** removes chars at current cursor locations and returns them */
-  Strings removeCurrentChar();
+  std::string removeCurrentChar();
   /** @} */
 
 
@@ -352,48 +330,10 @@ protected:
 
 
   /** helper method to return the string in the given region */
-  std::string regionAsStr(const Pos2di& start, const Pos2di& end) const;
+  std::string regionAsStr(const Point& start, const Point& end) const;
 
-
-  /**
-   * @defgroup CursorOpsInl Internal cursor operation details
-   * @{
-   */
-  /** remove cursors that are on the same location */
-  void removeDuplicateCursors();
-  /** helper method to apply a function on a given cursor */
-  template <typename Lambda>
-  void forEachCursor(Lambda op) {
-    size_t idx = 0;
-    for(auto& cu : locs) {
-      op(cu, idx);
-      ++idx;
-    }
-    removeDuplicateCursors();
-  }
-  /** helper method to apply a function on cursors from a given index */
-  template <typename Lambda>
-  void forEachCursorFrom(Lambda op, int i) {
-    int len = cursorCount();
-    for(int j=i;j<len;++j) op(locs[j], j);
-  }
   /** find whether there's a cursor already at the input location */
-  bool findCursor(const Pos2di& pos) const;
-  /**
-   * move right all cursors from the input location onwards, which are on the
-   * same line
-   */
-  void moveRightCursorsOnSameLine(int i);
-  /**
-   * move left all cursors from the input location onwards, which are on the
-   * same line
-   */
-  void moveLeftCursorsOnSameLine(int i);
-  /** move down all cursors from the input location onwards */
-  void moveDownAllNextCursors(int i);
-  /** move up all cursors from the input location onwards */
-  void moveUpAllNextCursors(int i);
-  /** @} */
+  bool findPoint(const Point& pos) const { return cu == pos; }
 
   friend class Editor;
 };

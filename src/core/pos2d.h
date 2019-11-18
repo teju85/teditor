@@ -82,13 +82,27 @@ struct Pos2d {
     }
     return *this;
   }
+
+  /**
+   * @brief Check if the given location is in the regions
+   */
+  bool isInside(int y, int x, const Pos2d<T>& cu) const {
+    Pos2d<T> start, end;
+    find(start, end, cu);
+    if(start.y < y && y < end.y) return true;
+    else if(start.y == end.y && start.y == y) {
+      if(start.x <= x && x <= end.x) return true;
+    } else if(start.y == y && x >= start.x) return true;
+    else if(end.y == y && x <= end.x) return true;
+    return false;
+  }
 };
 
 
 /** integer pos2d */
 typedef Pos2d<int> Pos2di;
 /** cursor */
-typedef Pos2di Cursor;
+typedef Pos2di Point;
 
 
 /**
