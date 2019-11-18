@@ -71,10 +71,10 @@ void Buffer::remove(bool removeCurrent) {
     op.str = removeChar();
     op.before = cu;
   }
-  lineDown();
   if(!op.str.empty()) {
     pushNewOp(op);
     modified = true;
+    lineDown();
   }
 }
 
@@ -83,10 +83,12 @@ std::string Buffer::removeChar() {
   int minLoc = getMinStartLoc();
   if(cu.x == minLoc && cu.y == 0) return del;
   if(cu.x > 0) {
+    left();
     del = at(cu.y).erase(cu.x, 1);
     return del;
   }
   int oldy = cu.y;
+  up();
   const auto& oldline = at(oldy);
   auto& newline = at(cu.y);
   cu.x = newline.length();
