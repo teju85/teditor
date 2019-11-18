@@ -4,14 +4,17 @@
 #include "core/editor.h"
 #include "core/terminal.h"
 #include "core/logger.h"
-
+#include "core/option.h"
 
 int main(int argc, char** argv) {
   using namespace teditor;
   ///@todo: add more relevant catch statements in future!
   try {
     SingletonHandler<Logger, std::string> shl("debug.log");
-    Args args(argc, argv);
+    auto files = parseArgs(argc, argv);
+    //Args args(argc, argv);
+    Args args(0, nullptr);
+    args.files = files;
     SingletonHandler<Terminal, std::string> term(args.ttyFile);
     auto* ed = new Editor(args);
     ed->run();

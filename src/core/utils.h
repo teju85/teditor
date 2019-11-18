@@ -59,7 +59,7 @@ bool same(const std::vector<T>& s1, const std::vector<T>& s2) {
 bool operator>(const struct timeval& ta, const struct timeval& tb);
 
 std::string env(const std::string& s);
-std::string expandEnvVars(const std::string& str, const Strings& vars);
+std::string expandEnvVars(const std::string& str);
 
 bool startsWith(const char* s1, int len, const char* s2);
 Strings split(const std::string &s, char delim);

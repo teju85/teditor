@@ -295,10 +295,11 @@ TEST_CASE("Utils::Paren") {
 }
 
 TEST_CASE("Utils::ExpandEnvVars") {
-    setenv("TEST", "test", 1);
-    REQUIRE("test/" == expandEnvVars("$TEST/", {"TEST"}));
-    REQUIRE("test/some/test" == expandEnvVars("$TEST/some/test", {"TEST"}));
-    REQUIRE("$TEST/" == expandEnvVars("$TEST/", {"SOME"}));
+  setenv("TEST", "test", 1);
+  REQUIRE("test/" == expandEnvVars("$TEST/"));
+  REQUIRE("test/some/test" == expandEnvVars("$TEST/some/test"));
+  REQUIRE("/" == expandEnvVars("$TEST1/"));
+  REQUIRE("test" == expandEnvVars("$TEST"));
 }
 
 TEST_CASE("Utils::ReadFileInfo") {

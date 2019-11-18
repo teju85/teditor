@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string>
 #include "utils.h"
+#include "file_utils.h"
+#include <vector>
 
 namespace teditor {
 
@@ -48,10 +50,7 @@ class Option {
     return str2real(value);
   }
 
-  std::string getStr() const {
-    ASSERT(type == String, "Option '%s' is not String!", name.c_str());
-    return value;
-  }
+  std::string getStr() const;
   /** @} */
 
   /**
@@ -86,6 +85,11 @@ class Option {
   void setVal(const std::string& val) { value = val; }
 
   static std::string type2str(Type t);
+  static std::string expandOptions(const std::string& str);
 };  // class Option
+
+
+/** parse input commandline args */
+std::vector<FileInfo> parseArgs(int argc, char** argv);
 
 }  // namespace teditor

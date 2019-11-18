@@ -216,17 +216,20 @@ char getMatchingParen(char c) {
   };
 }
 
-std::string expandEnvVars(const std::string& str, const Strings& vars) {
+std::string expandEnvVars(const std::string& str) {
   std::string ret(str);
-  for(const auto& var : vars) {
-    auto val = env(var);
-    auto name = "$" + var;
-    size_t pos = 0;
-    while(pos < ret.size()) {
-      pos = ret.find(name, pos);
-      if(pos == std::string::npos) break;
-      ret.replace(pos, name.size(), val);
+  for (size_t pos = 0; pos < ret.size(); ) {
+    if (ret[pos] == '$') {
+      auto loc = ret.find_first_not_of(
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_0123456789",
+        pos + 1);
+      auto var = ret.substr(pos + 1, loc - pos - 1);
+      auto val = env(var);
+      ret.replace(pos, loc - pos, val);
+      pos = loc;
+      continue;
     }
+    ++pos;
   }
   return ret;
 }

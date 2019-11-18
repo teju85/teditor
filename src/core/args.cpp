@@ -78,7 +78,7 @@ Args::Args(int argc, char** argv):
     }
   }
   Logger::setLevel(logLevel);
-  homeFolder = expandEnvVars(homeFolder, {"HOME"});
+  homeFolder = expandEnvVars(homeFolder);
   makeDir(homeFolder);
 }
 

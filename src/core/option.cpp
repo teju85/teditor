@@ -2,9 +2,32 @@
 #include <unordered_map>
 #include "option.h"
 #include <memory>
-
+#include <string.h>
 
 namespace teditor {
+
+std::string Option::expandOptions(const std::string& str) {
+  std::string ret(str);
+  for (size_t pos = 0; pos < ret.size(); ) {
+    if (ret[pos] == '<') {
+      auto loc = ret.find_first_of(">", pos + 1);
+      auto optName = ret.substr(pos + 1, loc - pos - 1);
+      auto val = get(optName).getStr();
+      ret.replace(pos, loc - pos + 1, val);
+      pos = loc;
+      continue;
+    }
+    ++pos;
+  }
+  return ret;
+}
+
+std::string Option::getStr() const {
+  ASSERT(type == String, "Option '%s' is not String!", name.c_str());
+  auto ret = expandEnvVars(value);
+  ret = expandOptions(ret);
+  return ret;
+}
 
 typedef std::unordered_map<std::string, std::shared_ptr<Option>> Options;
 
@@ -56,5 +79,33 @@ std::string Option::type2str(Option::Type t) {
   };
 }
 #undef CASE
+
+// NOTE: keep the options in alphabetical order
+void registerAllOptions() {
+  Option::add("homeFolder", "$HOME/.teditor", "Path to editor home folder",
+              Option::Type::String);
+  Option::add("quitAfterLoad", "NO",
+              "Quit after parsing cmdline args and loading input files",
+              Option::Type::Boolean);
+  Option::add("rc", "<homeFolder>/rcfile", "Path to rc file",
+              Option::Type::String);
+}
+
+std::vector<FileInfo> parseArgs(int argc, char** argv) {
+  registerAllOptions();
+  std::vector<FileInfo> files;
+  for(int i = 1; i < argc; ++i) {
+    if (!strcmp(argv[i], "-dump")) {
+      ++i;
+      ASSERT(i < argc, "'-dump' option expects an argument!");
+      Option::dumpAll(argv[i]);
+    } else {
+      ASSERT(argv[i][0] != '-', "Invalid arg passed! '%s'", argv[i]);
+      files.push_back(readFileInfo(argv[i]));
+    }
+  }
+  makeDir(Option::get("homeFolder").getStr());
+  return files;
+}
 
 }  // namespace teditor
