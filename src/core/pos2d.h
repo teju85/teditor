@@ -87,6 +87,8 @@ struct Pos2d {
 
 /** integer pos2d */
 typedef Pos2d<int> Pos2di;
+/** cursor */
+typedef Pos2di Cursor;
 
 
 /**
