@@ -757,6 +757,25 @@ TEST_CASE("Buffer::SingleCursorEdits") {
     REQUIRE(ml.isModified());
   }
 
+  SECTION("remove region with cursor coming before") {
+    ml.endOfLine();
+    ml.startRegion();
+    ml.left();
+    ml.left();
+    REQUIRE(Point(5, 0) == ml.getPoint());
+    ml.remove();
+    REQUIRE_FALSE(ml.isRegionActive());
+    REQUIRE("* Hel" == ml.at(0).get());
+    REQUIRE(Point(5, 0) == ml.getPoint());
+    REQUIRE(ml.undo());
+    REQUIRE("* Hello" == ml.at(0).get());
+    REQUIRE(Point(7, 0) == ml.getPoint());
+    REQUIRE(ml.redo());
+    REQUIRE("* Hel" == ml.at(0).get());
+    REQUIRE(Point(5, 0) == ml.getPoint());
+    REQUIRE(ml.isModified());
+  }
+
   SECTION("remove region and copy") {
     ml.startRegion();
     ml.right();
