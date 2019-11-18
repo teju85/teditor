@@ -13,11 +13,10 @@ namespace teditor {
 
 Buffer::Buffer(const std::string& name, bool noUndoRedo):
   lines(), startLine(0), modified(false), readOnly(false), buffName(name),
-  fileName(), dirName(), regions(), mode(Mode::createMode("text")), locs(),
-  undoStack(), redoStack(), disableStack(noUndoRedo) {
+  fileName(), dirName(), region(-1, -1), mode(Mode::createMode("text")),
+  cu(0, 0), undoStack(), redoStack(), disableStack(noUndoRedo) {
   addLine();
   dirName = getpwd();
-  locs.push_back(Pos2di(0, 0));
   begin();
 }
 
@@ -25,56 +24,31 @@ Buffer::Buffer(const std::string& name, bool noUndoRedo):
 void Buffer::insert(char c) {
   OpData op;
   op.type = OpInsert;
-  op.strs = Strings(locs.size(), std::string(1, c));
+  op.str = std::string(1, c);
   applyInsertOp(op);
 }
 
-void Buffer::insert(const Strings& strs) {
+void Buffer::insert(const std::string& str) {
   OpData op;
   op.type = OpInsert;
-  op.strs = strs;
+  op.str = str;
   applyInsertOp(op);
 }
 
-void Buffer::insert(const std::string& buf) {
-  OpData op;
-  op.type = OpInsert;
-  op.strs = Strings(locs.size(), buf);
-  applyInsertOp(op);
-}
-
-///@todo: what if a single line crosses the whole screen!?
-void Buffer::insert(char c, size_t i) {
-  auto& pos = locs[i];
-  if(c == '\n' || c == (char)Key_Enter) {
-    auto newLine = at(pos.y).split(pos.x);
-    lines.insert(lines.begin() + pos.y + 1, newLine);
-    // inserting line at the current cursor means all other cursors below it
-    // must also be moved down by one line to preserve their right location
-    moveDownAllNextCursors(i);
-    pos.x = 0;
-    return;
-  }
-  auto& line = lines[pos.y];
-  line.insert(c, pos.x);
-  // inserting a char should move other cursors in the same line!
-  moveRightCursorsOnSameLine(i);
-}
-
-Strings Buffer::removeAndCopy() {
+std::string Buffer::removeAndCopy() {
   OpData op;
   op.type = OpDelete;
-  if(!isRegionActive()) return op.strs;
+  if(!isRegionActive()) return op.str;
   ///@todo: what if 'before' is after 'after'!?
-  op.before = copyCursors(regions);
-  op.after = saveCursors();
-  op.strs = removeRegion(op.before, op.after);
-  restoreCursors(op.before);
+  op.before = region;
+  op.after = cu;
+  op.str = removeRegion(op.before, op.after);
+  cu = op.before;
   stopRegion();
   lineDown();
   pushNewOp(op);
   modified = true;
-  return op.strs;
+  return op.str;
 }
 
 void Buffer::remove(bool removeCurrent) {
@@ -82,72 +56,60 @@ void Buffer::remove(bool removeCurrent) {
   op.type = OpDelete;
   if(isRegionActive()) {
     ///@todo: what if 'before' is after 'after'!?
-    op.before = copyCursors(regions);
-    op.after = saveCursors();
-    op.strs = removeRegion(op.before, op.after);
-    restoreCursors(op.before);
+    op.before = region;
+    op.after = cu;
+    op.str = removeRegion(op.before, op.after);
+    cu = op.before;
     stopRegion();
   } else if(removeCurrent) {
-    op.after = op.before = saveCursors();
-    op.strs = removeCurrentChar();
+    op.after = op.before = cu;
+    op.str = removeCurrentChar();
   } else {
     // order is reversed for 'after' and 'before' due to the following
     // insertion op during the undo of this operation!
-    op.after = saveCursors();
-    op.strs = removeChar();
-    op.before = saveCursors();
+    op.after = cu;
+    op.str = removeChar();
+    op.before = cu;
   }
-  lineDown();
-  if(!allStringsEmpty(op.strs)) {
+  if(!op.str.empty()) {
     pushNewOp(op);
     modified = true;
+    lineDown();
   }
 }
 
-Strings Buffer::removeChar() {
-  Strings del;
-  int len = cursorCount();
-  int minLoc = getMinStartLoc();
-  for(int i=0;i<len;++i) {
-    auto& culoc = locs[i];
-    if(culoc.x == minLoc && culoc.y == 0) {
-      del.push_back("");
-      continue;
-    }
-    if(culoc.x > 0) {
-      moveLeftCursorsOnSameLine(i);
-      auto str = at(culoc.y).erase(culoc.x, 1);
-      del.push_back(str);
-      continue;
-    }
-    int oldy = culoc.y;
-    moveUpAllNextCursors(i);
-    const auto& oldline = at(oldy);
-    auto& newline = at(culoc.y);
-    culoc.x = newline.length();
-    newline.join(oldline);
-    lines.erase(lines.begin()+culoc.y+1);
-    del.push_back("\n");
-  }
-  lineDown();
-  // only if there are some chars deleted, the buffer is modified!
-  if(!allStringsEmpty(del)) modified = true;
-  return del;
-}
-
-Strings Buffer::removeRegion(const Positions& start, const Positions& end) {
-  Strings del;
-  for(size_t i=0;i<start.size();++i)
-    del.push_back(removeFrom(start[i], end[i]));
-  // only if there are some chars deleted, the buffer is modified!
-  if(!allStringsEmpty(del)) modified = true;
-  return del;
-}
-
-std::string Buffer::removeFrom(const Pos2d<int>& start,
-                               const Pos2d<int>& end) {
+std::string Buffer::removeChar() {
   std::string del;
-  Pos2di small, big;
+  int minLoc = getMinStartLoc();
+  if(cu.x == minLoc && cu.y == 0) return del;
+  if(cu.x > 0) {
+    left();
+    del = at(cu.y).erase(cu.x, 1);
+    return del;
+  }
+  int oldy = cu.y;
+  up();
+  const auto& oldline = at(oldy);
+  auto& newline = at(cu.y);
+  cu.x = newline.length();
+  newline.join(oldline);
+  lines.erase(lines.begin()+cu.y+1);
+  del = "\n";
+  lineDown();
+  modified = true;
+  return del;
+}
+
+std::string Buffer::removeRegion(const Point& start, const Point& end) {
+  std::string del = removeFrom(start, end);
+  // only if there are some chars deleted, the buffer is modified!
+  if (!del.empty()) modified = true;
+  return del;
+}
+
+std::string Buffer::removeFrom(const Point& start, const Point& end) {
+  std::string del;
+  Point small, big;
   if(0 == start.find(small, big, end)) {
     int len = big.x - small.x;
     del = at(small.y).erase(small.x, len);
@@ -184,28 +146,21 @@ std::string Buffer::removeFrom(const Pos2d<int>& start,
   return del;
 }
 
-Strings Buffer::removeCurrentChar() {
-  Strings del;
-  int len = cursorCount();
-  for(int i=0;i<len;++i) {
-    auto& culoc = locs[i];
-    if(culoc.x == lengthOf(culoc.y) && culoc.y == length()-1) {
-      del.push_back("");
-      continue;
-    }
-    if(culoc.x < lengthOf(culoc.y)) {
-      auto str = lines[culoc.y].erase(culoc.x, 1);
-      del.push_back(str);
-      continue;
-    }
-    int y = culoc.y;
-    int oldy = y + 1;
-    at(y).join(at(oldy));
-    lines.erase(lines.begin()+oldy);
-    del.push_back("\n");
+std::string Buffer::removeCurrentChar() {
+  std::string del;
+  if(cu.x == lengthOf(cu.y) && cu.y == length()-1) {
+    return del;
   }
-  // only if there are some chars deleted, the buffer is modified!
-  if(!allStringsEmpty(del)) modified = true;
+  if(cu.x < lengthOf(cu.y)) {
+    del = lines[cu.y].erase(cu.x, 1);
+    return del;
+  }
+  int y = cu.y;
+  int oldy = y + 1;
+  at(y).join(at(oldy));
+  lines.erase(lines.begin() + oldy);
+  del = "\n";
+  modified = true;
   return del;
 }
 
@@ -220,33 +175,28 @@ void Buffer::clear() {
   clearStack(redoStack);
 }
 
-Strings Buffer::killLine(bool pushToStack) {
+std::string Buffer::killLine(bool pushToStack) {
   OpData op;
   op.type = OpKillLine;
   stopRegion();
-  op.before = saveCursors();
+  op.before = cu;
   modified = true;
-  int len = cursorCount();
-  for(int i=0;i<len;++i) {
-    const auto& culoc = locs[i];
-    auto& line = lines.at(culoc.y);
-    if(culoc.x >= line.length()) {
-      if(culoc.y == length()-1) {
-        op.strs.push_back("");
-        continue;
-      }
-      auto& next = lines.at(culoc.y + 1);
-      line.insert(next.get(), culoc.x);
-      lines.erase(lines.begin() + culoc.y + 1);
-      op.strs.push_back("\n");
+  auto& line = lines.at(cu.y);
+  if(cu.x >= line.length()) {
+    if(cu.y == length()-1) {
+      op.str = "";
     } else {
-      auto str = line.erase(culoc.x, line.length()-culoc.x);
-      op.strs.push_back(str);
+      auto& next = lines.at(cu.y + 1);
+      line.insert(next.get(), cu.x);
+      lines.erase(lines.begin() + cu.y + 1);
+      op.str = "\n";
     }
+  } else {
+    op.str = line.erase(cu.x, line.length() - cu.x);
   }
-  op.after = saveCursors();
+  op.after = cu;
   if(pushToStack) pushNewOp(op);
-  return op.strs;
+  return op.str;
 }
 ////// End: Buffer editing //////
 
@@ -273,7 +223,7 @@ bool Buffer::redo() {
   } else if(top.type == OpDelete) {
     applyDeleteOp(top);
   } else if(top.type == OpKillLine) {
-    restoreCursors(top.before);
+    cu = top.before;
     killLine(false);
   }
   undoStack.push(top);
@@ -283,24 +233,35 @@ bool Buffer::redo() {
 
 void Buffer::applyInsertOp(OpData& op, bool pushToStack) {
   if(pushToStack)
-    op.before = saveCursors();
+    op.before = cu;
   else
-    restoreCursors(op.before);
-  forEachCursor([&op, this](Pos2di& cu, size_t idx) {
-    auto& str = op.strs[idx];
-    for(auto c : str) insert(c, (int)idx);
-  });
+    cu = op.before;
+  for (auto c : op.str) insertImpl(c);
   modified = true;
   if(pushToStack) {
-    op.after = saveCursors();
+    op.after = cu;
     pushNewOp(op);
   } else {
-    restoreCursors(op.after);
+    cu = op.after;
   }
 }
 
+///@todo: what if a single line crosses the whole screen!?
+void Buffer::insertImpl(char c) {
+  if(c == '\n' || c == (char)Key_Enter) {
+    auto newLine = at(cu.y).split(cu.x);
+    lines.insert(lines.begin() + cu.y + 1, newLine);
+    cu.x = 0;
+    ++cu.y;
+    return;
+  }
+  auto& line = lines[cu.y];
+  line.insert(c, cu.x);
+  right();
+}
+
 void Buffer::applyDeleteOp(OpData& op) {
-  restoreCursors(op.before);
+  cu = op.before;
   if(op.before == op.after) { // removeCurrent was called
     removeCurrentChar();
   } else {
@@ -308,7 +269,7 @@ void Buffer::applyDeleteOp(OpData& op) {
   }
   lineDown();
   modified = true;
-  restoreCursors(op.before);
+  cu = op.before;
 }
 
 void Buffer::pushNewOp(OpData& op) {
@@ -327,19 +288,15 @@ const AttrColor& Buffer::getColor(const std::string& name) const {
   return mode->getColorMap().get(name);
 }
 
-Strings Buffer::regionAsStr() const {
-  Strings out;
+std::string Buffer::regionAsStr() const {
+  std::string out;
   if(!isRegionActive()) return out;
-  int count = (int)regions.size();
-  for(int j=0;j<count;++j) {
-    auto rs = regionAsStr(regions[j], locs[j]);
-    out.push_back(rs);
-  }
+  out = regionAsStr(region, cu);
   return out;
 }
 
-std::string Buffer::regionAsStr(const Pos2di& start, const Pos2di& end) const {
-  Pos2di small, big;
+std::string Buffer::regionAsStr(const Point& start, const Point& end) const {
+  Point small, big;
   if(0 == start.find(small, big, end)) {
     int len = big.x - small.x;
     const auto& line = at(small.y);
@@ -411,7 +368,7 @@ void Buffer::loadFile(const std::string& file, int line) {
   }
   fp.close();
   resetBufferState(line, absFile);
-  locs[0] = {0, line};
+  cu = {0, line};
 }
 
 void Buffer::resetBufferState(int line, const std::string& file) {
@@ -438,19 +395,15 @@ void Buffer::draw(Editor& ed, const Window& win) {
   drawStatusBar(ed, win);
 }
 
-void Buffer::drawCursor(Editor& ed, const AttrColor& bg, const Window& win) {
-  int n = cursorCount();
+void Buffer::drawPoint(Editor& ed, const AttrColor& bg, const Window& win) {
   const auto& start = win.start();
   const auto& dim = win.dim();
   const auto& fg = getColor("cursorfg");
-  for(int i=0;i<n;++i) {
-    auto& culoc = locs[i];
-    char c = charAt(culoc);
-    auto screenloc = buffer2screen(culoc, start, dim);
-    DEBUG("drawCursor: i=%d x,y=%d,%d sloc=%d,%d start=%d\n",
-          i, culoc.x, culoc.y, screenloc.x, screenloc.y, startLine);
-    ed.sendChar(screenloc.x, screenloc.y, fg, bg, c);
-  }
+  char c = charAt(cu);
+  auto screenloc = buffer2screen(cu, start, dim);
+  DEBUG("drawPoint: i=%d x,y=%d,%d sloc=%d,%d start=%d\n", i, cu.x, cu.y,
+        screenloc.x, screenloc.y, startLine);
+  ed.sendChar(screenloc.x, screenloc.y, fg, bg, c);
 }
 
 void Buffer::drawStatusBar(Editor& ed, const Window& win) {
@@ -467,20 +420,15 @@ void Buffer::drawStatusBar(Editor& ed, const Window& win) {
   const auto& bg = getColor("statusbg");
   const auto& namefg = getColor("statusnamefg");
   ed.sendString(x, y, fg, bg, line.c_str(), dim.x);
-  const auto& loc = locs[0];
   // modified + linenum
   int count = ed.sendStringf(x, y, fg, bg, " %s [%d:%d]/%d ",
-                             modified? "**" : "  ", loc.y, loc.x, length());
+                             modified? "**" : "  ", cu.y, cu.x, length());
   // buffer name
   count += ed.sendString(x+count, y, namefg, bg, buffName.c_str(),
                          (int)buffName.length());
   // buffer counts
   count += ed.sendStringf(x+count, y, fg, bg, " <%d/%d> [%s]", currId+1,
                           ed.buffSize(), readOnly? "r-" : "rw");
-  // multiple cursor counts
-  if(cursorCount() > 1) {
-    count += ed.sendStringf(x+count, y, fg, bg, " mc:%d", cursorCount());
-  }
   // mode
   count += ed.sendStringf(x+count, y, fg, bg, " [mode=%s]",
                           mode->name().c_str());
@@ -516,7 +464,7 @@ int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
     for(int i=0;i<count;++i) {
       // under the highlighted region
       auto c = str[start + i];
-      if(regions.isInside(lineNum, start+i, locs)) {
+      if(region.isInside(lineNum, start+i, cu)) {
         ed.sendChar(xStart+i, y, getColor("highlightfg"),
                     getColor("highlightbg"), c);
       } else if(isD)
@@ -530,10 +478,10 @@ int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
   return y;
 }
 
-Pos2di Buffer::buffer2screen(const Pos2di& loc, const Pos2di& start,
-                             const Pos2di& dim) const {
+Point Buffer::buffer2screen(const Point& loc, const Point& start,
+                             const Point& dim) const {
   int w = dim.x;
-  Pos2d<int> ret = start;
+  Point ret = start;
   int relY = loc.y - startLine;
   for(int idx=0;idx<relY;++idx)
     ret.y += lines[idx].numLinesNeeded(w);
@@ -542,14 +490,13 @@ Pos2di Buffer::buffer2screen(const Pos2di& loc, const Pos2di& start,
   return ret;
 }
 
-Pos2di Buffer::screen2buffer(const Pos2di& loc, const Pos2di& start,
-                             const Pos2di& dim) const {
-  Pos2di rel = {loc.x - start.x, loc.y - start.y};
-  Pos2di res = {0, startLine};
+Point Buffer::screen2buffer(const Point& loc, const Point& start,
+                             const Point& dim) const {
+  Point rel = {loc.x - start.x, loc.y - start.y};
+  Point res = {0, startLine};
   int w = dim.x;
   int sy = 0;
-  for(;sy<=rel.y;++res.y)
-    sy += at(res.y).numLinesNeeded(w);
+  for(;sy<=rel.y;++res.y) sy += at(res.y).numLinesNeeded(w);
   if(sy > rel.y) --res.y;
   int dely = rel.y - sy + at(res.y).numLinesNeeded(w);
   res.x = dely * w + rel.x;
@@ -560,7 +507,7 @@ RemovedLines Buffer::keepRemoveLines(Pcre& pc, bool keep) {
   RemovedLines res;
   bool isRegion = isRegionActive();
   for(int i=0;i<length();++i) {
-    if(isRegion && !regions.isInside(i, 0, locs)) continue;
+    if(isRegion && !region.isInside(i, 0, cu)) continue;
     const std::string str = lines[i].get();
     bool match = pc.isMatch(str);
     if((match && keep) || (!match && !keep)) continue;
@@ -590,25 +537,20 @@ void Buffer::addLines(const RemovedLines& rlines) {
 
 bool Buffer::matchCurrentParen() {
   bool isOpen;
-  forEachCursor([&isOpen, this](Pos2di& cu, size_t i) {
-    bool tmp;
-    auto loc = matchCurrentParen((int)i, i==0? isOpen : tmp);
-    cu = loc;
-  });
+  cu = matchCurrentParen(isOpen);
   return isOpen;
 }
 
-Pos2d<int> Buffer::matchCurrentParen(int i, bool& isOpen) {
-  const auto& culoc = locs[i];
-  const auto& line = at(culoc.y).get();
-  char c = line[culoc.x];
+Point Buffer::matchCurrentParen(bool& isOpen) {
+  const auto& line = at(cu.y).get();
+  char c = line[cu.x];
   char mc = getMatchingParen(c);
   std::stack<char> st;
   if(isOpenParen(c)) {
     isOpen = true;
     int len = length();
-    for(int y=culoc.y;y<len;++y) {
-      int x = (y == culoc.y)? culoc.x : 0;
+    for(int y=cu.y;y<len;++y) {
+      int x = (y == cu.y)? cu.x : 0;
       int xlen = lengthOf(y);
       const auto& str = at(y).get();
       for(;x<xlen;++x) {
@@ -622,8 +564,8 @@ Pos2d<int> Buffer::matchCurrentParen(int i, bool& isOpen) {
     }
   } else if(isCloseParen(c)) {
     isOpen = false;
-    for(int y=culoc.y;y>=0;--y) {
-      int x = (y == culoc.y)? culoc.x : lengthOf(y);
+    for(int y=cu.y;y>=0;--y) {
+      int x = (y == cu.y)? cu.x : lengthOf(y);
       const auto& str = at(y).get();
       for(;x>=0;--x) {
         if(str[x] == c)
@@ -635,50 +577,45 @@ Pos2d<int> Buffer::matchCurrentParen(int i, bool& isOpen) {
       }
     }
   }
-  return culoc;
+  return cu;
 }
 
-void Buffer::sortRegions() {
+void Buffer::sortRegion() {
   modified = true;
-  int len = cursorCount();
-  for(int i=0;i<len;++i) {
-    auto& culoc = locs[i];
-    int cuy = culoc.y;
-    int ry = regions.at(i).y;
-    DEBUG("sortRegions: cuy=%d ry=%d i=%d\n", cuy, ry, i);
-    sort(lines.begin()+ry, lines.begin()+cuy+1, LineCompare);
-    DEBUG("sortRegions: done i=%d\n", i);
-    culoc.x = lines[cuy].length();
-  }
+  int cuy = cu.y;
+  int ry = region.y;
+  DEBUG("sortRegion: cuy=%d ry=%d\n", cuy, ry);
+  sort(lines.begin()+ry, lines.begin()+cuy+1, LineCompare);
+  DEBUG("sortRegion: done\n");
+  cu.x = lines[cuy].length();
 }
 
-char Buffer::charAt(const Pos2d<int>& pos) const {
+char Buffer::charAt(const Point& pos) const {
   if(pos.y >= length()) return ' ';
   const auto& line = at(pos.y);
   if(pos.x >= line.length()) return ' ';
   return line.at(pos.x);
 }
 
-int Buffer::totalLinesNeeded(const Pos2di& dim) const {
-  int end = locs[0].y;
+int Buffer::totalLinesNeeded(const Point& dim) const {
+  int end = cu.y;
   int len = 0;
-  for(int i=startLine;i<=end;++i)
-    len += lines[i].numLinesNeeded(dim.x);
+  for(int i = startLine; i <= end; ++i) len += lines[i].numLinesNeeded(dim.x);
   return len;
 }
 
-void Buffer::lineUp(const Pos2di& dim) {
+void Buffer::lineUp(const Point& dim) {
   // -1 for status bar
   int dimY = dim.y - 1;
   while(totalLinesNeeded(dim) > dimY) ++startLine;
 }
 
 void Buffer::lineDown() {
-  startLine = std::min(startLine, locs[0].y);
+  startLine = std::min(startLine, cu.y);
 }
 
-void Buffer::lineEnd(const Pos2di& start, const Pos2di& dim) {
-  auto screen = buffer2screen(locs[0], start, dim);
+void Buffer::lineEnd(const Point& start, const Point& dim) {
+  auto screen = buffer2screen(cu, start, dim);
   int relY = screen.y - startLine;
   // -1 for the status bar
   int dimY = dim.y - 1;
@@ -710,264 +647,151 @@ bool Buffer::save(const std::string& fName) {
 }
 
 ////// Start: Cursor movements //////
-void Buffer::startOfLine() {
-  int minLoc = getMinStartLoc();
-  forEachCursor([&minLoc](Pos2di& cu, size_t idx) { cu.x = minLoc; });
-}
-
-void Buffer::endOfLine() {
-  forEachCursor([this](Pos2di& cu, size_t idx) { cu.x = lengthOf(cu.y); });
-}
-
 void Buffer::left() {
   int minLoc = getMinStartLoc();
-  forEachCursor([&minLoc, this](Pos2di& cu, size_t idx) {
-    --cu.x;
-    if(cu.x < minLoc) {
-      if(cu.y >= 1) {
-        --cu.y;
-        cu.x = lengthOf(cu.y);
-      } else {
-        cu.y = 0;
-        cu.x = minLoc;
-      }
+  --cu.x;
+  if(cu.x < minLoc) {
+    if(cu.y >= 1) {
+      --cu.y;
+      cu.x = lengthOf(cu.y);
+    } else {
+      cu.y = 0;
+      cu.x = minLoc;
     }
-  });
+  }
   lineDown();
 }
 
 void Buffer::right() {
-  forEachCursor([this](Pos2di& cu, size_t idx) {
-    ++cu.x;
-    if(cu.x > lengthOf(cu.y)) {
-      if(cu.y < length()-1) {
-        ++cu.y;
-        cu.x = 0;
-      } else
-        --cu.x;
-    }
-  });
+  ++cu.x;
+  if(cu.x > lengthOf(cu.y)) {
+    if(cu.y < length()-1) {
+      ++cu.y;
+      cu.x = 0;
+    } else
+      --cu.x;
+  }
 }
 
 void Buffer::down() {
-  forEachCursor([this](Pos2di& cu, size_t idx) {
-    if(cu.y < length()-1) {
-      ++cu.y;
-      cu.x = std::min(cu.x, lengthOf(cu.y));
-    }
-  });
+  if(cu.y < length()-1) {
+    ++cu.y;
+    cu.x = std::min(cu.x, lengthOf(cu.y));
+  }
 }
 
 void Buffer::up() {
-  forEachCursor([this](Pos2di& cu, size_t idx) {
-    if(cu.y >= 1) {
-      --cu.y;
-      cu.x = std::min(cu.x, lengthOf(cu.y));
-    }
-  });
+  if(cu.y >= 1) {
+    --cu.y;
+    cu.x = std::min(cu.x, lengthOf(cu.y));
+  }
   lineDown();
 }
 
 void Buffer::begin() {
-  forEachCursor([](Pos2di& cu, size_t idx) { cu.x = cu.y = 0; });
+  cu.x = cu.y = 0;
   lineReset();
 }
 
 void Buffer::end() {
-  forEachCursor([this](Pos2di& cu, size_t idx) {
-    cu.y = std::max(0, length()-1);
-    cu.x = lengthOf(cu.y);
-  });
+  cu.y = std::max(0, length() - 1);
+  cu.x = lengthOf(cu.y);
 }
 
 void Buffer::pageDown(int ijump) {
-  forEachCursor([&ijump, this](Pos2di& cu, size_t idx) {
-    cu.x = 0;
-    cu.y = std::min(length()-1, cu.y+ijump);
-  });
+  cu.x = 0;
+  cu.y = std::min(length() - 1, cu.y + ijump);
 }
 
 void Buffer::pageUp(int ijump) {
-  forEachCursor([&ijump](Pos2di& cu, size_t idx) {
-    cu.x = 0;
-    cu.y = std::max(0, cu.y-ijump);
-  });
+  cu.x = 0;
+  cu.y = std::max(0, cu.y - ijump);
   lineDown();
 }
 
 void Buffer::nextPara() {
   int len = length();
-  forEachCursor([&len, this](Pos2di& cu, size_t idx) {
-    int prevLen = lengthOf(cu.y);
-    for(++cu.y;cu.y<len;++cu.y) {
-      if(lengthOf(cu.y) == 0 && prevLen != 0) break;
-      prevLen = lengthOf(cu.y);
-    }
-    cu.y = std::min(cu.y, len-1);
-    cu.x = 0;
-  });
+  int prevLen = lengthOf(cu.y);
+  for(++cu.y; cu.y < len; ++cu.y) {
+    if(lengthOf(cu.y) == 0 && prevLen != 0) break;
+    prevLen = lengthOf(cu.y);
+  }
+  cu.y = std::min(cu.y, len-1);
+  cu.x = 0;
 }
 
 void Buffer::previousPara() {
-  forEachCursor([this](Pos2di& cu, size_t idx) {
-    int prevLen = lengthOf(cu.y);
-    for(--cu.y;cu.y>=0;--cu.y) {
-      if(lengthOf(cu.y) == 0 && prevLen != 0) break;
-      prevLen = lengthOf(cu.y);
-    }
-    cu.y = std::max(cu.y, 0);
-    cu.x = 0;
-  });
+  int prevLen = lengthOf(cu.y);
+  for(--cu.y; cu.y >= 0; --cu.y) {
+    if(lengthOf(cu.y) == 0 && prevLen != 0) break;
+    prevLen = lengthOf(cu.y);
+  }
+  cu.y = std::max(cu.y, 0);
+  cu.x = 0;
   lineDown();
 }
 
 void Buffer::nextWord() {
   const auto& word = getWord();
-  forEachCursor([word, this](Pos2di& cu, size_t idx) {
-    while (true) {
-      const auto& line = at(cu.y);
-      if (cu.x >= line.length()) {
-        if (cu.y >= length() - 1) break;
-        ++cu.y;
-        cu.x = 0;
-        continue;
-      }
-      if (word.find(line.at(cu.x)) == std::string::npos) {
-        ++cu.x;
-        continue;
-      }
-      cu.x = line.findFirstNotOf(word, cu.x + 1);
-      break;
+  while (true) {
+    const auto& line = at(cu.y);
+    if (cu.x >= line.length()) {
+      if (cu.y >= length() - 1) return;
+      ++cu.y;
+      cu.x = 0;
+      continue;
     }
-  });
+    if (word.find(line.at(cu.x)) == std::string::npos) {
+      ++cu.x;
+      continue;
+    }
+    cu.x = line.findFirstNotOf(word, cu.x + 1);
+    break;
+  }
 }
 
 void Buffer::previousWord() {
   const auto& word = getWord();
-  forEachCursor([word, this](Pos2di& cu, size_t idx) {
-    while (true) {
-      const auto& line = at(cu.y);
-      if (cu.x <= 0) {
-        if (cu.y <= 0) return;
-        --cu.y;
-        cu.x = lengthOf(cu.y);
-        continue;
-      }
-      if (word.find(line.at(cu.x)) == std::string::npos) {
-        --cu.x;
-        continue;
-      }
-      cu.x = line.findLastNotOf(word, cu.x - 1);
-      break;
+  while (true) {
+    const auto& line = at(cu.y);
+    if (cu.x <= 0) {
+      if (cu.y <= 0) return;
+      --cu.y;
+      cu.x = lengthOf(cu.y);
+      continue;
     }
-  });
+    if (word.find(line.at(cu.x)) == std::string::npos) {
+      --cu.x;
+      continue;
+    }
+    cu.x = line.findLastNotOf(word, cu.x - 1);
+    break;
+  }
   lineDown();
 }
 
-void Buffer::gotoLine(int lineNum, const Pos2di& dim) {
-  forEachCursor([lineNum, this](Pos2di& cu, size_t idx) {
-    cu.y = std::min(length()-1, std::max(0, lineNum));
-  });
-  startLine = std::max(0, lineNum - dim.y/2);
-}
-
-void Buffer::removeDuplicateCursors() {
-  for(size_t i=0;i<locs.size();++i) {
-    for(size_t j=i+1;j<locs.size();++j) {
-      if(locs[i] == locs[j]) {
-        locs.erase(locs.begin()+j);
-        --j;
-      }
-    }
-  }
+void Buffer::gotoLine(int lineNum, const Point& dim) {
+  cu.y = std::min(length() - 1, std::max(0, lineNum));
+  startLine = std::max(0, lineNum - dim.y / 2);
 }
 ////// End: Cursor movements //////
 
-////// Start: Cursor operations //////
-void Buffer::addCursorFromBack(const Pos2di& pos) {
-  if(!findCursor(pos)) locs.push_back(pos);
-}
-
-void Buffer::addCursorFromFront(const Pos2di& pos) {
-  if(!findCursor(pos)) locs.insert(locs.begin(), pos);
-}
-
-void Buffer::clearAllCursorsButFirst() {
-  if(locs.size() <= 1) return;
-  auto first = locs[0];
-  locs.clear();
-  locs.push_back(first);
-}
-
-bool Buffer::hasCursorOn(int line) const {
-  for(const auto& cu : locs)
-    if(line == cu.y) return true;
-  return false;
-}
-
-Positions Buffer::copyCursors(const Positions& pos) const {
-  Positions out(pos.size());
-  std::copy(pos.begin(), pos.end(), out.begin());
-  return out;
-}
-
-void Buffer::restoreCursors(const Positions& pos) {
-  if(pos.empty()) return;
-  if(locs.size() != pos.size()) {
-    locs.clear();
-    locs.resize(pos.size());
-  }
-  std::copy(pos.begin(), pos.end(), locs.begin());
-}
-
-bool Buffer::findCursor(const Pos2di& pos) const {
-  for(const auto& cu : locs)
-    if(cu == pos) return true;
-  return false;
-}
-
-void Buffer::moveRightCursorsOnSameLine(int i) {
-  const auto culoc = locs[i];
-  forEachCursorFrom([&culoc](Pos2di& cu, int idx) {
-    if(cu.y == culoc.y) ++cu.x;
-  }, i);
-}
-
-void Buffer::moveLeftCursorsOnSameLine(int i) {
-  const auto culoc = locs[i];
-  forEachCursorFrom([&culoc](Pos2di& cu, int idx) {
-    if(cu.y == culoc.y) --cu.x;
-  }, i);
-}
-
-void Buffer::moveDownAllNextCursors(int i) {
-  forEachCursorFrom([](Pos2di& cu, int idx) { ++cu.y; }, i);
-}
-
-void Buffer::moveUpAllNextCursors(int i) {
-  forEachCursorFrom([](Pos2di& cu, int idx) { --cu.y; }, i);
-}
-////// End: Cursor operations //////
-
 void Buffer::indent() {
-  Strings strs;
-  Positions start, end;
+  std::string str;
+  Point start, end;
   bool add = true;
-  forEachCursor([&strs, &start, &end, &add, this](Pos2di& cu, int i) {
-    int line = cu.y;
-    int count = mode->indent(*this, line);
-    DEBUG("Indent: count=%d line=%d\n", count, line);
-    if(count >= 0) {
-      std::string str(count, ' ');
-      strs.push_back(str);
-      add = true;
-    } else {
-      start.push_back({0, line});
-      end.push_back({-count, line});
-      add = false;
-    }
-  });
-  add ? insert(strs) : (void)removeRegion(start, end);
+  int line = cu.y;
+  int count = mode->indent(*this, line);
+  DEBUG("Indent: count=%d line=%d\n", count, line);
+  if(count >= 0) {
+    str = std::string(count, ' ');
+    add = true;
+  } else {
+    start = {0, line};
+    end = {-count, line};
+    add = false;
+  }
+  add ? insert(str) : (void)removeRegion(start, end);
 }
 
 

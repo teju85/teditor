@@ -162,9 +162,9 @@ DEF_CMD(
     command = args.browserCmd + " '" + command + "'";
     // we'll only look at first cursor!
     auto query = ed.getBuff().regionAsStr();
-    auto queryStr = query.empty()? ed.prompt("Query: ") : query[0];
-    if(queryStr.empty()) return;
-    auto hexified = urlHexify(queryStr);
+    if (query.empty()) query = ed.prompt("Query: ");
+    if(query.empty()) return;
+    auto hexified = urlHexify(query);
     auto buf = format(command.c_str(), hexified.c_str());
     check_output(buf.c_str());
   },

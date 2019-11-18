@@ -15,6 +15,12 @@ struct Pos2d {
 
   Pos2d(T x_=0, T y_=0): x(x_), y(y_) {}
 
+  const Pos2d<T>& operator=(const Pos2d<T>& in) {
+    x = in.x;
+    y = in.y;
+    return *this;
+  }
+
   bool operator>(const Pos2d<T>& b) const {
     return (y > b.y) || (y == b.y && x > b.x);
   }
@@ -76,79 +82,27 @@ struct Pos2d {
     }
     return *this;
   }
+
+  /**
+   * @brief Check if the given location is in the regions
+   */
+  bool isInside(int _y, int _x, const Pos2d<T>& cu) const {
+    if (y == -1 && x == -1) return false;
+    Pos2d<T> start, end;
+    find(start, end, cu);
+    if(start.y < _y && _y < end.y) return true;
+    else if(start.y == end.y && start.y == _y) {
+      if(start.x <= _x && _x <= end.x) return true;
+    } else if(start.y == _y && _x >= start.x) return true;
+    else if(end.y == _y && _x <= end.x) return true;
+    return false;
+  }
 };
 
 
 /** integer pos2d */
 typedef Pos2d<int> Pos2di;
-
-
-/**
- * @brief anything that's a collection of 2d locations. This is specifically
- * used for tracking locations of multiple cursors.
- */
-class Positions: public std::vector<Pos2di> {
-public:
-  /**
-   * @defgroup Ctors Constructors
-   * @{
-   */
-  Positions(): std::vector<Pos2di>() {}
-  Positions(size_t s): std::vector<Pos2di>(s) {}
-  Positions(const std::initializer_list<Pos2di>& pos):
-    std::vector<Pos2di>(pos) {}
-  Positions(const Positions& other): std::vector<Pos2di>(other) {}
-  /** @} */
-
-  /**
-   * @defgroup Insert Update positions based on insertion
-   * @{
-   * @brief Update all the positions based on the characters inserted
-   * @param a the positions
-   * @param chars the characters
-   */
-  void added(const Strings& chars);
-  void added(const std::string& chars);
-  /** @} */
-
-  /** check whether the two position lists are the same or not */
-  bool operator==(const Positions& a) const { return same(*this, a); }
-
-  /**
-   * @brief move all positions on the same line by 'delta' chars
-   * @param i reference position
-   * @param delta amount of movement
-   */
-  void moveAllOnSameLine(size_t i, int delta);
-
-  /**
-   * @brief move all positions by 'delta' lines
-   * @param i reference position
-   * @param delta amount of movement
-   */
-  void moveLinesForAll(size_t i, int delta);
-
-private:
-  void addedImpl(size_t i, const std::string& chars);
-};
-
-
-/** Represents start/end of regions in a buffer */
-class Regions: public Positions {
-public:
-  /** mark region start/end locations as specified in the input */
-  void enable(const Positions& p);
-
-  /**
-   * @defgroup InsideCheck Check if the given location is in the regions
-   * @{
-   */
-  bool isInside(int y, int x, const Positions& cu) const;
-  bool isInside(int y, int x, const Positions& cu, int i) const;
-  /** @} */
-
-  /** get all region start/end markers */
-  const Positions& getLocs() const { return *this; }
-};
+/** cursor */
+typedef Pos2di Point;
 
 } // end namespace teditor

@@ -35,8 +35,8 @@ void Window::draw(Editor& ed) {
   buff.draw(ed, *this);
 }
 
-void Window::drawCursor(Editor& ed, const AttrColor& bg) {
-  getBuff().drawCursor(ed, bg, *this);
+void Window::drawPoint(Editor& ed, const AttrColor& bg) {
+  getBuff().drawPoint(ed, bg, *this);
 }
 
 
@@ -90,23 +90,23 @@ void Windows::draw(Editor& ed, bool cmdMsgBarActive) {
   DEBUG("draw: windows and cmdMsgBar\n");
   for(auto itr : wins) itr->draw(ed);
   if(cmdMsgBarActive) {
-    DEBUG("draw: cmdMsgBar.drawCursor\n");
+    DEBUG("draw: cmdMsgBar.drawPoint\n");
     int i = 0;
     for(auto itr : wins) {
       const auto& bg = itr->getBuff().getColor("cursorbg");
       const auto& ibg = itr->getBuff().getColor("inactivecursorbg");
-      itr->drawCursor(ed, i == 0? bg : ibg);
+      itr->drawPoint(ed, i == 0? bg : ibg);
       ++i;
     }
   } else {
-    DEBUG("draw: drawCursor\n");
+    DEBUG("draw: drawPoint\n");
     int i = 0;
     for(auto itr : wins) {
       DEBUG("draw: currWin=%d i=%d\n", currWin, i);
       if(i != 0) {
         const auto& bg = itr->getBuff().getColor("cursorbg");
         const auto& ibg = itr->getBuff().getColor("inactivecursorbg");
-        itr->drawCursor(ed, i == currWin? bg : ibg);
+        itr->drawPoint(ed, i == currWin? bg : ibg);
       }
       ++i;
     }

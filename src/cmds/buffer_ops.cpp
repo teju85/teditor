@@ -198,9 +198,8 @@ DEF_CMD(
   Cancel, "cancel", DEF_OP() {
     auto& buf = ed.getBuff();
     if(buf.isRegionActive()) buf.stopRegion();
-    if(buf.cursorCount() > 1) buf.clearAllCursorsButFirst();
   },
-  DEF_HELP() { return "Cancel all multiple-cursors + active regions"; });
+  DEF_HELP() { return "Cancel all active regions"; });
 
 DEF_CMD(
   CopyRegion, "copy-region", DEF_OP() {
@@ -217,15 +216,11 @@ DEF_CMD(
 DEF_CMD(
   TextSearch, "search", DEF_OP() {
     auto& buf = ed.getBuff();
-    if(buf.cursorCount() > 1) {
-      CMBAR_MSG(ed, "search works only with single cursor!\n");
-      return;
-    }
-    auto pos = buf.saveCursors();
+    auto pos = buf.getPoint();
     ISearch is(ed.getWindow());
     is.reset();
     auto ret = ed.prompt("Search: ", nullptr, &is);
-    buf.gotoLine(!ret.empty()? is.getIdx() : pos[0].y, ed.getWindow().dim());
+    buf.gotoLine(!ret.empty()? is.getIdx() : pos.y, ed.getWindow().dim());
   },
   DEF_HELP() { return "Search and jump to the matching location."; });
 

@@ -97,34 +97,5 @@ DEF_CMD(
   },
   DEF_HELP() { return "Jump to the specified line number"; });
 
-DEF_CMD(
-  AddCursorDown, "add-cursor-down", DEF_OP() {
-    auto& buf = ed.getBuff();
-    auto count = buf.cursorCount();
-    auto pos = buf.cursorAt(count - 1);
-    if(pos.y >= buf.length()) {
-      CMBAR_MSG(ed, "add-cursor-down: reached end of buffer!\n");
-      return;
-    }
-    ++pos.y;
-    pos.x = std::min(buf.at(pos.y).length(), pos.x);
-    buf.addCursorFromBack(pos);
-  },
-  DEF_HELP() { return "Adds a cursor at the next line."; });
-
-DEF_CMD(
-  AddCursorUp, "add-cursor-up", DEF_OP() {
-    auto& buf = ed.getBuff();
-    auto pos = buf.cursorAt(0);
-    if(pos.y <= 0) {
-      CMBAR_MSG(ed, "add-cursor-up: reached start of buffer!\n");
-      return;
-    }
-    --pos.y;
-    pos.x = std::min(buf.at(pos.y).length(), pos.x);
-    buf.addCursorFromFront(pos);
-  },
-  DEF_HELP() { return "Adds a cursor at the previous line."; });
-
 } // end namespace CursorOps
 } // end namespace teditor
