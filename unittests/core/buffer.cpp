@@ -470,9 +470,9 @@ TEST_CASE("Buffer::Cut") {
     ml.down();
     ml.down();
     ml.startOfLine();
-    auto before = ml.getPoint();
+    auto after = ml.getPoint();
     auto regs = ml.getRegion();
-    auto del = ml.removeRegion(regs, before);
+    auto del = ml.removeRegion(regs, after);
     REQUIRE("\nTesting123\n" == del);
     ///@todo: issue with trailing newline now!!
     REQUIRE(3 == ml.length());
