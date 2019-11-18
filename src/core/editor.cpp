@@ -152,7 +152,7 @@ void Editor::deleteBuffer(int idx) {
   checkForModifiedBuffer(buffs[currBuffId()]);
   auto& f = buf->getFileName();
   if(!f.empty()) {
-    int line = buf->saveCursors()[0].y;
+    int line = buf->getPoint().y;
     fileshist.add(f, line);
   }
   buffs.erase(idx);

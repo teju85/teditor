@@ -49,8 +49,6 @@ std::vector<KeyCmdPair> ReadOnlyMode::Keys::All = {
   {"M-!", "shell-command"},
   {"F7", "browser-search"},
   {"F5", "reload-buffer"},
-  {"C-D", "add-cursor-down"},
-  {"C-U", "add-cursor-up"},
   {"M-w", "copy-region"},
   {"M-g", "goto-line"},
   {"C-B C-S", "buffer-switch"},

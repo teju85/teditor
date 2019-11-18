@@ -48,7 +48,7 @@ public:
    * @{
    */
   void draw(Editor& ed);
-  void drawCursor(Editor& ed, const AttrColor& bg);
+  void drawPoint(Editor& ed, const AttrColor& bg);
   /** @} */
 
   void incrementCurrBuff();

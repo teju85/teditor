@@ -9,8 +9,8 @@ namespace DirMode {
 DEF_CMD(
   OpenFile, "dirmode-open-file", DEF_OP() {
     auto& buf = ed.getBuff();
-    auto locs = buf.saveCursors();
-    auto file = buf.dirModeGetFileAtLine(locs[0].y);
+    const auto& cu = buf.getPoint();
+    auto file = buf.dirModeGetFileAtLine(cu.y);
     auto& dir = buf.getFileName();
     if(file == "." || file.empty()) return;
     if(file == "..") {
@@ -24,8 +24,8 @@ DEF_CMD(
 DEF_CMD(
   CopyFile, "dirmode-copy-file", DEF_OP() {
     auto& buf = ed.getBuff();
-    auto locs = buf.saveCursors();
-    auto file = buf.dirModeGetFileAtLine(locs[0].y);
+    const auto& cu = buf.getPoint();
+    auto file = buf.dirModeGetFileAtLine(cu.y);
     auto& dir = buf.getFileName();
     if(isCurrentOrParentDir(file) || file.empty()) return;
     file = rel2abs(dir, file);
@@ -47,8 +47,8 @@ DEF_CMD(
 DEF_CMD(
   RenameFile, "dirmode-rename-file", DEF_OP() {
     auto& buf = ed.getBuff();
-    auto locs = buf.saveCursors();
-    auto file = buf.dirModeGetFileAtLine(locs[0].y);
+    const auto& cu = buf.getPoint();
+    auto file = buf.dirModeGetFileAtLine(cu.y);
     auto& dir = buf.getFileName();
     if(isCurrentOrParentDir(file) || file.empty()) return;
     file = rel2abs(dir, file);
@@ -69,8 +69,8 @@ DEF_CMD(
   DeleteFile, "dirmode-delete-file", DEF_OP() {
     auto& buf = ed.getBuff();
     auto& dir = buf.getFileName();
-    auto locs = buf.saveCursors();
-    auto file = buf.dirModeGetFileAtLine(locs[0].y);
+    const auto& cu = buf.getPoint();
+    auto file = buf.dirModeGetFileAtLine(cu.y);
     if(isCurrentOrParentDir(file) || file.empty()) return;
     auto delFile = rel2abs(dir, file);
     if(delFile.empty()) return;

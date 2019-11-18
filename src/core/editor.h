@@ -44,8 +44,8 @@ public:
   void checkForModifiedBuffers();
   void checkForModifiedBuffer(Buffer* mlb);
   bool hasCopy() const { return !copiedStr.empty(); }
-  const Strings& copyData() const { return copiedStr; }
-  void setCopyData(const Strings& in) { copiedStr = in; }
+  const std::string& copyData() const { return copiedStr; }
+  void setCopyData(const std::string& in) { copiedStr = in; }
 
   int sendChar(int x, int y, const AttrColor& fg, const AttrColor& bg, char c);
   int sendString(int x, int y, const AttrColor& fg, const AttrColor& bg,
@@ -88,7 +88,7 @@ private:
   Buffers buffs, cmBarArr;
   Windows windows;
   bool quitEventLoop, quitPromptLoop, cancelPromptLoop, cmdMsgBarActive;
-  Strings copiedStr;
+  std::string copiedStr;
   ColorMap defcMap;
   KeyCmdMap ynMap;
   FilesHist fileshist;
