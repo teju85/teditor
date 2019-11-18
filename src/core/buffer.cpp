@@ -110,6 +110,7 @@ std::string Buffer::removeRegion(const Point& start, const Point& end) {
 std::string Buffer::removeFrom(const Point& start, const Point& end) {
   std::string del;
   Point small, big;
+  // start == end?
   if(0 == start.find(small, big, end)) {
     int len = big.x - small.x;
     del = at(small.y).erase(small.x, len);
