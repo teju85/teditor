@@ -13,11 +13,21 @@ TEST_CASE("Option::Test") {
   REQUIRE("HOME1" == Option::get("home").getStr());
 }
 
+void parseRcFile(const std::string& rc);
+
 TEST_CASE("Option::ExpandOptions") {
   std::vector<FileInfo> files;
   parseArgs(0, nullptr, files);
   REQUIRE(expandEnvVars("$HOME/.teditor/org") ==
           Option::get("orgNotesDir").getStr());
+}
+
+TEST_CASE("Option::parseRcFile") {
+  parseRcFile("samples/default-rcfile");
+  REQUIRE(expandEnvVars("$HOME/.teditor/org") ==
+          Option::get("orgNotesDir").getStr());
+  REQUIRE_THROWS_AS(parseRcFile("samples/incorrect-rcfile"),
+                    std::runtime_error);
 }
 
 } // end namespace teditor
