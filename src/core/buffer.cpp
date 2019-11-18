@@ -390,7 +390,7 @@ void Buffer::draw(Editor& ed, const Window& win) {
   int len = length();
   const auto& fg = getColor("defaultfg");
   const auto& bg = getColor("defaultbg");
-  for(int y=start.y,idx=startLine;y<h&&idx<len;++idx)
+  for(int y = start.y, idx = startLine; y < h && idx < len; ++idx)
     y = drawLine(y, lines[idx].get(), ed, idx, fg, bg, win);
   drawStatusBar(ed, win);
 }
@@ -445,12 +445,8 @@ int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
                      const Window& win) {
   const auto& st = win.start();
   const auto& dim = win.dim();
-  int xStart = st.x;
-  int wid = dim.x;
-  int start = 0;
+  int xStart = st.x, wid = dim.x, start = 0;
   int len = (int)line.size();
-  // empty line
-  if(len <= 0) return y + 1;
   const auto* str = line.c_str();
   bool isD = mode->name() == "dir";
   if(isD) {
@@ -458,19 +454,20 @@ int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
     file =  getFileName() + '/' + file;
     isD = isDir(file);
   }
-  while(start < len) {
-    int diff = len - start;
+  auto maxLen = std::max(len, wid);
+  while(start < maxLen) {
+    int diff = maxLen - start;
     int count = std::min(diff, wid);
-    for(int i=0;i<count;++i) {
+    for(int i = 0; i < count; ++i) {
       // under the highlighted region
-      auto c = str[start + i];
+      auto c = start + i < len ? str[start + i] : ' ';
       if(region.isInside(lineNum, start+i, cu)) {
-        ed.sendChar(xStart+i, y, getColor("highlightfg"),
+        ed.sendChar(xStart + i, y, getColor("highlightfg"),
                     getColor("highlightbg"), c);
       } else if(isD)
-        ed.sendChar(xStart+i, y, getColor("dirfg"), bg, c);
+        ed.sendChar(xStart + i, y, getColor("dirfg"), bg, c);
       else
-        ed.sendChar(xStart+i, y, fg, bg, c);
+        ed.sendChar(xStart + i, y, fg, bg, c);
     }
     start += wid;
     ++y;
@@ -479,23 +476,21 @@ int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
 }
 
 Point Buffer::buffer2screen(const Point& loc, const Point& start,
-                             const Point& dim) const {
+                            const Point& dim) const {
   int w = dim.x;
   Point ret = start;
   int relY = loc.y - startLine;
-  for(int idx=0;idx<relY;++idx)
-    ret.y += lines[idx].numLinesNeeded(w);
+  for(int idx=0;idx<relY;++idx) ret.y += lines[idx].numLinesNeeded(w);
   ret.y += (loc.x / w);
   ret.x += loc.x % w;
   return ret;
 }
 
 Point Buffer::screen2buffer(const Point& loc, const Point& start,
-                             const Point& dim) const {
+                            const Point& dim) const {
   Point rel = {loc.x - start.x, loc.y - start.y};
   Point res = {0, startLine};
-  int w = dim.x;
-  int sy = 0;
+  int w = dim.x, sy = 0;
   for(;sy<=rel.y;++res.y) sy += at(res.y).numLinesNeeded(w);
   if(sy > rel.y) --res.y;
   int dely = rel.y - sy + at(res.y).numLinesNeeded(w);
