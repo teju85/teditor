@@ -14,7 +14,8 @@ TEST_CASE("Option::Test") {
 }
 
 TEST_CASE("Option::ExpandOptions") {
-  parseArgs(0, nullptr);
+  std::vector<FileInfo> files;
+  parseArgs(0, nullptr, files);
   REQUIRE(expandEnvVars("$HOME/.teditor/org") ==
           Option::get("orgNotesDir").getStr());
 }

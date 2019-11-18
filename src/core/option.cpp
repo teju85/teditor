@@ -124,21 +124,35 @@ void parseRcFile(const std::string& rc) {
   while(std::getline(fp, currLine, '\n')) {
     if (currLine.empty()) continue;
     if (currLine[0] == '#') continue;
-    ///@todo: parse the rc file
+    auto pos = currLine.find(' ');
+    ASSERT(pos != std::string::npos, "Incorrect syntax for rc file. Line:'%s'",
+           currLine.c_str());
+    auto optName = currLine.substr(0, pos);
+    auto optVal = currLine.substr(pos + 1, currLine.size() - pos - 1);
+    Option::set(optName, optVal);
   }
   fp.close();
 }
 
-std::vector<FileInfo> parseArgs(int argc, char** argv) {
+bool parseArgs(int argc, char** argv, std::vector<FileInfo>& files) {
   registerAllOptions();
-  std::vector<FileInfo> files;
   for(int i = 1; i < argc; ++i) {
     if (!strcmp(argv[i], "-h")) {
-      ///@todo: print help
+      printf("teditor: Terminal based editor written in C++.\n"
+             "USAGE:\n"
+             "  teditor [-h] [-dump <rcfile>] [-rc <rcFile>] <files>\n"
+             "OPTIONS:\n"
+             "  -h                Print this help and exit.\n"
+             "  -dump <rcFile>    Dump the default rc file and exit.\n"
+             "  -rc <rcFile>      Configure the editor using this rc file.\n"
+             "  <files>           Files to be opened\n");
+      return false;
     } else if (!strcmp(argv[i], "-dump")) {
       ++i;
       ASSERT(i < argc, "'-dump' option expects an argument!");
       Option::dumpAll(argv[i]);
+      printf("rc file dumped at '%s'\n", argv[i]);
+      return false;
     } else if(!strcmp(argv[i], "-rc")) {
       ++i;
       ASSERT(i < argc, "'-rc' option expects an argument!");
@@ -150,7 +164,7 @@ std::vector<FileInfo> parseArgs(int argc, char** argv) {
   }
   Logger::setLevel(Option::get("logLevel").getInt());
   makeDir(Option::get("homeFolder").getStr());
-  return files;
+  return true;
 }
 
 }  // namespace teditor

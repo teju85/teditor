@@ -96,6 +96,6 @@ class Option {
 
 
 /** parse input commandline args */
-std::vector<FileInfo> parseArgs(int argc, char** argv);
+bool parseArgs(int argc, char** argv, std::vector<FileInfo>& files);
 
 }  // namespace teditor

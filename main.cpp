@@ -11,8 +11,8 @@ int main(int argc, char** argv) {
   ///@todo: add more relevant catch statements in future!
   try {
     SingletonHandler<Logger, std::string> shl("debug.log");
-    auto files = parseArgs(argc, argv);
-    //Args args(argc, argv);
+    std::vector<FileInfo> files;
+    if (!parseArgs(argc, argv, files)) return 0;
     Args args(0, nullptr);
     args.files = files;
     SingletonHandler<Terminal, std::string> term(args.ttyFile);
