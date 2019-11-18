@@ -4,6 +4,7 @@
 #include <memory>
 #include <string.h>
 #include "logger.h"
+#include "version.h"
 
 namespace teditor {
 
@@ -145,6 +146,7 @@ bool parseArgs(int argc, char** argv, std::vector<FileInfo>& files) {
              "  -h                Print this help and exit.\n"
              "  -dump <rcFile>    Dump the default rc file and exit.\n"
              "  -rc <rcFile>      Configure the editor using this rc file.\n"
+             "  -v                Print version info and exit.\n"
              "  <files>           Files to be opened\n");
       return false;
     } else if (!strcmp(argv[i], "-dump")) {
@@ -157,6 +159,8 @@ bool parseArgs(int argc, char** argv, std::vector<FileInfo>& files) {
       ++i;
       ASSERT(i < argc, "'-rc' option expects an argument!");
       parseRcFile(argv[i]);
+    } else if(!strcmp(argv[i], "-v")) {
+      printf("teditor version %s\n", TEDITOR_VERSION_INFO);
     } else {
       ASSERT(argv[i][0] != '-', "Invalid arg passed! '%s'", argv[i]);
       files.push_back(readFileInfo(argv[i]));
