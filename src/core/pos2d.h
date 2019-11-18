@@ -86,14 +86,15 @@ struct Pos2d {
   /**
    * @brief Check if the given location is in the regions
    */
-  bool isInside(int y, int x, const Pos2d<T>& cu) const {
+  bool isInside(int _y, int _x, const Pos2d<T>& cu) const {
+    if (y == -1 && x == -1) return false;
     Pos2d<T> start, end;
     find(start, end, cu);
-    if(start.y < y && y < end.y) return true;
-    else if(start.y == end.y && start.y == y) {
-      if(start.x <= x && x <= end.x) return true;
-    } else if(start.y == y && x >= start.x) return true;
-    else if(end.y == y && x <= end.x) return true;
+    if(start.y < _y && _y < end.y) return true;
+    else if(start.y == end.y && start.y == _y) {
+      if(start.x <= _x && _x <= end.x) return true;
+    } else if(start.y == _y && _x >= start.x) return true;
+    else if(end.y == _y && _x <= end.x) return true;
     return false;
   }
 };
