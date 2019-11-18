@@ -15,6 +15,12 @@ struct Pos2d {
 
   Pos2d(T x_=0, T y_=0): x(x_), y(y_) {}
 
+  const Pos2d<T>& operator=(const Pos2d<T>& in) {
+    x = in.x;
+    y = in.y;
+    return *this;
+  }
+
   bool operator>(const Pos2d<T>& b) const {
     return (y > b.y) || (y == b.y && x > b.x);
   }
