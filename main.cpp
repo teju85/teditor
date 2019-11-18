@@ -5,6 +5,7 @@
 #include "core/terminal.h"
 #include "core/logger.h"
 #include "core/option.h"
+#include <memory>
 
 int main(int argc, char** argv) {
   using namespace teditor;
@@ -16,10 +17,11 @@ int main(int argc, char** argv) {
     Args args(0, nullptr);
     args.files = files;
     SingletonHandler<Terminal, std::string> term(Option::get("tty").getStr());
-    auto* ed = new Editor(args);
-    ed->run();
+    {
+      std::shared_ptr<Editor> ed(new Editor(args));
+      ed->run();
+    }
     DEBUG("Exited Editor::run loop...\n");
-    delete ed;
     DEBUG("Editor: dtor finished\n");
     DEBUG("Closing teditor\n");
     return 0;
