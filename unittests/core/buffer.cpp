@@ -476,6 +476,8 @@ TEST_CASE("Buffer::Cut") {
     REQUIRE("\nTesting123\n" == del);
     ///@todo: issue with trailing newline now!!
     REQUIRE(3 == ml.length());
+    REQUIRE("* Hello" == ml.at(0).get());
+    REQUIRE("for multi-line buffer!" == ml.at(1).get());
   }
 }
 
