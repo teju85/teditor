@@ -252,6 +252,7 @@ void Buffer::insertImpl(char c) {
     auto newLine = at(cu.y).split(cu.x);
     lines.insert(lines.begin() + cu.y + 1, newLine);
     cu.x = 0;
+    ++cu.y;
     return;
   }
   auto& line = lines[cu.y];
