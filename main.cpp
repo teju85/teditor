@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
     if (!parseArgs(argc, argv, files)) return 0;
     Args args(0, nullptr);
     args.files = files;
-    SingletonHandler<Terminal, std::string> term(args.ttyFile);
+    SingletonHandler<Terminal, std::string> term(Option::get("tty").getStr());
     auto* ed = new Editor(args);
     ed->run();
     DEBUG("Exited Editor::run loop...\n");
