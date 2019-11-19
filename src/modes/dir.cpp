@@ -14,6 +14,22 @@ public:
     populateColorMap<DirMode::Colors>(getColorMap());
   }
 
+  void getColorFor(AttrColor& fg, AttrColor& bg, int lineNum,
+                   const Buffer& b, bool isHighlighted) {
+    auto& cm = getColorMap();
+    if (isHighlighted) {
+      fg = cm.get("highlightfg");
+      bg = cm.get("highlightbg");
+    } else if (lineNum == 0) {
+      fg = cm.get("defaultfg");
+      bg = cm.get("defaultbg");
+    } else {
+      const auto& str = b.at(lineNum).get();
+      fg = cm.get(str[2] == 'd' ? "dirfg" : "defaultfg");
+      bg = cm.get("defaultbg");
+    }
+  }
+
   static Mode* create() { return new DirMode; }
 
   static bool modeCheck(const std::string& file) { return isDir(file); }
