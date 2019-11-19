@@ -320,7 +320,8 @@ std::string Buffer::regionAsStr(const Point& start, const Point& end) const {
 }
 
 void Buffer::load(const std::string& file, int line) {
-  isDir(file)? loadDir(file) : loadFile(file, line);
+  auto absFile = isRemote(file) ? file : rel2abs(pwd(), file);
+  isDir(file)? loadDir(absFile) : loadFile(absFile, line);
   setMode(Mode::createMode(Mode::inferMode(file)));
 }
 
@@ -337,23 +338,16 @@ void Buffer::makeReadOnly() {
 }
 
 void Buffer::loadDir(const std::string& dir) {
-  std::string first;
-  if(!isRemote(dir)) {
-    first = rel2abs(pwd(), dir);
-  } else {
-    first = dir;
-  }
-  insert(first + "\n" + listDir2str(dir));
-  resetBufferState(0, first);
+  insert(dir + "\n" + listDir2str(dir));
+  resetBufferState(0, dir);
   readOnly = true;
 }
 
 void Buffer::loadFile(const std::string& file, int line) {
-  auto absFile = rel2abs(pwd(), file);
   std::fstream fp;
-  fp.open(absFile.c_str(), std::fstream::in);
+  fp.open(file.c_str(), std::fstream::in);
   if(!fp.is_open()) {
-    resetBufferState(0, absFile);
+    resetBufferState(0, file);
     return;
   }
   std::string currLine;
@@ -362,8 +356,8 @@ void Buffer::loadFile(const std::string& file, int line) {
     addLine();
   }
   fp.close();
-  resetBufferState(line, absFile);
   line = std::min(std::max(0, line), length() - 1);
+  resetBufferState(line, file);
   cu = {0, line};
 }
 
