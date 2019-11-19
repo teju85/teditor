@@ -275,4 +275,20 @@ std::string listDir2str(const std::string& dir) {
   return out.output;
 }
 
+std::string copyFromRemote(const std::string& file) {
+  std::string tmp = tempFileName();
+  Remote r(file);
+  auto cmd = format("scp %s:%s %s", r.host.c_str(), r.file.c_str(),
+                    tmp.c_str());
+  check_output(cmd);
+  return tmp;
+}
+
+void copyToRemote(const std::string& rfile, const std::string& local) {
+  Remote r(rfile);
+  auto cmd = format("scp %s %s:%s", local.c_str(), r.host.c_str(),
+                    r.file.c_str());
+  check_output(cmd);
+}
+
 } // end namespace teditor

@@ -13,8 +13,9 @@ namespace teditor {
 
 Buffer::Buffer(const std::string& name, bool noUndoRedo):
   lines(), startLine(0), modified(false), readOnly(false), buffName(name),
-  fileName(), dirName(), region(-1, -1), mode(Mode::createMode("text")),
-  cu(0, 0), undoStack(), redoStack(), disableStack(noUndoRedo) {
+  fileName(), dirName(), tmpFileName(), region(-1, -1),
+  mode(Mode::createMode("text")), cu(0, 0), undoStack(), redoStack(),
+  disableStack(noUndoRedo) {
   addLine();
   dirName = getpwd();
   begin();
@@ -344,8 +345,14 @@ void Buffer::loadDir(const std::string& dir) {
 }
 
 void Buffer::loadFile(const std::string& file, int line) {
+  std::string inFile;
+  if (isRemote(file)) {
+    inFile = tmpFileName = copyFromRemote(file);
+  } else {
+    inFile = file;
+  }
   std::fstream fp;
-  fp.open(file.c_str(), std::fstream::in);
+  fp.open(inFile.c_str(), std::fstream::in);
   if(fp.is_open()) {
     std::string currLine;
     while(std::getline(fp, currLine, '\n')) {

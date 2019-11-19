@@ -50,6 +50,8 @@ Files listDir(const std::string& dir);
 Strings listDirRel(const std::string& dir);
 std::string listDir2str(const std::string& dir);
 
+std::string copyFromRemote(const std::string& file);
+void copyToRemote(const std::string& rfile, const std::string& local);
 void copyFile(const std::string& in, const std::string& out);
 
 typedef std::pair<std::string, int> FileInfo;

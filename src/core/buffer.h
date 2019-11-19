@@ -258,7 +258,7 @@ protected:
   std::vector<Line> lines;
   int startLine;
   bool modified, readOnly;
-  std::string buffName, fileName, dirName;
+  std::string buffName, fileName, dirName, tmpFileName;
   /** start of a region */
   Point region;
   ///@todo: support applying multiple modes
