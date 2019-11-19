@@ -11,23 +11,25 @@ namespace teditor {
 /** default mode for all readonly buffers */
 class ReadOnlyMode: public Mode {
 public:
-    ReadOnlyMode(const std::string& n="ro",
-                 const std::string& w="abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLM"
-                                      "NOPQRSTUVWXYZ0123456789_");
-    int indent(Buffer& buf, int line) { return 0; }
-    KeyCmdMap& getKeyCmdMap() { return kcMap; }
-    ColorMap& getColorMap() { return cMap; }
+  ReadOnlyMode(const std::string& n="ro",
+               const std::string& w="abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLM"
+               "NOPQRSTUVWXYZ0123456789_");
+  int indent(Buffer& buf, int line) { return 0; }
+  KeyCmdMap& getKeyCmdMap() { return kcMap; }
+  ColorMap& getColorMap() { return cMap; }
+  void getColorFor(AttrColor& fg, AttrColor& bg, int lineNum, const Buffer& b,
+                   bool isHighlighted);
 
-    static Mode* create() { return new ReadOnlyMode; }
+  static Mode* create() { return new ReadOnlyMode; }
 
-    static bool modeCheck(const std::string& file);
+  static bool modeCheck(const std::string& file);
 
 private:
-    KeyCmdMap kcMap;
-    ColorMap cMap;
+  KeyCmdMap kcMap;
+  ColorMap cMap;
 
-    struct Keys { static std::vector<KeyCmdPair> All; };
-    struct Colors { static std::vector<NameColorPair> All; };
+  struct Keys { static std::vector<KeyCmdPair> All; };
+  struct Colors { static std::vector<NameColorPair> All; };
 };
 
 

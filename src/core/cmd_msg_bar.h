@@ -50,6 +50,8 @@ public:
   void insert(char c) override;
   void insert(const std::string& str) override;
   void draw(Editor& ed, const Window& win) override;
+  int drawLine(int y, const std::string& line, Editor& ed, int lineNum,
+               const Window& win) override;
   void load(const std::string& file, int line=0) override {}
   bool save(const std::string& fName="") override { return false; }
   void clear() override;

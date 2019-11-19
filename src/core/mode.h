@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <memory>
 #include "utils.h"
-
+#include "colors.h"
 
 namespace teditor {
 
@@ -50,6 +50,10 @@ public:
 
   /** get color map for the buffer this mode applies to */
   virtual ColorMap& getColorMap() = 0;
+
+  /** get color for the given line */
+  virtual void getColorFor(AttrColor& fg, AttrColor& bg, int lineNum,
+                           const Buffer& b, bool isHighlighted) = 0;
 
   /**
    * @brief helper to register a named mode

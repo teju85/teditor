@@ -289,8 +289,8 @@ protected:
    * @{
    */
   void drawStatusBar(Editor& ed, const Window& win);
-  int drawLine(int y, const std::string& line, Editor& ed, int lineNum,
-               const AttrColor& fg, const AttrColor& bg, const Window &win);
+  virtual int drawLine(int y, const std::string& line, Editor& ed, int lineNum,
+                       const Window &win);
   /** @} */
 
   /**

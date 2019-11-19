@@ -2,7 +2,8 @@
 #include <string.h>
 #include "mode.h"
 #include "window.h"
-
+#include "logger.h"
+#include "editor.h"
 
 namespace teditor {
 
@@ -29,14 +30,10 @@ CmdMsgBar::CmdMsgBar(): Buffer(), minLoc(0), choices(), optLoc(0) {
 }
 
 void CmdMsgBar::draw(Editor& ed, const Window& win) {
-  const auto& cmfg = getColor("cmbarfg");
-  const auto& cmbg = getColor("cmbarbg");
-  const auto& cmhfg = getColor("cmbarhighlightfg");
-  const auto& cmhbg = getColor("cmbarhighlightbg");
   const auto& start = win.start();
   const auto& dim = win.dim();
   // first line is always the cmd prompt!
-  int y = drawLine(start.y, lines[0].get(), ed, 0, cmfg, cmbg, win);
+  int y = drawLine(start.y, lines[0].get(), ed, 0, win);
   if(!usingChoices()) return;
   int len = choices->size();
   int h = start.y + dim.y;
@@ -44,10 +41,36 @@ void CmdMsgBar::draw(Editor& ed, const Window& win) {
   for(int idx=startLine;y<h&&idx<len;++idx) {
     const auto& line = choices->at(idx);
     if(!choices->match(line, str)) continue;
-    const auto& fg = (idx == optLoc)? cmhfg : cmfg;
-    const auto& bg = (idx == optLoc)? cmhbg : cmbg;
-    y = drawLine(y, line, ed, idx, fg, bg, win);
+    y = drawLine(y, line, ed, idx, win);
   }
+}
+
+int CmdMsgBar::drawLine(int y, const std::string& line, Editor& ed,
+                         int lineNum, const Window& win) {
+  const auto& st = win.start();
+  const auto& dim = win.dim();
+  int xStart = st.x, wid = dim.x, start = 0;
+  int len = (int)line.size();
+  const auto* str = line.c_str();
+  ULTRA_DEBUG("CmdMsgBar::drawLine: y=%d line=%s len=%d\n", y, line.c_str(),
+              len);
+  auto maxLen = std::max(len, wid);
+  while(start < maxLen) {
+    int diff = maxLen - start;
+    int count = std::min(diff, wid);
+    for(int i = 0; i < count; ++i) {
+      auto c = start + i < len ? str[start + i] : ' ';
+      // under the highlighted region
+      auto highlighted = lineNum && lineNum == optLoc;
+      AttrColor fg, bg;
+      mode->getColorFor(fg, bg, lineNum, *(Buffer*)this, highlighted);
+      ed.sendChar(xStart + i, y, fg, bg, c);
+    }
+    start += wid;
+    ++y;
+  }
+  ULTRA_DEBUG("CmdMsgBar::drawLine: ended y=%d line=%s\n", y, line.c_str());
+  return y;
 }
 
 std::string CmdMsgBar::getFinalChoice() const {

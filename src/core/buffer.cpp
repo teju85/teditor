@@ -383,14 +383,9 @@ void Buffer::draw(Editor& ed, const Window& win) {
   // draw current buffer (-1 for the status bar)
   int h = start.y + dim.y - 1;
   int len = length();
-  const auto& fg = getColor("defaultfg");
-  const auto& bg = getColor("defaultbg");
-  DEBUG("Buffer::drawLine...\n");
   for(int y = start.y, idx = startLine; y < h && idx < len; ++idx)
-    y = drawLine(y, lines[idx].get(), ed, idx, fg, bg, win);
-  DEBUG("Buffer::drawStatusBar...\n");
+    y = drawLine(y, lines[idx].get(), ed, idx, win);
   drawStatusBar(ed, win);
-  DEBUG("Buffer::draw ended\n");
 }
 
 void Buffer::drawPoint(Editor& ed, const AttrColor& bg, const Window& win) {
@@ -440,7 +435,6 @@ std::string Buffer::dirModeGetFileAtLine(int line) {
 }
 
 int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
-                     const AttrColor& fg, const AttrColor& bg,
                      const Window& win) {
   const auto& st = win.start();
   const auto& dim = win.dim();
@@ -461,13 +455,10 @@ int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
     for(int i = 0; i < count; ++i) {
       // under the highlighted region
       auto c = start + i < len ? str[start + i] : ' ';
-      if(region.isInside(lineNum, start+i, cu)) {
-        ed.sendChar(xStart + i, y, getColor("highlightfg"),
-                    getColor("highlightbg"), c);
-      } else if(isD)
-        ed.sendChar(xStart + i, y, getColor("dirfg"), bg, c);
-      else
-        ed.sendChar(xStart + i, y, fg, bg, c);
+      auto highlighted = region.isInside(lineNum, start + i, cu);
+      AttrColor fg, bg;
+      mode->getColorFor(fg, bg, lineNum, *this, highlighted);
+      ed.sendChar(xStart + i, y, fg, bg, c);
     }
     start += wid;
     ++y;
