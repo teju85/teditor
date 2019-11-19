@@ -328,12 +328,8 @@ protected:
   void clearStack(OpStack& st);
   /** @} */
 
-
   /** helper method to return the string in the given region */
   std::string regionAsStr(const Point& start, const Point& end) const;
-
-  /** find whether there's a cursor already at the input location */
-  bool findPoint(const Point& pos) const { return cu == pos; }
 
   friend class Editor;
 };
@@ -345,7 +341,7 @@ public:
   ~Buffers();
 
   /** create a new buffer with a unique name and push it to the end */
-  Buffer* push_back(const std::string& name);
+  Buffer* push_back(const std::string& name, bool noUndoRedo = false);
   void push_back(Buffer* buf);
 
   void clear();

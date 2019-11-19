@@ -793,9 +793,9 @@ void Buffers::clear() {
   buffNames.clear();
 }
 
-Buffer* Buffers::push_back(const std::string& name) {
+Buffer* Buffers::push_back(const std::string& name, bool noUndoRedo) {
   auto uname = uniquify(name);
-  auto* buf = new Buffer(uname);
+  auto* buf = new Buffer(uname, noUndoRedo);
   push_back(buf);
   return buf;
 }

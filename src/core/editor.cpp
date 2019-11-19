@@ -295,8 +295,7 @@ Buffer& Editor::getBuff(const std::string& name, bool noUndoRedo,
                         bool& newCreated) {
   newCreated = false;
   for(auto itr : buffs) if(itr->bufferName() == name) return *itr;
-  Buffer* buf = new Buffer(name, noUndoRedo);
-  buffs.push_back(buf);
+  auto* buf = buffs.push_back(name, noUndoRedo);
   newCreated = true;
   return *buf;
 }
