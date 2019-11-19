@@ -283,27 +283,31 @@ void Editor::clearBackBuff() {
 }
 
 Buffer& Editor::getMessagesBuff() {
-  Buffer* buf = getBuff("*messages");
-  if(buf != nullptr) return *buf;
-  buf = new Buffer("*messages", true);
-  buf->makeReadOnly();
-  buffs.push_back(buf);
-  return *buf;
+  bool newOne;
+  Buffer& buf = getBuff("*messages", true, newOne);
+  if (newOne) {
+    buf.makeReadOnly();
+  }
+  return buf;
 }
 
 Buffer& Editor::getLedgerBuff() {
-  Buffer* buf = getBuff("*ledger");
-  if(buf != nullptr) return *buf;
-  buf = new Buffer("*ledger", true);
-  buf->setMode(Mode::createMode("ledger"));
-  buffs.push_back(buf);
-  return *buf;
+  bool newOne;
+  Buffer& buf = getBuff("*ledger", true, newOne);
+  if (newOne) {
+    buf.setMode(Mode::createMode("ledger"));
+  }
+  return buf;
 }
 
-Buffer* Editor::getBuff(const std::string& name) {
-  for(auto itr : buffs)
-    if(itr->bufferName() == name) return itr;
-  return nullptr;
+Buffer& Editor::getBuff(const std::string& name, bool noUndoRedo,
+                        bool& newCreated) {
+  newCreated = false;
+  for(auto itr : buffs) if(itr->bufferName() == name) return *itr;
+  Buffer* buf = new Buffer(name, noUndoRedo);
+  buffs.push_back(buf);
+  newCreated = true;
+  return *buf;
 }
 
 void Editor::writeLiteral(const char* fmt, ...) {

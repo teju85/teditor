@@ -28,6 +28,7 @@ public:
   void setTitle(const char* ti) { writef("%c]0;%s%c\n", '\033', ti, '\007'); }
   Buffer& getBuff() { return getWindow().getBuff(); }
   const Buffer& getBuff() const { return getWindow().getBuff(); }
+  Buffer& getBuff(const std::string& name, bool noUndoRedo, bool& newOne);
   Window& getWindow() { return windows.getWindow(); }
   const Window& getWindow() const { return windows.getWindow(); }
   Window& getCmBarWindow() { return *windows[0]; }
@@ -109,7 +110,6 @@ private:
   void draw();
   void loadFiles();
   void bufResize();
-  Buffer* getBuff(const std::string& name);
   const AttrColor& getColor(const std::string& name) const;
   int cmBarHeight() const;
   void deleteBuffer(int idx);
