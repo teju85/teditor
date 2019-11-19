@@ -34,7 +34,6 @@ public:
   Window& getCmBarWindow() { return *windows[0]; }
   CmdMsgBar& getCmBar() { return *cmBar; }
   Buffer& getMessagesBuff();
-  Buffer& getLedgerBuff();
   std::string prompt(const std::string& msg, KeyCmdMap* kcMap=nullptr,
                      Choices* choices=nullptr,const std::string& defVal=std::string());
   bool promptYesNo(const std::string& msg);

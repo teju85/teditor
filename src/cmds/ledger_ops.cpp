@@ -8,9 +8,18 @@ namespace teditor {
 namespace ledger {
 namespace ops {
 
+Buffer& getLedgerBuff(Editor& ed) {
+  bool newOne;
+  auto& buf = ed.getBuff("*ledger", true, newOne);
+  if (newOne) {
+    buf.setMode(Mode::createMode(Mode::inferMode(buf.bufferName())));
+  }
+  return buf;
+}
+
 DEF_CMD(
   Ledger, "ledger", DEF_OP() {
-    auto& buf = ed.getLedgerBuff();
+    auto& buf = getLedgerBuff(ed);
     Evaluate eval(Option::get("ledgerFile").getStr());
     eval.showTopAccounts(buf);
     ed.switchToBuff("*ledger");
@@ -19,7 +28,7 @@ DEF_CMD(
 
 DEF_CMD(
   LedgerAll, "ledger-all", DEF_OP() {
-    auto& buf = ed.getLedgerBuff();
+    auto& buf = getLedgerBuff(ed);
     Evaluate eval(Option::get("ledgerFile").getStr());
     eval.showAllAccounts(buf);
     ed.switchToBuff("*ledger");

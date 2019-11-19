@@ -291,15 +291,6 @@ Buffer& Editor::getMessagesBuff() {
   return buf;
 }
 
-Buffer& Editor::getLedgerBuff() {
-  bool newOne;
-  Buffer& buf = getBuff("*ledger", true, newOne);
-  if (newOne) {
-    buf.setMode(Mode::createMode("ledger"));
-  }
-  return buf;
-}
-
 Buffer& Editor::getBuff(const std::string& name, bool noUndoRedo,
                         bool& newCreated) {
   newCreated = false;
