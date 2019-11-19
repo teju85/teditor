@@ -343,8 +343,6 @@ void Buffer::loadDir(const std::string& dir) {
   } else {
     first = dir;
   }
-  startLine = 0;
-  begin();
   insert(first + "\n" + listDir2str(dir));
   resetBufferState(0, first);
   readOnly = true;
