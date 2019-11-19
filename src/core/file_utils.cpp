@@ -27,13 +27,17 @@ std::string remoteFileType(const std::string& f) {
   return str;
 }
 
+bool isRemoteDir(const std::string& type) {
+  return type.find("directory") != std::string::npos;
+}
+
 bool isDir(const std::string& f) {
   if(!isRemote(f)) {
     struct stat st;
     if(stat(f.c_str(), &st) != 0) return false;
     return S_ISDIR(st.st_mode);
   }
-  return remoteFileType(f) == "setgid directory\n";
+  return isRemoteDir(remoteFileType(f));
 }
 
 bool isFile(const std::string& f) {
@@ -42,7 +46,7 @@ bool isFile(const std::string& f) {
     if(stat(f.c_str(), &st) != 0) return false;
     return S_ISREG(st.st_mode);
   }
-  return remoteFileType(f) != "setgid directory\n";
+  return !isRemoteDir(remoteFileType(f));
 }
 
 bool isReadOnly(const char* f) {
