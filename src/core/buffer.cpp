@@ -363,6 +363,7 @@ void Buffer::loadFile(const std::string& file, int line) {
   }
   fp.close();
   resetBufferState(line, absFile);
+  line = std::min(std::max(0, line), length() - 1);
   cu = {0, line};
 }
 

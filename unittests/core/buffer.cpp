@@ -909,4 +909,22 @@ TEST_CASE("Buffers::uniquify") {
   REQUIRE(buffs.empty());
 }
 
+TEST_CASE("Buffer::MaxLine") {
+  SECTION("negative") {
+    Buffer ml;
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt", -1);
+    REQUIRE(Point(0, 0) == ml.getPoint());
+  }
+  SECTION("large number") {
+    Buffer ml;
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt", 100);
+    REQUIRE(Point(0, 3) == ml.getPoint());
+  }
+  SECTION("normal") {
+    Buffer ml;
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt", 1);
+    REQUIRE(Point(0, 1) == ml.getPoint());
+  }
+}
+
 } // end namespace teditor
