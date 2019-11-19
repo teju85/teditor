@@ -4,6 +4,7 @@
 #include "core/terminal.h"
 #include "core/logger.h"
 #include "core/option.h"
+#include "core/file_utils.h"
 #include <memory>
 
 int main(int argc, char** argv) {
@@ -13,6 +14,8 @@ int main(int argc, char** argv) {
     SingletonHandler<Logger, std::string> shl("debug.log");
     std::vector<FileInfo> files;
     if (!parseArgs(argc, argv, files)) return 0;
+    Logger::setLevel(Option::get("logLevel").getInt());
+    makeDir(Option::get("homeFolder").getStr());
     SingletonHandler<Terminal, std::string> term(Option::get("tty").getStr());
     {
       std::shared_ptr<Editor> ed(new Editor(files));

@@ -3,7 +3,6 @@
 #include "option.h"
 #include <memory>
 #include <string.h>
-#include "logger.h"
 #include "version.h"
 
 namespace teditor {
@@ -167,8 +166,6 @@ bool parseArgs(int argc, char** argv, std::vector<FileInfo>& files) {
       files.push_back(readFileInfo(argv[i]));
     }
   }
-  Logger::setLevel(Option::get("logLevel").getInt());
-  makeDir(Option::get("homeFolder").getStr());
   return true;
 }
 
