@@ -314,6 +314,15 @@ TEST_CASE("Utils::ReadFileInfo") {
   fi = readFileInfo("/ssh:remotehost:/usr/README.org;11");
   REQUIRE("/ssh:remotehost:/usr/README.org" == fi.first);
   REQUIRE(11 == fi.second);
+  fi = readFileInfo("/ssh:remotehost:/usr/;11");
+  REQUIRE("/ssh:remotehost:/usr" == fi.first);
+  REQUIRE(11 == fi.second);
+  fi = readFileInfo("/usr/;11");
+  REQUIRE("/usr" == fi.first);
+  REQUIRE(11 == fi.second);
+  fi = readFileInfo("/usr;11");
+  REQUIRE("/usr" == fi.first);
+  REQUIRE(11 == fi.second);
 }
 
 TEST_CASE("Utils::StrFind") {

@@ -271,6 +271,7 @@ FileInfo readFileInfo(const std::string& arg) {
     ASSERT(false, "File: Bad arg passed. Usage: <file>[;<line>]. '%s'!\n",
            arg.c_str());
   }
+  if (file.back() == '/') file.erase(file.begin() + file.length() - 1);
   return FileInfo(file, line);
 }
 
