@@ -339,22 +339,17 @@ void Buffer::makeReadOnly() {
 void Buffer::loadDir(const std::string& dir) {
   std::string first;
   if(!isRemote(dir)) {
-    Files fs = listDir(dir);
     first = rel2abs(pwd(), dir);
-    lines.back().append(first);
-    for(const auto& f : fs) {
-      auto fname = isCurrentOrParentDir(f.name)? f.name : basename(f.name);
-      auto buff = format("  %10.10s  %8lu  %s", f.perms, f.size, fname.c_str());
-      addLine();
-      lines.back().append(buff);
-    }
   } else {
     first = dir;
-    lines.back().append(dir);
-    insert(listRemoteDir(dir));
   }
-  resetBufferState(0, first);
+  startLine = 0;
   begin();
+  insert(first + "\n");
+  auto str = listDir2str(dir);
+  DEBUG("Buffer::loadDir: str=%s\n", str.c_str());
+  insert(str);
+  resetBufferState(0, first);
   readOnly = true;
 }
 
@@ -395,9 +390,12 @@ void Buffer::draw(Editor& ed, const Window& win) {
   int len = length();
   const auto& fg = getColor("defaultfg");
   const auto& bg = getColor("defaultbg");
+  DEBUG("Buffer::drawLine...\n");
   for(int y = start.y, idx = startLine; y < h && idx < len; ++idx)
     y = drawLine(y, lines[idx].get(), ed, idx, fg, bg, win);
+  DEBUG("Buffer::drawStatusBar...\n");
   drawStatusBar(ed, win);
+  DEBUG("Buffer::draw ended\n");
 }
 
 void Buffer::drawPoint(Editor& ed, const AttrColor& bg, const Window& win) {
@@ -406,8 +404,8 @@ void Buffer::drawPoint(Editor& ed, const AttrColor& bg, const Window& win) {
   const auto& fg = getColor("cursorfg");
   char c = charAt(cu);
   auto screenloc = buffer2screen(cu, start, dim);
-  DEBUG("drawPoint: i=%d x,y=%d,%d sloc=%d,%d start=%d\n", i, cu.x, cu.y,
-        screenloc.x, screenloc.y, startLine);
+  DEBUG("drawPoint: x,y=%d,%d sloc=%d,%d start=%d\n", cu.x, cu.y, screenloc.x,
+        screenloc.y, startLine);
   ed.sendChar(screenloc.x, screenloc.y, fg, bg, c);
 }
 
@@ -442,6 +440,7 @@ void Buffer::drawStatusBar(Editor& ed, const Window& win) {
 std::string Buffer::dirModeGetFileAtLine(int line) {
   if(line == 0) return "";
   auto& str = at(line).get();
+  if (str.empty()) return "";
   return str.substr(dirModeFileOffset());
 }
 
@@ -454,6 +453,7 @@ int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
   int len = (int)line.size();
   const auto* str = line.c_str();
   bool isD = mode->name() == "dir";
+  ULTRA_DEBUG("Buffer::drawLine: y=%d line=%s len=%d\n", y, line.c_str(), len);
   if(isD) {
     auto file = dirModeGetFileAtLine(lineNum);
     file =  getFileName() + '/' + file;
@@ -477,6 +477,7 @@ int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
     start += wid;
     ++y;
   }
+  ULTRA_DEBUG("Buffer::drawLine: ended y=%d line=%s\n", y, line.c_str());
   return y;
 }
 

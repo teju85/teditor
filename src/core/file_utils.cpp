@@ -12,7 +12,7 @@
 #include <iostream>
 #include <cctype>
 #include <algorithm>
-
+#include "logger.h"
 
 namespace teditor {
 
@@ -257,12 +257,17 @@ bool isCurrentOrParentDir(const std::string& dir) {
   return dir == "." || dir == "..";
 }
 
-std::string listRemoteDir(const std::string& dir) {
-  if(!isRemote(dir)) return "";
-  Remote r(dir);
-  auto cmd = format("ssh %s /bin/bash -c '\"cd %s && ls -a |"
-                    " xargs stat --format \\\"  %A  %8s  %n\\\"\"'",
-                    r.host.c_str(), r.file.c_str());
+std::string listDir2str(const std::string& dir) {
+  std::string cmd;
+  if (isRemote(dir)) {
+    Remote r(dir);
+    cmd = format("ssh %s /bin/bash -c '\"cd %s && ls -a |"
+                 " xargs stat --format \\\"  %%A  %%8s  %%n\\\"\"'",
+                 r.host.c_str(), r.file.c_str());
+  } else {
+    cmd = format("cd %s && ls -a | xargs stat --format '  %%A  %%8s  %%n'",
+                 dir.c_str());
+  }
   auto out = check_output(cmd);
   return out.output;
 }

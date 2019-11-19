@@ -48,7 +48,7 @@ typedef std::vector<FilePerm> Files;
 
 Files listDir(const std::string& dir);
 Strings listDirRel(const std::string& dir);
-std::string listRemoteDir(const std::string& dir);
+std::string listDir2str(const std::string& dir);
 
 void copyFile(const std::string& in, const std::string& out);
 

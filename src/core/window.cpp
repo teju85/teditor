@@ -31,9 +31,11 @@ void Window::resize(const Pos2di& start, const Pos2di& dim) {
 }
 
 void Window::draw(Editor& ed) {
+  DEBUG("Window::draw started\n");
   auto& buff = getBuff();
   buff.lineUp(dim());
   buff.draw(ed, *this);
+  DEBUG("Window::draw ended\n");
 }
 
 void Window::drawPoint(Editor& ed, const AttrColor& bg) {
