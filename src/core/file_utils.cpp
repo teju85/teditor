@@ -18,10 +18,13 @@ namespace teditor {
 
 std::string remoteFileType(const std::string& f) {
   Remote r(f);
-  auto cmd = format("ssh %s /bin/bash -c \"file %s | sed -e 's/.*: //'\"",
-                    r.host, r.file);
+  auto cmd = format("ssh %s /bin/bash -c \\\"file %s\\\"",
+                    r.host.c_str(), r.file.c_str());
   auto out = check_output(cmd);
-  return out.output;
+  auto str = out.output;
+  // "<file>: " removed
+  str.erase(0, r.file.size() + 2);
+  return str;
 }
 
 bool isDir(const std::string& f) {
@@ -30,7 +33,7 @@ bool isDir(const std::string& f) {
     if(stat(f.c_str(), &st) != 0) return false;
     return S_ISDIR(st.st_mode);
   }
-  return remoteFileType(f) == "directory";
+  return remoteFileType(f) == "setgid directory\n";
 }
 
 bool isFile(const std::string& f) {
@@ -39,7 +42,7 @@ bool isFile(const std::string& f) {
     if(stat(f.c_str(), &st) != 0) return false;
     return S_ISREG(st.st_mode);
   }
-  return remoteFileType(f) != "directory";
+  return remoteFileType(f) != "setgid directory\n";
 }
 
 bool isReadOnly(const char* f) {
