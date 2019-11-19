@@ -270,8 +270,8 @@ void Editor::resize() {
   frontbuff.resize(term.width(), term.height());
   const auto& defaultfg = getColor("defaultfg");
   const auto& defaultbg = getColor("defaultbg");
-  backbuff.clear(defaultfg, defaultbg);
   frontbuff.clear(defaultfg, defaultbg);
+  clearBackBuff();
   bufResize();
   clearScreen();
 }
