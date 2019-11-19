@@ -20,31 +20,31 @@ TEST_CASE("FilesHist") {
     REQUIRE(1U == fh.size());
     vec = fh.toString();
     REQUIRE_FALSE(vec.empty());
-    REQUIRE("main.cpp:0" == vec[0]);
+    REQUIRE("main.cpp;0" == vec[0]);
 
     // adding duplicate
     fh.add("main.cpp", 1);
     vec = fh.toString();
     REQUIRE(1U == fh.size());
-    REQUIRE("main.cpp:1" == vec[0]);
+    REQUIRE("main.cpp;1" == vec[0]);
 
     fh.add("tests", 0);
     vec = fh.toString();
     REQUIRE(2U == fh.size());
-    REQUIRE("tests:0" == vec[0]);
+    REQUIRE("tests;0" == vec[0]);
 
     fh.add("src", 0);
     vec = fh.toString();
     REQUIRE(3U == fh.size());
-    REQUIRE("src:0" == vec[0]);
+    REQUIRE("src;0" == vec[0]);
 
     // crossing the limit
     fh.add("Doxyfile", 10);
     vec = fh.toString();
     REQUIRE(3U == fh.size());
-    REQUIRE("Doxyfile:10" == vec[0]);
-    REQUIRE("src:0" == vec[1]);
-    REQUIRE("tests:0" == vec[2]);
+    REQUIRE("Doxyfile;10" == vec[0]);
+    REQUIRE("src;0" == vec[1]);
+    REQUIRE("tests;0" == vec[2]);
 
     // storage and reload it
     fh.store();
@@ -52,8 +52,8 @@ TEST_CASE("FilesHist") {
     FilesHist fh1(file, 2);
     vec = fh1.toString();
     REQUIRE(2U == fh1.size());
-    REQUIRE("Doxyfile:10" == vec[0]);
-    REQUIRE("src:0" == vec[1]);
+    REQUIRE("Doxyfile;10" == vec[0]);
+    REQUIRE("src;0" == vec[1]);
 
     remove(file.c_str());
 }

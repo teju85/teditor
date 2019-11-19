@@ -229,7 +229,7 @@ void copyFile(const std::string& in, const std::string& out) {
 FileInfo readFileInfo(const std::string& arg) {
   std::string file;
   int line;
-  const auto tokens = split(arg, ':');
+  const auto tokens = split(arg, ';');
   if(tokens.size() == 1U) {
     file = tokens[0];
     line = 0;
@@ -237,7 +237,7 @@ FileInfo readFileInfo(const std::string& arg) {
     file = tokens[0];
     line = str2num(tokens[1]);
   } else {
-    ASSERT(false, "File: Bad arg passed. Usage: <file>[:<line>]. '%s'!\n",
+    ASSERT(false, "File: Bad arg passed. Usage: <file>[;<line>]. '%s'!\n",
            arg.c_str());
   }
   return FileInfo(file, line);

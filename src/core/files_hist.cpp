@@ -19,7 +19,7 @@ void FilesHist::store() const {
   FILE* fp = fopen(file.c_str(), "w");
   if(fp == NULL) return;
   for(const auto& fi : *this)
-    fprintf(fp, "%s:%d\n", fi.first.c_str(), fi.second);
+    fprintf(fp, "%s;%d\n", fi.first.c_str(), fi.second);
   fclose(fp);
 }
 
@@ -39,7 +39,7 @@ void FilesHist::add(const std::string& file, int line) {
 Strings FilesHist::toString() const {
   Strings vec;
   for(const auto& fi : *this)
-    vec.push_back(format("%s:%d", fi.first.c_str(), fi.second));
+    vec.push_back(format("%s;%d", fi.first.c_str(), fi.second));
   return vec;
 }
 

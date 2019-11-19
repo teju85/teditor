@@ -307,10 +307,13 @@ TEST_CASE("Utils::ExpandEnvVars") {
 }
 
 TEST_CASE("Utils::ReadFileInfo") {
-    FileInfo fi = readFileInfo("README.org:10");
-    REQUIRE("README.org" == fi.first);
-    REQUIRE(10 == fi.second);
-    REQUIRE_THROWS(readFileInfo("README.org:10:10"));
+  FileInfo fi = readFileInfo("README.org;10");
+  REQUIRE("README.org" == fi.first);
+  REQUIRE(10 == fi.second);
+  REQUIRE_THROWS(readFileInfo("README.org;10;10"));
+  fi = readFileInfo("/ssh:remotehost:/usr/README.org;11");
+  REQUIRE("/ssh:remotehost:/usr/README.org" == fi.first);
+  REQUIRE(11 == fi.second);
 }
 
 TEST_CASE("Utils::StrFind") {
