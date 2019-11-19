@@ -53,20 +53,18 @@ bool isReadOnly(const char* f) {
   return access(f, R_OK) == 0 && access(f, W_OK) < 0;
 }
 
-bool dirExists(const std::string& f) { return isDir(f) && !isFile(f); }
-
 void makeDir(const std::string& d) {
-  if(dirExists(d)) return;
-  int ret = -1;
-  if(!isRemote(d)) {
-    ret = mkdir(d.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+  if (!isRemote(d)) {
+    if (isDir(d)) return;
+    int ret = mkdir(d.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    ASSERT(ret >= 0, "makeDir: '%s' failed!", d.c_str());
   } else {
     Remote r(d);
-    auto cmd = format("ssh %s mkdir %s", r.host, r.file);
+    auto cmd = format("ssh %s mkdir -p %s", r.host, r.file);
     auto out = check_output(cmd);
-    ret = out.status;
+    ASSERT(out.status == 0, "makeDir: cmd='%s' failed! code=%d\n", cmd.c_str(),
+           out.status);
   }
-  ASSERT(ret >= 0, "makeDir: '%s' failed!", d.c_str());
 }
 
 Remote::Remote(const std::string& f) {
