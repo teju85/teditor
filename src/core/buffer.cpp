@@ -345,10 +345,7 @@ void Buffer::loadDir(const std::string& dir) {
   }
   startLine = 0;
   begin();
-  insert(first + "\n");
-  auto str = listDir2str(dir);
-  DEBUG("Buffer::loadDir: str=%s\n", str.c_str());
-  insert(str);
+  insert(first + "\n" + listDir2str(dir));
   resetBufferState(0, first);
   readOnly = true;
 }
