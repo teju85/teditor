@@ -1,4 +1,4 @@
-#include "readonly.h"
+#include "../../modes/readonly.h"
 #include "core/buffer.h"
 
 
