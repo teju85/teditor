@@ -346,16 +346,14 @@ void Buffer::loadDir(const std::string& dir) {
 void Buffer::loadFile(const std::string& file, int line) {
   std::fstream fp;
   fp.open(file.c_str(), std::fstream::in);
-  if(!fp.is_open()) {
-    resetBufferState(0, file);
-    return;
+  if(fp.is_open()) {
+    std::string currLine;
+    while(std::getline(fp, currLine, '\n')) {
+      lines.back().append(currLine);
+      addLine();
+    }
+    fp.close();
   }
-  std::string currLine;
-  while(std::getline(fp, currLine, '\n')) {
-    lines.back().append(currLine);
-    addLine();
-  }
-  fp.close();
   line = std::min(std::max(0, line), length() - 1);
   resetBufferState(line, file);
   cu = {0, line};
