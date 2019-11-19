@@ -441,13 +441,7 @@ int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
   int xStart = st.x, wid = dim.x, start = 0;
   int len = (int)line.size();
   const auto* str = line.c_str();
-  bool isD = mode->name() == "dir";
   ULTRA_DEBUG("Buffer::drawLine: y=%d line=%s len=%d\n", y, line.c_str(), len);
-  if(isD) {
-    auto file = dirModeGetFileAtLine(lineNum);
-    file =  getFileName() + '/' + file;
-    isD = isDir(file);
-  }
   auto maxLen = std::max(len, wid);
   while(start < maxLen) {
     int diff = maxLen - start;
