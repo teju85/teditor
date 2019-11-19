@@ -425,6 +425,10 @@ void Buffer::drawStatusBar(Editor& ed, const Window& win) {
   // mode
   count += ed.sendStringf(x+count, y, fg, bg, " [mode=%s]",
                           mode->name().c_str());
+  // remote or local?
+  if (isRemote(fileName)) {
+    count += ed.sendStringf(x+count, y, fg, bg, " [ssh]");
+  }
 }
 
 std::string Buffer::dirModeGetFileAtLine(int line) {
