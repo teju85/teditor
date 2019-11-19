@@ -613,10 +613,15 @@ bool Buffer::save(const std::string& fName) {
   auto f = fName;
   if(f.empty()) f = fileName;
   if(f.empty()) return false;
-  fileName = f;
+  std::string outFile = fileName = f;
+  if (isRemote(fileName)) {
+    if (tmpFileName.empty())
+      tmpFileName = tempFileName();
+    outFile = tmpFileName;
+  }
   std::ofstream fp;
-  fp.open(fileName.c_str());
-  ASSERT(fp.is_open(), "Failed to open file '%s'!", fileName.c_str());
+  fp.open(outFile.c_str());
+  ASSERT(fp.is_open(), "Failed to open file '%s'!", outFile.c_str());
   int len = (int)lines.size();
   for(int i=0;i<len;++i) {
     // don't write the final line if it is empty
@@ -624,7 +629,11 @@ bool Buffer::save(const std::string& fName) {
     fp << lines[i].get() << "\n";
   }
   fp.close();
-  fileName = rel2abs(pwd(), fileName);
+  if (!isRemote(fileName)) {
+    fileName = rel2abs(pwd(), fileName);
+  } else {
+    copyToRemote(fileName, outFile);
+  }
   dirName = dirname(fileName);
   buffName = basename(fileName);
   modified = false;
