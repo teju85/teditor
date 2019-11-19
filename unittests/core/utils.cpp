@@ -242,10 +242,10 @@ TEST_CASE("Utils::ListDir") {
     REQUIRE(".." == f[1].name);
     REQUIRE("samples/correct.cpp" == f[2].name);
     REQUIRE("samples/cpp-mode.cpp" == f[3].name);
-    REQUIRE("samples/default-rcfile" == f[4].name);
+    REQUIRE("samples/default.rcfile" == f[4].name);
     REQUIRE("samples/hello.txt" == f[5].name);
-    REQUIRE("samples/incorrect-rcfile" == f[6].name);
-    REQUIRE("samples/incorrect.cpp" == f[7].name);
+    REQUIRE("samples/incorrect.cpp" == f[6].name);
+    REQUIRE("samples/incorrect.rcfile" == f[7].name);
     REQUIRE("samples/indent.txt" == f[8].name);
     REQUIRE("samples/ledger" == f[9].name);
     REQUIRE("samples/long.cpp" == f[10].name);
@@ -262,10 +262,10 @@ TEST_CASE("Utils::ListDirRel") {
     REQUIRE(".." == f[1]);
     REQUIRE("correct.cpp" == f[2]);
     REQUIRE("cpp-mode.cpp" == f[3]);
-    REQUIRE("default-rcfile" == f[4]);
+    REQUIRE("default.rcfile" == f[4]);
     REQUIRE("hello.txt" == f[5]);
-    REQUIRE("incorrect-rcfile" == f[6]);
-    REQUIRE("incorrect.cpp" == f[7]);
+    REQUIRE("incorrect.cpp" == f[6]);
+    REQUIRE("incorrect.rcfile" == f[7]);
     REQUIRE("indent.txt" == f[8]);
     REQUIRE("ledger" == f[9]);
     REQUIRE("long.cpp" == f[10]);

@@ -75,7 +75,7 @@ TEST_CASE("Buffer::BadFile") {
 TEST_CASE("Buffer::DirMode") {
   Buffer ml;
   setupBuff(ml, {0, 0}, {100, 10}, "samples");
-  REQUIRE(14 == ml.length());
+  REQUIRE(15 == ml.length());
   REQUIRE("samples" == ml.bufferName());
 }
 

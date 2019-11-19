@@ -23,10 +23,10 @@ TEST_CASE("Option::ExpandOptions") {
 }
 
 TEST_CASE("Option::parseRcFile") {
-  parseRcFile("samples/default-rcfile");
+  parseRcFile("samples/default.rcfile");
   REQUIRE(expandEnvVars("$HOME/.teditor/org") ==
           Option::get("orgNotesDir").getStr());
-  REQUIRE_THROWS_AS(parseRcFile("samples/incorrect-rcfile"),
+  REQUIRE_THROWS_AS(parseRcFile("samples/incorrect.rcfile"),
                     std::runtime_error);
 }
 
