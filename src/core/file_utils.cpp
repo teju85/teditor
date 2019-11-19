@@ -206,19 +206,43 @@ Files listDir(const std::string& dir) {
     f.push_back(fp);
   }
   closedir(dp);
-  sort(f.begin(), f.end(), FileCompare);
+  std::sort(f.begin(), f.end(), FileCompare);
   return f;
 }
 
 Strings listDirRel(const std::string& dir) {
-  Strings f;
-  DIR *dp = opendir(dir.c_str());
-  if(dp == nullptr) return f;
-  for(struct dirent *ep=readdir(dp);ep!=nullptr;ep=readdir(dp))
-    f.push_back(ep->d_name);
-  closedir(dp);
-  sort(f.begin(), f.end());
-  return f;
+  if (!isRemote(dir)) {
+    Strings f;
+    DIR *dp = opendir(dir.c_str());
+    if(dp == nullptr) return f;
+    for(struct dirent *ep=readdir(dp);ep!=nullptr;ep=readdir(dp))
+      f.push_back(ep->d_name);
+    closedir(dp);
+    std::sort(f.begin(), f.end());
+    return f;
+  } else {
+    Remote r(dir);
+    auto cmd = format("ssh %s /bin/bash -c '\"cd %s && ls -a |"
+                      " xargs stat --format \\\"%%n\\\"\"'",
+                      r.host.c_str(), r.file.c_str());
+    auto out = check_output(cmd);
+    return split(out.output, '\n');
+  }
+}
+
+std::string listDir2str(const std::string& dir) {
+  std::string cmd;
+  if (isRemote(dir)) {
+    Remote r(dir);
+    cmd = format("ssh %s /bin/bash -c '\"cd %s && ls -a |"
+                 " xargs stat --format \\\"  %%A  %%8s  %%n\\\"\"'",
+                 r.host.c_str(), r.file.c_str());
+  } else {
+    cmd = format("cd %s && ls -a | xargs stat --format '  %%A  %%8s  %%n'",
+                 dir.c_str());
+  }
+  auto out = check_output(cmd);
+  return out.output;
 }
 
 void copyFile(const std::string& in, const std::string& out) {
@@ -262,21 +286,6 @@ bool fileStrFind(const std::string& line, const std::string& str) {
 
 bool isCurrentOrParentDir(const std::string& dir) {
   return dir == "." || dir == "..";
-}
-
-std::string listDir2str(const std::string& dir) {
-  std::string cmd;
-  if (isRemote(dir)) {
-    Remote r(dir);
-    cmd = format("ssh %s /bin/bash -c '\"cd %s && ls -a |"
-                 " xargs stat --format \\\"  %%A  %%8s  %%n\\\"\"'",
-                 r.host.c_str(), r.file.c_str());
-  } else {
-    cmd = format("cd %s && ls -a | xargs stat --format '  %%A  %%8s  %%n'",
-                 dir.c_str());
-  }
-  auto out = check_output(cmd);
-  return out.output;
 }
 
 std::string copyFromRemote(const std::string& file) {
