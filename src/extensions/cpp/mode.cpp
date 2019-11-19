@@ -1,4 +1,4 @@
-#include "text.h"
+#include "../base/text.h"
 #include "core/buffer.h"
 #include "core/pcre.h"
 
