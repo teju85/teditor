@@ -51,7 +51,7 @@ Editor::Editor(const std::vector<FileInfo>& _files):
 
 Editor::~Editor() {
   DEBUG("Editor: dtor started\n");
-  fileshist.prune();
+  while (!buffs.empty()) deleteBuffer(0);
   fileshist.store();
   DEBUG("Editor: dtor finished\n");
 }
