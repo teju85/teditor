@@ -89,9 +89,6 @@ private:
 /** Accessor function to the list of mode names */
 Strings allModeNames();
 
-/** infers mode from it's filename */
-std::string inferMode(const std::string& file);
-
 
 class RegisterMode {
 public:
