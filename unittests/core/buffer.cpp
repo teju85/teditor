@@ -387,13 +387,25 @@ TEST_CASE("Buffer::TextModeIndent") {
   SECTION("indent") {
     Buffer ml;
     setupBuff(ml, {0, 0}, {30, 10}, "samples/indent.txt", 2);
+    REQUIRE_FALSE(ml.isModified());
     ml.indent();
+    REQUIRE(ml.isModified());
     REQUIRE("  This should indent" == ml.at(2).get());
+  }
+  SECTION("noindent") {
+    Buffer ml;
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/indent.txt", 0);
+    REQUIRE_FALSE(ml.isModified());
+    ml.indent();
+    REQUIRE_FALSE(ml.isModified());
+    REQUIRE("* Hello" == ml.at(0).get());
   }
   SECTION("deindent") {
     Buffer ml;
     setupBuff(ml, {0, 0}, {30, 10}, "samples/indent.txt", 4);
+    REQUIRE_FALSE(ml.isModified());
     ml.indent();
+    REQUIRE(ml.isModified());
     REQUIRE("This should deindent" == ml.at(4).get());
   }
 }

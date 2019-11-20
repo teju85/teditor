@@ -777,7 +777,8 @@ void Buffer::indent() {
   int line = cu.y;
   int count = mode->indent(*this, line);
   DEBUG("Indent: count=%d line=%d\n", count, line);
-  if(count >= 0) {
+  if (count == 0) return;
+  if(count > 0) {
     str = std::string(count, ' ');
     add = true;
   } else {
