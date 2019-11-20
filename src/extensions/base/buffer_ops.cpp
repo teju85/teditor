@@ -45,6 +45,7 @@ DEF_CMD(
   KillLine, "kill-line", DEF_OP() {
     auto del = ed.getBuff().killLine();
     ed.setCopyData(del);
+    CMBAR_MSG(ed, "Line killed\n");
   },
   DEF_HELP() {
     return "Removes the rest of the line and copies it to the clipboard.";
@@ -144,6 +145,7 @@ DEF_CMD(
     }
     auto del = buf.removeAndCopy();
     ed.setCopyData(del);
+    CMBAR_MSG(ed, "Cut done\n");
   },
   DEF_HELP() {
     return "Cuts the currently active region and copies that data into"
@@ -193,6 +195,8 @@ DEF_CMD(
     }
     auto cp = buf.regionAsStr();
     ed.setCopyData(cp);
+    buf.stopRegion();
+    CMBAR_MSG(ed, "Copy done\n");
   },
   DEF_HELP() { return "Copy current region into internal clipboard"; });
 
