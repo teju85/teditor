@@ -214,10 +214,6 @@ void Editor::run() {
   }
 }
 
-void Editor::checkForModifiedBuffers() {
-  for(auto itr : buffs) checkForModifiedBuffer(itr);
-}
-
 void Editor::checkForModifiedBuffer(Buffer* buf) {
   const auto& name = buf->bufferName();
   if(!buf->isModified() || buf->isRO()) return;

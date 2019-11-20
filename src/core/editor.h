@@ -40,8 +40,6 @@ public:
   std::string promptEnum(const std::string& msg, OptionMap& opts);
   void load(const std::string& file, int line);
   void runCmd(const std::string& cmd);
-  void checkForModifiedBuffers();
-  void checkForModifiedBuffer(Buffer* mlb);
   bool hasCopy() const { return !copiedStr.empty(); }
   const std::string& copyData() const { return copiedStr; }
   void setCopyData(const std::string& in) { copiedStr = in; }
@@ -113,6 +111,7 @@ private:
   int cmBarHeight() const;
   void deleteBuffer(int idx);
   void setCurrBuff(int i) { getWindow().setCurrBuff(i); }
+  void checkForModifiedBuffer(Buffer* mlb);
 };
 
 }; // end namespace teditor

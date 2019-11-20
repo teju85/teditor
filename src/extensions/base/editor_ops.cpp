@@ -8,7 +8,6 @@ namespace EditorOps {
 DEF_CMD(
   Quit, "quit", DEF_OP() {
     ed.requestQuitEventLoop();
-    ed.checkForModifiedBuffers();
   },
   DEF_HELP() {
     return "Quit the editor. It'll check for any modified but unsaved"
