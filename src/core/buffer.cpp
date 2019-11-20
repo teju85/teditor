@@ -350,7 +350,7 @@ void Buffer::makeReadOnly() {
 
 void Buffer::loadDir(const std::string& dir) {
   insert(dir + "\n" + listDir2str(dir));
-  resetBufferState(0, dir);
+  resetBufferState(0, dir, true);
   readOnly = true;
 }
 
@@ -372,17 +372,17 @@ void Buffer::loadFile(const std::string& file, int line) {
     fp.close();
   }
   line = std::min(std::max(0, line), length() - 1);
-  resetBufferState(line, file);
+  resetBufferState(line, file, false);
   cu = {0, line};
 }
 
-void Buffer::resetBufferState(int line, const std::string& file) {
+void Buffer::resetBufferState(int line, const std::string& file, bool dir) {
   startLine = line;
   begin();
   modified = false;
   readOnly = isReadOnly(file.c_str());
   fileName = file;
-  dirName = dirname(file);
+  dirName = dir ? file : dirname(file);
   buffName = basename(file);
   stopRegion();
 }

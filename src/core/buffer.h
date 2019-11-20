@@ -277,7 +277,7 @@ protected:
 
   void insertImpl(char c);
   void addLine() { lines.push_back(Line()); }
-  void resetBufferState(int line, const std::string& file);
+  void resetBufferState(int line, const std::string& file, bool dir);
   KeyCmdMap& getKeyCmdMap() { return mode->getKeyCmdMap(); }
   void loadFile(const std::string& file, int line);
   void loadDir(const std::string& dir);
