@@ -773,20 +773,18 @@ void Buffer::gotoLine(int lineNum, const Point& dim) {
 void Buffer::indent() {
   std::string str;
   Point start, end;
-  bool add = true;
   int line = cu.y;
   int count = mode->indent(*this, line);
   DEBUG("Indent: count=%d line=%d\n", count, line);
   if (count == 0) return;
-  if(count > 0) {
+  else if(count > 0) {
     str = std::string(count, ' ');
-    add = true;
+    insert(str);
   } else {
     start = {0, line};
     end = {-count, line};
-    add = false;
+    removeRegion(start, end);
   }
-  add ? insert(str) : (void)removeRegion(start, end);
 }
 
 
