@@ -275,18 +275,19 @@ TEST_CASE("Buffer::KeepLinesNoMatches") {
   auto res = ml.keepRemoveLines(pc, true);
   REQUIRE(21U == res.size());
   REQUIRE("#ifndef _GNU_SOURCE" == res[0].str);
-  REQUIRE(Point(0, 0) == res[0].pos);
+  REQUIRE(0 == res[0].num);
   REQUIRE("" == res[20].str);
   // pos is 0,0 because of sequential removal of lines!
-  REQUIRE(Point(0, 0) == res[20].pos);
+  REQUIRE(0 == res[20].num);
   REQUIRE(1 == ml.length());
-
   // undo
-  ml.addLines(res);
-  // yea, in case of full removal, undo causes an extra line at the end!
-  REQUIRE(22 == ml.length());
+  ml.undo();
+  REQUIRE(21 == ml.length());
   REQUIRE("#ifndef _GNU_SOURCE" == ml.at(0).get());
-  REQUIRE("" == ml.at(21).get());
+  REQUIRE("" == ml.at(20).get());
+  // redo
+  ml.redo();
+  REQUIRE(1 == ml.length());
 }
 
 TEST_CASE("Buffer::KeepLinesSomeMatches") {
@@ -298,16 +299,18 @@ TEST_CASE("Buffer::KeepLinesSomeMatches") {
   auto res = ml.keepRemoveLines(pc, true);
   REQUIRE(9U == res.size());
   REQUIRE("#ifndef _GNU_SOURCE" == res[0].str);
-  REQUIRE(Point(0, 0) == res[0].pos);
+  REQUIRE(0 == res[0].num);
   REQUIRE("" == res[8].str);
-  REQUIRE(Point(0, 12) == res[8].pos);
+  REQUIRE(12 == res[8].num);
   REQUIRE(12 == ml.length());
-
   // undo
-  ml.addLines(res);
+  ml.undo();
   REQUIRE(21 == ml.length());
   REQUIRE("#ifndef _GNU_SOURCE" == ml.at(0).get());
   REQUIRE("" == ml.at(20).get());
+  // redo
+  ml.redo();
+  REQUIRE(12 == ml.length());
 }
 
 TEST_CASE("Buffer::RemoveLinesNoMatches") {
@@ -320,12 +323,14 @@ TEST_CASE("Buffer::RemoveLinesNoMatches") {
   REQUIRE(0U == res.size());
   REQUIRE(res.empty());
   REQUIRE(21 == ml.length());
-
   // undo
-  ml.addLines(res);
+  ml.undo();
   REQUIRE(21 == ml.length());
   REQUIRE("#ifndef _GNU_SOURCE" == ml.at(0).get());
   REQUIRE("" == ml.at(20).get());
+  // redo
+  ml.redo();
+  REQUIRE(21 == ml.length());
 }
 
 TEST_CASE("Buffer::RemoveLinesSomeMatches") {
@@ -337,16 +342,18 @@ TEST_CASE("Buffer::RemoveLinesSomeMatches") {
   auto res = ml.keepRemoveLines(pc, false);
   REQUIRE(12U == res.size());
   REQUIRE("#include <stdint.h>" == res[0].str);
-  REQUIRE(Point(0, 4) == res[0].pos);
+  REQUIRE(4 == res[0].num);
   REQUIRE("#include <algorithm>" == res[11].str);
-  REQUIRE(Point(0, 4) == res[11].pos);
+  REQUIRE(4 == res[11].num);
   REQUIRE(9 == ml.length());
-
   // undo
-  ml.addLines(res);
+  ml.undo();
   REQUIRE(21 == ml.length());
   REQUIRE("#ifndef _GNU_SOURCE" == ml.at(0).get());
   REQUIRE("" == ml.at(20).get());
+  // redo
+  ml.redo();
+  REQUIRE(9 == ml.length());
 }
 
 TEST_CASE("Buffer::MatchCurrentParen") {

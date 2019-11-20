@@ -20,8 +20,8 @@ namespace teditor {
 struct RemovedLine {
   /** the removed line */
   std::string str;
-  /** from where it was removed */
-  Point pos;
+  /** line number */
+  int num;
 };
 /** list of removed lines */
 typedef std::vector<RemovedLine> RemovedLines;
@@ -73,6 +73,8 @@ public:
   RemovedLines keepRemoveLines(Pcre& pc, bool keep);
   /** add the previously removed lines back into the buffer */
   void addLines(const RemovedLines& rlines);
+  /** remove the lines as part of the redo operation on keepRemoveLines */
+  void removeLines(const RemovedLines& rlines);
   /** clear buffer contents */
   virtual void clear();
   /** @} */
@@ -231,7 +233,9 @@ protected:
     /** backspace operation */
     OpDelete,
     /** deleting the rest of the line */
-    OpKillLine
+    OpKillLine,
+    /** keep/remove lines */
+    OpKeepRemoveLines,
   };
 
 
@@ -246,6 +250,8 @@ protected:
     Point after;
     /** characters that were inserted/deleted in the above range */
     std::string str;
+    /** for keep/remove lines */
+    RemovedLines rlines;
     /** type of operation */
     OpType type;
   }; // end class OpData

@@ -215,6 +215,13 @@ bool Buffer::undo() {
     applyDeleteOp(top);
   } else if(top.type == OpDelete || top.type == OpKillLine) {
     applyInsertOp(top, false);
+  } else if(top.type == OpKeepRemoveLines) {
+    // in case of full removal!
+    if (length() == 1 && lengthOf(length() - 1) == 0) {
+      lines.erase(lines.begin());
+    }
+    addLines(top.rlines);
+    cu = top.before;
   }
   redoStack.push(top);
   undoStack.pop();
@@ -231,6 +238,9 @@ bool Buffer::redo() {
   } else if(top.type == OpKillLine) {
     cu = top.before;
     killLine(false);
+  } else if(top.type == OpKeepRemoveLines) {
+    removeLines(top.rlines);
+    cu = top.before;
   }
   undoStack.push(top);
   redoStack.pop();
@@ -489,35 +499,54 @@ Point Buffer::screen2buffer(const Point& loc, const Point& start,
 }
 
 RemovedLines Buffer::keepRemoveLines(Pcre& pc, bool keep) {
-  RemovedLines res;
-  bool isRegion = isRegionActive();
-  for(int i=0;i<length();++i) {
-    if(isRegion && !region.isInside(i, 0, cu)) continue;
-    const std::string str = lines[i].get();
+  OpData op;
+  op.type = OpKeepRemoveLines;
+  op.after = {0, 0};
+  op.before = cu;
+  Point small, big;
+  if (isRegionActive()) {
+    cu.find(small, big, region);
+    stopRegion();
+  } else {
+    small = {0, cu.y};
+    big = {0, length() - 1};
+  }
+  for(int i = small.y; i <= big.y; ++i) {
+    auto str = at(i).get();
     bool match = pc.isMatch(str);
     if((match && keep) || (!match && !keep)) continue;
-    lines.erase(lines.begin()+i);
-    res.push_back({str, {0, i}});
+    lines.erase(lines.begin() + i);
+    op.rlines.push_back({str, i});
+    --big.y;
     --i;
   }
-  if(!res.empty()) {
+  if(!op.rlines.empty()) {
     begin();
     modified = true;
+    pushNewOp(op);
   }
   // ensure that you don't segfault on full buffer removal!
   if(length() <= 0) addLine();
-  return res;
+  return op.rlines;
 }
 
 void Buffer::addLines(const RemovedLines& rlines) {
   // insert from back of the vector to restore the original state!
-  for(int i=(int)rlines.size()-1;i>=0;--i) {
+  for(int i = (int)rlines.size() - 1; i >= 0; --i) {
     const auto& rl = rlines[i];
-    int idx = rl.pos.y;
-    lines.insert(lines.begin()+idx, Line());
-    lines[idx].append(rl.str);
+    lines.insert(lines.begin() + rl.num, Line());
+    lines[rl.num].append(rl.str);
   }
-  begin();
+}
+
+void Buffer::removeLines(const RemovedLines& rlines) {
+  // remove from back of the vector to restore the original state!
+  for(int i = (int)rlines.size() - 1; i >= 0; --i) {
+    const auto& rl = rlines[i];
+    lines.erase(lines.begin() + rl.num);
+  }
+  // ensure that you don't segfault on full buffer removal!
+  if(length() <= 0) addLine();
 }
 
 bool Buffer::matchCurrentParen() {
