@@ -129,9 +129,11 @@ DEF_CMD(
     if(buf.isRegionActive()) buf.remove();
     auto cmd = ed.prompt("Shell Command: ");
     if(cmd.empty()) return;
+    MESSAGE(ed, "Shell Command: %s\n", cmd.c_str());
     auto res = check_output(cmd);
     if(res.output.empty()) return;
     buf.insert(res.output);
+    MESSAGE(ed, "Exit Code: %d\nError: %s\n", res.status, res.error.c_str());
   },
   DEF_HELP() {
     return "Prompts the user for a command, executes it inside a shall"
