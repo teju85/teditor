@@ -598,7 +598,7 @@ void Buffer::sortRegion() {
   int cuy = cu.y;
   int ry = region.y;
   DEBUG("sortRegion: cuy=%d ry=%d\n", cuy, ry);
-  sort(lines.begin()+ry, lines.begin()+cuy+1, LineCompare);
+  std::sort(lines.begin()+ry, lines.begin()+cuy+1, LineCompare);
   DEBUG("sortRegion: done\n");
   cu.x = lines[cuy].length();
 }
