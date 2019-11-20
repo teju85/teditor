@@ -382,7 +382,7 @@ void Buffer::resetBufferState(int line, const std::string& file) {
   modified = false;
   readOnly = isReadOnly(file.c_str());
   fileName = file;
-  dirName = isDir(file)? file : dirname(file);
+  dirName = dirname(file);
   buffName = basename(file);
   stopRegion();
 }
