@@ -157,7 +157,6 @@ DEF_CMD(
     auto command = ed.promptEnum("Search:", opts);
     if(command.empty()) return;
     command = Option::get("browserCmd").getStr() + " '" + command + "'";
-    // we'll only look at first cursor!
     auto query = ed.getBuff().regionAsStr();
     if (query.empty()) query = ed.prompt("Query: ");
     if(query.empty()) return;
