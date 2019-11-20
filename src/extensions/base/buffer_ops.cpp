@@ -79,49 +79,30 @@ DEF_CMD(
 //     buf.stopRegion();
 // }
 
-// CMD_UNDO2(KeepLines, "keep-lines", RemovedLines lines, std::string regex) {
-//     auto& buf = ed.getBuff();
-//     if(buf.cursorCount() > 1) {
-//         CMBAR_MSG(ed, "keep-lines works only with single cursor!\n");
-//         return;
-//     }
-//     switch(type) {
-//     case CMD_UNDO:
-//         buf.addLines(lines);
-//         break;
-//     case CMD_REDO: {
-//         Pcre pc(regex, true);
-//         buf.keepRemoveLines(pc, true);
-//         break;
-//     }
-//     default:
-//         regex = ed.prompt("Regex: ");
-//         Pcre pc(regex, true);
-//         lines = buf.keepRemoveLines(pc, true);
-//     };
-// }
+void keepRemoveLines(Editor& ed, bool keep) {
+  auto& buf = ed.getBuff();
+  auto regex = ed.prompt(keep ? "Keep Regex: " : "Remove Regex: ");
+  if (regex.empty()) return;
+  Pcre pc(regex, true);
+  auto before = buf.length();
+  buf.keepRemoveLines(pc, keep);
+  auto after = buf.length();
+  CMBAR_MSG(ed, "Removed %d lines\n", before - after);
+}
 
-// CMD_UNDO2(RemoveLines, "remove-lines", RemovedLines lines, std::string regex) {
-//     auto& buf = ed.getBuff();
-//     if(buf.cursorCount() > 1) {
-//         CMBAR_MSG(ed, "remove-lines works only with single cursor!\n");
-//         return;
-//     }
-//     switch(type) {
-//     case CMD_UNDO:
-//         buf.addLines(lines);
-//         break;
-//     case CMD_REDO: {
-//         Pcre pc(regex, true);
-//         buf.keepRemoveLines(pc, false);
-//         break;
-//     }
-//     default:
-//         regex = ed.prompt("Regex: ");
-//         Pcre pc(regex, true);
-//         lines = buf.keepRemoveLines(pc, false);
-//     };
-// }
+DEF_CMD(
+  KeepLines, "keep-lines", DEF_OP() { keepRemoveLines(ed, true); },
+  DEF_HELP() {
+    return "Prompts for a PCRE regex and only keeps those lines that match"
+      " this regex";
+  });
+
+DEF_CMD(
+  RemoveLines, "remove-lines", DEF_OP() { keepRemoveLines(ed, false); },
+  DEF_HELP() {
+    return "Prompts for a PCRE regex and only removes those lines that match"
+      " this regex";
+  });
 
 DEF_CMD(
   ShellToBuffer, "shell-to-buffer", DEF_OP() {
