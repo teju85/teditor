@@ -274,6 +274,7 @@ TEST_CASE("Buffer::KeepLinesNoMatches") {
   Pcre pc("not there");
   ml.keepRemoveLines(pc, true);
   REQUIRE(1 == ml.length());
+  REQUIRE(ml.isModified());
   // undo
   ml.undo();
   REQUIRE(21 == ml.length());
@@ -292,6 +293,7 @@ TEST_CASE("Buffer::KeepLinesSomeMatches") {
   Pcre pc("include");
   ml.keepRemoveLines(pc, true);
   REQUIRE(12 == ml.length());
+  REQUIRE(ml.isModified());
   // undo
   ml.undo();
   REQUIRE(21 == ml.length());
@@ -302,6 +304,24 @@ TEST_CASE("Buffer::KeepLinesSomeMatches") {
   REQUIRE(12 == ml.length());
 }
 
+TEST_CASE("Buffer::KeepLinesAllMatches") {
+  Buffer ml;
+  setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
+  REQUIRE(4 == ml.length());
+  REQUIRE(Point(0, 0) == ml.getPoint());
+  Pcre pc(".");  // this unfortunately removes empty lines!
+  ml.keepRemoveLines(pc, true);
+  REQUIRE(3 == ml.length());
+  REQUIRE(ml.isModified());
+  // undo
+  ml.undo();
+  REQUIRE(4 == ml.length());
+  REQUIRE("* Hello" == ml.at(0).get());
+  // redo
+  ml.redo();
+  REQUIRE(3 == ml.length());
+}
+
 TEST_CASE("Buffer::RemoveLinesNoMatches") {
   Buffer ml;
   setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
@@ -310,6 +330,7 @@ TEST_CASE("Buffer::RemoveLinesNoMatches") {
   Pcre pc("not there");
   ml.keepRemoveLines(pc, false);
   REQUIRE(21 == ml.length());
+  REQUIRE_FALSE(ml.isModified());
   // undo
   ml.undo();
   REQUIRE(21 == ml.length());
@@ -328,6 +349,7 @@ TEST_CASE("Buffer::RemoveLinesSomeMatches") {
   Pcre pc("include");
   ml.keepRemoveLines(pc, false);
   REQUIRE(9 == ml.length());
+  REQUIRE(ml.isModified());
   // undo
   ml.undo();
   REQUIRE(21 == ml.length());
@@ -336,6 +358,25 @@ TEST_CASE("Buffer::RemoveLinesSomeMatches") {
   // redo
   ml.redo();
   REQUIRE(9 == ml.length());
+}
+
+TEST_CASE("Buffer::RemoveLinesAllMatches") {
+  Buffer ml;
+  setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
+  REQUIRE(4 == ml.length());
+  REQUIRE(Point(0, 0) == ml.getPoint());
+  Pcre pc(".");
+  ml.keepRemoveLines(pc, false);
+  REQUIRE(1 == ml.length());
+  REQUIRE(ml.isModified());
+  // undo
+  ml.undo();
+  ///@todo: check this out (this is eating one line!)
+  REQUIRE(3 == ml.length());
+  REQUIRE("* Hello" == ml.at(0).get());
+  // redo
+  ml.redo();
+  REQUIRE(1 == ml.length());
 }
 
 TEST_CASE("Buffer::MatchCurrentParen") {
