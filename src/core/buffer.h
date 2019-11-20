@@ -13,6 +13,7 @@
 #include <stack>
 #include <vector>
 #include <unordered_set>
+#include "file_utils.h"
 
 namespace teditor {
 
@@ -282,7 +283,7 @@ protected:
   void loadDir(const std::string& dir);
   std::string removeFrom(const Point& start, const Point& end);
   Point matchCurrentParen(bool& isOpen);
-  int dirModeFileOffset() const { return 24; }
+  int dirModeFileOffset() const { return FilePerm::DirModeFileOffset; }
 
 
   /**

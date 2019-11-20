@@ -76,7 +76,7 @@ public:
 
   bool updateChoices(const std::string& str) {
     if(str.empty() || str.back() != '/') return false;
-    options = listDirRel(str);
+    options = DirCache::getDirContents(str);
     return true;
   }
 
@@ -92,7 +92,7 @@ DEF_CMD(
   FindFile, "find-file", DEF_OP() {
     auto& buf = ed.getBuff();
     auto pwd = buf.pwd() + '/';
-    FileChoices sc(listDirRel(pwd));
+    FileChoices sc(DirCache::getDirContents(pwd));
     auto file = ed.prompt("Find File: ", nullptr, &sc, pwd);
     if(!file.empty()) ed.load(file, 0);
   },

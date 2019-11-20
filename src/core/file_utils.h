@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 #include "utils.h"
 
 
@@ -42,6 +43,8 @@ struct FilePerm {
   std::string name;
   char perms[10];
   size_t size;
+
+  static const int DirModeFileOffset;
 };
 
 typedef std::vector<FilePerm> Files;
@@ -63,5 +66,32 @@ bool fileStrFind(const std::string& line, const std::string& str);
 
 /** check if the file represents current dir or parent dir */
 bool isCurrentOrParentDir(const std::string& dir);
+
+
+/** Cache the outputs of `listDirRel` for faster future access */
+class DirCache {
+ public:
+  /** method to return reference to the underlying singleton object */
+  static DirCache& getInstance();
+
+  /**
+   * @defgroup CacheUpdate Update ops
+   * @{
+   * @brief forcefully update cache at the given location 
+   */
+  static void forceUpdateAt(const std::string& dir, const Files& fs);
+  static void forceUpdateAt(const std::string& dir, const std::string& res);
+  /** @} */
+
+  /** get the contents of dir */
+  static Strings& getDirContents(const std::string& dir);
+
+ private:
+  std::unordered_map<std::string, Strings> cache;
+
+  DirCache(): cache() {}
+
+  std::string noTrailingSlash(const std::string& dir);
+};  // class DirCache
 
 } // end namespace teditor

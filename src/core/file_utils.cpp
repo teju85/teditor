@@ -169,6 +169,8 @@ std::string extension(const std::string& name) {
 }
 
 
+const int FilePerm::DirModeFileOffset = 24;
+
 FilePerm::FilePerm(const std::string& n): name(n), perms(), size(0) {
   struct stat st;
   ASSERT(stat(n.c_str(), &st) == 0, "'stat' failed on '%s'!", n.c_str());
@@ -205,6 +207,7 @@ Files listDir(const std::string& dir) {
   }
   closedir(dp);
   std::sort(f.begin(), f.end(), FileCompare);
+  DirCache::forceUpdateAt(dir, f);
   return f;
 }
 
@@ -240,6 +243,7 @@ std::string listDir2str(const std::string& dir) {
                  dir.c_str());
   }
   auto out = check_output(cmd);
+  DirCache::forceUpdateAt(dir, out.output);
   return out.output;
 }
 
@@ -301,6 +305,50 @@ void copyToRemote(const std::string& rfile, const std::string& local) {
   auto cmd = format("scp %s %s:%s", local.c_str(), r.host.c_str(),
                     r.file.c_str());
   check_output(cmd);
+}
+
+
+DirCache& DirCache::getInstance() {
+  static DirCache obj;
+  return obj;
+}
+
+void DirCache::forceUpdateAt(const std::string& dir, const Files& fs) {
+  auto& obj = getInstance();
+  auto d = obj.noTrailingSlash(dir);
+  Strings files;
+  for (const auto& f : fs) files.push_back(f.name);
+  obj.cache[d] = files;
+}
+
+void DirCache::forceUpdateAt(const std::string& dir, const std::string& res) {
+  Strings fileInfo = split(res, '\n');
+  Strings files;
+  for (const auto& fi : fileInfo) {
+    if (fi.size() <= FilePerm::DirModeFileOffset) continue;
+    files.push_back(fi.substr(FilePerm::DirModeFileOffset));
+  }
+  auto& obj = getInstance();
+  auto d = obj.noTrailingSlash(dir);
+  obj.cache[d] = files;
+}
+
+Strings& DirCache::getDirContents(const std::string& dir) {
+  auto& obj = getInstance();
+  auto d = obj.noTrailingSlash(dir);
+  auto itr = obj.cache.find(d);
+  if (itr == obj.cache.end()) {
+    obj.cache[d] = listDirRel(d);
+    itr = obj.cache.find(d);
+  }
+  return itr->second;
+}
+
+std::string DirCache::noTrailingSlash(const std::string& dir) {
+  auto d = dir;
+  // no trailing '/'
+  if (d.size() > 1 && d.back() == '/') d.erase(d.end() - 1);
+  return d;
 }
 
 } // end namespace teditor
