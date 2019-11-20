@@ -387,26 +387,66 @@ TEST_CASE("Buffer::TextModeIndent") {
   SECTION("indent") {
     Buffer ml;
     setupBuff(ml, {0, 0}, {30, 10}, "samples/indent.txt", 2);
+    REQUIRE(Point(0, 2) == ml.getPoint());
     REQUIRE_FALSE(ml.isModified());
     ml.indent();
     REQUIRE(ml.isModified());
     REQUIRE("  This should indent" == ml.at(2).get());
+    REQUIRE(Point(2, 2) == ml.getPoint());
+    ml.undo();
+    REQUIRE("This should indent" == ml.at(2).get());
+    REQUIRE(Point(0, 2) == ml.getPoint());
+  }
+  SECTION("indent - from middle") {
+    Buffer ml;
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/indent.txt", 2);
+    ml.right(); ml.right(); ml.right();
+    REQUIRE(Point(3, 2) == ml.getPoint());
+    REQUIRE_FALSE(ml.isModified());
+    ml.indent();
+    REQUIRE(ml.isModified());
+    REQUIRE("  This should indent" == ml.at(2).get());
+    REQUIRE(Point(2, 2) == ml.getPoint());
+    ml.undo();
+    REQUIRE("This should indent" == ml.at(2).get());
+    REQUIRE(Point(0, 2) == ml.getPoint());
   }
   SECTION("noindent") {
     Buffer ml;
     setupBuff(ml, {0, 0}, {30, 10}, "samples/indent.txt", 0);
+    REQUIRE(Point(0, 0) == ml.getPoint());
     REQUIRE_FALSE(ml.isModified());
     ml.indent();
     REQUIRE_FALSE(ml.isModified());
     REQUIRE("* Hello" == ml.at(0).get());
+    REQUIRE(Point(0, 0) == ml.getPoint());
   }
   SECTION("deindent") {
     Buffer ml;
     setupBuff(ml, {0, 0}, {30, 10}, "samples/indent.txt", 4);
+    REQUIRE(Point(0, 4) == ml.getPoint());
     REQUIRE_FALSE(ml.isModified());
     ml.indent();
     REQUIRE(ml.isModified());
     REQUIRE("This should deindent" == ml.at(4).get());
+    REQUIRE(Point(0, 4) == ml.getPoint());
+    ml.undo();
+    REQUIRE("  This should deindent" == ml.at(4).get());
+    REQUIRE(Point(2, 4) == ml.getPoint());
+  }
+  SECTION("deindent - from middle") {
+    Buffer ml;
+    setupBuff(ml, {0, 0}, {30, 10}, "samples/indent.txt", 4);
+    ml.right(); ml.right(); ml.right();
+    REQUIRE(Point(3, 4) == ml.getPoint());
+    REQUIRE_FALSE(ml.isModified());
+    ml.indent();
+    REQUIRE(ml.isModified());
+    REQUIRE("This should deindent" == ml.at(4).get());
+    REQUIRE(Point(0, 4) == ml.getPoint());
+    ml.undo();
+    REQUIRE("  This should deindent" == ml.at(4).get());
+    REQUIRE(Point(2, 4) == ml.getPoint());
   }
 }
 
