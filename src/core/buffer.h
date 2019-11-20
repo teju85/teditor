@@ -71,10 +71,6 @@ public:
    * @return Returns all those that don't match (or match)
    */
   RemovedLines keepRemoveLines(Pcre& pc, bool keep);
-  /** add the previously removed lines back into the buffer */
-  void addLines(const RemovedLines& rlines);
-  /** remove the lines as part of the redo operation on keepRemoveLines */
-  void removeLines(const RemovedLines& rlines);
   /** clear buffer contents */
   virtual void clear();
   /** @} */
@@ -325,6 +321,10 @@ protected:
    * @param op the info on what, how and where to delete from
    */
   void applyDeleteOp(OpData& op);
+  /** add the previously removed lines back into the buffer */
+  void addLines(const RemovedLines& rlines);
+  /** remove the lines as part of the redo operation on keepRemoveLines */
+  void removeLines(const RemovedLines& rlines);
   /**
    * pushing a new op onto the undo stack. It has the side-effect of clearing
    * the redo stack so far accumulated!
