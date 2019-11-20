@@ -498,7 +498,7 @@ Point Buffer::screen2buffer(const Point& loc, const Point& start,
   return res;
 }
 
-RemovedLines Buffer::keepRemoveLines(Pcre& pc, bool keep) {
+void Buffer::keepRemoveLines(Pcre& pc, bool keep) {
   OpData op;
   op.type = OpKeepRemoveLines;
   op.after = {0, 0};
@@ -527,7 +527,6 @@ RemovedLines Buffer::keepRemoveLines(Pcre& pc, bool keep) {
   }
   // ensure that you don't segfault on full buffer removal!
   if(length() <= 0) addLine();
-  return op.rlines;
 }
 
 void Buffer::addLines(const RemovedLines& rlines) {

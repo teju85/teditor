@@ -272,13 +272,7 @@ TEST_CASE("Buffer::KeepLinesNoMatches") {
   REQUIRE(21 == ml.length());
   REQUIRE(Point(0, 0) == ml.getPoint());
   Pcre pc("not there");
-  auto res = ml.keepRemoveLines(pc, true);
-  REQUIRE(21U == res.size());
-  REQUIRE("#ifndef _GNU_SOURCE" == res[0].str);
-  REQUIRE(0 == res[0].num);
-  REQUIRE("" == res[20].str);
-  // pos is 0,0 because of sequential removal of lines!
-  REQUIRE(0 == res[20].num);
+  ml.keepRemoveLines(pc, true);
   REQUIRE(1 == ml.length());
   // undo
   ml.undo();
@@ -296,12 +290,7 @@ TEST_CASE("Buffer::KeepLinesSomeMatches") {
   REQUIRE(21 == ml.length());
   REQUIRE(Point(0, 0) == ml.getPoint());
   Pcre pc("include");
-  auto res = ml.keepRemoveLines(pc, true);
-  REQUIRE(9U == res.size());
-  REQUIRE("#ifndef _GNU_SOURCE" == res[0].str);
-  REQUIRE(0 == res[0].num);
-  REQUIRE("" == res[8].str);
-  REQUIRE(12 == res[8].num);
+  ml.keepRemoveLines(pc, true);
   REQUIRE(12 == ml.length());
   // undo
   ml.undo();
@@ -319,9 +308,7 @@ TEST_CASE("Buffer::RemoveLinesNoMatches") {
   REQUIRE(21 == ml.length());
   REQUIRE(Point(0, 0) == ml.getPoint());
   Pcre pc("not there");
-  auto res = ml.keepRemoveLines(pc, false);
-  REQUIRE(0U == res.size());
-  REQUIRE(res.empty());
+  ml.keepRemoveLines(pc, false);
   REQUIRE(21 == ml.length());
   // undo
   ml.undo();
@@ -339,12 +326,7 @@ TEST_CASE("Buffer::RemoveLinesSomeMatches") {
   REQUIRE(21 == ml.length());
   REQUIRE(Point(0, 0) == ml.getPoint());
   Pcre pc("include");
-  auto res = ml.keepRemoveLines(pc, false);
-  REQUIRE(12U == res.size());
-  REQUIRE("#include <stdint.h>" == res[0].str);
-  REQUIRE(4 == res[0].num);
-  REQUIRE("#include <algorithm>" == res[11].str);
-  REQUIRE(4 == res[11].num);
+  ml.keepRemoveLines(pc, false);
   REQUIRE(9 == ml.length());
   // undo
   ml.undo();

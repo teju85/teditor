@@ -16,17 +16,6 @@
 
 namespace teditor {
 
-/** holder for lines removed during keep-lines */
-struct RemovedLine {
-  /** the removed line */
-  std::string str;
-  /** line number */
-  int num;
-};
-/** list of removed lines */
-typedef std::vector<RemovedLine> RemovedLines;
-
-
 class Editor;
 class Window;
 
@@ -68,9 +57,8 @@ public:
    * @brief Keep/Remove lines that match the input regex.
    * @param pc the regular expression that needs to be matched
    * @param keep whether to keep the matching lines or remove them
-   * @return Returns all those that don't match (or match)
    */
-  RemovedLines keepRemoveLines(Pcre& pc, bool keep);
+  void keepRemoveLines(Pcre& pc, bool keep);
   /** clear buffer contents */
   virtual void clear();
   /** @} */
@@ -222,6 +210,17 @@ public:
   void setMode(ModePtr m) { mode = m; }
 
 protected:
+  /** holder for lines removed during keep-lines */
+  struct RemovedLine {
+    /** the removed line */
+    std::string str;
+    /** line number */
+    int num;
+  };
+  /** list of removed lines */
+  typedef std::vector<RemovedLine> RemovedLines;
+
+
   /** the operation type */
   enum OpType {
     /** insertion operation */
