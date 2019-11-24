@@ -1,7 +1,7 @@
 #include "core/editor.h"
 #include "core/command.h"
 #include "core/isearch.h"
-
+#include "core/option.h"
 
 namespace teditor {
 namespace BufferOps {
@@ -158,7 +158,8 @@ DEF_CMD(
     if(buf.isRegionActive()) buf.remove();
     auto url = ed.prompt("URL: ");
     if(url.empty()) return;
-    auto output = downloadUrlToString(url);
+    auto output = downloadUrlToString(url, Option::get("dnldProg").getStr(),
+                                      Option::get("dnldProgOpts").getStr());
     if(output.empty()) return;
     buf.insert(output);
   },
