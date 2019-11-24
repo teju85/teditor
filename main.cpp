@@ -21,8 +21,7 @@ int main(int argc, char** argv) {
       std::shared_ptr<Editor> ed(new Editor(files));
       ed->run();
     }
-    DEBUG("Editor: dtor finished\n");
-    DEBUG("Closing teditor\n");
+    DEBUG("Editor: dtor finished. Closing teditor\n");
     return 0;
   } catch(const std::runtime_error& e) {
     printf("teditor: Error: %s\n", e.what());
