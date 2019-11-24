@@ -89,6 +89,10 @@ void registerAllOptions() {
   Option::add("cmBar::height", "1", "Cmd-bar height", Option::Type::Integer);
   Option::add("cmBar::multiheight", "8", "Cmd-bar height during interaction",
               Option::Type::Integer);
+  Option::add("dnldProg", "curl", "Program used for downloading URLs",
+              Option::Type::String);
+  Option::add("dnldProgOpts", "-s", "Options passed to <dnldProg>",
+              Option::Type::String);
   Option::add("histFile", "<homeFolder>/history", "Path to history file",
               Option::Type::String);
   Option::add("homeFolder", "$HOME/.teditor", "Path to editor home folder",

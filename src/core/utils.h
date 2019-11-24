@@ -89,10 +89,14 @@ CmdStatus check_output(const std::string& cmd, const std::string& host);
 std::string urlHexify(const std::string& url);
 
 /** @brief Download the content of input url into the given file */
-void downloadUrl(const std::string& url, const std::string& file);
+void downloadUrl(const std::string& url, const std::string& file,
+                 const std::string& dnldProg = "curl",
+                 const std::string& dnldProgOpts = "-s");
 
 /** @brief Download the content of input url into a string */
-std::string downloadUrlToString(const std::string& url);
+std::string downloadUrlToString(const std::string& url,
+                                const std::string& dnldProg = "curl",
+                                const std::string& dnldProgOpts = "-s");
 
 bool isOpenParen(char c);
 bool isCloseParen(char c);

@@ -181,13 +181,18 @@ std::string urlHexify(const std::string& url) {
   return ret;
 }
 
-void downloadUrl(const std::string& url, const std::string& file) {
-  auto res = check_output("curl -s " + url + " > " + file);
+void downloadUrl(const std::string& url, const std::string& file,
+                                const std::string& dnldProg,
+                                const std::string& dnldProgOpts) {
+  auto res = check_output(dnldProg + " " + dnldProgOpts + " " + url + " > " +
+                          file);
   ASSERT(res.status == 0, "downloadUrl: failed! status=%d\n", res.status);
 }
 
-std::string downloadUrlToString(const std::string& url) {
-  auto res = check_output("curl -s " + url);
+std::string downloadUrlToString(const std::string& url,
+                                const std::string& dnldProg,
+                                const std::string& dnldProgOpts) {
+  auto res = check_output(dnldProg + " " + dnldProgOpts + " " + url);
   ASSERT(res.status == 0, "downloadUrl: failed! status=%d\n", res.status);
   return res.output;
 }
