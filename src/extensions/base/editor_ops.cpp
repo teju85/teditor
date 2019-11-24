@@ -176,7 +176,8 @@ DEF_CMD(
     if(url.empty()) return;
     auto file = ed.prompt("File: ");
     if(file.empty()) return;
-    downloadUrl(url, file);
+    downloadUrl(url, file, Option::get("dnldProg").getStr(),
+                Option::get("dnldProgOpts").getStr());
   },
   DEF_HELP() {
     return "Prompts for a URL and a filename and dowloads that URL into that"
