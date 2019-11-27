@@ -195,6 +195,9 @@ TEST_CASE("Buffer::GotoLine") {
   REQUIRE(Point(0, 0) == ml.getPoint());
   ml.gotoLine(10, dim);
   REQUIRE(Point(0, 10) == ml.getPoint());
+  ml.right();
+  ml.gotoLine(1, dim);
+  REQUIRE(Point(0, 1) == ml.getPoint());
   ml.gotoLine(30, dim);
   REQUIRE(Point(0, 20) == ml.getPoint());
 }

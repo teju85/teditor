@@ -794,6 +794,7 @@ void Buffer::previousWord() {
 
 void Buffer::gotoLine(int lineNum, const Point& dim) {
   cu.y = std::min(length() - 1, std::max(0, lineNum));
+  cu.x = 0;
   startLine = std::max(0, lineNum - dim.y / 2);
 }
 ////// End: Cursor movements //////
