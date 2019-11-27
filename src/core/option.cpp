@@ -97,6 +97,8 @@ void registerAllOptions() {
               Option::Type::String);
   Option::add("homeFolder", "$HOME/.teditor", "Path to editor home folder",
               Option::Type::String);
+  Option::add("iCaseSearch", "NO", "Perform case insensitive searches",
+              Option::Type::Boolean);
   Option::add("ledgerFile", "<homeFolder>/ledger.lg",
               "Path to the ledger file used for personal accounting",
               Option::Type::String);
