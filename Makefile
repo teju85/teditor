@@ -28,7 +28,7 @@ INCLUDES       := $(SRC) \
 LIBRARIES      := $(PCRE2_LIB) $(TS_LIB)
 INCS           := $(foreach inc,$(INCLUDES),-I$(inc))
 CC             := gcc
-CCFLAGS        := -O3 -std=c99 $(INCS)
+CCFLAGS        := -std=c99 $(INCS)
 CXX            := g++
 CXXFLAGS       := -std=gnu++11 -Wall -Werror $(INCS)
 LD             := g++
@@ -44,10 +44,12 @@ TEST_OBJS      := $(patsubst %.cpp,%.o,$(TESTSRC)) \
                   $(CORE_OBJS)
 TESTEXE        := $(BINDIR)/tests
 ifeq ($(DEBUG),1)
+    CCFLAGS    += -g
     CXXFLAGS   += -g
     LDFLAGS    += -g
     CXXFLAGS   += -DDEBUG_BUILD
 else
+    CCFLAGS    += -O3
     CXXFLAGS   += -O3
     LDFLAGS    += -O3
     CXXFLAGS   += -UDEBUG_BUILD
