@@ -12,7 +12,6 @@ class Buffer;
 class KeyCmdMap;
 class ColorMap;
 class Mode;
-class Pcre;
 
 
 typedef Mode* (*ModeCreator)();
