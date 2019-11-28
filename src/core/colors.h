@@ -27,20 +27,29 @@ private:
 };
 
 
-#include "def_colors.h"
-
-
 struct ColorHelper {
 public:
-  ColorHelper();
   static color_t fromstr(const std::string& str);
   static std::string tostr(color_t colo);
 
+  struct Registrar {
+    Registrar(const std::string& str, color_t c) {
+      ColorHelper::get().amap[str] = c;
+      ColorHelper::get().rmap[c] = str;
+    }
+  };  // struct Registrar
+
 private:
+  ColorHelper() : amap(), rmap() {}
+
   std::unordered_map<std::string,color_t> amap;
   std::unordered_map<color_t,std::string> rmap;
-  static const ColorHelper Str2Color;
+
+  static ColorHelper& get();
+  friend struct Registrar;
 };
+
+#include "def_colors.h"
 
 
 struct AttrColor {

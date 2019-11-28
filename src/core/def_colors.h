@@ -1,6 +1,8 @@
 
 // https://jonasjacek.github.io/colors/
-#define DEF_COLOR(type, val) static const color_t Color_ ## type = val
+#define DEF_COLOR(type, val)                 \
+  static const color_t Color_ ## type = val; \
+  static const ColorHelper::Registrar RegColor_ ## type(#type, Color_ ## type)
 
 DEF_COLOR(Black,              0);
 DEF_COLOR(Maroon,             1);
