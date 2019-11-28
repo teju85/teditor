@@ -115,8 +115,10 @@ debug:
 
 
 stats:
-	@echo -n "SRC:   Line/Word/Char counts: "
-	@find main.cpp $(SRC) -name "*.cpp" -o -name "*.h" | xargs wc -lwc | tail -n1
+	@echo -n "CORE:  Line/Word/Char counts: "
+	@find main.cpp $(SRC)/core -name "*.cpp" -o -name "*.h" | xargs wc -lwc | tail -n1
+	@echo -n "EXT:   Line/Word/Char counts: "
+	@find $(SRC)/extensions -name "*.cpp" -o -name "*.h" | xargs wc -lwc | tail -n1
 	@echo -n "TESTS: Line/Word/Char counts: "
 	@find $(TESTS) -name "*.cpp" -o -name "*.h" | xargs wc -lwc | tail -n1
 
