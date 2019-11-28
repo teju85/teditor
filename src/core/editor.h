@@ -9,7 +9,6 @@
 #include "buffer.h"
 #include "keys.h"
 #include <unordered_map>
-#include "files_hist.h"
 #include "cell_buffer.h"
 #include "cmd_msg_bar.h"
 #include "window.h"
