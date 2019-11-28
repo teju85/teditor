@@ -3,18 +3,21 @@
 #include "logger.h"
 #include "cmd_msg_bar.h"
 #include "window.h"
-
+#include <algorithm>
+#include "option.h"
 
 namespace teditor {
 
 bool strFindEmpty(const std::string& line, const std::string& str) {
   if(str.empty()) return true;
-  return strFind(line, str);
+  auto noCase = Option::get("iCaseSearch").getBool();
+  return noCase ? iStrFind(line, str) : strFind(line, str);
 }
 
 
 ISearch::ISearch(Window& w): Choices(strFindEmpty), win(w), ml(w.getBuff()),
-                             curr(), matches() {
+                             curr(), matches(),
+                             noCase(Option::get("iCaseSearch").getBool()) {
 }
 
 std::string ISearch::getFinalStr(int idx, const std::string& str) const {
@@ -49,7 +52,7 @@ void ISearch::searchBuffer() {
   for(int i=0;i<len;++i) {
     const auto& str = ml.at(i).get();
     std::vector<int> res;
-    searchLine(str, res);
+    noCase ? iSearchLine(str, res) : searchLine(str, res);
     if(!res.empty()) matches[i] = res;
   }
 }
@@ -67,6 +70,20 @@ void ISearch::searchLine(const std::string& str, std::vector<int>& res) {
     if(loc == std::string::npos) break;
     res.push_back((int)loc);
     loc += curr.size();
+  }
+}
+
+void ISearch::iSearchLine(const std::string& str, std::vector<int>& res) {
+  auto itr = str.begin(), end = str.end();
+  while (itr != end) {
+    auto pos = std::search(itr, end, curr.begin(), curr.end(),
+                           [] (char a, char b) {
+                             return std::tolower(a) == std::tolower(b);
+                           });
+    if (pos == end) break;
+    int loc = pos - str.begin();
+    res.push_back(loc);
+    itr += curr.size();
   }
 }
 

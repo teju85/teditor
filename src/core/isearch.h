@@ -44,9 +44,12 @@ private:
   std::string curr;
   /** line number v/s list of matches */
   std::unordered_map<int, std::vector<int>> matches;
+  /** case insensitive search? */
+  bool noCase;
 
   void searchBuffer();
   void searchLine(const std::string& str, std::vector<int>& res);
+  void iSearchLine(const std::string& str, std::vector<int>& res);
 };
 
 } // end namespace teditor
