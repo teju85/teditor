@@ -331,9 +331,9 @@ std::string Buffer::regionAsStr(const Point& start, const Point& end) const {
 }
 
 void Buffer::load(const std::string& file, int line) {
-  auto absFile = isRemote(file) ? file : rel2abs(pwd(), file);
+  ASSERT(isAbs(file), "Buffer::load file must be abs-path! '%s'", file.c_str());
   bool dir = isDir(file);
-  dir ? loadDir(absFile) : loadFile(absFile, line);
+  dir ? loadDir(file) : loadFile(file, line);
   setMode(Mode::createMode(Mode::inferMode(file, dir)));
 }
 

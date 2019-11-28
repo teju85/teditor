@@ -408,7 +408,7 @@ TEST_CASE("Buffer::Mode") {
 TEST_CASE("Buffer::Mode:setMode") {
   Buffer ml;
   REQUIRE("text" == ml.modeName());
-  ml.load("samples/multiline.txt", 2);
+  setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt", 2);
   REQUIRE("text" == ml.modeName());
   ml.makeReadOnly();
   REQUIRE("ro" == ml.modeName());

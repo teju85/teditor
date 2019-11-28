@@ -134,7 +134,10 @@ void Editor::loadFiles() {
     DEBUG("loadFiles: Added default buffer\n");
     return;
   }
-  for(auto& f : files) load(f.first, f.second);
+  for(auto& f : files) {
+    auto tmp = isAbs(f.first) ? f.first : rel2abs(getpwd(), f.first);
+    load(tmp, f.second);
+  }
   DEBUG("loadFiles: ended\n");
 }
 
