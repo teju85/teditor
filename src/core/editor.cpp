@@ -2,6 +2,8 @@
 #define _GNU_SOURCE // for wcstring, strcasestr
 #endif
 
+#include <fstream>
+#include <iostream>
 #include <stdint.h>
 #include <vector>
 #include "editor.h"
@@ -32,9 +34,9 @@ std::vector<KeyCmdPair> PromptYesNoKeys::All = {
 Editor::Editor(const std::vector<FileInfo>& _files):
   backbuff(), frontbuff(), lastfg(), lastbg(), cmBar(new CmdMsgBar), buffs(),
   cmBarArr(), windows(), quitEventLoop(false), quitPromptLoop(false),
-  cancelPromptLoop(false), cmdMsgBarActive(false), copiedStr(), defcMap(),
-  ynMap(), files(_files), fileshist(Option::get("histFile").getStr(),
-                                    Option::get("maxHistory").getInt()) {
+  cancelPromptLoop(false), cmdMsgBarActive(false), defcMap(), ynMap(),
+  files(_files), fileshist(Option::get("histFile").getStr(),
+                           Option::get("maxHistory").getInt()) {
   DEBUG("Editor: ctor started\n");
   // This array is here only to make sure we get consistent interface to the
   // Window API.
@@ -54,6 +56,37 @@ Editor::~Editor() {
   while (!buffs.empty()) deleteBuffer(0);
   fileshist.store();
   DEBUG("Editor: dtor finished\n");
+}
+
+///@todo: currently this is cygwin only!
+const std::string Editor::clipboard() const {
+  std::ifstream fp;
+  std::string ret;
+  char buff[64];
+  fp.open("/dev/clipboard", std::ios::binary);
+  ASSERT(fp.is_open(), "Failed to open file '/dev/clipboard'!");
+  while (true) {
+    fp.read(buff, 64);
+    ret.append(buff, fp.gcount());
+    if (fp.gcount() < 64) break;
+  }
+  // remove '\r'
+  for (size_t i = 0; i < ret.size(); ++i) {
+    if (ret[i] == '\r') {
+      ret.erase(i, 1);
+      --i;
+    }
+  }
+  return ret;
+}
+
+///@todo: currently tihs is cygwin only!
+void Editor::setClipboard(const std::string& in) {
+  std::ofstream fp;
+  fp.open("/dev/clipboard");
+  ASSERT(fp.is_open(), "Failed to open file '/dev/clipboard'!");
+  fp << in;
+  fp.close();
 }
 
 void Editor::saveBuffer(Buffer& buf) {

@@ -44,7 +44,7 @@ DEF_CMD(DeleteChar, "delete-char",
 DEF_CMD(
   KillLine, "kill-line", DEF_OP() {
     auto del = ed.getBuff().killLine();
-    ed.setCopyData(del);
+    ed.setClipboard(del);
     CMBAR_MSG(ed, "Line killed\n");
   },
   DEF_HELP() {
@@ -125,12 +125,9 @@ DEF_CMD(
 DEF_CMD(
   PasteRegion, "paste-region", DEF_OP() {
     auto& buf = ed.getBuff();
-    if(!ed.hasCopy()) {
-      CMBAR_MSG(ed, "No selection to paste!\n");
-      return;
-    }
     if(buf.isRegionActive()) buf.remove();
-    buf.insert(ed.copyData());
+    auto copy = ed.clipboard();
+    if (!copy.empty()) buf.insert(copy);
   },
   DEF_HELP() {
     return "Copies the last copied (or cut) region from the clipboard.";
@@ -144,7 +141,7 @@ DEF_CMD(
       return;
     }
     auto del = buf.removeAndCopy();
-    ed.setCopyData(del);
+    ed.setClipboard(del);
     CMBAR_MSG(ed, "Cut done\n");
   },
   DEF_HELP() {
@@ -195,7 +192,7 @@ DEF_CMD(
       return;
     }
     auto cp = buf.regionAsStr();
-    ed.setCopyData(cp);
+    ed.setClipboard(cp);
     buf.stopRegion();
     CMBAR_MSG(ed, "Copy done\n");
   },

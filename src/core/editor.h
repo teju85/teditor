@@ -39,9 +39,8 @@ public:
   std::string promptEnum(const std::string& msg, OptionMap& opts);
   void load(const std::string& file, int line);
   void runCmd(const std::string& cmd);
-  bool hasCopy() const { return !copiedStr.empty(); }
-  const std::string& copyData() const { return copiedStr; }
-  void setCopyData(const std::string& in) { copiedStr = in; }
+  const std::string clipboard() const;
+  void setClipboard(const std::string& in);
 
   int sendChar(int x, int y, const AttrColor& fg, const AttrColor& bg, char c);
   int sendString(int x, int y, const AttrColor& fg, const AttrColor& bg,
@@ -82,7 +81,6 @@ private:
   Buffers buffs, cmBarArr;
   Windows windows;
   bool quitEventLoop, quitPromptLoop, cancelPromptLoop, cmdMsgBarActive;
-  std::string copiedStr;
   ColorMap defcMap;
   KeyCmdMap ynMap;
   std::vector<FileInfo> files;
