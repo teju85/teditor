@@ -126,7 +126,6 @@ void Editor::createReadOnlyBuff(const std::string& name,
   if(switchToIt) setCurrBuff((int)buffs.size() - 1);
 }
 
-///@todo: don't load the same file/dir more than once!
 void Editor::loadFiles() {
   DEBUG("loadFiles: started\n");
   if(files.empty()) {
