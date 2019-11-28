@@ -4,20 +4,23 @@
 #include "cmd_msg_bar.h"
 #include "window.h"
 #include <algorithm>
-#include "option.h"
 
 namespace teditor {
 
 bool strFindEmpty(const std::string& line, const std::string& str) {
   if(str.empty()) return true;
-  auto noCase = Option::get("iCaseSearch").getBool();
-  return noCase ? iStrFind(line, str) : strFind(line, str);
+  return strFind(line, str);
+}
+
+bool iStrFindEmpty(const std::string& line, const std::string& str) {
+  if(str.empty()) return true;
+  return iStrFind(line, str);
 }
 
 
-ISearch::ISearch(Window& w): Choices(strFindEmpty), win(w), ml(w.getBuff()),
-                             curr(), matches(),
-                             noCase(Option::get("iCaseSearch").getBool()) {
+ISearch::ISearch(Window& w, bool _noCase):
+  Choices(_noCase ? iStrFindEmpty : strFindEmpty), win(w), ml(w.getBuff()),
+  curr(), matches(), noCase(_noCase) {
 }
 
 std::string ISearch::getFinalStr(int idx, const std::string& str) const {
@@ -83,7 +86,7 @@ void ISearch::iSearchLine(const std::string& str, std::vector<int>& res) {
     if (pos == end) break;
     int loc = pos - str.begin();
     res.push_back(loc);
-    itr += curr.size();
+    itr = pos + curr.size();
   }
 }
 

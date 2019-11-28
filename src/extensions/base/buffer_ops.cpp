@@ -205,7 +205,7 @@ DEF_CMD(
   TextSearch, "search", DEF_OP() {
     auto& buf = ed.getBuff();
     auto pos = buf.getPoint();
-    ISearch is(ed.getWindow());
+    ISearch is(ed.getWindow(), Option::get("iCaseSearch").getBool());
     is.reset();
     auto ret = ed.prompt("Search: ", nullptr, &is);
     buf.gotoLine(!ret.empty()? is.getIdx() : pos.y, ed.getWindow().dim());

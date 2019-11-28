@@ -18,7 +18,7 @@ class Window;
  */
 class ISearch: public Choices {
 public:
-  ISearch(Window& w);
+  ISearch(Window& w, bool _noCase);
 
   const std::string& at(int idx) const;
   int size() const { return ml.length(); }
