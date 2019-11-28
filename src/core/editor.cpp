@@ -70,13 +70,7 @@ const std::string Editor::clipboard() const {
     ret.append(buff, fp.gcount());
     if (fp.gcount() < 64) break;
   }
-  // remove '\r'
-  for (size_t i = 0; i < ret.size(); ++i) {
-    if (ret[i] == '\r') {
-      ret.erase(i, 1);
-      --i;
-    }
-  }
+  dos2unix(ret);
   return ret;
 }
 

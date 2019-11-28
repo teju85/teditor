@@ -108,4 +108,7 @@ bool strFind(const std::string& line, const std::string& str);
 /** Filter function that performs case insensitive find */
 bool iStrFind(const std::string& line, const std::string& str);
 
+void dos2unix(std::string& in);
+std::string dos2unix(const std::string& in);
+
 } // end namespace teditor

@@ -371,4 +371,10 @@ TEST_CASE("Remote") {
   REQUIRE_THROWS_AS(Remote("/ssh:fdsf"), std::runtime_error);
 }
 
+TEST_CASE("dos2unix") {
+  REQUIRE(dos2unix("abcd") == "abcd");
+  REQUIRE(dos2unix("abcd\n") == "abcd\n");
+  REQUIRE(dos2unix("abcd\r\n") == "abcd\n");
+}
+
 } // end namespace teditor

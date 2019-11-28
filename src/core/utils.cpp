@@ -251,4 +251,19 @@ bool iStrFind(const std::string& line, const std::string& str) {
   return res != line.end();
 }
 
+void dos2unix(std::string& in) {
+  for (size_t i = 0; i < in.size(); ++i) {
+    if (in[i] == '\r') {
+      in.erase(i, 1);
+      --i;
+    }
+  }
+}
+
+std::string dos2unix(const std::string& in) {
+  std::string out(in);
+  dos2unix(out);
+  return out;
+}
+
 } // end namespace teditor
