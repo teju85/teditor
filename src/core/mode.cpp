@@ -1,5 +1,4 @@
 #include "mode.h"
-#include "file_utils.h"
 
 
 namespace teditor {
@@ -26,16 +25,16 @@ Strings allModeNames() {
 Mode::Registrar::Registrar(const std::string& mode, ModeCreator fptr,
                            InferMode iptr) {
   auto& m = modes();
-  ASSERT(m.find(mode) == m.end(),
-         "Mode '%s' already registered!", mode.c_str());
+  ASSERT(m.find(mode) == m.end(), "Mode '%s' is already registered!",
+         mode.c_str());
   m[mode] = fptr;
   infers()[mode] = iptr;
 }
 
-std::string Mode::inferMode(const std::string& file) {
+std::string Mode::inferMode(const std::string& file, bool isDir) {
   auto& i = infers();
   // special case for directories
-  if(isDir(file)) return "dir";
+  if(isDir) return "dir";
   for(const auto itr : i)
     if(itr.second(file)) return itr.first;
   // default mode

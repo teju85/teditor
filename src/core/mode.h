@@ -64,9 +64,10 @@ public:
   /**
    * @brief Helper to infer mode name from the file
    * @param file the file
+   * @param isDir is the input file a directory
    * @return the mode name
    */
-  static std::string inferMode(const std::string& file);
+  static std::string inferMode(const std::string& file, bool isDir);
 
   struct Registrar {
     Registrar(const std::string& mode, ModeCreator fptr, InferMode iptr);
