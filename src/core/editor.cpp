@@ -142,6 +142,17 @@ void Editor::loadFiles() {
 }
 
 void Editor::load(const std::string& file, int line) {
+  int i = 0;
+  for (const auto& buf : buffs) {
+    if (buf->getFileName() == file) {
+      setCurrBuff(i);
+      getBuff().gotoLine(line, getWindow().dim());
+      CMBAR_MSG(*this, "File '%s' already loaded. Switching to its buffer...\n",
+                file.c_str());
+      return;
+    }
+    ++i;
+  }
   auto* buf = new Buffer;
   buf->load(file, line);
   buffs.push_back(buf);
