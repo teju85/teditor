@@ -326,9 +326,16 @@ TEST_CASE("Utils::ReadFileInfo") {
 }
 
 TEST_CASE("Utils::StrFind") {
-    REQUIRE(strFind("there is abc in this line", "abc"));
-    REQUIRE_FALSE(strFind("there is no", "abc"));
-    REQUIRE_FALSE(strFind("abc", "no matching"));
+  REQUIRE(strFind("there is abc in this line", "abc"));
+  REQUIRE_FALSE(strFind("there is no", "abc"));
+  REQUIRE_FALSE(strFind("abc", "no matching"));
+}
+
+TEST_CASE("Utils::iStrFind") {
+  REQUIRE(iStrFind("there is abc in this line", "abc"));
+  REQUIRE(iStrFind("there is ABc in this line", "abc"));
+  REQUIRE_FALSE(iStrFind("there is no", "abc"));
+  REQUIRE_FALSE(iStrFind("abc", "no matching"));
 }
 
 TEST_CASE("Utils::FileStrFind") {

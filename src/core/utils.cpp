@@ -243,4 +243,12 @@ bool strFind(const std::string& line, const std::string& str) {
   return line.find(str) != std::string::npos;
 }
 
+bool iStrFind(const std::string& line, const std::string& str) {
+  auto res = std::search(line.begin(), line.end(), str.begin(), str.end(),
+                         [] (char a, char b) {
+                           return std::tolower(a) == std::tolower(b);
+                         });
+  return res != line.end();
+}
+
 } // end namespace teditor

@@ -105,5 +105,7 @@ char getMatchingParen(char c);
 
 /** Filter function that just performs std::string::find */
 bool strFind(const std::string& line, const std::string& str);
+/** Filter function that performs case insensitive find */
+bool iStrFind(const std::string& line, const std::string& str);
 
 } // end namespace teditor
