@@ -23,6 +23,15 @@ Strings allModeNames() {
   return ret;
 }
 
+Mode::Registrar::Registrar(const std::string& mode, ModeCreator fptr,
+                           InferMode iptr) {
+  auto& m = modes();
+  ASSERT(m.find(mode) == m.end(),
+         "Mode '%s' already registered!", mode.c_str());
+  m[mode] = fptr;
+  infers()[mode] = iptr;
+}
+
 std::string Mode::inferMode(const std::string& file) {
   auto& i = infers();
   // special case for directories
@@ -31,15 +40,6 @@ std::string Mode::inferMode(const std::string& file) {
     if(itr.second(file)) return itr.first;
   // default mode
   return "text";
-}
-
-void Mode::registerMode(const std::string& mode, ModeCreator fptr,
-                        InferMode iptr) {
-  auto& m = modes();
-  ASSERT(m.find(mode) == m.end(),
-         "Mode '%s' already registered!", mode.c_str());
-  m[mode] = fptr;
-  infers()[mode] = iptr;
 }
 
 ModePtr Mode::createMode(const std::string& mode) {

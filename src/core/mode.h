@@ -56,15 +56,6 @@ public:
                            const Buffer& b, bool isHighlighted) = 0;
 
   /**
-   * @brief helper to register a named mode
-   * @param mode name of the mode (useful for later queries)
-   * @param fptr functor that helps create the mode object
-   * @param iptr functor to check if this mode applies to the input file
-   */
-  static void registerMode(const std::string& mode, ModeCreator fptr,
-                           InferMode iptr);
-
-  /**
    * @brief Helper to create mode object of the named mode
    * @param mode name of the mode
    * @return the mode object pointer
@@ -78,27 +69,23 @@ public:
    */
   static std::string inferMode(const std::string& file);
 
+  struct Registrar {
+    Registrar(const std::string& mode, ModeCreator fptr, InferMode iptr);
+  };  // struct Registrar
+
 private:
   /** mode name */
   std::string name_;
   /** list of chars that define a word */
   std::string word_;
-};
+};  // class Mode
 
 
 /** Accessor function to the list of mode names */
 Strings allModeNames();
 
 
-class RegisterMode {
-public:
-  RegisterMode(const std::string& mode, ModeCreator fptr, InferMode iptr) {
-    Mode::registerMode(mode, fptr, iptr);
-  }
-};
-
-
 #define REGISTER_MODE(Name, NameStr)                                    \
-  RegisterMode mode ## Name(NameStr, Name::create, Name::modeCheck)
+  Mode::Registrar mode ## Name(NameStr, Name::create, Name::modeCheck)
 
 }; // end namespace teditor
