@@ -33,12 +33,10 @@ Mode::Registrar::Registrar(const std::string& mode, ModeCreator fptr,
 
 std::string Mode::inferMode(const std::string& file, bool isDir) {
   auto& i = infers();
-  // special case for directories
-  if(isDir) return "dir";
+  if(isDir) return "dir";  // special case for directories
   for(const auto itr : i)
     if(itr.second(file)) return itr.first;
-  // default mode
-  return "text";
+  return "text";  // default mode
 }
 
 ModePtr Mode::createMode(const std::string& mode) {
