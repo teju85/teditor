@@ -56,10 +56,6 @@ struct RegisterCmd {
 #define DEF_CMD(UniqName, CmdName, OpFunc, HelpFunc)            \
   RegisterCmd cmd ## UniqName(CmdName, OpFunc, HelpFunc)
 
-/** helper macro to define a command without any help */
-#define DEF_CMD_NO_HELP(UniqName, CmdName, OpFunc)      \
-  DEF_CMD(UniqName, CmdName, OpFunc, nullptr)
-
 /** helper macro to define a command function */
 #define DEF_OP()  [](Editor& ed)
 
