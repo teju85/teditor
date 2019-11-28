@@ -27,14 +27,6 @@ typedef std::unordered_map<std::string,Command> CommandMap;
  * @defgroup CommandFunctions All methods related to creating/querying commands
  * @{
  */
-/** Accessor function to the command map */
-CommandMap& cmds();
-/**
- * @brief helper to register a named command
- * @param name name of the command (useful for later queries)
- * @param cmd the command object
- */
-void registerCmd(const std::string& name, const Command& cmd);
 /**
  * @brief Helper to return the command of interest
  * @param cmd name of the command
@@ -46,15 +38,13 @@ Strings allCmdNames();
 /** @} */
 
 
-struct RegisterCmd {
-  RegisterCmd(const std::string& cmd, OperateFunc op, HelpFunc help=nullptr) {
-    registerCmd(cmd, std::make_pair(op, help));
-  }
+struct CmdRegistrar {
+  CmdRegistrar(const std::string& cmd, OperateFunc op, HelpFunc help);
 };
 
 /** macro to register a command to the database */
 #define DEF_CMD(UniqName, CmdName, OpFunc, HelpFunc)            \
-  RegisterCmd cmd ## UniqName(CmdName, OpFunc, HelpFunc)
+  CmdRegistrar cmd ## UniqName(CmdName, OpFunc, HelpFunc)
 
 /** helper macro to define a command function */
 #define DEF_OP()  [](Editor& ed)

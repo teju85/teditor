@@ -10,11 +10,12 @@ CommandMap& cmds() {
   return _cmds;
 }
 
-void registerCmd(const std::string& name, const Command& cmd) {
+CmdRegistrar::CmdRegistrar(const std::string& cmd, OperateFunc op,
+                           HelpFunc help) {
   auto& c = cmds();
-  ASSERT(c.find(name) == c.end(),
-         "Command '%s' already registered!", name.c_str());
-  c[name] = cmd;
+  ASSERT(c.find(cmd) == c.end(),
+         "Command '%s' already registered!", cmd.c_str());
+  c[cmd] = std::make_pair(op, help);
 }
 
 const Command& getCmd(const std::string& cmd) {
