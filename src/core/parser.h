@@ -7,6 +7,9 @@ extern "C" {
 
 namespace teditor {
 
+/** Symbol as a numeric ID */
+typedef TSSymbol SymId;
+
 /** main parser class for dealing with parsing of buffers */
 class Parser {
 public:
@@ -31,17 +34,17 @@ public:
   /** Simple wrapper around TSNode for ease of use */
   class Node {
   public:
-    /** gets the named child at the given index of the current node */
+    /** gets the child at the given index of the current node */
     Node operator[](int idx);
+
+    /** node type as a numerical ID */
+    SymId id() const { return ts_node_symbol(node); }
 
     /** node type as a string*/
     std::string type() const { return std::string(ts_node_type(node)); }
 
     /** number of child nodes of this node */
     int childCount() const { return ts_node_child_count(node); }
-
-    /** number of named childnodes of this node */
-    int namedChildCount() const { return ts_node_named_child_count(node); }
 
     /** returns the syntax-tree as an S-expression */
     std::string nodeString() const;

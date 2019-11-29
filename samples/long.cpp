@@ -8,6 +8,8 @@ int factorial(int n) {
 
 int main(int argc, char** argv) {
   int n = 1;
+  float tmp;
+  double a, b;
   if (argc == 2) n = atoi(argv[i]);
   printf("factorial(%d) = %d\n", factorial(n));
   return 0;

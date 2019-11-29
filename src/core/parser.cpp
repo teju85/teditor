@@ -41,7 +41,7 @@ void Parser::parse(const std::string& src, Tree& tree) {
 
 Parser::Node Parser::Node::operator[](int idx) {
   Node ret;
-  ret.node = ts_node_named_child(node, idx);
+  ret.node = ts_node_child(node, idx);
   return ret;
 }
 
