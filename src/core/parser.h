@@ -4,6 +4,7 @@ extern "C" {
 #include <tree_sitter/runtime.h>
 };
 #include <string>
+#include "pos2d.h"
 
 namespace teditor {
 
@@ -45,6 +46,12 @@ public:
 
     /** number of child nodes of this node */
     int childCount() const { return ts_node_child_count(node); }
+
+    /** node starting point */
+    Pos2du start() const;
+
+    /** node ending point */
+    Pos2du end() const;
 
     /** returns the syntax-tree as an S-expression */
     std::string nodeString() const;

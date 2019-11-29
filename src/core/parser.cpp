@@ -45,6 +45,22 @@ Parser::Node Parser::Node::operator[](int idx) {
   return ret;
 }
 
+Pos2du Parser::Node::start() const {
+  Pos2du ret;
+  auto s = ts_node_start_point(node);
+  ret.x = s.column;
+  ret.y = s.row;
+  return ret;
+}
+
+Pos2du Parser::Node::end() const {
+  Pos2du ret;
+  auto e = ts_node_end_point(node);
+  ret.x = e.column;
+  ret.y = e.row;
+  return ret;
+}
+
 std::string Parser::Node::nodeString() const {
   char *str = ts_node_string(node);
   std::string ret(str);

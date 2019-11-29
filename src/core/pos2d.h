@@ -102,6 +102,8 @@ struct Pos2d {
 
 /** integer pos2d */
 typedef Pos2d<int> Pos2di;
+/** unsigned integer pos2d */
+typedef Pos2d<unsigned> Pos2du;
 /** cursor */
 typedef Pos2di Point;
 

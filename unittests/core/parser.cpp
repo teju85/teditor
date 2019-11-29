@@ -16,6 +16,9 @@ TEST_CASE("Parser::Test - Long") {
   Parser::Tree t;
   p.parse(correct, t);
   auto root = t.root();
+  auto rs = root.start(), re = root.end();
+  REQUIRE(Pos2du(0, 0) == rs);
+  REQUIRE(Pos2du(0, 16) == re);
   CHECK_NODE(root, 4, "translation_unit");
   auto first = root[0];
   CHECK_NODE(first, 2, "preproc_include");
