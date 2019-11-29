@@ -11,7 +11,6 @@ class Buffers;
 class Editor;
 class Windows;
 
-///@todo: have the concept of current-buffer moved from Editor to this class
 /** Window to draw the contents of an associated buffer */
 class Window {
 public:
