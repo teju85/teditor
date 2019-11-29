@@ -33,6 +33,7 @@ DEF_CMD(
       return;
     }
     auto& buf = getGrepBuff(ed);
+    buf.clear();
     buf.insert("Grep\nCommand: " + cmd + "\npwd: " + buf.pwd() + "\n\n");
     buf.insert(res.output);
     buf.begin();
