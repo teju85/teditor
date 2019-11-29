@@ -17,8 +17,8 @@ public:
   int indent(Buffer& buf, int line) { return 0; }
   KeyCmdMap& getKeyCmdMap() { return kcMap; }
   ColorMap& getColorMap() { return cMap; }
-  void getColorFor(AttrColor& fg, AttrColor& bg, int lineNum, const Buffer& b,
-                   bool isHighlighted);
+  void getColorFor(AttrColor& fg, AttrColor& bg, int lineNum, int pos,
+                   const Buffer& b, bool isHighlighted);
 
   static Mode* create() { return new ReadOnlyMode; }
 

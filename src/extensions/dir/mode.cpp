@@ -14,7 +14,7 @@ public:
     populateColorMap<DirMode::Colors>(getColorMap());
   }
 
-  void getColorFor(AttrColor& fg, AttrColor& bg, int lineNum,
+  void getColorFor(AttrColor& fg, AttrColor& bg, int lineNum, int pos,
                    const Buffer& b, bool isHighlighted) {
     auto& cm = getColorMap();
     if (isHighlighted) {

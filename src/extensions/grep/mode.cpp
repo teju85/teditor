@@ -11,6 +11,17 @@ public:
     populateColorMap<GrepMode::Colors>(getColorMap());
   }
 
+  void getColorFor(AttrColor& fg, AttrColor& bg, int lineNum, int pos,
+                   const Buffer& b, bool isHighlighted) {
+    auto& cmap = getColorMap();
+    fg = cmap.get(isHighlighted ? "highlightfg" : "defaultfg");
+    bg = cmap.get(isHighlighted ? "highlightbg" : "defaultbg");
+    const auto& line = b.at(lineNum).get();
+    if (lineNum < (int)line.size()) {
+      ///@todo: implement
+    }
+  }
+
   static Mode* create() { return new GrepMode; }
 
   static bool modeCheck(const std::string& file) { return file == "*grep"; }

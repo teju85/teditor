@@ -466,7 +466,7 @@ int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
       auto c = start + i < len ? str[start + i] : ' ';
       auto highlighted = region.isInside(lineNum, start + i, cu);
       AttrColor fg, bg;
-      mode->getColorFor(fg, bg, lineNum, *this, highlighted);
+      mode->getColorFor(fg, bg, lineNum, start + i, *this, highlighted);
       ed.sendChar(xStart + i, y, fg, bg, c);
     }
     start += wid;

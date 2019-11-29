@@ -11,9 +11,8 @@ namespace ops {
 Buffer& getGrepBuff(Editor& ed) {
   bool newOne;
   auto& buf = ed.getBuff("*grep", true, newOne);
-  if (newOne) {
+  if (newOne)
     buf.setMode(Mode::createMode(Mode::inferMode(buf.bufferName(), false)));
-  }
   return buf;
 }
 

@@ -51,7 +51,7 @@ public:
   virtual ColorMap& getColorMap() = 0;
 
   /** get color for the given line */
-  virtual void getColorFor(AttrColor& fg, AttrColor& bg, int lineNum,
+  virtual void getColorFor(AttrColor& fg, AttrColor& bg, int lineNum, int pos,
                            const Buffer& b, bool isHighlighted) = 0;
 
   /**

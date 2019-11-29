@@ -63,7 +63,8 @@ int CmdMsgBar::drawLine(int y, const std::string& line, Editor& ed,
       // under the highlighted region
       auto highlighted = lineNum && lineNum == optLoc;
       AttrColor fg, bg;
-      mode->getColorFor(fg, bg, lineNum, *(Buffer*)this, highlighted);
+      mode->getColorFor(fg, bg, lineNum, start + i, *(Buffer*)this,
+                        highlighted);
       ed.sendChar(xStart + i, y, fg, bg, c);
     }
     start += wid;

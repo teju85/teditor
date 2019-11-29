@@ -22,7 +22,7 @@ public:
 
   KeyCmdMap& getKeyCmdMap() { return kcMap; }
   ColorMap& getColorMap() { return cMap; }
-  void getColorFor(AttrColor& fg, AttrColor& bg, int lineNum,
+  void getColorFor(AttrColor& fg, AttrColor& bg, int lineNum, int pos,
                    const Buffer& b, bool isHighlighted) {
     fg = cMap.get(isHighlighted ? "cmbarhighlightfg" : "cmbarfg");
     bg = cMap.get(isHighlighted ? "cmbarhighlightbg" : "cmbarbg");

@@ -17,7 +17,7 @@ ReadOnlyMode::ReadOnlyMode(const std::string& n, const std::string& w):
 }
 
 void ReadOnlyMode::getColorFor(AttrColor& fg, AttrColor& bg, int lineNum,
-                               const Buffer& b, bool isHighlighted) {
+                               int pos, const Buffer& b, bool isHighlighted) {
   fg = cMap.get(isHighlighted ? "highlightfg" : "defaultfg");
   bg = cMap.get(isHighlighted ? "highlightbg" : "defaultbg");
 }
