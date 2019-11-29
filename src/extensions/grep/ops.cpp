@@ -40,6 +40,35 @@ DEF_CMD(
   },
   DEF_HELP() { return "Starts grep-mode buffer, if not already done."; });
 
+DEF_CMD(
+  GrepFindFile, "grep-find-file", DEF_OP() {
+    auto& buf = getGrepBuff(ed);
+    const auto& cu = buf.getPoint();
+    if (cu.y < 4) {
+      CMBAR_MSG(ed, "grep: Point not on files!\n");
+      return;
+    }
+    const auto& line = buf.at(cu.y).get();
+    auto fileEnd = line.find_first_of(':');
+    if (fileEnd == std::string::npos) {
+      CMBAR_MSG(ed, "grep: bad line!\n");
+      return;
+    }
+    auto lineEnd = line.find_first_of(':', fileEnd + 1);
+    if (lineEnd == std::string::npos) {
+      CMBAR_MSG(ed, "grep: bad line!\n");
+      return;
+    }
+    auto file = line.substr(0, fileEnd);
+    // grep outputs 1-based line numbering
+    auto lineNum = str2num(line.substr(fileEnd + 1, lineEnd = fileEnd)) - 1;
+    auto pwd = buf.at(2).get().substr(5);
+    if (pwd == ".") pwd = buf.pwd();
+    file = pwd + '/' + file;
+    ed.load(file, lineNum);
+  },
+  DEF_HELP() { return "Starts grep-mode buffer, if not already done."; });
+
 } // end namespace ops
 } // end namespace grep
 } // end namespace teditor

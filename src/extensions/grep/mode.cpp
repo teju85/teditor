@@ -24,9 +24,11 @@ REGISTER_MODE(GrepMode, "grep");
 
 
 std::vector<KeyCmdPair> GrepMode::Keys::All = {
+  {"enter", "grep-find-file"},
 };
 
 std::vector<NameColorPair> GrepMode::Colors::All = {
+  {"filefg", "Yellow"},
 };
 
 } // end namespace teditor
