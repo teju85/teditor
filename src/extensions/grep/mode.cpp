@@ -17,9 +17,12 @@ public:
     fg = cmap.get(isHighlighted ? "highlightfg" : "defaultfg");
     bg = cmap.get(isHighlighted ? "highlightbg" : "defaultbg");
     const auto& line = b.at(lineNum).get();
-    if (lineNum < (int)line.size()) {
-      ///@todo: implement
-    }
+    if (lineNum < 4 || pos >= (int)line.size()) return;
+    auto loc = line.find_first_of(':');
+    if (loc == std::string::npos) return;
+    loc = line.find_first_of(':', loc + 1);
+    if (loc == std::string::npos) return;
+    if (pos < (int)loc) fg = cmap.get("filefg");
   }
 
   static Mode* create() { return new GrepMode; }
