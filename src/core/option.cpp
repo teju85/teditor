@@ -93,6 +93,8 @@ void registerAllOptions() {
               Option::Type::String);
   Option::add("dnldProgOpts", "-s", "Options passed to <dnldProg>",
               Option::Type::String);
+  Option::add("grepCmd", "grep -nH -e ", "Default grep command for prompting",
+              Option::Type::String);
   Option::add("histFile", "<homeFolder>/history", "Path to history file",
               Option::Type::String);
   Option::add("homeFolder", "$HOME/.teditor", "Path to editor home folder",

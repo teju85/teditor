@@ -1,6 +1,8 @@
 #include "core/editor.h"
 #include "core/command.h"
 #include "core/isearch.h"
+#include "core/option.h"
+#include "core/utils.h"
 
 namespace teditor {
 namespace grep {
@@ -17,9 +19,24 @@ Buffer& getGrepBuff(Editor& ed) {
 
 DEF_CMD(
   Grep, "grep", DEF_OP() {
-    //auto& buf = getGrepBuff(ed);
-    ///@todo: implement
-    //ed.switchToBuff("*grep");
+    auto cmd = ed.prompt("Run grep (like this): ", nullptr, nullptr,
+                         Option::get("grepCmd").getStr());
+    if (cmd.empty()) {
+      CMBAR_MSG(ed, "grep: nothing to run!\n");
+      return;
+    }
+    CMBAR_MSG(ed, "grep cmd = %s\n", cmd.c_str());
+    auto res = check_output(cmd);
+    if (res.status != 0) {
+      CMBAR_MSG(ed, "grep failed. Exit status = %d\n", res.status);
+      MESSAGE(ed, "cmd = %s\nerr = %s\n", cmd.c_str(), res.error.c_str());
+      return;
+    }
+    auto& buf = getGrepBuff(ed);
+    buf.insert("Grep\nCommand: " + cmd + "\npwd: " + buf.pwd() + "\n\n");
+    buf.insert(res.output);
+    buf.begin();
+    ed.switchToBuff("*grep");
   },
   DEF_HELP() { return "Starts grep-mode buffer, if not already done."; });
 
