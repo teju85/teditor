@@ -36,7 +36,7 @@ public:
     static Mode* create() { return new CppMode; }
 
     static bool modeCheck(const std::string& file) {
-        static Pcre reg("[.](cpp|c|cxx|cu|h|hpp|cuh)$");
+        static Pcre reg("[.](cpp|c|cxx|cu|h|hpp|hxx|cuh)$");
         return reg.isMatch(file);
     }
 

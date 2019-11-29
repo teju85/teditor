@@ -35,6 +35,11 @@ TEST_CASE("CppMode") {
     setupBuff(ml, {0, 0}, {30, 10}, "test.hpp", 0);
     REQUIRE("c++" == ml.modeName());
   }
+  SECTION("hxx file") {
+    Buffer ml;
+    setupBuff(ml, {0, 0}, {30, 10}, "test.hxx", 0);
+    REQUIRE("c++" == ml.modeName());
+  }
   SECTION("cuh file") {
     Buffer ml;
     setupBuff(ml, {0, 0}, {30, 10}, "test.cuh", 0);
