@@ -3,7 +3,8 @@
 #include "core/option.h"
 
 namespace teditor {
-namespace CursorOps {
+namespace cursor {
+namespace ops {
 
 DEF_CMD(CursorDown, "cursor-down",
         DEF_OP() { ed.getBuff().down(); },
@@ -97,5 +98,6 @@ DEF_CMD(
   },
   DEF_HELP() { return "Jump to the specified line number"; });
 
-} // end namespace CursorOps
+} // end namespace ops
+} // end namespace cursor
 } // end namespace teditor

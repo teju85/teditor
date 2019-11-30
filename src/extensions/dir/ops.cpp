@@ -2,9 +2,9 @@
 #include "core/command.h"
 #include <stdio.h>
 
-
 namespace teditor {
-namespace DirMode {
+namespace dir {
+namespace ops {
 
 DEF_CMD(
   OpenFile, "dirmode-open-file", DEF_OP() {
@@ -86,5 +86,6 @@ DEF_CMD(
       " buffer at the end to reflect the changes.";
   });
 
-} // end namespace DirMode
+} // end namespace ops
+} // end namespace dir
 } // end namespace teditor

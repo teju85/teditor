@@ -7,7 +7,6 @@
 #include <stdio.h>
 #include <stdint.h>
 
-
 namespace teditor {
 namespace ledger {
 

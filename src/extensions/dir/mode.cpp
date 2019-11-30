@@ -2,14 +2,13 @@
 #include "core/buffer.h"
 #include "core/file_utils.h"
 
-
 namespace teditor {
-
+namespace dir {
 
 /** dir mode */
-class DirMode: public ReadOnlyMode {
+class DirMode: public readonly::ReadOnlyMode {
 public:
-  DirMode(): ReadOnlyMode("dir") {
+  DirMode(): readonly::ReadOnlyMode("dir") {
     populateKeyMap<DirMode::Keys>(getKeyCmdMap());
     populateColorMap<DirMode::Colors>(getColorMap());
   }
@@ -53,5 +52,5 @@ std::vector<NameColorPair> DirMode::Colors::All = {
   {"dirfg", "Blue"}
 };
 
-
+} // end namespace dir
 } // end namespace teditor

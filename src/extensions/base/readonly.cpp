@@ -4,6 +4,7 @@
 
 
 namespace teditor {
+namespace readonly {
 
 bool ReadOnlyMode::modeCheck(const std::string& file) {
   return isReadOnly(file.c_str());
@@ -86,5 +87,5 @@ std::vector<NameColorPair> ReadOnlyMode::Colors::All = {
   {"cmbarhighlightbg",  "highlightbg"}
 };
 
-
+} // end namespace readonly
 } // end namespace teditor

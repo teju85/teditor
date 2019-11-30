@@ -5,6 +5,7 @@
 
 
 namespace teditor {
+namespace cmbar {
 
 /** cmbar mode */
 class CmBarMode: public Mode {
@@ -165,4 +166,5 @@ std::vector<NameColorPair> CmBarMode::Colors::All = {
   {"cmbarhighlightbg",  "highlightbg"}
 };
 
+} // end namespace cmbar
 } // end namespace teditor

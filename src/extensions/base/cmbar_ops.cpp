@@ -4,7 +4,8 @@
 
 
 namespace teditor {
-namespace Prompt {
+namespace cmbar {
+namespace ops {
 
 DEF_CMD(Quit, "prompt-quit",
         DEF_OP() { ed.requestQuitPromptLoop(); },
@@ -75,5 +76,6 @@ DEF_CMD(OptionsUp, "prompt-options-up",
         DEF_OP() { ed.getCmBar().up(); },
         DEF_HELP() { return "Scroll up in the options list"; });
 
-} // end namespace Prompt
+} // end namespace ops
+} // end namespace cmbar
 } // end namespace teditor

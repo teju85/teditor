@@ -2,11 +2,12 @@
 #include "core/buffer.h"
 
 namespace teditor {
+namespace grep {
 
 /** grep mode */
-class GrepMode: public ReadOnlyMode {
+class GrepMode: public readonly::ReadOnlyMode {
 public:
-  GrepMode(): ReadOnlyMode("grep") {
+  GrepMode(): readonly::ReadOnlyMode("grep") {
     populateKeyMap<GrepMode::Keys>(getKeyCmdMap());
     populateColorMap<GrepMode::Colors>(getColorMap());
   }
@@ -47,4 +48,5 @@ std::vector<NameColorPair> GrepMode::Colors::All = {
   {"titlefg", "Bold:Red"},
 };
 
+} // end namespace grep
 } // end namespace teditor

@@ -1,14 +1,12 @@
 #include "../base/readonly.h"
 #include "core/buffer.h"
 
-
 namespace teditor {
 
-
 /** ledger mode */
-class LedgerMode: public ReadOnlyMode {
+class LedgerMode: public readonly::ReadOnlyMode {
 public:
-  LedgerMode(): ReadOnlyMode("ledger") {
+  LedgerMode(): readonly::ReadOnlyMode("ledger") {
     populateKeyMap<LedgerMode::Keys>(getKeyCmdMap());
     populateColorMap<LedgerMode::Colors>(getColorMap());
   }
@@ -30,8 +28,6 @@ std::vector<KeyCmdPair> LedgerMode::Keys::All = {
   {"T", "ledger"},
 };
 
-std::vector<NameColorPair> LedgerMode::Colors::All = {
-};
-
+std::vector<NameColorPair> LedgerMode::Colors::All = {};
 
 } // end namespace teditor

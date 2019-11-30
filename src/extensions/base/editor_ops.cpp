@@ -3,7 +3,8 @@
 #include "core/option.h"
 
 namespace teditor {
-namespace EditorOps {
+namespace editor {
+namespace ops {
 
 DEF_CMD(
   Quit, "quit", DEF_OP() {
@@ -233,5 +234,6 @@ DEF_CMD(
   },
   DEF_HELP() { return "Starts task manager UI. Only for windows!"; });
 
-} // end namespace EditorOps
+} // end namespace ops
+} // end namespace editor
 } // end namespace teditor

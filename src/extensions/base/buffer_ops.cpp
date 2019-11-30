@@ -4,7 +4,8 @@
 #include "core/option.h"
 
 namespace teditor {
-namespace BufferOps {
+namespace buffer {
+namespace ops {
 
 DEF_CMD(
   CommandUndo, "command-undo", DEF_OP() {
@@ -263,5 +264,6 @@ DEF_CMD(
       " will overwrite any modified-but-unsaved changes in current buffer!";
   });
 
-} // end namespace BufferOps
+} // end namespace ops
+} // end namespace buffer
 } // end namespace teditor
