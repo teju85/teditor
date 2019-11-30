@@ -14,7 +14,8 @@ public:
   void getColorFor(AttrColor& fg, AttrColor& bg, int lineNum, int pos,
                    const Buffer& b, bool isHighlighted) {
     auto& cmap = getColorMap();
-    fg = cmap.get(isHighlighted ? "highlightfg" : "defaultfg");
+    fg = cmap.get(isHighlighted ? "highlightfg" :
+                  lineNum == 0 ? "titlefg" : "defaultfg");
     bg = cmap.get(isHighlighted ? "highlightbg" : "defaultbg");
     const auto& line = b.at(lineNum).get();
     if (lineNum < 4 || pos >= (int)line.size()) return;
@@ -42,7 +43,8 @@ std::vector<KeyCmdPair> GrepMode::Keys::All = {
 };
 
 std::vector<NameColorPair> GrepMode::Colors::All = {
-  {"filefg", "Yellow"},
+  {"filefg", "Underline:Yellow"},
+  {"titlefg", "Bold:Red"},
 };
 
 } // end namespace teditor
