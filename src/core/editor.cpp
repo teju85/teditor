@@ -58,6 +58,10 @@ Editor::~Editor() {
   DEBUG("Editor: dtor finished\n");
 }
 
+void Editor::setTitle(const std::string& ti) {
+  writef("%c]0;%s%c\n", '\033', ti.c_str(), '\007');
+}
+
 ///@todo: currently this is cygwin only!
 const std::string Editor::clipboard() const {
   std::ifstream fp;

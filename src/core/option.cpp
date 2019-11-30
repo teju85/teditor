@@ -118,6 +118,7 @@ void registerAllOptions() {
               Option::Type::Boolean);
   Option::add("tabSpaces", "2", "Number of spaces per tab",
               Option::Type::Integer);
+  Option::add("title", "teditor", "Window title", Option::Type::String);
   Option::add("tty", "/dev/tty", "Path to the tty file", Option::Type::String);
   Option::add("windowSplitter", "|", "Character used as window splitter",
               Option::Type::Char);

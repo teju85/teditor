@@ -24,7 +24,7 @@ class Editor {
 public:
   Editor(const std::vector<FileInfo>& _files);
   ~Editor();
-  void setTitle(const char* ti) { writef("%c]0;%s%c\n", '\033', ti, '\007'); }
+  void setTitle(const std::string& ti);
   Buffer& getBuff() { return getWindow().getBuff(); }
   const Buffer& getBuff() const { return getWindow().getBuff(); }
   Buffer& getBuff(const std::string& name, bool noUndoRedo, bool& newOne);

@@ -19,6 +19,7 @@ int main(int argc, char** argv) {
     SingletonHandler<Terminal, std::string> term(Option::get("tty").getStr());
     {
       std::shared_ptr<Editor> ed(new Editor(files));
+      ed->setTitle(Option::get("title").getStr());
       ed->run();
     }
     DEBUG("Editor: dtor finished. Closing teditor\n");
