@@ -81,10 +81,6 @@ std::vector<NameColorPair> ReadOnlyMode::Colors::All = {
   {"statusfg",          "DarkGreen"},
   {"statusbg",          "DarkestGray"},
   {"statusnamefg",      "Underline:Yellow"},
-  {"cmbarfg",           "defaultfg"},
-  {"cmbarbg",           "defaultbg"},
-  {"cmbarhighlightfg",  "highlightfg"},
-  {"cmbarhighlightbg",  "highlightbg"}
 };
 
 } // end namespace readonly

@@ -25,8 +25,8 @@ public:
   ColorMap& getColorMap() { return cMap; }
   void getColorFor(AttrColor& fg, AttrColor& bg, int lineNum, int pos,
                    const Buffer& b, bool isHighlighted) {
-    fg = cMap.get(isHighlighted ? "cmbarhighlightfg" : "cmbarfg");
-    bg = cMap.get(isHighlighted ? "cmbarhighlightbg" : "cmbarbg");
+    fg = cMap.get(isHighlighted ? "highlightfg" : "defaultfg");
+    bg = cMap.get(isHighlighted ? "highlightbg" : "defaultbg");
   }
 
   static Mode* create() { return new CmBarMode; }
@@ -160,10 +160,6 @@ std::vector<NameColorPair> CmBarMode::Colors::All = {
   {"statusfg",          "DarkGreen"},
   {"statusbg",          "DarkestGray"},
   {"statusnamefg",      "Underline:Yellow"},
-  {"cmbarfg",           "defaultfg"},
-  {"cmbarbg",           "defaultbg"},
-  {"cmbarhighlightfg",  "highlightfg"},
-  {"cmbarhighlightbg",  "highlightbg"}
 };
 
 } // end namespace cmbar
