@@ -1,6 +1,8 @@
 #include "core/editor.h"
 #include "core/command.h"
 #include <stdio.h>
+#include "core/option.h"
+#include "core/logger.h"
 
 namespace teditor {
 namespace dir {
@@ -20,6 +22,22 @@ DEF_CMD(
     ed.load(dir+'/'+file, 0);
   },
   DEF_HELP() { return "Open the file under the cursor in a new buffer."; });
+
+DEF_CMD(
+  OpenSpecialFile, "dirmode-open-special-file", DEF_OP() {
+    auto& buf = ed.getBuff();
+    const auto& cu = buf.getPoint();
+    auto file = buf.dirModeGetFileAtLine(cu.y);
+    auto& dir = buf.getFileName();
+    if (file.empty()) return;
+    if (file == ".") file = dir;
+    else if (file == "..") file = dirname(dir);
+    else file = dir + '/' + file;
+    auto cmd = Option::get("startProg").getStr() + " " + file;
+    CMBAR_MSG(ed, "Running: %s", cmd.c_str());
+    check_output(cmd);
+  },
+  DEF_HELP() { return "Open the file using the <startProg>."; });
 
 DEF_CMD(
   CopyFile, "dirmode-copy-file", DEF_OP() {

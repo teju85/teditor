@@ -43,9 +43,10 @@ REGISTER_MODE(DirMode, "dir");
 
 std::vector<KeyCmdPair> DirMode::Keys::All = {
   {"c",      "dirmode-copy-file"},
-  {"r",      "dirmode-rename-file"},
   {"d",      "dirmode-delete-file"},
-  {"enter",  "dirmode-open-file"}
+  {"enter",  "dirmode-open-file"},
+  {"r",      "dirmode-rename-file"},
+  {"s",      "dirmode-open-special-file"},
 };
 
 std::vector<NameColorPair> DirMode::Colors::All = {
