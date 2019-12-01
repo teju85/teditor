@@ -236,10 +236,10 @@ std::string listDir2str(const std::string& dir) {
   if (isRemote(dir)) {
     Remote r(dir);
     cmd = format("ssh %s /bin/bash -c '\"cd %s && ls -a |"
-                 " xargs stat --format \\\"  %%A  %%8s  %%n\\\"\"'",
+                 " xargs -d \\\"\n\\\" stat --format \\\"  %%A  %%8s  %%n\\\"\"'",
                  r.host.c_str(), r.file.c_str());
   } else {
-    cmd = format("cd %s && ls -a | xargs stat --format '  %%A  %%8s  %%n'",
+    cmd = format("cd %s && ls -a | xargs -d '\n' stat --format '  %%A  %%8s  %%n'",
                  dir.c_str());
   }
   auto out = check_output(cmd);
