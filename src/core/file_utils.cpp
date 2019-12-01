@@ -224,7 +224,7 @@ Strings listDirRel(const std::string& dir) {
   } else {
     Remote r(dir);
     auto cmd = format("ssh %s /bin/bash -c '\"cd %s && ls -a |"
-                      " xargs stat --format \\\"%%n\\\"\"'",
+                      " xargs -d \\\"\n\\\" stat --format \\\"%%n\\\"\"'",
                       r.host.c_str(), r.file.c_str());
     auto out = check_output(cmd);
     return split(out.output, '\n');
