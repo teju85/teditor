@@ -62,6 +62,7 @@ TEST_CASE("Parser::Test - Long") {
   CHECK_NODE(func[2][3][2], 0, ",");
   CHECK_NODE(func[2][3][3], 0, "identifier");
   CHECK_NODE(func[2][3][4], 0, ";");
+  CHECK_NODE(func[2][7], 0, "}");
 }
 
 TEST_CASE("Parser::Test - Correct") {
