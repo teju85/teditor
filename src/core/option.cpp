@@ -116,6 +116,8 @@ void registerAllOptions() {
   Option::add("quitAfterLoad", "NO",
               "Quit after parsing cmdline args and loading input files",
               Option::Type::Boolean);
+  Option::add("songsDir", "<homeFolder>/songs", "Path to dir containing songs",
+              Option::Type::String);
   Option::add("startProg", "cygstart", "Program used to open special files",
               Option::Type::String);
   Option::add("tabSpaces", "2", "Number of spaces per tab",
