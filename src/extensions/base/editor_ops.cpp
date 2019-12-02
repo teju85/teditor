@@ -225,6 +225,15 @@ DEF_CMD(
   });
 
 DEF_CMD(
+  SongsDir, "songs-dir", DEF_OP() {
+    ed.load(Option::get("songsDir").getStr(), 0);
+  },
+  DEF_HELP() {
+    return "Loads the dir containing songs. This dir can be customized by the"
+      " arg 'songsDir'.";
+  });
+
+DEF_CMD(
   TaskManager, "task-manager",
   DEF_OP() {
     std::string cmd = "cygstart Taskmgr.exe";
