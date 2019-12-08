@@ -90,6 +90,17 @@ TEST_CASE("Number") {
     m = p.toFloat();
     FLT_CHECK(m, 3.f);
   }
+  SECTION("+") {  // skipping -, * and / tests as they are all similar
+    Num32 n1(1), n2(1.5f);
+    auto m = n1 + n1;
+    INT_CHECK(m, 2);
+    m = n1 + n2;
+    FLT_CHECK(m, 2.5f);
+    m = n2 + n1;
+    FLT_CHECK(m, 2.5f);
+    m = n2 + n2;
+    FLT_CHECK(m, 3.0f);
+  }
 }
 
 }  // namespace calc
