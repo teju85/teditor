@@ -103,5 +103,8 @@ TEST_CASE("Number") {
   }
 }
 
+#undef FLT_CHECK
+#undef INT_CHECK
+
 }  // namespace calc
 }  // namespace teditor
