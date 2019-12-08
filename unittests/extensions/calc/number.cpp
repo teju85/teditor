@@ -70,8 +70,11 @@ TEST_CASE("Number") {
     REQUIRE(n1 == n3);
   }
   SECTION("<") {  // skipping >=, < and <= tests as they are all similar
-    Num32 n1(2), n2(2.0f);
+    Num32 n1(2), n2(2.0f), n3;
     REQUIRE_FALSE(n1 < n2);
+    REQUIRE_FALSE(n2 < n1);
+    REQUIRE_FALSE(n1 < n3);
+    REQUIRE(n3 < n1);
   }
 }
 
