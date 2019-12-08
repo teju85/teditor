@@ -101,6 +101,13 @@ TEST_CASE("Number") {
     m = n2 + n2;
     FLT_CHECK(m, 3.0f);
   }
+  SECTION("sine and arcsine") {
+    Num32 n(0);
+    auto m = sin(n);
+    FLT_CHECK(m, 0.f);
+    m = asin(n);
+    FLT_CHECK(m, 0.f);
+  }
 }
 
 #undef FLT_CHECK

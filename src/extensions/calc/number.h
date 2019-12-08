@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <cmath>
 
 namespace teditor {
 namespace calc {
@@ -94,6 +95,9 @@ struct Number {
   }
 };  // struct Number
 
+#undef B_OP
+#undef OP
+
 
 // operator overloads
 template <typename I, typename F>
@@ -121,8 +125,31 @@ Number<I, F> operator/(const Number<I, F>& a, const Number<I, F>& b) {
   return ret;
 }
 
-#undef B_OP
-#undef OP
+// other functions
+#define ALG_FUNC(name)                                  \
+  template <typename I, typename F>                     \
+  Number<I, F> name(const Number<I, F>& in) {           \
+    Number<I, F> out;                                   \
+    out.isInt = false;                                  \
+    out.f = std::name(in.isInt ? F(in.i) : in.f);       \
+    return out;                                         \
+  }
+ALG_FUNC(abs);
+ALG_FUNC(sin);
+ALG_FUNC(cos)
+ALG_FUNC(tan);
+ALG_FUNC(asin);
+ALG_FUNC(acos)
+ALG_FUNC(atan);
+ALG_FUNC(sinh);
+ALG_FUNC(cosh)
+ALG_FUNC(tanh);
+ALG_FUNC(asinh);
+ALG_FUNC(acosh)
+ALG_FUNC(atanh);
+ALG_FUNC(cbrt);
+ALG_FUNC(ceil);
+#undef ALG_FUNC
 
 typedef Number<int32_t, float> Num32;
 typedef Number<int64_t, double> Num64;
