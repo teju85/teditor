@@ -5,24 +5,25 @@
 namespace teditor {
 namespace calc {
 
-#define OP(a, b, op) do {                       \
-    if (a.isInt && b.isInt) {                   \
-      a.i = a.i op b.i;                         \
-    } else if (a.isInt && !b.isInt) {           \
-      a.isInt = false;                          \
-      a.f = FloatT(a.i) op b.f;                 \
-    } else if (!a.isInt && b.isInt) {            \
-      a.f = a.f op FloatT(b.i);                 \
-    } else {                                    \
-      a.f = a.f op b.f;                         \
-    }                                           \
-  } while(0)
+#define OP(b, op) do {                \
+    if (isInt && b.isInt) {           \
+      i = i op b.i;                   \
+    } else if (isInt && !b.isInt) {   \
+      isInt = false;                  \
+      f = FloatT(i) op b.f;           \
+    } else if (!isInt && b.isInt) {   \
+      f = f op FloatT(b.i);           \
+    } else {                          \
+      f = f op b.f;                   \
+    }                                 \
+  } while(0);                         \
+  return *this
 
-#define B_OP(a, b, op) do {                             \
-    if (a.isInt && b.isInt) return a.i op b.i;          \
-    if (a.isInt && !b.isInt) return FloatT(a.i) op b.f; \
-    if (!a.isInt && b.isInt) return a.f op Float(b.i);  \
-    return a.f op b.f;                                  \
+#define B_OP(b, op) do {                                \
+    if (isInt && b.isInt) return i op b.i;              \
+    if (isInt && !b.isInt) return FloatT(i) op b.f;     \
+    if (!isInt && b.isInt) return f op FloatT(b.i);     \
+    return f op b.f;                                    \
   } while(0)
 
 /**
@@ -61,30 +62,18 @@ struct Number {
   }
 
   // inplace operators
-  const Num& operator+=(const Num& b) {
-    OP(*this, b, +);
-    return *this;
-  }
-  const Num& operator-=(const Num& b) {
-    OP(*this, b, -);
-    return *this;
-  }
-  const Num& operator*=(const Num& b) {
-    OP(*this, b, *);
-    return *this;
-  }
-  const Num& operator/=(const Num& b) {
-    OP(*this, b, /);
-    return *this;
-  }
+  const Num& operator+=(const Num& b) { OP(b, +); }
+  const Num& operator-=(const Num& b) { OP(b, -); }
+  const Num& operator*=(const Num& b) { OP(b, *); }
+  const Num& operator/=(const Num& b) { OP(b, /); }
 
   // comparisons
-  bool operator==(const Num& b) const { return i == b.i; }
-  bool operator!=(const Num& b) const { return i != b.i; }
-  bool operator<(const Num& b) const { B_OP(*this, b, <); }
-  bool operator<=(const Num& b) const { B_OP(*this, b, <=); }
-  bool operator>(const Num& b) const { B_OP(*this, b, >); }
-  bool operator>=(const Num& b) const { B_OP(*this, b, >=); }
+  bool operator==(const Num& b) const { B_OP(b, ==); }
+  bool operator!=(const Num& b) const { B_OP(b, !=); }
+  bool operator<(const Num& b) const { B_OP(b, <); }
+  bool operator<=(const Num& b) const { B_OP(b, <=); }
+  bool operator>(const Num& b) const { B_OP(b, >); }
+  bool operator>=(const Num& b) const { B_OP(b, >=); }
 
   // conversions
   Num toInt() const {
