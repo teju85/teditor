@@ -80,7 +80,7 @@ struct Number {
     Num ret(*this);
     if (!ret.isInt) {
       ret.isInt = true;
-      ret.f = IntT(ret.i);
+      ret.i = IntT(ret.f);
     }
     return ret;
   }
@@ -88,7 +88,7 @@ struct Number {
     Num ret(*this);
     if (ret.isInt) {
       ret.isInt = false;
-      ret.i = Float(ret.f);
+      ret.f = FloatT(ret.i);
     }
     return ret;
   }

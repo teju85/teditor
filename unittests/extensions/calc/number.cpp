@@ -76,6 +76,20 @@ TEST_CASE("Number") {
     REQUIRE_FALSE(n1 < n3);
     REQUIRE(n3 < n1);
   }
+  SECTION("toInt") {
+    Num32 n(2.5f), p(3);
+    auto m = n.toInt();
+    INT_CHECK(m, 2);
+    m = p.toInt();
+    INT_CHECK(m, 3);
+  }
+  SECTION("toFloat") {
+    Num32 n(2.5f), p(3);
+    auto m = n.toFloat();
+    FLT_CHECK(m, 2.5f);
+    m = p.toFloat();
+    FLT_CHECK(m, 3.f);
+  }
 }
 
 }  // namespace calc
