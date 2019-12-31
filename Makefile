@@ -60,8 +60,7 @@ ARFLAGS        := rcs
 CPPSRC         := $(shell find $(SRC) -name "*.cpp")
 CORE_OBJS      := $(patsubst %.cpp,$(BINDIR)/%.o,$(CPPSRC))
 TESTSRC        := $(shell find $(TESTS) -name "*.cpp")
-TEST_OBJS      := $(patsubst %.cpp,$(BINDIR)/%.o,$(TESTSRC)) \
-                  $(CORE_OBJS)
+TEST_OBJS      := $(patsubst %.cpp,$(BINDIR)/%.o,$(TESTSRC))
 MAINSRC        := $(shell find $(MAIN) -name "*.cpp")
 MAIN_OBJS      := $(patsubst %.cpp,$(BINDIR)/%.o,$(MAINSRC))
 
@@ -108,7 +107,7 @@ $(EXE): $(MAIN_OBJS) $(CORE_OBJS) $(LIBRARIES)
 tests: $(TESTEXE)
 	$(TESTEXE)
 
-$(TESTEXE): $(TEST_OBJS) $(LIBRARIES)
+$(TESTEXE): $(CORE_OBJS) $(TEST_OBJS) $(LIBRARIES)
 	@if [ "$(VERBOSE)" = "0" ]; then \
 	    echo "Building $@ ..."; \
 	fi
@@ -124,7 +123,7 @@ $(BINDIR)/%.o: %.cpp $(DEPDIR)/%.d
 	$(PREFIX)mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d && touch $@
 
 clean:
-	rm -rf $(CORE_OBJS) $(BINDIR)/main.o $(EXE)
+	rm -rf $(CORE_OBJS) $(MAIN_OBJS) $(EXE)
 	rm -rf $(TEST_OBJS) $(TESTEXE)
 	rm -rf $(DEPFILES)
 
