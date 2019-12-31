@@ -39,9 +39,11 @@ EXE            := $(BINDIR)/teditor
 CPPSRC         := $(shell find $(SRC) -name "*.cpp")
 HEADERS        := $(shell find $(SRC) -name "*.h" -o -name "*.hpp")
 CORE_OBJS      := $(patsubst %.cpp,%.o,$(CPPSRC))
+CORE_OBJS      := $(patsubst $(SRC)/%.o,$(BINDIR)/$(SRC)/%.o,$(CORE_OBJS))
 TESTSRC        := $(shell find $(TESTS) -name "*.cpp")
-TEST_OBJS      := $(patsubst %.cpp,%.o,$(TESTSRC)) \
-                  $(CORE_OBJS)
+TEST_OBJS      := $(patsubst %.cpp,%.o,$(TESTSRC))
+TEST_OBJS      := $(patsubst $(TESTS)/%.o,$(BINDIR)/$(TESTS)/%.o,$(TEST_OBJS))
+TEST_OBJS      := $(TEST_OBJS) $(CORE_OBJS)
 TESTEXE        := $(BINDIR)/tests
 ifeq ($(DEBUG),1)
     CCFLAGS    += -g
@@ -59,6 +61,7 @@ ifeq ($(VERBOSE),1)
 else
     PREFIX     := @
 endif
+MKDIR_P        := mkdir -p
 
 
 default:
@@ -98,10 +101,11 @@ $(TESTS)/%.o: $(TESTS)/%.cpp $(HEADERS)
 	fi
 	$(PREFIX)$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-%.o: %.cpp $(HEADERS)
+$(BINDIR)/%.o: %.cpp $(HEADERS)
 	@if [ "$(VERBOSE)" = "0" ]; then \
 	    echo "Compiling $< ..."; \
 	fi
+	$(PREFIX)$(MKDIR_P) $(shell dirname $@)
 	$(PREFIX)$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 clean:
@@ -153,7 +157,7 @@ TS_ALL_OBJS    := $(TS_RT_OBJ) \
 tree-sitter: tree-sitter-make-dir $(TS_LIB)
 
 tree-sitter-make-dir:
-	$(PREFIX)mkdir -p $(TS_BINDIR)
+	$(PREFIX)$(MKDIR_P) $(TS_BINDIR)
 
 $(TS_LIB): $(TS_ALL_OBJS)
 	@if [ "$(VERBOSE)" = "0" ]; then \
