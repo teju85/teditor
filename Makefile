@@ -9,9 +9,24 @@ ifeq ($(DEBUG),1)
 else
     TYPE       := Release
 endif
+ifeq ($(VERBOSE),1)
+    PREFIX     :=
+else
+    PREFIX     := @
+endif
+
 BINDIR         := bin/$(TYPE)
 DEPDIR         := bin/.deps
 DOCDIR         := html
+
+SRC            := src
+TESTS          := unittests
+MAIN           := main
+
+EXE            := $(BINDIR)/teditor
+TESTEXE        := $(BINDIR)/tests
+
+MKDIR_P        := mkdir -p
 
 PCRE2_BINDIR   := $(shell pwd)/$(BINDIR)/pcre2
 PCRE2_LIB      := $(PCRE2_BINDIR)/lib/libpcre2-8.a
@@ -24,8 +39,6 @@ TS_DIR         := external/tree-sitter
 TS_BINDIR      := $(BINDIR)/tree-sitter
 TS_LIB         := $(TS_BINDIR)/libts.a
 
-SRC            := src
-TESTS          := unittests
 INCLUDES       := $(SRC) \
                   $(TESTS) \
                   $(PCRE2_INCLUDE) \
@@ -43,16 +56,20 @@ LD             := g++
 LDFLAGS        :=
 AR             := ar
 ARFLAGS        := rcs
-EXE            := $(BINDIR)/teditor
+
 CPPSRC         := $(shell find $(SRC) -name "*.cpp")
 CORE_OBJS      := $(patsubst %.cpp,$(BINDIR)/%.o,$(CPPSRC))
-SRC_DEPS       := $(patsubst %.cpp,$(DEPDIR)/%.d,$(CPPSRC))
 TESTSRC        := $(shell find $(TESTS) -name "*.cpp")
 TEST_OBJS      := $(patsubst %.cpp,$(BINDIR)/%.o,$(TESTSRC)) \
                   $(CORE_OBJS)
+MAINSRC        := $(shell find $(MAIN) -name "*.cpp")
+MAIN_OBJS      := $(patsubst %.cpp,$(BINDIR)/%.o,$(MAINSRC))
+
+SRC_DEPS       := $(patsubst %.cpp,$(DEPDIR)/%.d,$(CPPSRC))
 TEST_DEPS      := $(patsubst %.cpp,$(DEPDIR)/%.d,$(TESTSRC))
-TESTEXE        := $(BINDIR)/tests
-DEPFILES       := $(SRC_DEPS) $(TEST_DEPS) $(DEPDIR)/main.d
+MAIN_DEPS      := $(patsubst %.cpp,$(DEPDIR)/%.d,$(MAINSRC))
+DEPFILES       := $(SRC_DEPS) $(TEST_DEPS) $(MAIN_DEPS)
+
 ifeq ($(DEBUG),1)
     CCFLAGS    += -g
     CXXFLAGS   += -g
@@ -64,12 +81,6 @@ else
     LDFLAGS    += -O3
     CXXFLAGS   += -UDEBUG_BUILD
 endif
-ifeq ($(VERBOSE),1)
-    PREFIX     :=
-else
-    PREFIX     := @
-endif
-MKDIR_P        := mkdir -p
 
 
 default:
@@ -88,7 +99,7 @@ default:
 
 teditor: $(EXE)
 
-$(EXE): $(BINDIR)/main.o $(CORE_OBJS) $(LIBRARIES)
+$(EXE): $(MAIN_OBJS) $(CORE_OBJS) $(LIBRARIES)
 	@if [ "$(VERBOSE)" = "0" ]; then \
 	    echo "Building $@ ..."; \
 	fi
@@ -102,15 +113,6 @@ $(TESTEXE): $(TEST_OBJS) $(LIBRARIES)
 	    echo "Building $@ ..."; \
 	fi
 	$(PREFIX)$(LD) $(LDFLAGS) -o $@ $^
-
-$(BINDIR)/main.o: main.cpp $(DEPDIR)/main.d
-	@if [ "$(VERBOSE)" = "0" ]; then \
-	    echo "Compiling $< ..."; \
-	fi
-	$(PREFIX)$(MKDIR_P) $(shell dirname $@)
-	$(PREFIX)$(MKDIR_P) $(shell dirname $(DEPDIR)/main.d)
-	$(PREFIX)$(CXX) -MT $@ -MMD -MP -MF $(DEPDIR)/main.Td $(CXXFLAGS) -c -o $@ $<
-	$(PREFIX)mv -f $(DEPDIR)/main.Td $(DEPDIR)/main.d && touch $@
 
 $(BINDIR)/%.o: %.cpp $(DEPDIR)/%.d
 	@if [ "$(VERBOSE)" = "0" ]; then \
