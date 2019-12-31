@@ -1,3 +1,5 @@
+# auto dependency generation logic here is thanks to:
+#  http://make.mad-scientist.net/papers/advanced-auto-dependency-generation/
 
 DEBUG          ?= 0
 VERBOSE        ?= 0
@@ -50,6 +52,7 @@ TEST_OBJS      := $(patsubst %.cpp,$(BINDIR)/%.o,$(TESTSRC)) \
                   $(CORE_OBJS)
 TEST_DEPS      := $(patsubst %.cpp,$(DEPDIR)/%.d,$(TESTSRC))
 TESTEXE        := $(BINDIR)/tests
+DEPFILES       := $(SRC_DEPS) $(TEST_DEPS) $(DEPDIR)/main.d
 ifeq ($(DEBUG),1)
     CCFLAGS    += -g
     CXXFLAGS   += -g
@@ -85,7 +88,7 @@ default:
 
 teditor: $(EXE)
 
-$(EXE): main.o $(CORE_OBJS) $(LIBRARIES)
+$(EXE): $(BINDIR)/main.o $(CORE_OBJS) $(LIBRARIES)
 	@if [ "$(VERBOSE)" = "0" ]; then \
 	    echo "Building $@ ..."; \
 	fi
@@ -100,16 +103,28 @@ $(TESTEXE): $(TEST_OBJS) $(LIBRARIES)
 	fi
 	$(PREFIX)$(LD) $(LDFLAGS) -o $@ $^
 
-$(BINDIR)/%.o: %.cpp
+$(BINDIR)/main.o: main.cpp $(DEPDIR)/main.d
 	@if [ "$(VERBOSE)" = "0" ]; then \
 	    echo "Compiling $< ..."; \
 	fi
 	$(PREFIX)$(MKDIR_P) $(shell dirname $@)
-	$(PREFIX)$(CXX) $(CXXFLAGS) -c -o $@ $<
+	$(PREFIX)$(MKDIR_P) $(shell dirname $(DEPDIR)/main.d)
+	$(PREFIX)$(CXX) -MT $@ -MMD -MP -MF $(DEPDIR)/main.Td $(CXXFLAGS) -c -o $@ $<
+	$(PREFIX)mv -f $(DEPDIR)/main.Td $(DEPDIR)/main.d && touch $@
+
+$(BINDIR)/%.o: %.cpp $(DEPDIR)/%.d
+	@if [ "$(VERBOSE)" = "0" ]; then \
+	    echo "Compiling $< ..."; \
+	fi
+	$(PREFIX)$(MKDIR_P) $(shell dirname $@)
+	$(PREFIX)$(MKDIR_P) $(shell dirname $(DEPDIR)/$*d)
+	$(PREFIX)$(CXX) -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td $(CXXFLAGS) -c -o $@ $<
+	$(PREFIX)mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d && touch $@
 
 clean:
-	rm -rf $(CORE_OBJS) main.o $(EXE)
+	rm -rf $(CORE_OBJS) $(BINDIR)/main.o $(EXE)
 	rm -rf $(TEST_OBJS) $(TESTEXE)
+	rm -rf $(DEPFILES)
 
 clean_all: clean pcre2-clean tree-sitter-clean
 	rm -rf $(BINDIR) $(DOCDIR)
@@ -182,3 +197,7 @@ tree-sitter-make-dir:
 
 tree-sitter-clean:
 	rm -rf $(TS_ALL_OBJS) $(TS_LIB)
+
+$(DEPFILES):
+
+include $(wildcard $(DEPFILES))
