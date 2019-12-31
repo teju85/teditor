@@ -8,6 +8,7 @@ else
     TYPE       := Release
 endif
 BINDIR         := bin/$(TYPE)
+DEPDIR         := bin/.deps
 DOCDIR         := html
 
 PCRE2_BINDIR   := $(shell pwd)/$(BINDIR)/pcre2
@@ -42,13 +43,12 @@ AR             := ar
 ARFLAGS        := rcs
 EXE            := $(BINDIR)/teditor
 CPPSRC         := $(shell find $(SRC) -name "*.cpp")
-HEADERS        := $(shell find $(SRC) -name "*.h" -o -name "*.hpp")
-CORE_OBJS      := $(patsubst %.cpp,%.o,$(CPPSRC))
-CORE_OBJS      := $(patsubst $(SRC)/%.o,$(BINDIR)/$(SRC)/%.o,$(CORE_OBJS))
+CORE_OBJS      := $(patsubst %.cpp,$(BINDIR)/%.o,$(CPPSRC))
+SRC_DEPS       := $(patsubst %.cpp,$(DEPDIR)/%.d,$(CPPSRC))
 TESTSRC        := $(shell find $(TESTS) -name "*.cpp")
-TEST_OBJS      := $(patsubst %.cpp,%.o,$(TESTSRC))
-TEST_OBJS      := $(patsubst $(TESTS)/%.o,$(BINDIR)/$(TESTS)/%.o,$(TEST_OBJS))
-TEST_OBJS      := $(TEST_OBJS) $(CORE_OBJS)
+TEST_OBJS      := $(patsubst %.cpp,$(BINDIR)/%.o,$(TESTSRC)) \
+                  $(CORE_OBJS)
+TEST_DEPS      := $(patsubst %.cpp,$(DEPDIR)/%.d,$(TESTSRC))
 TESTEXE        := $(BINDIR)/tests
 ifeq ($(DEBUG),1)
     CCFLAGS    += -g
@@ -100,7 +100,7 @@ $(TESTEXE): $(TEST_OBJS) $(LIBRARIES)
 	fi
 	$(PREFIX)$(LD) $(LDFLAGS) -o $@ $^
 
-$(BINDIR)/%.o: %.cpp $(HEADERS)
+$(BINDIR)/%.o: %.cpp
 	@if [ "$(VERBOSE)" = "0" ]; then \
 	    echo "Compiling $< ..."; \
 	fi
