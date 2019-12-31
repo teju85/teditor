@@ -142,21 +142,23 @@ pcre2-clean:
 	    make clean
 
 
-TS_RT_OBJ      := $(BINDIR)/runtime.o
+TS_RT_OBJ      := $(TS_BINDIR)/runtime.o
 TS_ALL_OBJS    := $(TS_RT_OBJ) \
-                  $(BINDIR)/parser-c.o \
-                  $(BINDIR)/parser-cpp.o \
-                  $(BINDIR)/scanner-cpp.o \
-                  $(BINDIR)/parser-javascript.o \
-                  $(BINDIR)/parser-json.o
+                  $(TS_BINDIR)/parser-c.o \
+                  $(TS_BINDIR)/parser-cpp.o \
+                  $(TS_BINDIR)/scanner-cpp.o \
+                  $(TS_BINDIR)/parser-javascript.o \
+                  $(TS_BINDIR)/parser-json.o
 
-tree-sitter: $(TS_LIB)
+tree-sitter: tree-sitter-make-dir $(TS_LIB)
+
+tree-sitter-make-dir:
+	$(PREFIX)mkdir -p $(TS_BINDIR)
 
 $(TS_LIB): $(TS_ALL_OBJS)
 	@if [ "$(VERBOSE)" = "0" ]; then \
 	    echo "Linking $@ ..."; \
 	fi
-	$(PREFIX)mkdir -p $(TS_BINDIR)
 	$(PREFIX)$(AR) $(ARFLAGS) $@ $^
 
 $(TS_RT_OBJ): $(TS_DIR)/src/runtime/runtime.c
@@ -165,13 +167,13 @@ $(TS_RT_OBJ): $(TS_DIR)/src/runtime/runtime.c
 	fi
 	$(PREFIX)$(CC) -c $(CCFLAGS) -o $@ $<
 
-$(BINDIR)/parser-%.o: $(TS_DIR)-%/src/parser.c
+$(TS_BINDIR)/parser-%.o: $(TS_DIR)-%/src/parser.c
 	@if [ "$(VERBOSE)" = "0" ]; then \
 	    echo "Compiling $< ..."; \
 	fi
 	$(PREFIX)$(CC) -c $(CCFLAGS) -o $@ $<
 
-$(BINDIR)/scanner-%.o: $(TS_DIR)-%/src/scanner.cc
+$(TS_BINDIR)/scanner-%.o: $(TS_DIR)-%/src/scanner.cc
 	@if [ "$(VERBOSE)" = "0" ]; then \
 	    echo "Compiling $< ..."; \
 	fi
