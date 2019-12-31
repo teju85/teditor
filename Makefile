@@ -2,10 +2,15 @@
 DEBUG          ?= 0
 VERBOSE        ?= 0
 
-BINDIR         := $(shell pwd)/bin
+ifeq ($(DEBUG),1)
+    TYPE       := Debug
+else
+    TYPE       := Release
+endif
+BINDIR         := bin/$(TYPE)
 DOCDIR         := html
 
-PCRE2_BINDIR   := $(BINDIR)/pcre2
+PCRE2_BINDIR   := $(shell pwd)/$(BINDIR)/pcre2
 PCRE2_LIB      := $(PCRE2_BINDIR)/lib/libpcre2-8.a
 PCRE2_INCLUDE  := $(PCRE2_BINDIR)/include
 PCRE2_DIR      := external/pcre2
@@ -95,12 +100,6 @@ $(TESTEXE): $(TEST_OBJS) $(LIBRARIES)
 	fi
 	$(PREFIX)$(LD) $(LDFLAGS) -o $@ $^
 
-$(TESTS)/%.o: $(TESTS)/%.cpp $(HEADERS)
-	@if [ "$(VERBOSE)" = "0" ]; then \
-	    echo "Compiling $< ..."; \
-	fi
-	$(PREFIX)$(CXX) $(CXXFLAGS) -c -o $@ $<
-
 $(BINDIR)/%.o: %.cpp $(HEADERS)
 	@if [ "$(VERBOSE)" = "0" ]; then \
 	    echo "Compiling $< ..."; \
@@ -154,12 +153,7 @@ TS_ALL_OBJS    := $(TS_RT_OBJ) \
                   $(TS_BINDIR)/parser-javascript.o \
                   $(TS_BINDIR)/parser-json.o
 
-tree-sitter: tree-sitter-make-dir $(TS_LIB)
-
-tree-sitter-make-dir:
-	$(PREFIX)$(MKDIR_P) $(TS_BINDIR)
-
-$(TS_LIB): $(TS_ALL_OBJS)
+$(TS_LIB): $(TS_ALL_OBJS) | tree-sitter-make-dir
 	@if [ "$(VERBOSE)" = "0" ]; then \
 	    echo "Linking $@ ..."; \
 	fi
@@ -182,6 +176,9 @@ $(TS_BINDIR)/scanner-%.o: $(TS_DIR)-%/src/scanner.cc
 	    echo "Compiling $< ..."; \
 	fi
 	$(PREFIX)$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+tree-sitter-make-dir:
+	$(PREFIX)$(MKDIR_P) $(TS_BINDIR)
 
 tree-sitter-clean:
 	rm -rf $(TS_ALL_OBJS) $(TS_LIB)
