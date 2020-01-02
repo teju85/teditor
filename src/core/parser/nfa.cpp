@@ -8,6 +8,7 @@ bool NFA::State::isMatch(char in) const {
   switch(c) {
   case Split:
   case Match:         return true;
+  case Digit:         return in >= '0' && in <= '9';
   case WhiteSpace:    return in == ' ' || in == '\t';
   case NonWhiteSpace: return in != ' ' && in != '\t';
   case Any:           return true;
