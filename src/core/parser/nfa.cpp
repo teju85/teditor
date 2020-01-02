@@ -185,7 +185,7 @@ void NFA::stitchFragments() {
   if (fragments.empty()) return;
   auto frag = fragments.top();
   fragments.pop();
-  // reached the end of the list, note down its start state
+  // reached the end of the list, note down its start state and add match state
   if (fragments.empty()) {
     startStates.push_back(frag.entry);
     auto* st = createState(Specials::Match);
