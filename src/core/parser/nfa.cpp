@@ -1,4 +1,5 @@
 #include "nfa.h"
+#include <core/utils.h>
 
 namespace teditor {
 namespace parser {
@@ -16,14 +17,12 @@ bool NFA::State::isMatch(char in) const {
   };
 }
 
-NFA::Fragment::Fragment(State* e): entry(e), tails() {
-  tails.push_back(e);
-}
+NFA::Fragment::Fragment(State* e): entry(e), tails() { appendState(e); }
 
 void NFA::Fragment::addState(State* s) {
   for (auto t : tails) t->next = s;
   tails.clear();
-  tails.push_back(s);
+  appendState(s);
 }
 
 
@@ -33,9 +32,9 @@ NFA::CompilerState::CompilerState() :
 }
 
 void NFA::addRegex(const std::string& reg) {
-  while (!fragments.empty()) fragments.pop();
   CompilerState cState;
   for (auto c : reg) parseChar(c, cState);
+  stitchFragments();
 }
 
 void NFA::parseChar(char c, CompilerState& cState) {
@@ -91,7 +90,7 @@ void NFA::parseGeneral(char c, CompilerState cState) {
     sp->c = Specials::Split;
     sp->other = frag.entry;
     frag.entry = sp;
-    frag.tails.push_back(sp);
+    frag.appendState(sp);
   } break;
   case '|':
     ///@todo: implement
@@ -179,6 +178,9 @@ void NFA::addNewState(State* st) {
     auto& frag = fragments.top();
     frag.addState(st);
   }
+}
+
+void NFA::stitchFragments() {
 }
 
 }  // namespace parser

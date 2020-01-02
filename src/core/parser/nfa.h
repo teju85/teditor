@@ -54,6 +54,7 @@ private:
     State* other;  // used only with Split state
 
     State() : c(0), s(), next(nullptr), other(nullptr) {}
+    State(int _c): c(_c), s(), next(nullptr), other(nullptr) {}
     bool isMatch(char in) const;
   };  // struct State
 
@@ -72,6 +73,7 @@ private:
     Fragment(): entry(nullptr), tails() {}
     Fragment(State* e);
     void addState(State* s);
+    void appendState(State* s) { tails.push_back(s); }
   };  // struct Fragment
 
 
@@ -107,6 +109,7 @@ private:
   void parseInsideSqBracket(char c, CompilerState& cState);
   void addNewStateFor(char c);
   void addNewState(State* st);
+  void stitchFragments();
 };  // struct NFA
 
 }  // namespace parser
