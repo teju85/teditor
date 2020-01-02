@@ -25,6 +25,11 @@ void NFA::Fragment::addState(State* s) {
   appendState(s);
 }
 
+bool NFA::Fragment::isOnlySplit() const {
+  return entry != nullptr && entry->c == Specials::Split && !tails.empty() &&
+    tails[0] == entry;
+}
+
 
 NFA::CompilerState::CompilerState() :
   prevBackSlash(false), prevSqBracketOpen(false), isUnderRange(false),
@@ -66,29 +71,30 @@ void NFA::parseGeneral(char c, CompilerState cState) {
   switch(c) {
   case '+': {
     auto& frag = fragments.top();
-    auto* sp = new State;
-    sp->c = Specials::Split;
+    auto* sp = createState(Specials::Split);
     sp->other = frag.entry;
     frag.addState(sp);
   } break;
   case '*': {
     auto& frag = fragments.top();
-    auto* sp = new State;
-    sp->c = Specials::Split;
+    auto* sp = createState(Specials::Split);
     sp->other = frag.entry;
     frag.addState(sp);
   } break;
   case '?': {
     auto& frag = fragments.top();
-    auto* sp = new State;
-    sp->c = Specials::Split;
+    auto* sp = createState(Specials::Split);
     sp->other = frag.entry;
     frag.entry = sp;
     frag.appendState(sp);
   } break;
-  case '|':
-    ///@todo: implement
-    break;
+  case '|': {
+    // just create a fragment containing split state. This will be stitched
+    // properly during `stitchFragments` call
+    auto* sp = createState(Specials::Split);
+    Fragment frag(sp);
+    fragments.push(frag);
+  } break;
   case '(':
     ///@todo: implement
     break;
@@ -99,9 +105,7 @@ void NFA::parseGeneral(char c, CompilerState cState) {
     cState.prevSqBracketOpen = true;
     cState.isUnderSqBracket = true;
     cState.isUnderRange = false;
-    auto* st = new State;
-    st->c = Specials::AnyFromList;
-    states.push_back(st);
+    auto* st = createState(Specials::AnyFromList);
     Fragment frag(st);
     fragments.push(frag);
   } break;

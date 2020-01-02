@@ -71,6 +71,9 @@ private:
     Fragment(State* e);
     void addState(State* s);
     void appendState(State* s) { tails.push_back(s); }
+    // this is useful while stitching fragments together, especially for the
+    // cases of alternation
+    bool isOnlySplit() const;
   };  // struct Fragment
 
 
