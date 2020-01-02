@@ -164,10 +164,8 @@ void NFA::parseInsideSqBracket(char c, CompilerState& cState) {
     return;
   }
   // to be considered a '-' literally, it must always come at the beginning!
-  if (c == '-') {
-    if (!prevSq) cState.isUnderRange = true;
-    str.push_back(c);
-  }
+  if (c == '-' && !prevSq) cState.isUnderRange = true;
+  str.push_back(c);
 }
 
 NFA::State* NFA::createState(int c) {
