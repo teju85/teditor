@@ -188,6 +188,8 @@ void NFA::stitchFragments() {
   // reached the end of the list, note down its start state
   if (fragments.empty()) {
     startStates.push_back(frag.entry);
+    auto* st = createState(Specials::Match);
+    frag.addState(st);
     return;
   }
   auto top = fragments.top();
