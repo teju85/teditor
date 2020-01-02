@@ -68,7 +68,7 @@ private:
   // this does NOT own any of the underlying pointers
   struct Fragment {
     State* entry;
-    States tails;
+    std::vector<State*> tails;
 
     Fragment(): entry(nullptr), tails() {}
     Fragment(State* e);
