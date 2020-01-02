@@ -189,6 +189,26 @@ void NFA::stitchFragments() {
   if (fragments.empty()) return;
   auto frag = fragments.top();
   fragments.pop();
+  // reached the end of the list, note down its start state
+  if (fragments.empty()) {
+    startStates.push_back(frag.entry);
+    return;
+  }
+  auto top = fragments.top();
+  fragments.pop();
+  if (top.isOnlySplit()) {
+    ASSERT(!fragments.empty(), "Alternation must consist of states!");
+    auto& other = fragments.top();
+    top.entry->next = frag.entry;
+    top.tails = frag.tails;
+    top.entry->other = other.entry;
+    for (auto t : other.tails) top.appendState(t);
+    fragments.pop();
+    return;
+  }
+  top.addState(frag.entry);
+  top.tails = frag.tails;
+  fragments.push(top);
 }
 
 }  // namespace parser
