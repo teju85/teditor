@@ -77,18 +77,6 @@ private:
   };  // struct Fragment
 
 
-  // used to store intermediate regex compiler state
-  struct CompilerState {
-    bool prevBackSlash;
-    bool prevSqBracketOpen;
-    bool isUnderRange;
-    bool isUnderSqBracket;
-
-    CompilerState();
-    void validate(const std::string& reg);
-  };  // struct CompilerState
-
-
   std::vector<State*> states;  // all states for this NFA
   // one start state pointer for each lexer-token regex
   // this does NOT own the underlying pointers
@@ -104,6 +92,18 @@ private:
     actives.clear();
     for (auto s : startStates) actives.insert(s);
   }
+
+
+  // used to store intermediate regex compiler state
+  struct CompilerState {
+    bool prevBackSlash;
+    bool prevSqBracketOpen;
+    bool isUnderRange;
+    bool isUnderSqBracket;
+
+    CompilerState();
+    void validate(const std::string& reg);
+  };  // struct CompilerState
 
   void parseChar(char c, CompilerState& cState);
   void parseGeneral(char c, CompilerState cState);
