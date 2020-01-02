@@ -45,21 +45,15 @@ void NFA::parseChar(char c, CompilerState& cState) {
   if (cState.prevBackSlash) {
     cState.prevBackSlash = false;
     switch(c) {
-    case 'd': {
-      auto* st = new State;
-      st->c = Specials::Digit;
-      addNewState(st);
-    } break;
-    case 's': {
-      auto* st = new State;
-      st->c = Specials::WhiteSpace;
-      addNewState(st);
-    } break;
-    case 'S': {
-      auto* st = new State;
-      st->c = Specials::NonWhiteSpace;
-      addNewState(st);
-    } break;
+    case 'd':
+      addNewStateFor(Specials::Digit);
+      break;
+    case 's':
+      addNewStateFor(Specials::WhiteSpace);
+      break;
+    case 'S':
+      addNewStateFor(Specials::NonWhiteSpace);
+    break;
     default:
       addNewStateFor(c);
     };
@@ -111,11 +105,9 @@ void NFA::parseGeneral(char c, CompilerState cState) {
     Fragment frag(st);
     fragments.push(frag);
   } break;
-  case '.': {
-    auto* st = new State;
-    st->c = Specials::Any;
-    addNewState(st);
-  } break;
+  case '.':
+    addNewStateFor(Specials::Any);
+    break;
   case '\\':
     cState.prevBackSlash = true;
     break;
@@ -163,14 +155,14 @@ void NFA::parseInsideSqBracket(char c, CompilerState& cState) {
   }
 }
 
-void NFA::addNewStateFor(char c) {
-  auto* st = new State;
-  st->c = c;
-  addNewState(st);
+NFA::State* NFA::createState(int c) {
+  auto* st = new State(c);
+  states.push_back(st);
+  return st;
 }
 
-void NFA::addNewState(State* st) {
-  states.push_back(st);
+void NFA::addNewStateFor(int c) {
+  auto* st = createState(c);
   if (fragments.empty()) {
     Fragment frag(st);
     fragments.push(frag);

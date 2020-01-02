@@ -107,8 +107,8 @@ private:
   void parseChar(char c, CompilerState& cState);
   void parseGeneral(char c, CompilerState cState);
   void parseInsideSqBracket(char c, CompilerState& cState);
-  void addNewStateFor(char c);
-  void addNewState(State* st);
+  State* createState(int c);
+  void addNewStateFor(int c);
   void stitchFragments();
 };  // struct NFA
 
