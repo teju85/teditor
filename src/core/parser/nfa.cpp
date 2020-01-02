@@ -49,7 +49,10 @@ void NFA::CompilerState::validate(const std::string& reg) {
 
 void NFA::addRegex(const std::string& reg) {
   CompilerState cState;
-  for (auto c : reg) parseChar(c, cState);
+  for (auto c : reg) {
+    printf("parsing '%c'\n", c);
+    parseChar(c, cState);
+  }
   cState.validate(reg);
   stitchFragments();
 }
@@ -189,6 +192,8 @@ void NFA::stitchFragments() {
   if (fragments.empty()) return;
   auto frag = fragments.top();
   fragments.pop();
+  printf("entry = %d (%c) frag.size = %lu\n", frag.entry->c, frag.entry->c,
+         fragments.size());
   // reached the end of the list, note down its start state
   if (fragments.empty()) {
     startStates.push_back(frag.entry);
@@ -196,6 +201,8 @@ void NFA::stitchFragments() {
   }
   auto top = fragments.top();
   fragments.pop();
+  printf("  top = %d (%c) frag.size = %lu\n", top.entry->c, top.entry->c,
+         fragments.size());
   if (top.isOnlySplit()) {
     ASSERT(!fragments.empty(), "Alternation must consist of states!");
     auto& other = fragments.top();
@@ -209,6 +216,7 @@ void NFA::stitchFragments() {
   top.addState(frag.entry);
   top.tails = frag.tails;
   fragments.push(top);
+  stitchFragments();
 }
 
 }  // namespace parser
