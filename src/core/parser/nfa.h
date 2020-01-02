@@ -32,6 +32,8 @@ struct NFA {
     return false;
   }
 
+  ~NFA() { for (auto itr : states) delete itr; }
+
 private:
   /** list of special states */
   enum Specials {
@@ -59,11 +61,6 @@ private:
   };  // struct State
 
 
-  struct States : public std::vector<State*> {
-    ~States() { for (auto itr : *this) delete itr; }
-  };  // struct States
-
-
   // used only while compiling the regex's
   // this does NOT own any of the underlying pointers
   struct Fragment {
@@ -88,7 +85,7 @@ private:
   };  // struct CompilerState
 
 
-  States states;  // all states for this NFA
+  std::vector<State*> states;  // all states for this NFA
   // one start state pointer for each lexer-token regex
   // this does NOT own the underlying pointers
   std::vector<State*> startStates;
