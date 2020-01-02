@@ -61,6 +61,21 @@ private:
   };  // struct State
 
 
+  std::vector<State*> states;  // all states for this NFA
+  // one start state pointer for each lexer-token regex
+  // this does NOT own the underlying pointers
+  std::vector<State*> startStates;
+  // during matching these are the "active" states
+  // this does NOT own the underlying pointers
+  std::unordered_set<State*> actives;
+
+  // prepares the engine for the next match task
+  void reset() {
+    actives.clear();
+    for (auto s : startStates) actives.insert(s);
+  }
+
+
   // used only while compiling the regex's
   // this does NOT own any of the underlying pointers
   struct Fragment {
@@ -77,21 +92,8 @@ private:
   };  // struct Fragment
 
 
-  std::vector<State*> states;  // all states for this NFA
-  // one start state pointer for each lexer-token regex
-  // this does NOT own the underlying pointers
-  std::vector<State*> startStates;
-  // during matching these are the "active" states
-  // this does NOT own the underlying pointers
-  std::unordered_set<State*> actives;
   // stack of fragments used during the regex compilation
   std::stack<Fragment> fragments;
-
-  // prepares the engine for the next match task
-  void reset() {
-    actives.clear();
-    for (auto s : startStates) actives.insert(s);
-  }
 
 
   // used to store intermediate regex compiler state
