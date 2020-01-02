@@ -164,10 +164,9 @@ void NFA::parseInsideSqBracket(char c, CompilerState& cState) {
     return;
   }
   // to be considered a '-' literally, it must always come at the beginning!
-  if (c == '-' && !prevSq) {
-    cState.isUnderRange = true;
+  if (c == '-') {
+    if (!prevSq) cState.isUnderRange = true;
     str.push_back(c);
-    return;
   }
 }
 
@@ -189,6 +188,9 @@ void NFA::addNewStateFor(int c) {
 }
 
 void NFA::stitchFragments() {
+  if (fragments.empty()) return;
+  auto frag = fragments.top();
+  fragments.pop();
 }
 
 }  // namespace parser
