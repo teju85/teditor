@@ -204,7 +204,8 @@ void NFA::stitchFragments() {
   printf("  top = %d (%c) frag.size = %lu\n", top.entry->c, top.entry->c,
          fragments.size());
   if (top.isOnlySplit()) {
-    ASSERT(!fragments.empty(), "Alternation must consist of states!");
+    ASSERT(!fragments.empty(),
+           "Alternation must consist of atleast 2 fragments!");
     auto& other = fragments.top();
     top.entry->next = frag.entry;
     top.tails = frag.tails;
