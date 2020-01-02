@@ -49,10 +49,7 @@ void NFA::CompilerState::validate(const std::string& reg) {
 
 void NFA::addRegex(const std::string& reg) {
   CompilerState cState;
-  for (auto c : reg) {
-    printf("parsing '%c'\n", c);
-    parseChar(c, cState);
-  }
+  for (auto c : reg) parseChar(c, cState);
   cState.validate(reg);
   stitchFragments();
 }
@@ -179,21 +176,14 @@ NFA::State* NFA::createState(int c) {
 
 void NFA::addNewStateFor(int c) {
   auto* st = createState(c);
-  if (fragments.empty()) {
-    Fragment frag(st);
-    fragments.push(frag);
-  } else {
-    auto& frag = fragments.top();
-    frag.addState(st);
-  }
+  Fragment frag(st);
+  fragments.push(frag);
 }
 
 void NFA::stitchFragments() {
   if (fragments.empty()) return;
   auto frag = fragments.top();
   fragments.pop();
-  printf("entry = %d (%c) frag.size = %lu\n", frag.entry->c, frag.entry->c,
-         fragments.size());
   // reached the end of the list, note down its start state
   if (fragments.empty()) {
     startStates.push_back(frag.entry);
@@ -201,8 +191,6 @@ void NFA::stitchFragments() {
   }
   auto top = fragments.top();
   fragments.pop();
-  printf("  top = %d (%c) frag.size = %lu\n", top.entry->c, top.entry->c,
-         fragments.size());
   if (top.isOnlySplit()) {
     ASSERT(!fragments.empty(),
            "Alternation must consist of atleast 2 fragments!");
@@ -212,6 +200,7 @@ void NFA::stitchFragments() {
     top.entry->other = other.entry;
     for (auto t : other.tails) top.appendState(t);
     fragments.pop();
+    fragments.push(top);
     return;
   }
   top.addState(frag.entry);
