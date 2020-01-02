@@ -85,6 +85,7 @@ private:
     bool isUnderSqBracket;
 
     CompilerState();
+    void validate(const std::string& reg);
   };  // struct CompilerState
 
 

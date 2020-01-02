@@ -36,9 +36,21 @@ NFA::CompilerState::CompilerState() :
   isUnderSqBracket(false) {
 }
 
+void NFA::CompilerState::validate(const std::string& reg) {
+  if (prevBackSlash)
+    ASSERT(false, "No succeeding char after backslash? regex=%s", reg.c_str());
+  if (prevSqBracketOpen)
+    ASSERT(false, "No succeeding char after '['? regex=%s", reg.c_str());
+  if (isUnderRange)
+    ASSERT(false, "No succeeding char after '-'? regex=%s", reg.c_str());
+  if (isUnderSqBracket)
+    ASSERT(false, "No matching ']' char for '['? regex=%s", reg.c_str());
+}
+
 void NFA::addRegex(const std::string& reg) {
   CompilerState cState;
   for (auto c : reg) parseChar(c, cState);
+  cState.validate(reg);
   stitchFragments();
 }
 
