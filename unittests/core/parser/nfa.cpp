@@ -87,6 +87,11 @@ TEST_CASE("NFA::BackSlash") {
     REQUIRE(nfa.find("Z") == 0);
     REQUIRE(nfa.find("aZ") == NFA::NoMatch);
   }
+  SECTION("\\d+") {
+    nfa.addRegex("\\d+");
+    REQUIRE(nfa.find("01234") == 4);
+    REQUIRE(nfa.find("abcs") == NFA::NoMatch);
+  }
 }
 
 // TEST_CASE("NFA::SqBrkt") {
