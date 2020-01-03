@@ -100,6 +100,26 @@ TEST_CASE("NFA::BackSlash") {
     REQUIRE(nfa.find("\\") == 0);
     REQUIRE(nfa.find("a\\") == NFA::NoMatch);
   }
+  SECTION("\\[") {
+    nfa.addRegex("\\[");
+    REQUIRE(nfa.find("[") == 0);
+    REQUIRE(nfa.find("a[") == NFA::NoMatch);
+  }
+  SECTION("\\]") {
+    nfa.addRegex("\\]");
+    REQUIRE(nfa.find("]") == 0);
+    REQUIRE(nfa.find("a]") == NFA::NoMatch);
+  }
+  SECTION("\\(") {
+    nfa.addRegex("\\(");
+    REQUIRE(nfa.find("(") == 0);
+    REQUIRE(nfa.find("a(") == NFA::NoMatch);
+  }
+  SECTION("\\)") {
+    nfa.addRegex("\\)");
+    REQUIRE(nfa.find(")") == 0);
+    REQUIRE(nfa.find("a)") == NFA::NoMatch);
+  }
   SECTION("\\Z") {
     REQUIRE_THROWS(nfa.addRegex("\\Z"));
   }

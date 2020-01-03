@@ -161,6 +161,10 @@ void NFA::parseChar(char c, CompilerState& cState) {
       addNewStateFor(Specials::NonWhiteSpace);
       break;
     case '\\':
+    case '[':
+    case ']':
+    case '(':
+    case ')':
       addNewStateFor(c);
       break;
     default:
