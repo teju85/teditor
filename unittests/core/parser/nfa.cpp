@@ -255,5 +255,21 @@ TEST_CASE("NFA::Groups") {
   }
 }
 
+TEST_CASE("NFA::MultipleRegex") {
+  NFA nfa;
+  nfa.addRegex("abcd+");
+  nfa.addRegex("vwx?y");
+  size_t reg;
+  REQUIRE(nfa.find(reg, "abcd") == 3);
+  REQUIRE(reg == 0);
+  REQUIRE(nfa.find(reg, "abcddd") == 5);
+  REQUIRE(reg == 0);
+  REQUIRE(nfa.find(reg, "def") == NFA::NoMatch);
+  REQUIRE(nfa.find(reg, "vwxy") == 3);
+  REQUIRE(reg == 1);
+  REQUIRE(nfa.find(reg, "vwy") == 2);
+  REQUIRE(reg == 1);
+}
+
 } // end namespace parser
 } // end namespace teditor

@@ -46,6 +46,12 @@ void NFA::CompilerState::validate(const std::string& reg) {
 }
 
 size_t NFA::find(const std::string& str, size_t start, size_t end) {
+  size_t tmp;
+  return find(tmp, str, start, end);
+}
+
+size_t NFA::find(size_t& regexId, const std::string& str, size_t start,
+                 size_t end) {
   //printf("start...\n");
   if (end == 0) end = str.size();
   // prepare the engine for the current match task
@@ -91,6 +97,7 @@ size_t NFA::find(const std::string& str, size_t start, size_t end) {
       //printf("match found... pos=%lu\n", a->matchPos);
       matchFound = true;
       pos = std::max(a->matchPos, pos);
+      regexId = a->regId;
     }
   }
   //printf("end...\n");
@@ -109,9 +116,10 @@ void NFA::addRegex(const std::string& reg) {
          fragments.size());
   auto& frag = fragments.top();
   //printf("last fragment entry = %d\n", frag.entry->c);
-  startStates.push_back(frag.entry);
   auto* st = createState(Specials::Match);
+  st->regId = startStates.size();
   frag.addState(st);
+  startStates.push_back(frag.entry);
   fragments.pop();
   //printf("stitch end...\n");
 }

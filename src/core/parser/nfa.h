@@ -31,6 +31,8 @@ struct NFA {
   void addRegex(const std::string& reg);
 
   size_t find(const std::string& str, size_t start = 0, size_t end = 0);
+  size_t find(size_t& regexId, const std::string& str, size_t start = 0,
+              size_t end = 0);
 
   ~NFA() { for (auto itr : states) delete itr; }
 
@@ -60,6 +62,7 @@ private:
     State* next;
     State* other;  // used only with Split state
     size_t matchPos;  // used only during matching phase
+    size_t regId;  // only used to track which regex matched the input string
 
     State() : c(0), s(), next(nullptr), other(nullptr) {}
     State(int _c): c(_c), s(), next(nullptr), other(nullptr) {}
