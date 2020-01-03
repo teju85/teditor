@@ -197,26 +197,23 @@ void NFA::parseGeneral(char c, CompilerState& cState) {
     frag.entry = sp;
     frag.appendState(sp);
   } break;
-  case '|': {
-    // This will be stitched properly during `stitchFragments` call
-    auto* sp = createState(Specials::Alternation);
-    Fragment frag(sp);
-    fragments.push(frag);
-  } break;
+  case '|':
+    // This will be stitched properly during `stitchFragments()`
+    addNewStateFor(Specials::Alternation);
+    break;
   case '(':
-    ///@todo: implement
+    // This will be stitched properly during `stitchFragments()`
+    addNewStateFor(Specials::Bracket);
     break;
   case ')':
-    ///@todo: implement
+    stitchFragments();
     break;
-  case '[': {
+  case '[':
     cState.prevSqBracketOpen = true;
     cState.isUnderSqBracket = true;
     cState.isUnderRange = false;
-    auto* st = createState(Specials::AnyFromList);
-    Fragment frag(st);
-    fragments.push(frag);
-  } break;
+    addNewStateFor(Specials::AnyFromList);
+    break;
   case '.':
     addNewStateFor(Specials::Any);
     break;
@@ -283,6 +280,7 @@ void NFA::stitchFragments() {
   if (fragments.size() <= 1) return;
   auto frag = fragments.top();
   fragments.pop();
+  if (frag.entry->c == Specials::Bracket) return;
   auto top = fragments.top();
   fragments.pop();
   //printf("stitching: frag.entry=%d top.entry=%d\n", frag.entry->c, top.entry->c);
