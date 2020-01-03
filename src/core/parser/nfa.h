@@ -3,7 +3,7 @@
 #include <stack>
 #include <string>
 #include <vector>
-#include <unordered_map>
+#include <unordered_set>
 #include <core/double_buffer.hpp>
 
 namespace teditor {
@@ -54,6 +54,7 @@ private:
     std::string s;  // when matching with a set of possible chars (aka [...]) */
     State* next;
     State* other;  // used only with Split state
+    size_t matchPos;  // used only during matching phase
 
     State() : c(0), s(), next(nullptr), other(nullptr) {}
     State(int _c): c(_c), s(), next(nullptr), other(nullptr) {}
@@ -61,7 +62,7 @@ private:
   };  // struct State
 
 
-  typedef std::unordered_map<State*, size_t> Actives;
+  typedef std::unordered_set<State*> Actives;
 
 
   std::vector<State*> states;  // all states for this NFA

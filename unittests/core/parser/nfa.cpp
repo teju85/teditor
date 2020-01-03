@@ -25,9 +25,9 @@ TEST_CASE("NFA::general") {
     nfa.addRegex("ab+");
     REQUIRE(nfa.find("a") == NFA::NoMatch);
     REQUIRE(nfa.find("aab") == NFA::NoMatch);
-    // REQUIRE(nfa.find("ab") == 1);
-    // REQUIRE(nfa.find("abb") == 2);
-    // REQUIRE(nfa.find("aab", 1) == 2);
+    REQUIRE(nfa.find("ab") == 1);
+    REQUIRE(nfa.find("abb") == 2);
+    REQUIRE(nfa.find("aab", 1) == 2);
   }
   SECTION("*") {
     nfa.addRegex("ab*");
