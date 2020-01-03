@@ -71,9 +71,12 @@ TEST_CASE("NFA::BackSlash") {
     REQUIRE(nfa.find("Hello World") == NFA::NoMatch);
     REQUIRE(nfa.find("Hello World", 5) == 5);
   }
-  // SECTION("\\S") {
-  //   nfa.addRegex("\\S");
-  // }
+  SECTION("\\S") {
+    nfa.addRegex("\\S");
+    REQUIRE(nfa.find("abcd") == 0);
+    REQUIRE(nfa.find(" abcd") == NFA::NoMatch);
+    REQUIRE(nfa.find("\tabcd") == NFA::NoMatch);
+  }
   // SECTION("\\d") {
   //   nfa.addRegex("\\d");
   // }
