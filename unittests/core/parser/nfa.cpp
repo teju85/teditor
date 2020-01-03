@@ -213,10 +213,27 @@ TEST_CASE("NFA::SqBrkt") {
 
 TEST_CASE("NFA::Groups") {
   NFA nfa;
-  SECTION("simple") {
+  SECTION("simple1") {
     nfa.addRegex("(abc)");
     REQUIRE(nfa.find("abc") == 2);
     REQUIRE(nfa.find("aabc") == NFA::NoMatch);
+  }
+  SECTION("simple2") {
+    nfa.addRegex("(abc)+");
+    REQUIRE(nfa.find("abcabc") == 5);
+    REQUIRE(nfa.find("aba") == NFA::NoMatch);
+  }
+  SECTION("simple3") {
+    nfa.addRegex("abcd+");
+    REQUIRE(nfa.find("abcd") == 3);
+    REQUIRE(nfa.find("abcdd") == 4);
+    REQUIRE(nfa.find("abc") == NFA::NoMatch);
+  }
+  SECTION("simple4") {
+    nfa.addRegex("(abcd)+");
+    REQUIRE(nfa.find("abcd") == 3);
+    REQUIRE(nfa.find("abcdabcd") == 7);
+    REQUIRE(nfa.find("abc") == NFA::NoMatch);
   }
 }
 
