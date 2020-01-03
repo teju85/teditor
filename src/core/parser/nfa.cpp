@@ -149,9 +149,12 @@ void NFA::parseChar(char c, CompilerState& cState) {
       break;
     case 'S':
       addNewStateFor(Specials::NonWhiteSpace);
-    break;
-    default:
+      break;
+    case '\\':
       addNewStateFor(c);
+      break;
+    default:
+      ASSERT(false, "Bad escaped character \\%c!", c);
     };
     return;
   }

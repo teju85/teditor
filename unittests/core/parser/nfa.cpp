@@ -82,10 +82,13 @@ TEST_CASE("NFA::BackSlash") {
     REQUIRE(nfa.find("0abcs") == 0);
     REQUIRE(nfa.find("abcs") == NFA::NoMatch);
   }
-  SECTION("\\Z") {  // has no meaning in the current NFA logic!
-    nfa.addRegex("\\Z");
-    REQUIRE(nfa.find("Z") == 0);
-    REQUIRE(nfa.find("aZ") == NFA::NoMatch);
+  SECTION("\\\\") {
+    nfa.addRegex("\\\\");
+    REQUIRE(nfa.find("\\") == 0);
+    REQUIRE(nfa.find("a\\") == NFA::NoMatch);
+  }
+  SECTION("\\Z") {
+    REQUIRE_THROWS(nfa.addRegex("\\Z"));
   }
   SECTION("\\d+") {
     nfa.addRegex("\\d+");
