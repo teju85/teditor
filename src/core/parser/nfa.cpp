@@ -165,6 +165,7 @@ void NFA::parseChar(char c, CompilerState& cState) {
     case ']':
     case '(':
     case ')':
+    case '.':
       addNewStateFor(c);
       break;
     default:
