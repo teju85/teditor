@@ -209,6 +209,16 @@ TEST_CASE("NFA::SqBrkt") {
     REQUIRE(nfa.find("b") == NFA::NoMatch);
     REQUIRE(nfa.find("c") == 0);
   }
+  SECTION("multiple-ranges") {
+    nfa.addRegex("[a-ce-g]");
+    REQUIRE(nfa.find("a") == 0);
+    REQUIRE(nfa.find("b") == 0);
+    REQUIRE(nfa.find("c") == 0);
+    REQUIRE(nfa.find("e") == 0);
+    REQUIRE(nfa.find("f") == 0);
+    REQUIRE(nfa.find("g") == 0);
+    REQUIRE(nfa.find("d") == NFA::NoMatch);
+  }
 }
 
 TEST_CASE("NFA::Groups") {
