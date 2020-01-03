@@ -138,7 +138,6 @@ void NFA::checkForSplitState(NFA::State* st, size_t pos, Actives& ac) {
 }
 
 void NFA::parseChar(char c, CompilerState& cState) {
-  //printf("prevBS = %d char = %c\n", cState.prevBackSlash, c);
   if (cState.isUnderSqBracket) {
     parseInsideSqBracket(c, cState);
     return;
@@ -219,8 +218,6 @@ void NFA::parseGeneral(char c, CompilerState& cState) {
     break;
   case '\\':
     cState.prevBackSlash = true;
-    //printf("inside backslash handler\n");
-    //printf("  prevBS = %d char = %c\n", cState.prevBackSlash, c);
     break;
   default:
     addNewStateFor(c);
@@ -283,6 +280,10 @@ void NFA::stitchFragments() {
   if (frag.entry->c == Specials::Bracket) return;
   auto top = fragments.top();
   fragments.pop();
+  if (top.entry->c == Specials::Bracket) {
+    fragments.push(frag);
+    return;
+  }
   //printf("stitching: frag.entry=%d top.entry=%d\n", frag.entry->c, top.entry->c);
   // alternation
   if (top.entry->c == Specials::Alternation) {
