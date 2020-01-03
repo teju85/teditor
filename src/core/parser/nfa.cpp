@@ -56,17 +56,20 @@ size_t NFA::find(const std::string& str, size_t start, size_t end) {
   // prepare the engine for the current match task
   acs.current().clear();
   for (auto s : startStates) acs.current().insert(s);
+  //printf("actives count = %lu start states = %lu\n", acs.current().size(), startStates.size());
   for (; start < end; ++start) {
     stepThroughSplitStates();
     acs.next().clear();
+    //printf("current char = %c(%d) pos = %lu\n", str[start], str[start], start);
     for (auto& a : acs.current()) {
       auto& next = acs.next();
-      // printf("state-char = %d char = %d start = %lu pos = %lu\n",
+      // //printf("state-char = %d char = %d start = %lu pos = %lu\n",
       //        a->c, str[start], start, a->matchPos);
       if (a->c == Specials::Match) {
         next.insert(a);
         continue;
       }
+      //printf("current state = %d\n", a->c);
       if (a->isMatch(str[start])) {
         if (a->next != nullptr) {
           //printf("  inserting next c=%d\n", a->next->c);
@@ -103,13 +106,17 @@ void NFA::addRegex(const std::string& reg) {
   CompilerState cState;
   for (auto c : reg) parseChar(c, cState);
   cState.validate(reg);
+  //printf("stitch start len=%lu...\n", fragments.size());
   stitchFragments();
+  //printf("stitch end...\n");
 }
 
 void NFA::stepThroughSplitStates() {
   acs.next().clear();
-  for (auto& a : acs.current())
+  for (auto& a : acs.current()) {
+    //printf("working on state = %d\n", a->c);
     checkForSplitState(a, a->matchPos, acs.next());
+  }
   acs.update();
 }
 
@@ -258,6 +265,7 @@ void NFA::stitchFragments() {
   fragments.pop();
   // reached the end of the list, note down its start state and add match state
   if (fragments.empty()) {
+    //printf("last fragment entry = %d\n", frag.entry->c);
     startStates.push_back(frag.entry);
     auto* st = createState(Specials::Match);
     frag.addState(st);
@@ -270,16 +278,16 @@ void NFA::stitchFragments() {
     ASSERT(!fragments.empty(),
            "Alternation must consist of atleast 2 fragments!");
     auto& other = fragments.top();
+    //printf("   other.entry (for alternation)=%d\n", other.entry->c);
     top.entry->next = frag.entry;
     top.tails = frag.tails;
     top.entry->other = other.entry;
     for (auto t : other.tails) top.appendState(t);
     fragments.pop();
-    fragments.push(top);
-    return;
+  } else {
+    top.addState(frag.entry);
+    top.tails = frag.tails;
   }
-  top.addState(frag.entry);
-  top.tails = frag.tails;
   fragments.push(top);
   stitchFragments();
 }
