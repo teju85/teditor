@@ -7,14 +7,34 @@ namespace parser {
 
 TEST_CASE("NFA::general") {
   NFA nfa;
-  SECTION("simple") {
+  SECTION("simple1") {
     nfa.addRegex("a");
+    REQUIRE(nfa.find("a") == 0);
+    REQUIRE(nfa.find("b") == NFA::NoMatch);
+    REQUIRE(nfa.find("hello", 2) == NFA::NoMatch);
+    REQUIRE(nfa.find("hallo", 1) == 1);
+  }
+  SECTION("simple2") {
+    nfa.addRegex("abc");
+    REQUIRE(nfa.find("acb") == NFA::NoMatch);
+    REQUIRE(nfa.find("b") == NFA::NoMatch);
+    REQUIRE(nfa.find("hello", 2) == NFA::NoMatch);
+    REQUIRE(nfa.find(" abc", 1) == 3);
   }
   SECTION("+") {
     nfa.addRegex("ab+");
+    REQUIRE(nfa.find("a") == NFA::NoMatch);
+    REQUIRE(nfa.find("aab") == NFA::NoMatch);
+    // REQUIRE(nfa.find("ab") == 1);
+    // REQUIRE(nfa.find("abb") == 2);
+    // REQUIRE(nfa.find("aab", 1) == 2);
   }
   SECTION("*") {
     nfa.addRegex("ab*");
+    // REQUIRE(nfa.find("a") == 0);
+    // REQUIRE(nfa.find("aab") == NFA::NoMatch);
+    // REQUIRE(nfa.find("ab") == 1);
+    // REQUIRE(nfa.find("abb") == 2);
   }
   SECTION("?") {
     nfa.addRegex("ab?");

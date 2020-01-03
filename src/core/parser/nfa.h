@@ -26,13 +26,12 @@ struct NFA {
    */
   void addRegex(const std::string& reg);
 
-  /** after the search is done, this will tell if there was a match or not */
-  bool isMatch() const {
-    for (auto s : actives) if (s->c == Match) return true;
-    return false;
-  }
+  size_t find(const std::string& str, size_t start = 0, size_t end = 0);
 
   ~NFA() { for (auto itr : states) delete itr; }
+
+  /** represents case when regex didn't match anything */
+  static const size_t NoMatch;
 
 private:
   /** list of special states */
@@ -67,13 +66,13 @@ private:
   std::vector<State*> startStates;
   // during matching these are the "active" states
   // this does NOT own the underlying pointers
-  std::unordered_set<State*> actives;
+  // uses double-buffering to avoid corruption
+  std::unordered_set<State*> actives[2];
+  // currently used active states
+  int currentActive;
 
-  // prepares the engine for the next match task
-  void reset() {
-    actives.clear();
-    for (auto s : startStates) actives.insert(s);
-  }
+  void stepThroughSplitStates();
+  void checkForSplitState(State* st, std::unordered_set<State*>& ac);
 
 
   // used only while compiling the regex's

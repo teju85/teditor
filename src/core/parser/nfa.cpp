@@ -4,6 +4,8 @@
 namespace teditor {
 namespace parser {
 
+const size_t NFA::NoMatch = std::string::npos;
+
 bool NFA::State::isMatch(char in) const {
   switch(c) {
   case Split:
@@ -48,11 +50,54 @@ void NFA::CompilerState::validate(const std::string& reg) {
     ASSERT(false, "No matching ']' char for '['? regex=%s", reg.c_str());
 }
 
+size_t NFA::find(const std::string& str, size_t start, size_t end) {
+  if (end == 0) end = str.size();
+  // prepare the engine for the current match task
+  currentActive = 0;
+  actives[currentActive].clear();
+  for (auto s : startStates) actives[currentActive].insert(s);
+  for (; start < end; ++start) {
+    stepThroughSplitStates();
+    auto nextActive = currentActive ^ 1;
+    actives[nextActive].clear();
+    for (auto a : actives[currentActive]) {
+      //printf("state-char = %d char = %d start = %lu\n", a->c, str[start], start);
+      if (a->isMatch(str[start])) {
+        if (a->next != nullptr) actives[nextActive].insert(a->next);
+        if (a->other != nullptr) actives[nextActive].insert(a->other);
+      }
+    }
+    currentActive = nextActive;
+    if (actives[currentActive].empty()) return NoMatch;
+    // always finds the shortest match!
+    for (auto a : actives[currentActive]) if (a->c == Match) return start;
+  }
+  return NoMatch;
+}
+
 void NFA::addRegex(const std::string& reg) {
   CompilerState cState;
   for (auto c : reg) parseChar(c, cState);
   cState.validate(reg);
   stitchFragments();
+}
+
+void NFA::stepThroughSplitStates() {
+  auto nextActive = currentActive ^ 1;
+  actives[nextActive].clear();
+  for (auto a : actives[currentActive])
+    checkForSplitState(a, actives[nextActive]);
+  currentActive = nextActive;
+}
+
+void NFA::checkForSplitState(NFA::State* st, std::unordered_set<State*>& ac) {
+  if (st == nullptr) return;
+  if (st->c != Specials::Split) {
+    ac.insert(st);
+    return;
+  }
+  checkForSplitState(st->next, ac);
+  checkForSplitState(st->other, ac);
 }
 
 void NFA::parseChar(char c, CompilerState& cState) {
