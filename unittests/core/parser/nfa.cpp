@@ -94,33 +94,43 @@ TEST_CASE("NFA::BackSlash") {
   }
 }
 
-// TEST_CASE("NFA::SqBrkt") {
-//   NFA nfa;
-//   SECTION("any-from-list") {
-//     nfa.addRegex("[abcd]");
-//   }
-//   SECTION("range") {
-//     nfa.addRegex("[a-d]");
-//   }
-//   SECTION("range-with-minus") {
-//     nfa.addRegex("[0--]");  // -, ., / and 0
-//   }
-//   SECTION("reverse-range") {
-//     nfa.addRegex("[d-a]");
-//   }
-//   SECTION("only-minus") {
-//     nfa.addRegex("[-]");
-//   }
-//   SECTION("sq-brkt-in-range") {
-//     nfa.addRegex("[[-]]");  // [, \ and ]
-//   }
-//   SECTION("literal-^") {
-//     nfa.addRegex("[ab^]");  // a, b, and ^
-//   }
-//   SECTION("^ aka none-from-list") {
-//     nfa.addRegex("[^ab]");
-//   }
-// }
+TEST_CASE("NFA::SqBrkt") {
+  NFA nfa;
+  SECTION("any-from-list") {
+    nfa.addRegex("[abcd]");
+    REQUIRE(nfa.find("a") == 0);
+    REQUIRE(nfa.find("b") == 0);
+    REQUIRE(nfa.find("c") == 0);
+    REQUIRE(nfa.find("d") == 0);
+    REQUIRE(nfa.find("e") == NFA::NoMatch);
+  }
+  SECTION("range") {
+    nfa.addRegex("[a-d]");
+    REQUIRE(nfa.find("a") == 0);
+    REQUIRE(nfa.find("b") == 0);
+    REQUIRE(nfa.find("c") == 0);
+    REQUIRE(nfa.find("d") == 0);
+    REQUIRE(nfa.find("e") == NFA::NoMatch);
+  }
+  // SECTION("range-with-minus") {
+  //   nfa.addRegex("[0--]");  // -, ., / and 0
+  // }
+  // SECTION("reverse-range") {
+  //   nfa.addRegex("[d-a]");
+  // }
+  // SECTION("only-minus") {
+  //   nfa.addRegex("[-]");
+  // }
+  // SECTION("sq-brkt-in-range") {
+  //   nfa.addRegex("[[-]]");  // [, \ and ]
+  // }
+  // SECTION("literal-^") {
+  //   nfa.addRegex("[ab^]");  // a, b, and ^
+  // }
+  // SECTION("^ aka none-from-list") {
+  //   nfa.addRegex("[^ab]");
+  // }
+}
 
 } // end namespace parser
 } // end namespace teditor
