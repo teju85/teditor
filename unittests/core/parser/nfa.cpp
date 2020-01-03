@@ -77,12 +77,16 @@ TEST_CASE("NFA::BackSlash") {
     REQUIRE(nfa.find(" abcd") == NFA::NoMatch);
     REQUIRE(nfa.find("\tabcd") == NFA::NoMatch);
   }
-  // SECTION("\\d") {
-  //   nfa.addRegex("\\d");
-  // }
-  // SECTION("\\Z") {  // has no meaning in the current NFA logic!
-  //   nfa.addRegex("\\Z");
-  // }
+  SECTION("\\d") {
+    nfa.addRegex("\\d");
+    REQUIRE(nfa.find("0abcs") == 0);
+    REQUIRE(nfa.find("abcs") == NFA::NoMatch);
+  }
+  SECTION("\\Z") {  // has no meaning in the current NFA logic!
+    nfa.addRegex("\\Z");
+    REQUIRE(nfa.find("Z") == 0);
+    REQUIRE(nfa.find("aZ") == NFA::NoMatch);
+  }
 }
 
 // TEST_CASE("NFA::SqBrkt") {
