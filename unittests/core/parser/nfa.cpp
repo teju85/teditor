@@ -31,10 +31,12 @@ TEST_CASE("NFA::general") {
   }
   SECTION("*") {
     nfa.addRegex("ab*");
-    // REQUIRE(nfa.find("a") == 0);
-    // REQUIRE(nfa.find("aab") == NFA::NoMatch);
-    // REQUIRE(nfa.find("ab") == 1);
-    // REQUIRE(nfa.find("abb") == 2);
+    REQUIRE(nfa.find("a") == 0);
+    REQUIRE(nfa.find("cab") == NFA::NoMatch);
+    REQUIRE(nfa.find("acc") == 0);
+    REQUIRE(nfa.find("ab") == 1);
+    REQUIRE(nfa.find("abb") == 2);
+    REQUIRE(nfa.find("abbbbbc") == 5);
   }
   SECTION("?") {
     nfa.addRegex("ab?");

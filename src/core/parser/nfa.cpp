@@ -51,6 +51,7 @@ void NFA::CompilerState::validate(const std::string& reg) {
 }
 
 size_t NFA::find(const std::string& str, size_t start, size_t end) {
+  //printf("start...\n");
   if (end == 0) end = str.size();
   // prepare the engine for the current match task
   acs.current().clear();
@@ -60,16 +61,20 @@ size_t NFA::find(const std::string& str, size_t start, size_t end) {
     acs.next().clear();
     for (auto& a : acs.current()) {
       auto& next = acs.next();
+      // printf("state-char = %d char = %d start = %lu pos = %lu\n",
+      //        a->c, str[start], start, a->matchPos);
       if (a->c == Specials::Match) {
         next.insert(a);
         continue;
       }
       if (a->isMatch(str[start])) {
         if (a->next != nullptr) {
+          //printf("  inserting next c=%d\n", a->next->c);
           a->next->matchPos = start;
           next.insert(a->next);
         }
         if (a->other != nullptr) {
+          //printf("  inserting other c=%d\n", a->other->c);
           a->other->matchPos = start;
           next.insert(a->other);
         }
@@ -83,11 +88,14 @@ size_t NFA::find(const std::string& str, size_t start, size_t end) {
   size_t pos = 0;
   bool matchFound = false;
   for (auto& a : acs.current()) {
+    //printf("final state c=%d\n", a->c);
     if (a->c == Match) {
+      //printf("match found... pos=%lu\n", a->matchPos);
       matchFound = true;
       pos = std::max(a->matchPos, pos);
     }
   }
+  //printf("end...\n");
   return matchFound ? pos : NoMatch;
 }
 
@@ -107,6 +115,7 @@ void NFA::stepThroughSplitStates() {
 
 void NFA::checkForSplitState(NFA::State* st, size_t pos, Actives& ac) {
   if (st == nullptr) return;
+  //printf("checking for split-state jump for st->c=%d .. #states=%lu\n", st->c, states.size());
   st->matchPos = pos;
   if (st->c != Specials::Split) {
     ac.insert(st);
@@ -153,6 +162,7 @@ void NFA::parseGeneral(char c, CompilerState cState) {
     auto& frag = fragments.top();
     auto* sp = createState(Specials::Split);
     sp->other = frag.entry;
+    frag.entry = sp;
     frag.addState(sp);
   } break;
   case '?': {
@@ -255,6 +265,7 @@ void NFA::stitchFragments() {
   }
   auto top = fragments.top();
   fragments.pop();
+  //printf("stitching: frag.entry=%d top.entry=%d\n", frag.entry->c, top.entry->c);
   if (top.isOnlySplit()) {
     ASSERT(!fragments.empty(),
            "Alternation must consist of atleast 2 fragments!");
