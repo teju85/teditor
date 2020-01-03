@@ -53,26 +53,36 @@ void NFA::CompilerState::validate(const std::string& reg) {
 size_t NFA::find(const std::string& str, size_t start, size_t end) {
   if (end == 0) end = str.size();
   // prepare the engine for the current match task
-  currentActive = 0;
-  actives[currentActive].clear();
-  for (auto s : startStates) actives[currentActive].insert(s);
+  acs.current().clear();
+  for (auto s : startStates) acs.current()[s] = NoMatch;
   for (; start < end; ++start) {
     stepThroughSplitStates();
-    auto nextActive = currentActive ^ 1;
-    actives[nextActive].clear();
-    for (auto a : actives[currentActive]) {
-      //printf("state-char = %d char = %d start = %lu\n", a->c, str[start], start);
-      if (a->isMatch(str[start])) {
-        if (a->next != nullptr) actives[nextActive].insert(a->next);
-        if (a->other != nullptr) actives[nextActive].insert(a->other);
+    acs.next().clear();
+    for (auto& a : acs.current()) {
+      auto& next = acs.next();
+      //printf("state-char = %d char = %d start = %lu\n", a.first->c, str[start], start);
+      if (a.first->c == Specials::Match) {
+        next[a.first] = a.second;
+        continue;
+      }
+      if (a.first->isMatch(str[start])) {
+        if (a.first->next != nullptr) next[a.first->next] = start;
+        if (a.first->other != nullptr) next[a.first->other] = start;
       }
     }
-    currentActive = nextActive;
-    if (actives[currentActive].empty()) return NoMatch;
-    // always finds the shortest match!
-    for (auto a : actives[currentActive]) if (a->c == Match) return start;
+    acs.update();
+    if (acs.current().empty()) return NoMatch;
   }
-  return NoMatch;
+  // always finds the longest match!
+  size_t pos = 0;
+  bool matchFound = false;
+  for (auto& a : acs.current()) {
+    if (a.first->c == Match) {
+      matchFound = true;
+      pos = std::max(a.second, pos);
+    }
+  }
+  return matchFound ? pos : NoMatch;
 }
 
 void NFA::addRegex(const std::string& reg) {
@@ -83,21 +93,20 @@ void NFA::addRegex(const std::string& reg) {
 }
 
 void NFA::stepThroughSplitStates() {
-  auto nextActive = currentActive ^ 1;
-  actives[nextActive].clear();
-  for (auto a : actives[currentActive])
-    checkForSplitState(a, actives[nextActive]);
-  currentActive = nextActive;
+  acs.next().clear();
+  for (auto& a : acs.current())
+    checkForSplitState(a.first, a.second, acs.next());
+  acs.update();
 }
 
-void NFA::checkForSplitState(NFA::State* st, std::unordered_set<State*>& ac) {
+void NFA::checkForSplitState(NFA::State* st, size_t pos, Actives& ac) {
   if (st == nullptr) return;
   if (st->c != Specials::Split) {
-    ac.insert(st);
+    ac[st] = pos;
     return;
   }
-  checkForSplitState(st->next, ac);
-  checkForSplitState(st->other, ac);
+  checkForSplitState(st->next, pos, ac);
+  checkForSplitState(st->other, pos, ac);
 }
 
 void NFA::parseChar(char c, CompilerState& cState) {

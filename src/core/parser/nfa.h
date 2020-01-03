@@ -3,7 +3,8 @@
 #include <stack>
 #include <string>
 #include <vector>
-#include <unordered_set>
+#include <unordered_map>
+#include <core/double_buffer.hpp>
 
 namespace teditor {
 namespace parser {
@@ -60,6 +61,9 @@ private:
   };  // struct State
 
 
+  typedef std::unordered_map<State*, size_t> Actives;
+
+
   std::vector<State*> states;  // all states for this NFA
   // one start state pointer for each lexer-token regex
   // this does NOT own the underlying pointers
@@ -67,12 +71,10 @@ private:
   // during matching these are the "active" states
   // this does NOT own the underlying pointers
   // uses double-buffering to avoid corruption
-  std::unordered_set<State*> actives[2];
-  // currently used active states
-  int currentActive;
+  DoubleBuffer<Actives> acs;
 
   void stepThroughSplitStates();
-  void checkForSplitState(State* st, std::unordered_set<State*>& ac);
+  void checkForSplitState(State* st, size_t pos, Actives& ac);
 
 
   // used only while compiling the regex's
