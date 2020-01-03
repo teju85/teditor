@@ -28,11 +28,6 @@ void NFA::Fragment::addState(State* s) {
   appendState(s);
 }
 
-bool NFA::Fragment::isOnlySplit() const {
-  return entry != nullptr && entry->c == Specials::Split && !tails.empty() &&
-    tails[0] == entry;
-}
-
 
 NFA::CompilerState::CompilerState() :
   prevBackSlash(false), prevSqBracketOpen(false), isUnderRange(false),
@@ -203,9 +198,8 @@ void NFA::parseGeneral(char c, CompilerState& cState) {
     frag.appendState(sp);
   } break;
   case '|': {
-    // just create a fragment containing split state. This will be stitched
-    // properly during `stitchFragments` call
-    auto* sp = createState(Specials::Split);
+    // This will be stitched properly during `stitchFragments` call
+    auto* sp = createState(Specials::Alternation);
     Fragment frag(sp);
     fragments.push(frag);
   } break;
@@ -293,7 +287,8 @@ void NFA::stitchFragments() {
   fragments.pop();
   //printf("stitching: frag.entry=%d top.entry=%d\n", frag.entry->c, top.entry->c);
   // alternation
-  if (top.isOnlySplit()) {
+  if (top.entry->c == Specials::Alternation) {
+    top.entry->c = Specials::Split;
     ASSERT(!fragments.empty(),
            "Alternation must consist of atleast 2 fragments!");
     stitchFragments();
