@@ -215,8 +215,8 @@ TEST_CASE("NFA::Groups") {
   NFA nfa;
   SECTION("simple") {
     nfa.addRegex("(abc)");
-    // REQUIRE(nfa.find("abc") == 2);
-    // REQUIRE(nfa.find("aabc") == NFA::NoMatch);
+    REQUIRE(nfa.find("abc") == 2);
+    REQUIRE(nfa.find("aabc") == NFA::NoMatch);
   }
 }
 
