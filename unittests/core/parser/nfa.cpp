@@ -40,9 +40,18 @@ TEST_CASE("NFA::general") {
   }
   SECTION("?") {
     nfa.addRegex("ab?");
+    REQUIRE(nfa.find("a") == 0);
+    REQUIRE(nfa.find("ab") == 1);
+    REQUIRE(nfa.find("cab") == NFA::NoMatch);
+    REQUIRE(nfa.find("abb") == 1);
   }
   SECTION(".") {
     nfa.addRegex("ab.");
+    REQUIRE(nfa.find("a") == NFA::NoMatch);
+    REQUIRE(nfa.find("ab") == NFA::NoMatch);
+    REQUIRE(nfa.find("abx") == 2);
+    REQUIRE(nfa.find("aby") == 2);
+    REQUIRE(nfa.find("axx") == NFA::NoMatch);
   }
   SECTION("|") {
     nfa.addRegex("a|b");
