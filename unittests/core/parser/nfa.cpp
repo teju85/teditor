@@ -43,5 +43,33 @@ TEST_CASE("NFA::BackSlash") {
   }
 }
 
+TEST_CASE("NFA::SqBrkt") {
+  NFA nfa;
+  SECTION("any-from-list") {
+    nfa.addRegex("[abcd]");
+  }
+  SECTION("range") {
+    nfa.addRegex("[a-d]");
+  }
+  SECTION("range-with-minus") {
+    nfa.addRegex("[0--]");  // -, ., / and 0
+  }
+  SECTION("reverse-range") {
+    nfa.addRegex("[d-a]");
+  }
+  SECTION("only-minus") {
+    nfa.addRegex("[-]");
+  }
+  SECTION("sq-brkt-in-range") {
+    nfa.addRegex("[[-]]");  // [, \ and ]
+  }
+  SECTION("literal-^") {
+    nfa.addRegex("[ab^]");  // a, b, and ^
+  }
+  SECTION("^ aka none-from-list") {
+    nfa.addRegex("[^ab]");
+  }
+}
+
 } // end namespace parser
 } // end namespace teditor
