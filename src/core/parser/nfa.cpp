@@ -108,6 +108,16 @@ void NFA::addRegex(const std::string& reg) {
   cState.validate(reg);
   //printf("stitch start len=%lu...\n", fragments.size());
   stitchFragments();
+  // reached the end of the list, note down its start state and add match state
+  ASSERT(fragments.size() == 1,
+         "After stitching, there should only be one fragment left! [%lu]",
+         fragments.size());
+  auto& frag = fragments.top();
+  //printf("last fragment entry = %d\n", frag.entry->c);
+  startStates.push_back(frag.entry);
+  auto* st = createState(Specials::Match);
+  frag.addState(st);
+  fragments.pop();
   //printf("stitch end...\n");
 }
 
@@ -268,23 +278,17 @@ void NFA::addNewStateFor(int c) {
 }
 
 void NFA::stitchFragments() {
-  if (fragments.empty()) return;
+  if (fragments.size() <= 1) return;
   auto frag = fragments.top();
   fragments.pop();
-  // reached the end of the list, note down its start state and add match state
-  if (fragments.empty()) {
-    //printf("last fragment entry = %d\n", frag.entry->c);
-    startStates.push_back(frag.entry);
-    auto* st = createState(Specials::Match);
-    frag.addState(st);
-    return;
-  }
   auto top = fragments.top();
   fragments.pop();
   //printf("stitching: frag.entry=%d top.entry=%d\n", frag.entry->c, top.entry->c);
+  // alternation
   if (top.isOnlySplit()) {
     ASSERT(!fragments.empty(),
            "Alternation must consist of atleast 2 fragments!");
+    stitchFragments();
     auto& other = fragments.top();
     //printf("   other.entry (for alternation)=%d\n", other.entry->c);
     top.entry->next = frag.entry;
@@ -292,10 +296,12 @@ void NFA::stitchFragments() {
     top.entry->other = other.entry;
     for (auto t : other.tails) top.appendState(t);
     fragments.pop();
-  } else {
-    top.addState(frag.entry);
-    top.tails = frag.tails;
+    fragments.push(top);
+    return;
   }
+  // normal concatenation
+  top.addState(frag.entry);
+  top.tails = frag.tails;
   fragments.push(top);
   stitchFragments();
 }

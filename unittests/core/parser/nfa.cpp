@@ -61,6 +61,19 @@ TEST_CASE("NFA::general") {
     REQUIRE(nfa.find("bcc") == 0);
     REQUIRE(nfa.find("c") == NFA::NoMatch);
   }
+  SECTION("| - case 1") {
+    nfa.addRegex("a|b|c");
+    REQUIRE(nfa.find("a") == 0);
+    REQUIRE(nfa.find("b") == 0);
+    REQUIRE(nfa.find("c") == 0);
+    REQUIRE(nfa.find("d") == NFA::NoMatch);
+  }
+  SECTION("| - case 2") {
+    nfa.addRegex("abc|def");
+    REQUIRE(nfa.find("def") == 2);
+    REQUIRE(nfa.find("abc") == 2);
+    REQUIRE(nfa.find("ghi") == NFA::NoMatch);
+  }
 }
 
 TEST_CASE("NFA::BackSlash") {
