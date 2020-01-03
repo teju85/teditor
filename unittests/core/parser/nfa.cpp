@@ -115,24 +115,47 @@ TEST_CASE("NFA::SqBrkt") {
     REQUIRE(nfa.find("d") == 0);
     REQUIRE(nfa.find("e") == NFA::NoMatch);
   }
-  // SECTION("range-with-minus") {
-  //   nfa.addRegex("[0--]");  // -, ., / and 0
-  // }
-  // SECTION("reverse-range") {
-  //   nfa.addRegex("[d-a]");
-  // }
-  // SECTION("only-minus") {
-  //   nfa.addRegex("[-]");
-  // }
-  // SECTION("sq-brkt-in-range") {
-  //   nfa.addRegex("[[-]]");  // [, \ and ]
-  // }
-  // SECTION("literal-^") {
-  //   nfa.addRegex("[ab^]");  // a, b, and ^
-  // }
-  // SECTION("^ aka none-from-list") {
-  //   nfa.addRegex("[^ab]");
-  // }
+  SECTION("range-with-minus") {
+    nfa.addRegex("[0--]");  // -, ., / and 0
+    REQUIRE(nfa.find("0") == 0);
+    REQUIRE(nfa.find("/") == 0);
+    REQUIRE(nfa.find(".") == 0);
+    REQUIRE(nfa.find("-") == 0);
+    REQUIRE(nfa.find("a") == NFA::NoMatch);
+  }
+  SECTION("reverse-range") {
+    nfa.addRegex("[d-a]");
+    REQUIRE(nfa.find("a") == 0);
+    REQUIRE(nfa.find("b") == 0);
+    REQUIRE(nfa.find("c") == 0);
+    REQUIRE(nfa.find("d") == 0);
+    REQUIRE(nfa.find("e") == NFA::NoMatch);
+  }
+  SECTION("only-minus") {
+    nfa.addRegex("[-]");
+    REQUIRE(nfa.find("-") == 0);
+    REQUIRE(nfa.find("a") == NFA::NoMatch);
+  }
+  SECTION("sq-brkt-in-range") {
+    nfa.addRegex("[[-]]");  // [, \ and ]
+    REQUIRE(nfa.find("[") == 0);
+    REQUIRE(nfa.find("\\") == 0);
+    REQUIRE(nfa.find("]") == 0);
+    REQUIRE(nfa.find("e") == NFA::NoMatch);
+  }
+  SECTION("literal-^") {
+    nfa.addRegex("[ab^]");  // a, b, and ^
+    REQUIRE(nfa.find("a") == 0);
+    REQUIRE(nfa.find("b") == 0);
+    REQUIRE(nfa.find("^") == 0);
+    REQUIRE(nfa.find("e") == NFA::NoMatch);
+  }
+  SECTION("^ aka none-from-list") {
+    nfa.addRegex("[^ab]");
+    REQUIRE(nfa.find("a") == NFA::NoMatch);
+    REQUIRE(nfa.find("b") == NFA::NoMatch);
+    REQUIRE(nfa.find("c") == 0);
+  }
 }
 
 } // end namespace parser
