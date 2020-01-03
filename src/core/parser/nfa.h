@@ -14,6 +14,9 @@ namespace parser {
 
 /**
  * @brief A single NFA used to match a list of tokens (as seen during lexing)
+ * @note the current design is not thread-safe! Meaning, the same NFA object
+ *       cannot be used by multiple threads at the same. It will cause
+ *       corruption of data
  */
 struct NFA {
   /**
