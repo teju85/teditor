@@ -235,6 +235,14 @@ TEST_CASE("NFA::Groups") {
     REQUIRE(nfa.find("abcdabcd") == 7);
     REQUIRE(nfa.find("abc") == NFA::NoMatch);
   }
+  SECTION("simple5") {
+    nfa.addRegex("ab|(cd)+");
+    REQUIRE(nfa.find("ab") == 1);
+    REQUIRE(nfa.find("cd") == 1);
+    REQUIRE(nfa.find("cdcd") == 3);
+    REQUIRE(nfa.find("ac") == NFA::NoMatch);
+    REQUIRE(nfa.find("ca") == NFA::NoMatch);
+  }
 }
 
 } // end namespace parser
