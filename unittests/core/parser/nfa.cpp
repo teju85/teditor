@@ -63,21 +63,24 @@ TEST_CASE("NFA::general") {
   }
 }
 
-// TEST_CASE("NFA::BackSlash") {
-//   NFA nfa;
-//   SECTION("\\s") {
-//     nfa.addRegex("\\s");
-//   }
-//   SECTION("\\S") {
-//     nfa.addRegex("\\S");
-//   }
-//   SECTION("\\d") {
-//     nfa.addRegex("\\d");
-//   }
-//   SECTION("\\Z") {  // has no meaning in the current NFA logic!
-//     nfa.addRegex("\\Z");
-//   }
-// }
+TEST_CASE("NFA::BackSlash") {
+  NFA nfa;
+  SECTION("\\s") {
+    nfa.addRegex("\\s");
+    REQUIRE(nfa.find("abcdef") == NFA::NoMatch);
+    REQUIRE(nfa.find("Hello World") == NFA::NoMatch);
+    REQUIRE(nfa.find("Hello World", 5) == 5);
+  }
+  // SECTION("\\S") {
+  //   nfa.addRegex("\\S");
+  // }
+  // SECTION("\\d") {
+  //   nfa.addRegex("\\d");
+  // }
+  // SECTION("\\Z") {  // has no meaning in the current NFA logic!
+  //   nfa.addRegex("\\Z");
+  // }
+}
 
 // TEST_CASE("NFA::SqBrkt") {
 //   NFA nfa;

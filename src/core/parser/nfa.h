@@ -113,7 +113,7 @@ private:
   };  // struct CompilerState
 
   void parseChar(char c, CompilerState& cState);
-  void parseGeneral(char c, CompilerState cState);
+  void parseGeneral(char c, CompilerState& cState);
   void parseInsideSqBracket(char c, CompilerState& cState);
   State* createState(int c);
   void addNewStateFor(int c);

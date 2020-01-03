@@ -133,6 +133,7 @@ void NFA::checkForSplitState(NFA::State* st, size_t pos, Actives& ac) {
 }
 
 void NFA::parseChar(char c, CompilerState& cState) {
+  //printf("prevBS = %d char = %c\n", cState.prevBackSlash, c);
   if (cState.isUnderSqBracket) {
     parseInsideSqBracket(c, cState);
     return;
@@ -157,7 +158,8 @@ void NFA::parseChar(char c, CompilerState& cState) {
   parseGeneral(c, cState);
 }
 
-void NFA::parseGeneral(char c, CompilerState cState) {
+void NFA::parseGeneral(char c, CompilerState& cState) {
+  //printf("current char for regex compiling = %c\n", c);
   switch(c) {
   case '+': {
     auto& frag = fragments.top();
@@ -205,6 +207,8 @@ void NFA::parseGeneral(char c, CompilerState cState) {
     break;
   case '\\':
     cState.prevBackSlash = true;
+    //printf("inside backslash handler\n");
+    //printf("  prevBS = %d char = %c\n", cState.prevBackSlash, c);
     break;
   default:
     addNewStateFor(c);
@@ -248,6 +252,7 @@ void NFA::parseInsideSqBracket(char c, CompilerState& cState) {
 }
 
 NFA::State* NFA::createState(int c) {
+  //printf("creating state for %d\n", c);
   auto* st = new State(c);
   states.push_back(st);
   return st;
