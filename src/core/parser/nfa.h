@@ -15,6 +15,7 @@ namespace parser {
 
 /**
  * @brief Ken-Thompson NFA as described here: https://swtch.com/~rsc/regexp/regexp1.html
+ *        but adjusted to work with teditor environment
  * @note the current design is not thread-safe! Meaning, the same NFA object
  *       cannot be used by multiple threads at the same. It will cause
  *       corruption of data
