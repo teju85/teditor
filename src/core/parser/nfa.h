@@ -30,9 +30,19 @@ struct NFA {
    */
   void addRegex(const std::string& reg);
 
+  /**
+   * @brief String match function
+   * @param regexId the regex which matched the input string
+   * @param str the input string
+   * @param start location from where to start searching
+   * @param end location (minus 1) till where to search
+   * @return the location of the longest match, else returns NFA::NoMatch
+   * @{
+   */
   size_t find(const std::string& str, size_t start = 0, size_t end = 0);
   size_t find(size_t& regexId, const std::string& str, size_t start = 0,
               size_t end = 0);
+  /** @} */
 
   ~NFA() { for (auto itr : states) delete itr; }
 
@@ -58,11 +68,11 @@ private:
   ///@todo: special case for just string comparison (to reduce mem footprint)
   struct State {
     int c;
-    std::string s;  // when matching with a set of possible chars (aka [...]) */
+    std::string s;    // for matching with a set of possible chars (aka [...])
     State* next;
-    State* other;  // used only with Split state
+    State* other;     // used only with Split state
     size_t matchPos;  // used only during matching phase
-    size_t regId;  // only used to track which regex matched the input string
+    size_t regId;     // only used to track which regex matched the input string
 
     State() : c(0), s(), next(nullptr), other(nullptr) {}
     State(int _c): c(_c), s(), next(nullptr), other(nullptr) {}
