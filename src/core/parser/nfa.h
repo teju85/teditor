@@ -46,6 +46,28 @@ struct NFA {
   bool isMatch(bool lastStateRemaining = false) const;
 
   /**
+   * @brief Tells if after the current `step()` whether there are any active
+   *        states still remaining. So, this can be used to prematurely stop
+   *        the regex search in the string
+   * @return true if there are no more actives states, else false
+   */
+  bool areActiveStatesEmpty() const { return acs.current().empty(); }
+
+  /**
+   * @brief After the search has finished, use this to know the latest position
+   *        of the match of the regex in the input string
+   * @return if match found, its latest position in string, else NFA::NoMatch
+   */
+  size_t getMatchPos() const { return matchState->matchPos; }
+
+  /**
+   * @brief Step through the NFA state using the current char
+   * @param c current char
+   * @param pos its position in the input string
+   */
+  void step(char c, size_t pos);
+
+  /**
    * @brief Reset all the variables used during regex search
    *
    * This needs to be called once before beginning of every search

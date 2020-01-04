@@ -65,37 +65,41 @@ size_t NFA::find(const std::string& str, size_t start, size_t end) {
   if (end == 0) end = str.size();
   reset();
   for (; start < end; ++start) {
-    acs.next().clear();
-    for (auto& a : acs.current()) {
-      auto& next = acs.next();
-      if (a->c == Specials::Match) {
-        next.insert(a);
-        continue;
-      }
-      if (a->isMatch(str[start])) {
-        if (a->next != nullptr) {
-          a->next->matchPos = start;
-          next.insert(a->next);
-        }
-        if (a->other != nullptr) {
-          a->other->matchPos = start;
-          next.insert(a->other);
-        }
-      }
-    }
-    acs.update();
-    if (acs.current().empty()) return NoMatch;
-    stepThroughSplitStates();
+    step(str[start], start);
+    if (areActiveStatesEmpty()) return NoMatch;
     // if only match state remains, no further progress is possible
-    if (isMatch(true)) return matchState->matchPos;
+    if (isMatch(true)) return getMatchPos();
   }
-  return matchState->matchPos;
+  return getMatchPos();
 }
 
 void NFA::reset() {
   matchState->matchPos = NoMatch;
   acs.current().clear();
   acs.current().insert(startState);
+  stepThroughSplitStates();
+}
+
+void NFA::step(char c, size_t pos) {
+  acs.next().clear();
+  for (auto& a : acs.current()) {
+    auto& next = acs.next();
+    if (a->c == Specials::Match) {
+      next.insert(a);
+      continue;
+    }
+    if (a->isMatch(c)) {
+      if (a->next != nullptr) {
+        a->next->matchPos = pos;
+        next.insert(a->next);
+      }
+      if (a->other != nullptr) {
+        a->other->matchPos = pos;
+        next.insert(a->other);
+      }
+    }
+  }
+  acs.update();
   stepThroughSplitStates();
 }
 
