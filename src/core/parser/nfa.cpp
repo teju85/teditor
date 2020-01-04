@@ -52,33 +52,25 @@ size_t NFA::find(const std::string& str, size_t start, size_t end) {
 
 size_t NFA::find(size_t& regexId, const std::string& str, size_t start,
                  size_t end) {
-  //printf("start...\n");
   if (end == 0) end = str.size();
   // prepare the engine for the current match task
   acs.current().clear();
   for (auto s : startStates) acs.current().insert(s);
   stepThroughSplitStates();
-  //printf("actives count = %lu start states = %lu\n", acs.current().size(), startStates.size());
   for (; start < end; ++start) {
     acs.next().clear();
-    //printf("current char = %c(%d) pos = %lu\n", str[start], str[start], start);
     for (auto& a : acs.current()) {
       auto& next = acs.next();
-      // //printf("state-char = %d char = %d start = %lu pos = %lu\n",
-      //        a->c, str[start], start, a->matchPos);
       if (a->c == Specials::Match) {
         next.insert(a);
         continue;
       }
-      //printf("current state = %d\n", a->c);
       if (a->isMatch(str[start])) {
         if (a->next != nullptr) {
-          //printf("  inserting next c=%d\n", a->next->c);
           a->next->matchPos = start;
           next.insert(a->next);
         }
         if (a->other != nullptr) {
-          //printf("  inserting other c=%d\n", a->other->c);
           a->other->matchPos = start;
           next.insert(a->other);
         }
@@ -92,15 +84,12 @@ size_t NFA::find(size_t& regexId, const std::string& str, size_t start,
   size_t pos = 0;
   bool matchFound = false;
   for (auto& a : acs.current()) {
-    //printf("final state c=%d\n", a->c);
     if (a->c == Match) {
-      //printf("match found... pos=%lu\n", a->matchPos);
       matchFound = true;
       pos = std::max(a->matchPos, pos);
       regexId = a->regId;
     }
   }
-  //printf("end...\n");
   return matchFound ? pos : NoMatch;
 }
 
@@ -108,33 +97,27 @@ void NFA::addRegex(const std::string& reg) {
   CompilerState cState;
   for (auto c : reg) parseChar(c, cState);
   cState.validate(reg);
-  //printf("stitch start len=%lu...\n", fragments.size());
   stitchFragments();
   // reached the end of the list, note down its start state and add match state
   ASSERT(fragments.size() == 1,
          "After stitching, there should only be one fragment left! [%lu]",
          fragments.size());
   auto& frag = fragments.top();
-  //printf("last fragment entry = %d\n", frag.entry->c);
   auto* st = createState(Specials::Match);
   frag.addState(st);
   startStates.push_back(frag.entry);
   fragments.pop();
-  //printf("stitch end...\n");
 }
 
 void NFA::stepThroughSplitStates() {
   acs.next().clear();
-  for (auto& a : acs.current()) {
-    //printf("working on state = %d\n", a->c);
+  for (auto& a : acs.current())
     checkForSplitState(a, a->matchPos, acs.next());
-  }
   acs.update();
 }
 
 void NFA::checkForSplitState(NFA::State* st, size_t pos, Actives& ac) {
   if (st == nullptr) return;
-  //printf("checking for split-state jump for st->c=%d .. #states=%lu\n", st->c, states.size());
   st->matchPos = pos;
   if (st->c != Specials::Split) {
     ac.insert(st);
@@ -181,7 +164,6 @@ void NFA::parseChar(char c, CompilerState& cState) {
 }
 
 void NFA::parseGeneral(char c, CompilerState& cState) {
-  //printf("current char for regex compiling = %c\n", c);
   switch(c) {
   case '+': {
     auto& frag = fragments.top();
@@ -268,7 +250,6 @@ void NFA::parseInsideSqBracket(char c, CompilerState& cState) {
 }
 
 NFA::State* NFA::createState(int c) {
-  //printf("creating state for %d\n", c);
   auto* st = new State(c);
   states.push_back(st);
   st->regId = startStates.size();
@@ -292,7 +273,6 @@ void NFA::stitchFragments() {
     fragments.push(frag);
     return;
   }
-  //printf("stitching: frag.entry=%d top.entry=%d\n", frag.entry->c, top.entry->c);
   // alternation
   if (top.entry->c == Specials::Alternation) {
     top.entry->c = Specials::Split;
@@ -300,7 +280,6 @@ void NFA::stitchFragments() {
            "Alternation must consist of atleast 2 fragments!");
     stitchFragments();
     auto& other = fragments.top();
-    //printf("   other.entry (for alternation)=%d\n", other.entry->c);
     top.entry->next = frag.entry;
     top.tails = frag.tails;
     top.entry->other = other.entry;
