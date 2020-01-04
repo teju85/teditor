@@ -92,7 +92,6 @@ private:
     Alternation,    // Temporary state for recgonizing alternations
   };  // enum Specials
 
-
   ///@todo: special case for just string comparison (to reduce mem footprint)
   struct State {
     int c;
@@ -100,12 +99,10 @@ private:
     State* next;
     State* other;     // used only with Split state
     size_t matchPos;  // used only for matches
-
     State() : c(0), s(), next(nullptr), other(nullptr) {}
     State(int _c): c(_c), s(), next(nullptr), other(nullptr) {}
     bool isMatch(char in) const;
   };  // struct State
-
 
   typedef std::unordered_set<State*> Actives;
 
@@ -121,23 +118,19 @@ private:
   void stepThroughSplitStates();
   void checkForSplitState(State* st, size_t pos, Actives& ac);
 
-
   // used only while compiling the regex's
   // this does NOT own any of the underlying pointers
   struct Fragment {
     State* entry;
     std::vector<State*> tails;
-
     Fragment(): entry(nullptr), tails() {}
     Fragment(State* e);
     void addState(State* s);
     void appendState(State* s) { tails.push_back(s); }
   };  // struct Fragment
 
-
   // stack of fragments used during the regex compilation
   std::stack<Fragment> fragments;
-
 
   // used to store intermediate regex compiler state
   struct CompilerState {
@@ -145,7 +138,6 @@ private:
     bool prevSqBracketOpen;
     bool isUnderRange;
     bool isUnderSqBracket;
-
     CompilerState();
     void validate(const std::string& reg);
   };  // struct CompilerState
