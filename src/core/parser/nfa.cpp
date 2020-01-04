@@ -89,14 +89,17 @@ size_t NFA::find(const std::string& str, size_t start, size_t end) {
     acs.update();
     if (acs.current().empty()) return NoMatch;
     stepThroughSplitStates();
-    // only match state remains, so no progress should be possible
-    const auto itr = acs.current().find(matchState);
-    if (itr != acs.current().end() && acs.current().size() == 1) {
-      return matchState->matchPos;
-    }
+    // if only match state remains, no further progress is possible
+    if (isMatch(true)) return matchState->matchPos;
   }
+  return isMatch() ? matchState->matchPos : NoMatch;
+}
+
+bool NFA::isMatch(bool lastStateRemaining) const {
+  // this is useful to prematurely terminate the main loop
+  if (lastStateRemaining && acs.current().size() != 1) return false;
   const auto itr = acs.current().find(matchState);
-  return itr != acs.current().end() ? matchState->matchPos : NoMatch;
+  return itr != acs.current().end();
 }
 
 void NFA::stepThroughSplitStates() {

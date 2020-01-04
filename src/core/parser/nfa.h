@@ -36,6 +36,8 @@ struct NFA {
 
   ~NFA() { for (auto itr : states) delete itr; }
 
+  bool isMatch(bool lastStateRemaining = false) const;
+
   /** represents case when regex didn't match anything */
   static const size_t NoMatch;
 
