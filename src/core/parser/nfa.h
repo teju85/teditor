@@ -36,6 +36,13 @@ struct NFA {
 
   ~NFA() { for (auto itr : states) delete itr; }
 
+  /**
+   * @brief checks if we have reached match state, indicating a regex match
+   * @param lastStateRemaining if set to true, means that this will expect only
+   *                           one state to be remaining which should be Match
+   *                           state.
+   * @return true if match has been found, else false
+   */
   bool isMatch(bool lastStateRemaining = false) const;
 
   /** represents case when regex didn't match anything */
