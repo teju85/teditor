@@ -45,6 +45,13 @@ struct NFA {
    */
   bool isMatch(bool lastStateRemaining = false) const;
 
+  /**
+   * @brief Reset all the variables used during regex search
+   *
+   * This needs to be called once before beginning of every search
+   */
+  void reset();
+
   /** represents case when regex didn't match anything */
   static const size_t NoMatch;
 
