@@ -117,7 +117,6 @@ void NFA::addRegex(const std::string& reg) {
   auto& frag = fragments.top();
   //printf("last fragment entry = %d\n", frag.entry->c);
   auto* st = createState(Specials::Match);
-  st->regId = startStates.size();
   frag.addState(st);
   startStates.push_back(frag.entry);
   fragments.pop();
@@ -272,6 +271,7 @@ NFA::State* NFA::createState(int c) {
   //printf("creating state for %d\n", c);
   auto* st = new State(c);
   states.push_back(st);
+  st->regId = startStates.size();
   return st;
 }
 
