@@ -64,6 +64,7 @@ NFA::NFA(const std::string& reg) : regex(reg) {
 size_t NFA::find(const std::string& str, size_t start, size_t end) {
   if (end == 0) end = str.size();
   // prepare the engine for the current match task
+  matchState->matchPos = NoMatch;
   acs.current().clear();
   acs.current().insert(startState);
   stepThroughSplitStates();
@@ -92,7 +93,7 @@ size_t NFA::find(const std::string& str, size_t start, size_t end) {
     // if only match state remains, no further progress is possible
     if (isMatch(true)) return matchState->matchPos;
   }
-  return isMatch() ? matchState->matchPos : NoMatch;
+  return matchState->matchPos;
 }
 
 bool NFA::isMatch(bool lastStateRemaining) const {
