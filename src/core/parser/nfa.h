@@ -13,7 +13,7 @@ namespace parser {
 
 
 /**
- * @brief A single NFA used to match a list of tokens (as seen during lexing)
+ * @brief Ken-Thompson NFA as described here: https://swtch.com/~rsc/regexp/regexp1.html
  * @note the current design is not thread-safe! Meaning, the same NFA object
  *       cannot be used by multiple threads at the same. It will cause
  *       corruption of data
@@ -23,35 +23,16 @@ struct NFA {
    * @brief ctor with adding a regex for the NFA
    * @param reg regex
    */
-  NFA(const std::string& reg) { addRegex(reg); }
-
-  /** default ctor */
-  NFA() {}
-
-  /**
-   * @brief Compile the input regex and add it as one of the alternations
-   * 
-   * The idea here is that this NFA represents alternations of *all* of the
-   * regex's which describe lex-tokens in the grammar. This will make the lex
-   * logic far efficient as it does not require back-tracking
-   *
-   * @param reg regex that defines the current token
-   */
-  void addRegex(const std::string& reg);
+  NFA(const std::string& reg);
 
   /**
    * @brief String match function
-   * @param regexId the regex which matched the input string
    * @param str the input string
    * @param start location from where to start searching
    * @param end location (minus 1) till where to search
    * @return the location of the longest match, else returns NFA::NoMatch
-   * @{
    */
   size_t find(const std::string& str, size_t start = 0, size_t end = 0);
-  size_t find(size_t& regexId, const std::string& str, size_t start = 0,
-              size_t end = 0);
-  /** @} */
 
   ~NFA() { for (auto itr : states) delete itr; }
 
@@ -80,8 +61,7 @@ private:
     std::string s;    // for matching with a set of possible chars (aka [...])
     State* next;
     State* other;     // used only with Split state
-    size_t matchPos;  // used only during matching phase
-    size_t regId;     // only used to track which regex matched the input string
+    size_t matchPos;  // used only for matches
 
     State() : c(0), s(), next(nullptr), other(nullptr) {}
     State(int _c): c(_c), s(), next(nullptr), other(nullptr) {}
@@ -91,11 +71,10 @@ private:
 
   typedef std::unordered_set<State*> Actives;
 
-
+  std::string regex;
   std::vector<State*> states;  // all states for this NFA
-  // one start state pointer for each lexer-token regex
-  // this does NOT own the underlying pointers
-  std::vector<State*> startStates;
+  State *startState;
+  State *matchState;
   // during matching these are the "active" states
   // this does NOT own the underlying pointers
   // uses double-buffering to avoid corruption

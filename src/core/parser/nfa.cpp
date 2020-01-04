@@ -45,17 +45,27 @@ void NFA::CompilerState::validate(const std::string& reg) {
     ASSERT(false, "No matching ']' char for '['? regex=%s", reg.c_str());
 }
 
-size_t NFA::find(const std::string& str, size_t start, size_t end) {
-  size_t tmp;
-  return find(tmp, str, start, end);
+NFA::NFA(const std::string& reg) : regex(reg) {
+  CompilerState cState;
+  for (auto c : reg) parseChar(c, cState);
+  cState.validate(reg);
+  stitchFragments();
+  // reached the end of the list, note down its start state and add match state
+  ASSERT(fragments.size() == 1,
+         "After stitching, there should only be one fragment left! [%lu]",
+         fragments.size());
+  auto& frag = fragments.top();
+  matchState = createState(Specials::Match);
+  frag.addState(matchState);
+  startState = frag.entry;
+  fragments.pop();
 }
 
-size_t NFA::find(size_t& regexId, const std::string& str, size_t start,
-                 size_t end) {
+size_t NFA::find(const std::string& str, size_t start, size_t end) {
   if (end == 0) end = str.size();
   // prepare the engine for the current match task
   acs.current().clear();
-  for (auto s : startStates) acs.current().insert(s);
+  acs.current().insert(startState);
   stepThroughSplitStates();
   for (; start < end; ++start) {
     acs.next().clear();
@@ -79,40 +89,21 @@ size_t NFA::find(size_t& regexId, const std::string& str, size_t start,
     acs.update();
     if (acs.current().empty()) return NoMatch;
     stepThroughSplitStates();
-  }
-  // always finds the longest match!
-  size_t pos = 0;
-  bool matchFound = false;
-  for (auto& a : acs.current()) {
-    if (a->c == Match) {
-      matchFound = true;
-      pos = std::max(a->matchPos, pos);
-      regexId = a->regId;
+    // only match state remains, so no progress should be possible
+    const auto itr = acs.current().find(matchState);
+    if (itr != acs.current().end() && acs.current().size() == 1) {
+      return matchState->matchPos;
     }
   }
-  return matchFound ? pos : NoMatch;
-}
-
-void NFA::addRegex(const std::string& reg) {
-  CompilerState cState;
-  for (auto c : reg) parseChar(c, cState);
-  cState.validate(reg);
-  stitchFragments();
-  // reached the end of the list, note down its start state and add match state
-  ASSERT(fragments.size() == 1,
-         "After stitching, there should only be one fragment left! [%lu]",
-         fragments.size());
-  auto& frag = fragments.top();
-  auto* st = createState(Specials::Match);
-  frag.addState(st);
-  startStates.push_back(frag.entry);
-  fragments.pop();
+  const auto itr = acs.current().find(matchState);
+  return itr != acs.current().end() ? matchState->matchPos : NoMatch;
 }
 
 void NFA::stepThroughSplitStates() {
   acs.next().clear();
-  for (auto& a : acs.current())
+  for (auto& a : acs.current()) {
     checkForSplitState(a, a->matchPos, acs.next());
+  }
   acs.update();
 }
 
@@ -252,7 +243,6 @@ void NFA::parseInsideSqBracket(char c, CompilerState& cState) {
 NFA::State* NFA::createState(int c) {
   auto* st = new State(c);
   states.push_back(st);
-  st->regId = startStates.size();
   return st;
 }
 
