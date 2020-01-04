@@ -271,5 +271,12 @@ TEST_CASE("NFA::MultipleRegex") {
   REQUIRE(reg == 1);
 }
 
+TEST_CASE("NFA::ctor") {
+  NFA nfa("abcd+");
+  REQUIRE(nfa.find("abcd") == 3);
+  REQUIRE(nfa.find("abcddd") == 5);
+  REQUIRE(nfa.find("def") == NFA::NoMatch);
+}
+
 } // end namespace parser
 } // end namespace teditor
