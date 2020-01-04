@@ -21,15 +21,16 @@ struct Token {
   Pos2ds end;
 
   /** special reserved token for denoting EOF */
-  static const size_t EOF;
+  static const size_t End;
 };  // struct Token
+
 
 /** Represents a node in the parse tree */
 struct Node {
   /** current node contents */
   Token token;
 
-  bool isEof() const { return token.type == Token::EOF; }
+  bool isEof() const { return token.type == Token::End; }
   bool isLeaf() const { return childIds.empty(); }
   size_t size() const { return childIds.size(); }
   size_t operator[](size_t idx) { return childIds[idx]; }
