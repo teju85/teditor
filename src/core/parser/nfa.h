@@ -20,6 +20,15 @@ namespace parser {
  */
 struct NFA {
   /**
+   * @brief ctor with adding a regex for the NFA
+   * @param reg regex
+   */
+  NFA(const std::string& reg) { addRegex(reg); }
+
+  /** default ctor */
+  NFA() {}
+
+  /**
    * @brief Compile the input regex and add it as one of the alternations
    * 
    * The idea here is that this NFA represents alternations of *all* of the
