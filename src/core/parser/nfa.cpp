@@ -57,9 +57,9 @@ size_t NFA::find(size_t& regexId, const std::string& str, size_t start,
   // prepare the engine for the current match task
   acs.current().clear();
   for (auto s : startStates) acs.current().insert(s);
+  stepThroughSplitStates();
   //printf("actives count = %lu start states = %lu\n", acs.current().size(), startStates.size());
   for (; start < end; ++start) {
-    stepThroughSplitStates();
     acs.next().clear();
     //printf("current char = %c(%d) pos = %lu\n", str[start], str[start], start);
     for (auto& a : acs.current()) {
@@ -86,8 +86,8 @@ size_t NFA::find(size_t& regexId, const std::string& str, size_t start,
     }
     acs.update();
     if (acs.current().empty()) return NoMatch;
+    stepThroughSplitStates();
   }
-  stepThroughSplitStates();
   // always finds the longest match!
   size_t pos = 0;
   bool matchFound = false;
