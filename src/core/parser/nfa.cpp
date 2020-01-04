@@ -65,22 +65,22 @@ size_t NFA::find(const std::string& str, size_t start, size_t end) {
   if (end == 0) end = str.size();
   reset();
   for (; start < end; ++start) {
-    step(str[start], start);
+    step(str[start], {start, 0});
     if (areActiveStatesEmpty()) return NoMatch;
     // if only match state remains, no further progress is possible
-    if (isMatch(true)) return getMatchPos();
+    if (isMatch(true)) return getMatchPos().x;
   }
-  return getMatchPos();
+  return getMatchPos().x;
 }
 
 void NFA::reset() {
-  matchState->matchPos = NoMatch;
+  matchState->matchPos = {NoMatch, NoMatch};
   acs.current().clear();
   acs.current().insert(startState);
   stepThroughSplitStates();
 }
 
-void NFA::step(char c, size_t pos) {
+void NFA::step(char c, const Pos2ds& pos) {
   acs.next().clear();
   for (auto& a : acs.current()) {
     auto& next = acs.next();
@@ -118,7 +118,7 @@ void NFA::stepThroughSplitStates() {
   acs.update();
 }
 
-void NFA::checkForSplitState(NFA::State* st, size_t pos, Actives& ac) {
+void NFA::checkForSplitState(NFA::State* st, const Pos2ds& pos, Actives& ac) {
   if (st == nullptr) return;
   st->matchPos = pos;
   if (st->c != Specials::Split) {

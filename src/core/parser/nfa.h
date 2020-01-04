@@ -5,6 +5,7 @@
 #include <vector>
 #include <unordered_set>
 #include <core/double_buffer.hpp>
+#include <core/pos2d.h>
 
 namespace teditor {
 namespace parser {
@@ -58,14 +59,14 @@ struct NFA {
    *        of the match of the regex in the input string
    * @return if match found, its latest position in string, else NFA::NoMatch
    */
-  size_t getMatchPos() const { return matchState->matchPos; }
+  const Pos2ds& getMatchPos() const { return matchState->matchPos; }
 
   /**
    * @brief Step through the NFA state using the current char
    * @param c current char
    * @param pos its position in the input string
    */
-  void step(char c, size_t pos);
+  void step(char c, const Pos2ds& pos);
 
   /**
    * @brief Reset all the variables used during regex search
@@ -98,7 +99,7 @@ private:
     std::string s;    // for matching with a set of possible chars (aka [...])
     State* next;
     State* other;     // used only with Split state
-    size_t matchPos;  // used only for matches
+    Pos2ds matchPos;  // used only for matches
     State() : c(0), s(), next(nullptr), other(nullptr) {}
     State(int _c): c(_c), s(), next(nullptr), other(nullptr) {}
     bool isMatch(char in) const;
@@ -116,7 +117,7 @@ private:
   DoubleBuffer<Actives> acs;
 
   void stepThroughSplitStates();
-  void checkForSplitState(State* st, size_t pos, Actives& ac);
+  void checkForSplitState(State* st, const Pos2ds& pos, Actives& ac);
 
   // used only while compiling the regex's
   // this does NOT own any of the underlying pointers
