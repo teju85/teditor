@@ -20,24 +20,20 @@ struct Token {
   /** end of this token in the input stream */
   Pos2ds end;
 
+  bool isEof() const { return type == End; }
+
   /** special reserved token for denoting EOF */
   static const size_t End;
 };  // struct Token
 
 
 /** Represents a node in the parse tree */
-struct Node {
+struct Node : public std::vector<Node*> {
   /** current node contents */
   Token token;
 
-  bool isEof() const { return token.type == Token::End; }
-  bool isLeaf() const { return childIds.empty(); }
-  size_t size() const { return childIds.size(); }
-  size_t operator[](size_t idx) { return childIds[idx]; }
-  void addChild(size_t childId) { childIds.push_back(childId); }
-
-private:
-  std::vector<size_t> childIds;
+  ~Node() { for (auto n : *this) delete n; }
+  bool isLeaf() const { return empty(); }
 };  // struct Node
 
 }  // namespace parser
