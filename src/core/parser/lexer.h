@@ -16,14 +16,14 @@ struct Token {
    */
   uint32_t type;
   /** start of this token in the input stream */
-  Pos2ds start;
+  Point start;
   /** end of this token in the input stream */
-  Pos2ds end;
+  Point end;
 
   bool isEof() const { return type == End; }
 
   /** special reserved token for denoting EOF */
-  static const size_t End;
+  static const uint32_t End;
 };  // struct Token
 
 
