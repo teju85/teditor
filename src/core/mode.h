@@ -42,7 +42,7 @@ public:
   virtual const std::string& word() const { return word_; }
 
   /** function to compute indentation of the line in the input buffer */
-  virtual size_t indent(Buffer& buf, size_t line) = 0;
+  virtual int indent(Buffer& buf, size_t line) = 0;
 
   /** get key-cmd map for the buffer this mode applies to */
   virtual KeyCmdMap& getKeyCmdMap() = 0;

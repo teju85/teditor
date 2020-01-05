@@ -13,12 +13,12 @@ TextMode::TextMode(const std::string& n, const std::string& w):
   populateColorMap<TextMode::Colors>(getColorMap());
 }
 
-size_t TextMode::indent(Buffer& buf, size_t line) {
+int TextMode::indent(Buffer& buf, size_t line) {
   if(!(0 < line && line < buf.length())) return 0;
   const auto& prev = buf.at(line-1);
   auto& curr = buf.at(line);
-  auto prevInd = prev.indentSize();
-  auto currInd = curr.indentSize();
+  auto prevInd = (int)prev.indentSize();
+  auto currInd = (int)curr.indentSize();
   return prevInd - currInd;
 }
 

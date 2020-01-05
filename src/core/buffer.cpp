@@ -671,8 +671,7 @@ bool Buffer::save(const std::string& fName) {
 ////// Start: Cursor movements //////
 void Buffer::left() {
   auto minLoc = getMinStartLoc();
-  --cu.x;
-  if(cu.x < minLoc) {
+  if (cu.x == minLoc) {
     if(cu.y >= 1) {
       --cu.y;
       cu.x = lengthOf(cu.y);
@@ -680,6 +679,8 @@ void Buffer::left() {
       cu.y = 0;
       cu.x = minLoc;
     }
+  } else {
+    --cu.x;
   }
   lineDown();
 }
@@ -687,7 +688,7 @@ void Buffer::left() {
 void Buffer::right() {
   ++cu.x;
   if(cu.x > lengthOf(cu.y)) {
-    if(cu.y < length()-1) {
+    if(cu.y < length() - 1) {
       ++cu.y;
       cu.x = 0;
     } else
@@ -744,10 +745,13 @@ void Buffer::nextPara() {
 
 void Buffer::previousPara() {
   auto prevLen = lengthOf(cu.y);
-  for(--cu.y; cu.y >= 0; --cu.y) {
+  if (cu.y == 0) {
+    cu.x = 0;
+    return;
+  }
+  for(--cu.y; cu.y > 0; --cu.y) {
     if(lengthOf(cu.y) == 0 && prevLen != 0) break;
     prevLen = lengthOf(cu.y);
-    if (cu.y == 0) break;
   }
   cu.x = 0;
   lineDown();

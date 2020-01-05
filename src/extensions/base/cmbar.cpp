@@ -19,7 +19,7 @@ public:
     populateColorMap<CmBarMode::Colors>(cMap);
   }
 
-  size_t indent(Buffer& buf, size_t line) { return 0; }
+  int indent(Buffer& buf, size_t line) { return 0; }
 
   KeyCmdMap& getKeyCmdMap() { return kcMap; }
   ColorMap& getColorMap() { return cMap; }

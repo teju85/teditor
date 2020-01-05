@@ -13,7 +13,7 @@ public:
   ReadOnlyMode(const std::string& n="ro",
                const std::string& w="abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNO"
                                     "PQRSTUVWXYZ0123456789_");
-  size_t indent(Buffer& buf, size_t line) { return 0; }
+  int indent(Buffer& buf, size_t line) { return 0; }
   KeyCmdMap& getKeyCmdMap() { return kcMap; }
   ColorMap& getColorMap() { return cMap; }
   void getColorFor(AttrColor& fg, AttrColor& bg, size_t lineNum, size_t pos,
