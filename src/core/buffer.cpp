@@ -85,14 +85,14 @@ void Buffer::remove(bool removeCurrent) {
 
 std::string Buffer::removeChar() {
   std::string del;
-  int minLoc = getMinStartLoc();
+  auto minLoc = getMinStartLoc();
   if(cu.x == minLoc && cu.y == 0) return del;
   if(cu.x > 0) {
     left();
     del = at(cu.y).erase(cu.x, 1);
     return del;
   }
-  int oldy = cu.y;
+  auto oldy = cu.y;
   up();
   const auto& oldline = at(oldy);
   auto& newline = at(cu.y);
@@ -117,7 +117,7 @@ std::string Buffer::removeFrom(const Point& start, const Point& end) {
   Point small, big;
   // start == end?
   if(0 == start.find(small, big, end)) {
-    int len = big.x - small.x;
+    auto len = big.x - small.x;
     del = at(small.y).erase(small.x, len);
     return del;
   }
@@ -133,13 +133,13 @@ std::string Buffer::removeFrom(const Point& start, const Point& end) {
     }
   }
   bool isFullLine = small.x == 0;
-  int actualIdx = small.y;
+  auto actualIdx = small.y;
   del += curr.erase(small.x, curr.length()-small.x);
   if(isFullLine)
     lines.erase(lines.begin()+small.y);
   else
     ++actualIdx;
-  for(int line=small.y+1;line<big.y;++line) {
+  for (auto line = small.y + 1; line < big.y; ++line) {
     del += '\n';
     del += at(actualIdx).get();
     lines.erase(lines.begin()+actualIdx);
@@ -161,8 +161,8 @@ std::string Buffer::removeCurrentChar() {
     del = lines[cu.y].erase(cu.x, 1);
     return del;
   }
-  int y = cu.y;
-  int oldy = y + 1;
+  auto y = cu.y;
+  auto oldy = y + 1;
   at(y).join(at(oldy));
   lines.erase(lines.begin() + oldy);
   del = "\n";
@@ -314,13 +314,13 @@ std::string Buffer::regionAsStr() const {
 std::string Buffer::regionAsStr(const Point& start, const Point& end) const {
   Point small, big;
   if(0 == start.find(small, big, end)) {
-    int len = big.x - small.x;
+    auto len = big.x - small.x;
     const auto& line = at(small.y);
     auto out = line.get().substr(small.x, len);
     return out;
   }
   std::string out = at(small.y).get().substr(small.x);
-  for(int i=small.y+1;i<big.y;++i) {
+  for (auto i = small.y + 1; i < big.y; ++i) {
     out += '\n';
     out += at(i).get();
   }
@@ -330,7 +330,7 @@ std::string Buffer::regionAsStr(const Point& start, const Point& end) const {
   return out;
 }
 
-void Buffer::load(const std::string& file, int line) {
+void Buffer::load(const std::string& file, size_t line) {
   ASSERT(isAbs(file), "Buffer::load file must be abs-path! '%s'", file.c_str());
   bool dir = isDir(file);
   dir ? loadDir(file) : loadFile(file, line);
@@ -355,7 +355,7 @@ void Buffer::loadDir(const std::string& dir) {
   readOnly = true;
 }
 
-void Buffer::loadFile(const std::string& file, int line) {
+void Buffer::loadFile(const std::string& file, size_t line) {
   std::string inFile;
   if (isRemote(file)) {
     inFile = tmpFileName = copyFromRemote(file);
@@ -372,12 +372,12 @@ void Buffer::loadFile(const std::string& file, int line) {
     }
     fp.close();
   }
-  line = std::min(std::max(0, line), length() - 1);
+  line = std::min(line, length() - 1);
   resetBufferState(line, file, false);
   cu = {0, line};
 }
 
-void Buffer::resetBufferState(int line, const std::string& file, bool dir) {
+void Buffer::resetBufferState(size_t line, const std::string& file, bool dir) {
   startLine = line;
   begin();
   modified = false;
@@ -392,9 +392,9 @@ void Buffer::draw(Editor& ed, const Window& win) {
   const auto& start = win.start();
   const auto& dim = win.dim();
   // draw current buffer (-1 for the status bar)
-  int h = start.y + dim.y - 1;
-  int len = length();
-  for(int y = start.y, idx = startLine; y < h && idx < len; ++idx)
+  auto h = start.y + dim.y - 1;
+  auto len = length();
+  for(size_t y = start.y, idx = startLine; y < h && idx < len; ++idx)
     y = drawLine(y, lines[idx].get(), ed, idx, win);
   drawStatusBar(ed, win);
 }
@@ -411,25 +411,25 @@ void Buffer::drawPoint(Editor& ed, const AttrColor& bg, const Window& win) {
 }
 
 void Buffer::drawStatusBar(Editor& ed, const Window& win) {
-  int currId = win.currBuffId();
+  auto currId = win.currBuffId();
   const auto& start = win.start();
   const auto& dim = win.dim();
   DEBUG("drawStatusBar: dim=%d,%d start=%d,%d\n", dim.x, dim.y, start.x,
         start.y);
   std::string line(dim.x, ' ');
-  int x = start.x;
+  auto x = start.x;
   // -1 is for the status bar
-  int y = start.y + dim.y - 1;
+  auto y = start.y + dim.y - 1;
   const auto& fg = getColor("statusfg");
   const auto& bg = getColor("statusbg");
   const auto& namefg = getColor("statusnamefg");
   ed.sendString(x, y, fg, bg, line.c_str(), dim.x);
   // modified + linenum
-  int count = ed.sendStringf(x, y, fg, bg, " %s [%d:%d]/%d ",
-                             modified? "**" : "  ", cu.y, cu.x, length());
+  auto count = ed.sendStringf(x, y, fg, bg, " %s [%d:%d]/%d ",
+                              modified? "**" : "  ", cu.y, cu.x, length());
   // buffer name
   count += ed.sendString(x+count, y, namefg, bg, buffName.c_str(),
-                         (int)buffName.length());
+                         buffName.length());
   // buffer counts
   count += ed.sendStringf(x+count, y, fg, bg, " <%d/%d> [%s]", currId+1,
                           ed.buffSize(), readOnly? "r-" : "rw");
@@ -442,26 +442,26 @@ void Buffer::drawStatusBar(Editor& ed, const Window& win) {
   }
 }
 
-std::string Buffer::dirModeGetFileAtLine(int line) {
+std::string Buffer::dirModeGetFileAtLine(size_t line) {
   if(line == 0) return "";
   auto& str = at(line).get();
   if (str.empty()) return "";
   return str.substr(dirModeFileOffset());
 }
 
-int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
-                     const Window& win) {
+size_t Buffer::drawLine(size_t y, const std::string& line, Editor& ed,
+                        size_t lineNum, const Window& win) {
   const auto& st = win.start();
   const auto& dim = win.dim();
-  int xStart = st.x, wid = dim.x, start = 0;
-  int len = (int)line.size();
+  size_t xStart = st.x, wid = dim.x, start = 0;
+  auto len = line.size();
   const auto* str = line.c_str();
-  ULTRA_DEBUG("Buffer::drawLine: y=%d line=%s len=%d\n", y, line.c_str(), len);
+  ULTRA_DEBUG("Buffer::drawLine: y=%lu line=%s len=%d\n", y, line.c_str(), len);
   auto maxLen = std::max(len, wid);
   while(start < maxLen) {
-    int diff = maxLen - start;
-    int count = std::min(diff, wid);
-    for(int i = 0; i < count; ++i) {
+    auto diff = maxLen - start;
+    auto count = std::min(diff, wid);
+    for(size_t i = 0; i < count; ++i) {
       // under the highlighted region
       auto c = start + i < len ? str[start + i] : ' ';
       auto highlighted = region.isInside(lineNum, start + i, cu);
@@ -472,16 +472,16 @@ int Buffer::drawLine(int y, const std::string& line, Editor& ed, int lineNum,
     start += wid;
     ++y;
   }
-  ULTRA_DEBUG("Buffer::drawLine: ended y=%d line=%s\n", y, line.c_str());
+  ULTRA_DEBUG("Buffer::drawLine: ended y=%lu line=%s\n", y, line.c_str());
   return y;
 }
 
 Point Buffer::buffer2screen(const Point& loc, const Point& start,
                             const Point& dim) const {
-  int w = dim.x;
+  auto w = dim.x;
   Point ret = start;
-  int relY = loc.y - startLine;
-  for(int idx=0;idx<relY;++idx) ret.y += lines[idx].numLinesNeeded(w);
+  auto relY = loc.y - startLine;
+  for (size_t idx = 0; idx < relY; ++idx) ret.y += lines[idx].numLinesNeeded(w);
   ret.y += (loc.x / w);
   ret.x += loc.x % w;
   return ret;
@@ -491,10 +491,10 @@ Point Buffer::screen2buffer(const Point& loc, const Point& start,
                             const Point& dim) const {
   Point rel = {loc.x - start.x, loc.y - start.y};
   Point res = {0, startLine};
-  int w = dim.x, sy = 0;
+  size_t w = dim.x, sy = 0;
   for(;sy<=rel.y;++res.y) sy += at(res.y).numLinesNeeded(w);
   if(sy > rel.y) --res.y;
-  int dely = rel.y - sy + at(res.y).numLinesNeeded(w);
+  auto dely = rel.y - sy + at(res.y).numLinesNeeded(w);
   res.x = dely * w + rel.x;
   return res;
 }
@@ -512,7 +512,7 @@ void Buffer::keepRemoveLines(Pcre& pc, bool keep) {
     small = {0, cu.y};
     big = {0, length() - 1};
   }
-  for(int i = small.y; i <= big.y; ++i) {
+  for(auto i = small.y; i <= big.y; ++i) {
     auto str = at(i).get();
     bool match = pc.isMatch(str);
     if((match && keep) || (!match && !keep)) continue;
@@ -532,21 +532,18 @@ void Buffer::keepRemoveLines(Pcre& pc, bool keep) {
 
 void Buffer::addLines(const RemovedLines& rlines) {
   // insert from back of the vector to restore the original state!
-  for(int i = (int)rlines.size() - 1; i >= 0; --i) {
-    const auto& rl = rlines[i];
-    lines.insert(lines.begin() + rl.num, Line());
-    lines[rl.num].append(rl.str);
+  for (auto rl = rlines.rbegin(); rl != rlines.rend(); ++rl) {
+    lines.insert(lines.begin() + rl->num, Line());
+    lines[rl->num].append(rl->str);
   }
 }
 
 void Buffer::removeLines(const RemovedLines& rlines) {
   // remove from back of the vector to restore the original state!
-  for(int i = (int)rlines.size() - 1; i >= 0; --i) {
-    const auto& rl = rlines[i];
-    lines.erase(lines.begin() + rl.num);
-  }
+  for (auto rl = rlines.rbegin(); rl != rlines.rend(); ++rl)
+    lines.erase(lines.begin() + rl->num);
   // ensure that you don't segfault on full buffer removal!
-  if(length() <= 0) addLine();
+  if (length() <= 0) addLine();
 }
 
 bool Buffer::matchCurrentParen() {
@@ -562,10 +559,10 @@ Point Buffer::matchCurrentParen(bool& isOpen) {
   std::stack<char> st;
   if(isOpenParen(c)) {
     isOpen = true;
-    int len = length();
-    for(int y=cu.y;y<len;++y) {
-      int x = (y == cu.y)? cu.x : 0;
-      int xlen = lengthOf(y);
+    auto len = length();
+    for (auto y = cu.y; y < len; ++y) {
+      auto x = (y == cu.y)? cu.x : 0;
+      auto xlen = lengthOf(y);
       const auto& str = at(y).get();
       for(;x<xlen;++x) {
         if(str[x] == c)
@@ -578,8 +575,8 @@ Point Buffer::matchCurrentParen(bool& isOpen) {
     }
   } else if(isCloseParen(c)) {
     isOpen = false;
-    for(int y=cu.y;y>=0;--y) {
-      int x = (y == cu.y)? cu.x : lengthOf(y);
+    for(auto y = cu.y; y >= 0; --y) {
+      auto x = (y == cu.y)? cu.x : lengthOf(y);
       const auto& str = at(y).get();
       for(;x>=0;--x) {
         if(str[x] == c)
@@ -588,7 +585,9 @@ Point Buffer::matchCurrentParen(bool& isOpen) {
           st.pop();
           if(st.empty()) return {x, y};
         }
+        if (x == 0) break;
       }
+      if (y == 0) break;
     }
   }
   return cu;
@@ -596,9 +595,9 @@ Point Buffer::matchCurrentParen(bool& isOpen) {
 
 void Buffer::sortRegion() {
   modified = true;
-  int cuy = cu.y;
-  int ry = region.y;
-  DEBUG("sortRegion: cuy=%d ry=%d\n", cuy, ry);
+  auto cuy = cu.y;
+  auto ry = region.y;
+  DEBUG("sortRegion: cuy=%lu ry=%lu\n", cuy, ry);
   std::sort(lines.begin()+ry, lines.begin()+cuy+1, LineCompare);
   DEBUG("sortRegion: done\n");
   cu.x = lines[cuy].length();
@@ -611,16 +610,16 @@ char Buffer::charAt(const Point& pos) const {
   return line.at(pos.x);
 }
 
-int Buffer::totalLinesNeeded(const Point& dim) const {
-  int end = cu.y;
-  int len = 0;
-  for(int i = startLine; i <= end; ++i) len += lines[i].numLinesNeeded(dim.x);
+size_t Buffer::totalLinesNeeded(const Point& dim) const {
+  auto end = cu.y;
+  size_t len = 0;
+  for(auto i = startLine; i <= end; ++i) len += lines[i].numLinesNeeded(dim.x);
   return len;
 }
 
 void Buffer::lineUp(const Point& dim) {
   // -1 for status bar
-  int dimY = dim.y - 1;
+  auto dimY = dim.y - 1;
   while(totalLinesNeeded(dim) > dimY) ++startLine;
 }
 
@@ -630,11 +629,11 @@ void Buffer::lineDown() {
 
 void Buffer::lineEnd(const Point& start, const Point& dim) {
   auto screen = buffer2screen(cu, start, dim);
-  int relY = screen.y - startLine;
+  auto relY = screen.y - startLine;
   // -1 for the status bar
-  int dimY = dim.y - 1;
+  auto dimY = dim.y - 1;
   if(relY < dimY) return;
-  int diff = relY - dimY + 1;
+  auto diff = relY - dimY + 1;
   startLine += diff;
 }
 
@@ -651,8 +650,8 @@ bool Buffer::save(const std::string& fName) {
   std::ofstream fp;
   fp.open(outFile.c_str());
   ASSERT(fp.is_open(), "Failed to open file '%s'!", outFile.c_str());
-  int len = (int)lines.size();
-  for(int i=0;i<len;++i) {
+  auto len = lines.size();
+  for (size_t i = 0; i < len; ++i) {
     // don't write the final line if it is empty
     if(i == len-1 && lines[i].empty()) continue;
     fp << lines[i].get() << "\n";
@@ -671,7 +670,7 @@ bool Buffer::save(const std::string& fName) {
 
 ////// Start: Cursor movements //////
 void Buffer::left() {
-  int minLoc = getMinStartLoc();
+  auto minLoc = getMinStartLoc();
   --cu.x;
   if(cu.x < minLoc) {
     if(cu.y >= 1) {
@@ -717,24 +716,24 @@ void Buffer::begin() {
 }
 
 void Buffer::end() {
-  cu.y = std::max(0, length() - 1);
+  cu.y = length() - 1;
   cu.x = lengthOf(cu.y);
 }
 
-void Buffer::pageDown(int ijump) {
+void Buffer::pageDown(size_t ijump) {
   cu.x = 0;
   cu.y = std::min(length() - 1, cu.y + ijump);
 }
 
-void Buffer::pageUp(int ijump) {
+void Buffer::pageUp(size_t ijump) {
   cu.x = 0;
-  cu.y = std::max(0, cu.y - ijump);
+  cu.y = cu.y < ijump ? 0 : cu.y - ijump;
   lineDown();
 }
 
 void Buffer::nextPara() {
-  int len = length();
-  int prevLen = lengthOf(cu.y);
+  auto len = length();
+  auto prevLen = lengthOf(cu.y);
   for(++cu.y; cu.y < len; ++cu.y) {
     if(lengthOf(cu.y) == 0 && prevLen != 0) break;
     prevLen = lengthOf(cu.y);
@@ -744,12 +743,12 @@ void Buffer::nextPara() {
 }
 
 void Buffer::previousPara() {
-  int prevLen = lengthOf(cu.y);
+  auto prevLen = lengthOf(cu.y);
   for(--cu.y; cu.y >= 0; --cu.y) {
     if(lengthOf(cu.y) == 0 && prevLen != 0) break;
     prevLen = lengthOf(cu.y);
+    if (cu.y == 0) break;
   }
-  cu.y = std::max(cu.y, 0);
   cu.x = 0;
   lineDown();
 }
@@ -793,16 +792,17 @@ void Buffer::previousWord() {
   lineDown();
 }
 
-void Buffer::gotoLine(int lineNum, const Point& dim) {
-  cu.y = std::min(length() - 1, std::max(0, lineNum));
+void Buffer::gotoLine(size_t lineNum, const Point& dim) {
+  cu.y = std::min(length() - 1, lineNum);
   cu.x = 0;
-  startLine = std::max(0, lineNum - dim.y / 2);
+  auto y2 = dim.y / 2;
+  startLine = lineNum < y2 ? 0 : lineNum - y2;
 }
 ////// End: Cursor movements //////
 
 void Buffer::indent() {
-  int line = cu.y;
-  int count = mode->indent(*this, line);
+  auto line = cu.y;
+  auto count = mode->indent(*this, line);
   DEBUG("Indent: count=%d line=%d\n", count, line);
   if (count == 0) return;
   startOfLine();
@@ -818,7 +818,7 @@ void Buffer::indent() {
 
 
 Buffers::~Buffers() {
-  for(int i=0;i<(int)size();++i) {
+  for(size_t i = 0; i < size(); ++i) {
     erase(i);
     --i;
   }
@@ -842,7 +842,7 @@ void Buffers::push_back(Buffer* buf) {
   buffNames.insert(buf->bufferName());
 }
 
-void Buffers::erase(int idx) {
+void Buffers::erase(size_t idx) {
   Buffer* buf = at(idx);
   buffNames.erase(buf->bufferName());
   delete buf;
@@ -858,7 +858,7 @@ Strings Buffers::namesList() const {
 std::string Buffers::uniquify(const std::string& name) const {
   std::string out(name);
   auto start = buffNames.begin(), end = buffNames.end();
-  int idx = 0;
+  size_t idx = 0;
   while(std::find(start, end, out) != end) {
     ++idx;
     out = name + "_" + num2str(idx);

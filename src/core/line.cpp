@@ -4,7 +4,7 @@
 
 namespace teditor {
 
-std::string Line::erase(int idx, int count) {
+std::string Line::erase(size_t idx, size_t count) {
   std::string ret;
   if(idx >= length() || (idx+count) > length()) return ret;
   ret = line.substr(idx, count);
@@ -12,7 +12,7 @@ std::string Line::erase(int idx, int count) {
   return ret;
 }
 
-Line Line::split(int idx) {
+Line Line::split(size_t idx) {
   Line other;
   if(idx >= length() || idx < 0) return other;
   auto del = erase(idx, length()-idx);
@@ -26,49 +26,49 @@ void Line::join(const Line& other) {
   if(!other.empty()) append(other.get());
 }
 
-void Line::prepend(char c, int count) {
+void Line::prepend(char c, size_t count) {
   std::string tmp(count, c);
   prepend(tmp.c_str());
 }
 
-void Line::insert(char c, int idx) {
+void Line::insert(char c, size_t idx) {
   if(idx >= length()) append(c);
   else line.insert(line.begin()+idx, c);
 }
 
-void Line::insert(const char* c, int idx) {
+void Line::insert(const char* c, size_t idx) {
   if(idx >= length()) append(c);
   else line.insert(idx, c);
 }
 
-void Line::insert(const std::string& str, int idx) {
+void Line::insert(const std::string& str, size_t idx) {
   if(idx >= length()) append(str);
   else line.insert(idx, str);
 }
 
-int Line::numLinesNeeded(int wid) const {
-  int len = length();
+size_t Line::numLinesNeeded(size_t wid) const {
+  auto len = length();
   // an empty line is still a line!
   if(len <= 0) return 1;
   return (len + wid - 1) / wid;
 }
 
-int Line::findFirstNotOf(const std::string& str, int pos) const {
+size_t Line::findFirstNotOf(const std::string& str, size_t pos) const {
   auto res = line.find_first_not_of(str, pos);
   if(res == std::string::npos) return line.length();
-  return (int)res;
+  return res;
 }
 
-int Line::findLastNotOf(const std::string& str, int pos) const {
+size_t Line::findLastNotOf(const std::string& str, size_t pos) const {
   auto res = line.find_last_not_of(str, pos);
   if(res == std::string::npos) return 0;
-  return (int)res;
+  return res;
 }
 
-int Line::indentSize() const {
+size_t Line::indentSize() const {
   auto pos = line.find_first_not_of(' ');
   if(pos == std::string::npos) return 0;
-  return (int)pos;
+  return pos;
 }
 
 

@@ -98,7 +98,7 @@ Accounts Parser::topAccounts(bool sort) const {
 Accounts Parser::allAccounts(bool sort) const {
   std::map<std::string, Accounts> tmp;
   Accounts all;
-  for(int i=0;i<(int)accts.size();++i) {
+  for (size_t i = 0; i < accts.size(); ++i) {
     const auto& a = accts[i];
     auto tokens = split(a.name(), ':');
     if(tmp.find(tokens[0]) == tmp.end()) tmp[tokens[0]] = Accounts();

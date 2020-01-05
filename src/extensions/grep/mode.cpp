@@ -12,19 +12,19 @@ public:
     populateColorMap<GrepMode::Colors>(getColorMap());
   }
 
-  void getColorFor(AttrColor& fg, AttrColor& bg, int lineNum, int pos,
+  void getColorFor(AttrColor& fg, AttrColor& bg, size_t lineNum, size_t pos,
                    const Buffer& b, bool isHighlighted) {
     auto& cmap = getColorMap();
     fg = cmap.get(isHighlighted ? "highlightfg" :
                   lineNum == 0 ? "titlefg" : "defaultfg");
     bg = cmap.get(isHighlighted ? "highlightbg" : "defaultbg");
     const auto& line = b.at(lineNum).get();
-    if (lineNum < 4 || pos >= (int)line.size()) return;
+    if (lineNum < 4 || pos >= line.size()) return;
     auto loc = line.find_first_of(':');
     if (loc == std::string::npos) return;
     loc = line.find_first_of(':', loc + 1);
     if (loc == std::string::npos) return;
-    if (pos < (int)loc) fg = cmap.get("filefg");
+    if (pos < loc) fg = cmap.get("filefg");
   }
 
   static Mode* create() { return new GrepMode; }

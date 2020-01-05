@@ -47,7 +47,7 @@ DEF_CMD(
   PageDown, "page-down", DEF_OP() {
     auto jump = Option::get("pageScrollJump").getReal();
     auto& buf = ed.getBuff();
-    buf.pageDown(int(jump * ed.getWindow().dim().y));
+    buf.pageDown(size_t(jump * ed.getWindow().dim().y));
   },
   DEF_HELP() {
     return "Scroll down by a page. Definition of a page is as given by the"
@@ -58,7 +58,7 @@ DEF_CMD(
   PageUp, "page-up", DEF_OP() {
     auto jump = Option::get("pageScrollJump").getReal();
     auto& buf = ed.getBuff();
-    buf.pageUp(int(jump * ed.getWindow().dim().y));
+    buf.pageUp(size_t(jump * ed.getWindow().dim().y));
   },
   DEF_HELP() {
     return "Scroll up by a page. Definition of a page is as given by the"

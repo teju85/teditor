@@ -42,7 +42,7 @@ public:
   virtual const std::string& word() const { return word_; }
 
   /** function to compute indentation of the line in the input buffer */
-  virtual int indent(Buffer& buf, int line) = 0;
+  virtual size_t indent(Buffer& buf, size_t line) = 0;
 
   /** get key-cmd map for the buffer this mode applies to */
   virtual KeyCmdMap& getKeyCmdMap() = 0;
@@ -51,8 +51,8 @@ public:
   virtual ColorMap& getColorMap() = 0;
 
   /** get color for the given line */
-  virtual void getColorFor(AttrColor& fg, AttrColor& bg, int lineNum, int pos,
-                           const Buffer& b, bool isHighlighted) = 0;
+  virtual void getColorFor(AttrColor& fg, AttrColor& bg, size_t lineNum,
+                           size_t pos, const Buffer& b, bool isHighlighted) = 0;
 
   /**
    * @brief Helper to create mode object of the named mode

@@ -81,7 +81,7 @@ public:
     return true;
   }
 
-  std::string getFinalStr(int idx, const std::string& str) const {
+  std::string getFinalStr(size_t idx, const std::string& str) const {
     auto loc = str.find_last_of('/');
     if(loc == std::string::npos) return str;
     auto sub = str.substr(0, loc+1) + at(idx);

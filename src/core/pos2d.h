@@ -54,7 +54,7 @@ struct Pos2d {
    * @return -1 if the vertical location is earlier, 0 if equal and +1 if
    * earlier than the other
    */
-  int find(Pos2d<T>& start, Pos2d<T>& end, const Pos2d<T>& other) const {
+  T find(Pos2d<T>& start, Pos2d<T>& end, const Pos2d<T>& other) const {
     if(y < other.y) {
       start = *this;
       end = other;
@@ -86,8 +86,8 @@ struct Pos2d {
   /**
    * @brief Check if the given location is in the regions
    */
-  bool isInside(int _y, int _x, const Pos2d<T>& cu) const {
-    if (y == -1 && x == -1) return false;
+  bool isInside(T _y, T _x, const Pos2d<T>& cu) const {
+    if (y == T(-1) && x == T(-1)) return false;
     Pos2d<T> start, end;
     find(start, end, cu);
     if(start.y < _y && _y < end.y) return true;
@@ -107,6 +107,6 @@ typedef Pos2d<unsigned> Pos2du;
 /** size_t pos2d */
 typedef Pos2d<size_t> Pos2ds;
 /** cursor */
-typedef Pos2di Point;
+typedef Pos2ds Point;
 
 } // end namespace teditor

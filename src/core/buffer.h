@@ -86,17 +86,17 @@ public:
   bool matchCurrentParen();
 
   /** Load a file/dir into the buffer and optionally jump to a line */
-  virtual void load(const std::string& file, int line=0);
+  virtual void load(const std::string& file, size_t line = 0);
 
   /** number of lines in this buffer */
-  int length() const { return (int)lines.size(); }
+  size_t length() const { return lines.size(); }
 
   /**
    * @defgroup Accessor Accessing individual lines
    * @{
    */
-  Line& at(int idx) { return lines[idx]; }
-  const Line& at(int idx) const { return lines[idx]; }
+  Line& at(size_t idx) { return lines[idx]; }
+  const Line& at(size_t idx) const { return lines[idx]; }
   /** @} */
 
   /**
@@ -141,9 +141,9 @@ public:
   /** go to end of the buffer */
   void end();
   /** scroll down a page */
-  void pageDown(int ijump);
+  void pageDown(size_t ijump);
   /** scroll up a page */
-  void pageUp(int ijump);
+  void pageUp(size_t ijump);
   /** jump to start of next paragraph */
   void nextPara();
   /** jump to start of previous paragraph */
@@ -153,7 +153,7 @@ public:
   /** jump to previous word */
   void previousWord();
   /** goto the specified line number */
-  void gotoLine(int lineNum, const Point& dim);
+  void gotoLine(size_t lineNum, const Point& dim);
   /** @} */
 
   /**
@@ -161,7 +161,7 @@ public:
    * @{
    */
   /** checks if there are any cursors on the given line */
-  bool hasPointOn(int line) const { return line == cu.y; }
+  bool hasPointOn(size_t line) const { return line == cu.y; }
   const Point& getPoint() const { return cu; }
   void setPoint(const Point& p) { cu = p; }
   /** @} */
@@ -182,13 +182,13 @@ public:
   /** @} */
 
   /** length of a given line in this buffer */
-  int lengthOf(int i) const { return lines[i].length(); }
+  size_t lengthOf(size_t i) const { return lines[i].length(); }
 
   /** indent the current line */
   void indent();
 
   /** number of lines needed to draw the currrent buffer in this window */
-  virtual int totalLinesNeeded(const Point& dim) const;
+  virtual size_t totalLinesNeeded(const Point& dim) const;
 
   virtual void lineUp(const Point& dim);
   virtual void lineDown();
@@ -200,8 +200,8 @@ public:
   const std::string& pwd() const { return dirName; }
   bool isRO() const { return readOnly; }
   bool isModified() const { return modified; }
-  virtual int getMinStartLoc() const { return 0; }
-  std::string dirModeGetFileAtLine(int line);
+  virtual size_t getMinStartLoc() const { return 0; }
+  std::string dirModeGetFileAtLine(size_t line);
 
   void reload();
   const AttrColor& getColor(const std::string& name) const;
@@ -216,7 +216,7 @@ protected:
     /** the removed line */
     std::string str;
     /** line number */
-    int num;
+    size_t num;
   };
   /** list of removed lines */
   typedef std::vector<RemovedLine> RemovedLines;
@@ -258,7 +258,7 @@ protected:
 
 
   std::vector<Line> lines;
-  int startLine;
+  size_t startLine;
   bool modified, readOnly;
   std::string buffName, fileName, dirName, tmpFileName;
   /** start of a region */
@@ -277,13 +277,13 @@ protected:
 
   void insertImpl(char c);
   void addLine() { lines.push_back(Line()); }
-  void resetBufferState(int line, const std::string& file, bool dir);
+  void resetBufferState(size_t line, const std::string& file, bool dir);
   KeyCmdMap& getKeyCmdMap() { return mode->getKeyCmdMap(); }
-  void loadFile(const std::string& file, int line);
+  void loadFile(const std::string& file, size_t line);
   void loadDir(const std::string& dir);
   std::string removeFrom(const Point& start, const Point& end);
   Point matchCurrentParen(bool& isOpen);
-  int dirModeFileOffset() const { return FilePerm::DirModeFileOffset; }
+  size_t dirModeFileOffset() const { return FilePerm::DirModeFileOffset; }
 
 
   /**
@@ -291,8 +291,8 @@ protected:
    * @{
    */
   void drawStatusBar(Editor& ed, const Window& win);
-  virtual int drawLine(int y, const std::string& line, Editor& ed, int lineNum,
-                       const Window &win);
+  virtual size_t drawLine(size_t y, const std::string& line, Editor& ed,
+                          size_t lineNum, const Window &win);
   /** @} */
 
   /**
@@ -351,7 +351,7 @@ public:
   void push_back(Buffer* buf);
 
   void clear();
-  void erase(int idx);
+  void erase(size_t idx);
 
   /** list of buffer names, in the order they are found in this object */
   Strings namesList() const;

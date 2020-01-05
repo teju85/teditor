@@ -23,17 +23,17 @@ ISearch::ISearch(Window& w, bool _noCase):
   curr(), matches(), noCase(_noCase) {
 }
 
-std::string ISearch::getFinalStr(int idx, const std::string& str) const {
+std::string ISearch::getFinalStr(size_t idx, const std::string& str) const {
   return at(idx);
 }
 
-const std::string& ISearch::at(int idx) const {
+const std::string& ISearch::at(size_t idx) const {
   return ml.at(idx).get();
 }
 
-const std::vector<int>& ISearch::matchesAt(int i) const {
+const std::vector<size_t>& ISearch::matchesAt(size_t i) const {
   const auto itr = matches.find(i);
-  ASSERT(itr != matches.end(), "No matches at line '%d'!", i);
+  ASSERT(itr != matches.end(), "No matches at line '%lu'!", i);
   return itr->second;
 }
 
@@ -51,21 +51,21 @@ void ISearch::reset() {
 }
 
 void ISearch::searchBuffer() {
-  int len = ml.length();
-  for(int i=0;i<len;++i) {
+  auto len = ml.length();
+  for (size_t i = 0; i < len; ++i) {
     const auto& str = ml.at(i).get();
-    std::vector<int> res;
+    std::vector<size_t> res;
     noCase ? iSearchLine(str, res) : searchLine(str, res);
     if(!res.empty()) matches[i] = res;
   }
 }
 
 void ISearch::updateMainBuffer(CmdMsgBar& cmBar) {
-  int loc = cmBar.getOptLoc();
+  auto loc = cmBar.getOptLoc();
   ml.gotoLine(loc, win.dim());
 }
 
-void ISearch::searchLine(const std::string& str, std::vector<int>& res) {
+void ISearch::searchLine(const std::string& str, std::vector<size_t>& res) {
   size_t len = str.size();
   size_t loc = 0;
   while(loc < len) {
@@ -76,7 +76,7 @@ void ISearch::searchLine(const std::string& str, std::vector<int>& res) {
   }
 }
 
-void ISearch::iSearchLine(const std::string& str, std::vector<int>& res) {
+void ISearch::iSearchLine(const std::string& str, std::vector<size_t>& res) {
   auto itr = str.begin(), end = str.end();
   while (itr != end) {
     auto pos = std::search(itr, end, curr.begin(), curr.end(),
@@ -84,7 +84,7 @@ void ISearch::iSearchLine(const std::string& str, std::vector<int>& res) {
                              return std::tolower(a) == std::tolower(b);
                            });
     if (pos == end) break;
-    int loc = pos - str.begin();
+    auto loc = pos - str.begin();
     res.push_back(loc);
     itr = pos + curr.size();
   }

@@ -13,7 +13,7 @@ public:
   TextMode(const std::string& n="text",
            const std::string& w="abcdefghijklmnopqrstuvwxyzABCDEGGHIJKLMNOPQRS"
                                 "TUVWXYZ0123456789_");
-  int indent(Buffer& buf, int line);
+  size_t indent(Buffer& buf, size_t line);
 
   static Mode* create() { return new TextMode; }
   static bool modeCheck(const std::string& file);

@@ -17,15 +17,15 @@ const Buffer& Window::getBuff() const { return *(buffs->at(currBuff)); }
 
 void Window::incrementCurrBuff() {
   ++currBuff;
-  if(currBuff >= (int)buffs->size()) currBuff = 0;
+  if(currBuff >= buffs->size()) currBuff = 0;
 }
 
 void Window::decrementCurrBuff() {
   --currBuff;
-  if(currBuff < 0) currBuff = (int)buffs->size() - 1;
+  if(currBuff < 0) currBuff = buffs->size() - 1;
 }
 
-void Window::resize(const Pos2di& start, const Pos2di& dim) {
+void Window::resize(const Point& start, const Point& dim) {
   screenStart = start;
   screenDim = dim;
 }
@@ -56,9 +56,9 @@ Windows::~Windows() {
   borders.clear();
 }
 
-void Windows::resize(int cmBarHt) {
+void Windows::resize(size_t cmBarHt) {
   auto& term = Terminal::getInstance();
-  Pos2di sz(term.width(), term.height());
+  Point sz(term.width(), term.height());
   sz.y -= cmBarHt;
   DEBUG("Windows::resize: buff-x,y=%d,%d ht=%d\n", sz.x, sz.y, cmBarHt);
   // cmbar
@@ -70,8 +70,8 @@ void Windows::resize(int cmBarHt) {
   if(wins.size() == 2) return;
   ///@todo: update this to support arbitrary splits!
   // -1 for the border
-  int lWidth = (sz.x - 1) / 2;
-  int rWidth = sz.x - 1 - lWidth;
+  auto lWidth = (sz.x - 1) / 2;
+  auto rWidth = sz.x - 1 - lWidth;
   auto start = wins[1]->start();
   wins[1]->resize(start, {lWidth, sz.y});
   wins[2]->resize({start.x+lWidth+1, start.y}, {rWidth, sz.y});
@@ -81,7 +81,7 @@ void Windows::resize(int cmBarHt) {
 
 void Windows::incrementCurrWin() {
   ++currWin;
-  if(currWin >= (int)wins.size()) currWin = 1;
+  if(currWin >= wins.size()) currWin = 1;
 }
 
 void Windows::decrementCurrWin() {
@@ -94,7 +94,7 @@ void Windows::draw(Editor& ed, bool cmdMsgBarActive) {
   for(auto itr : wins) itr->draw(ed);
   if(cmdMsgBarActive) {
     DEBUG("draw: cmdMsgBar.drawPoint\n");
-    int i = 0;
+    size_t i = 0;
     for(auto itr : wins) {
       const auto& bg = itr->getBuff().getColor("cursorbg");
       const auto& ibg = itr->getBuff().getColor("inactivecursorbg");
@@ -103,7 +103,7 @@ void Windows::draw(Editor& ed, bool cmdMsgBarActive) {
     }
   } else {
     DEBUG("draw: drawPoint\n");
-    int i = 0;
+    size_t i = 0;
     for(auto itr : wins) {
       DEBUG("draw: currWin=%d i=%d\n", currWin, i);
       if(i != 0) {
@@ -120,7 +120,7 @@ void Windows::draw(Editor& ed, bool cmdMsgBarActive) {
   const auto& fg = getWindow().getBuff().getColor("winframefg");
   const auto& bg = getWindow().getBuff().getColor("winframebg");
   for(auto& b : borders) {
-    for(int i=b.sy;i<b.ey;++i)
+    for (auto i = b.sy; i < b.ey; ++i)
       ed.sendChar(b.x, i, bg, fg, Option::get("windowSplitter").getChar());
   }
   DEBUG("draw: ended\n");
@@ -134,9 +134,9 @@ bool Windows::splitVertically() {
   const auto& dim = curr->dim();
   screenDim = dim; // note down the current dim for a later 'clear' call
   // -1 for the border
-  int lWidth = (dim.x - 1) / 2;
+  auto lWidth = (dim.x - 1) / 2;
   // right window
-  int rWidth = dim.x - 1 - lWidth;
+  auto rWidth = dim.x - 1 - lWidth;
   Window* w = new Window;
   curr->resize(start, {lWidth, dim.y});
   curr->copyTo(*w);
@@ -151,7 +151,7 @@ void Windows::clearAll() {
   auto* w = new Window;
   wins[currWin]->copyTo(*w);
   w->resize({0, 0}, screenDim);
-  for(int i=1;i<(int)wins.size();++i) {
+  for (size_t i = 1; i < wins.size(); ++i) {
     delete wins[i];
     wins.erase(wins.begin() + i);
     --i;
