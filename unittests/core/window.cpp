@@ -39,12 +39,12 @@ TEST_CASE("Windows::splitVertically") {
     // currently only one vertical split is allowed
     REQUIRE(!w.splitVertically());
     REQUIRE(3 == w.size());
-    REQUIRE(Pos2di(0, 0) == w[w.currWinId()]->start());
-    REQUIRE(Pos2di(15, 10) == w[w.currWinId()]->dim());
+    REQUIRE(Point(0, 0) == w[w.currWinId()]->start());
+    REQUIRE(Point(15, 10) == w[w.currWinId()]->dim());
     w.incrementCurrWin();
     REQUIRE(2 == w.currWinId());
-    REQUIRE(Pos2di(16, 0) == w[w.currWinId()]->start());
-    REQUIRE(Pos2di(15, 10) == w[w.currWinId()]->dim());
+    REQUIRE(Point(16, 0) == w[w.currWinId()]->start());
+    REQUIRE(Point(15, 10) == w[w.currWinId()]->dim());
   }
 
   SECTION("evenWidth") {
@@ -54,12 +54,12 @@ TEST_CASE("Windows::splitVertically") {
     // currently only one vertical split is allowed
     REQUIRE(!w.splitVertically());
     REQUIRE(3 == w.size());
-    REQUIRE(Pos2di(0, 0) == w[w.currWinId()]->start());
-    REQUIRE(Pos2di(14, 10) == w[w.currWinId()]->dim());
+    REQUIRE(Point(0, 0) == w[w.currWinId()]->start());
+    REQUIRE(Point(14, 10) == w[w.currWinId()]->dim());
     w.incrementCurrWin();
     REQUIRE(2 == w.currWinId());
-    REQUIRE(Pos2di(15, 0) == w[w.currWinId()]->start());
-    REQUIRE(Pos2di(15, 10) == w[w.currWinId()]->dim());
+    REQUIRE(Point(15, 0) == w[w.currWinId()]->start());
+    REQUIRE(Point(15, 10) == w[w.currWinId()]->dim());
   }
 }
 
