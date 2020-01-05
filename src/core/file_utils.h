@@ -44,7 +44,7 @@ struct FilePerm {
   char perms[10];
   size_t size;
 
-  static const int DirModeFileOffset;
+  static const size_t DirModeFileOffset;
 };
 
 typedef std::vector<FilePerm> Files;
@@ -57,7 +57,7 @@ std::string copyFromRemote(const std::string& file);
 void copyToRemote(const std::string& rfile, const std::string& local);
 void copyFile(const std::string& in, const std::string& out);
 
-typedef std::pair<std::string, int> FileInfo;
+typedef std::pair<std::string, size_t> FileInfo;
 
 FileInfo readFileInfo(const std::string& arg);
 
@@ -98,7 +98,7 @@ class DirCache {
 /** Stores visited files history */
 class FilesHist: public std::vector<FileInfo> {
 public:
-  FilesHist(const std::string& f, int max);
+  FilesHist(const std::string& f, size_t max);
 
   /** prune the history if it crosses 'maxLen' */
   void prune();
@@ -107,7 +107,7 @@ public:
   void store() const;
 
   /** adds a element into the history */
-  void add(const std::string& file, int line);
+  void add(const std::string& file, size_t line);
 
   /** generate string version of the history */
   Strings toString() const;
@@ -116,7 +116,7 @@ private:
   /** file which is used to load/store the history */
   std::string file;
   /** max files in the history */
-  int maxLen;
+  size_t maxLen;
 };  // class FilesHist
 
 } // end namespace teditor

@@ -55,9 +55,9 @@ public:
   /** for mouse events */
   Pos2d<uint16_t> loc;
 
-  int getWinchFd(int idx) const { return winchFds[idx]; }
-  int width() const { return tsize.x; }
-  int height() const { return tsize.y; }
+  int getWinchFd(size_t idx) const { return winchFds[idx]; }
+  size_t width() const { return tsize.x; }
+  size_t height() const { return tsize.y; }
 
   /**
    * @defgroup PtyOps Operations to interact with the underlying pty
@@ -119,7 +119,7 @@ private:
   /** termios struct to update attrs */
   struct termios tios, origTios;
   /** terminal size */
-  Pos2di tsize;
+  Point tsize;
   /** key sequences */
   std::string seq, oldSeq;
   /** whether to resize the buffer */
@@ -131,7 +131,7 @@ private:
   static Terminal* inst;
   static const std::string EnterMouseSeq;
   static const std::string ExitMouseSeq;
-  static const int BuffSize;
+  static const size_t BuffSize;
 
   enum ColorSupport {
     CS_None = 0,

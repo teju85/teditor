@@ -34,17 +34,15 @@ bool operator==(const Cell& a, const Cell& b) {
   return (a.ch == b.ch) && (a.fg == b.fg) && (a.bg == b.bg);
 }
 
-CellBuffer::CellBuffer(int w, int h): width(w), height(h), cells(w*h) {
+CellBuffer::CellBuffer(size_t w, size_t h): width(w), height(h), cells(w * h) {
 }
 
 void CellBuffer::clear(AttrColor fg, AttrColor bg) {
-  int len = width * height;
-  for(int i=0;i<len;++i) {
-    cells[i].set(' ', fg, bg);
-  }
+  auto len = width * height;
+  for (size_t i = 0; i < len; ++i) cells[i].set(' ', fg, bg);
 }
 
-void CellBuffer::resize(int w, int h) {
+void CellBuffer::resize(size_t w, size_t h) {
   if(width == w && height == h) return;
   cells.resize(w*h);
   width = w;

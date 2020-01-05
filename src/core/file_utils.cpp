@@ -169,7 +169,7 @@ std::string extension(const std::string& name) {
 }
 
 
-const int FilePerm::DirModeFileOffset = 24;
+const size_t FilePerm::DirModeFileOffset = 24;
 
 FilePerm::FilePerm(const std::string& n): name(n), perms(), size(0) {
   struct stat st;
@@ -261,7 +261,7 @@ void copyFile(const std::string& in, const std::string& out) {
 
 FileInfo readFileInfo(const std::string& arg) {
   std::string file;
-  int line;
+  size_t line;
   const auto tokens = split(arg, ';');
   if(tokens.size() == 1U) {
     file = tokens[0];
@@ -352,7 +352,7 @@ std::string DirCache::noTrailingSlash(const std::string& dir) {
 }
 
 
-FilesHist::FilesHist(const std::string& f, int max): file(f), maxLen(max) {
+FilesHist::FilesHist(const std::string& f, size_t max): file(f), maxLen(max) {
   if(!isFile(file)) return;
   auto arr = slurpToArr(file);
   for(const auto& a : arr) push_back(readFileInfo(a));
@@ -360,7 +360,7 @@ FilesHist::FilesHist(const std::string& f, int max): file(f), maxLen(max) {
 }
 
 void FilesHist::prune() {
-  if((int)size() > maxLen) erase(begin()+maxLen, end());
+  if(size() > maxLen) erase(begin()+maxLen, end());
 }
 
 void FilesHist::store() const {
@@ -368,14 +368,14 @@ void FilesHist::store() const {
   FILE* fp = fopen(file.c_str(), "w");
   if(fp == NULL) return;
   for(const auto& fi : *this)
-    fprintf(fp, "%s;%d\n", fi.first.c_str(), fi.second);
+    fprintf(fp, "%s;%lu\n", fi.first.c_str(), fi.second);
   fclose(fp);
 }
 
-void FilesHist::add(const std::string& file, int line) {
+void FilesHist::add(const std::string& file, size_t line) {
   FileInfo fi(file, line);
   // remove duplicates
-  for(int i=0;i<(int)size();++i) {
+  for (size_t i = 0; i < size(); ++i) {
     if(at(i).first == file) {
       erase(begin()+i);
       --i;
@@ -388,7 +388,7 @@ void FilesHist::add(const std::string& file, int line) {
 Strings FilesHist::toString() const {
   Strings vec;
   for(const auto& fi : *this)
-    vec.push_back(format("%s;%d", fi.first.c_str(), fi.second));
+    vec.push_back(format("%s;%lu", fi.first.c_str(), fi.second));
   return vec;
 }
 

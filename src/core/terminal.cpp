@@ -27,7 +27,7 @@ void sigwinch_handler(int xxx) {
 
 const std::string Terminal::EnterMouseSeq = "\x1b[?1000h\x1b[?1002h\x1b[?1015h\x1b[?1006h";
 const std::string Terminal::ExitMouseSeq = "\x1b[?1006l\x1b[?1015l\x1b[?1002l\x1b[?1000l";
-const int Terminal::BuffSize = 32 * 1024;
+const size_t Terminal::BuffSize = 32 * 1024;
 const int Terminal::Magic = 0432;
 const int Terminal::TiFuncs[] = {28, 40, 16, 13, 5, 39, 36, 27, 26, 34, 89, 88};
 const int Terminal::TiNFuncs = sizeof(Terminal::TiFuncs) / sizeof(int);
@@ -236,7 +236,7 @@ int Terminal::decodeChar(key_t ch) {
 }
 
 int Terminal::decodeEscSeq() {
-  int len = (int)seq.length();
+  auto len = seq.length();
   DEBUG("decodeEscSeq: len=%d seq=%s\n", len, seq.c_str());
   if(len == 0) {
     mk.setKey(Key_Esc);
@@ -249,7 +249,7 @@ int Terminal::decodeEscSeq() {
     return 1;
   }
   // check for shortest string matching the list of keys
-  for(int i=1;i<=len;++i) {
+  for (size_t i = 1; i <= len; ++i) {
     std::string str(seq, 0, i);
     const auto itr = AllCombos::allKeys.find(str);
     if(itr != AllCombos::allKeys.end()) {

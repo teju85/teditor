@@ -26,16 +26,16 @@ bool operator==(const Cell& a, const Cell& b);
 /** list of cells */
 class CellBuffer {
 public:
-  CellBuffer(int w=0, int h=0);
+  CellBuffer(size_t w = 0, size_t h = 0);
   void clear(AttrColor fg, AttrColor bg);
-  void resize(int w, int h);
-  const Cell& at(int x, int y) const { return cells[y*width+x]; }
-  Cell& at(int x, int y) { return cells[y*width+x]; }
-  unsigned w() const { return (unsigned)width; }
-  unsigned h() const { return (unsigned)height; }
+  void resize(size_t w, size_t h);
+  const Cell& at(size_t x, size_t y) const { return cells[y*width+x]; }
+  Cell& at(size_t x, size_t y) { return cells[y*width+x]; }
+  size_t w() const { return width; }
+  size_t h() const { return height; }
 
 private:
-  int width, height;
+  size_t width, height;
   std::vector<Cell> cells;
 };
 

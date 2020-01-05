@@ -37,19 +37,20 @@ public:
                      Choices* choices=nullptr,const std::string& defVal=std::string());
   bool promptYesNo(const std::string& msg);
   std::string promptEnum(const std::string& msg, OptionMap& opts);
-  void load(const std::string& file, int line);
+  void load(const std::string& file, size_t line);
   void runCmd(const std::string& cmd);
   const std::string clipboard() const;
   void setClipboard(const std::string& in);
 
-  int sendChar(int x, int y, const AttrColor& fg, const AttrColor& bg, char c);
-  int sendString(int x, int y, const AttrColor& fg, const AttrColor& bg,
-                 const char* str, int len);
-  int sendStringf(int x, int y, const AttrColor& fg, const AttrColor& bg,
-                  const char* fmt, ...);
+  size_t sendChar(size_t x, size_t y, const AttrColor& fg, const AttrColor& bg,
+                  char c);
+  size_t sendString(size_t x, size_t y, const AttrColor& fg, const AttrColor& bg,
+                    const char* str, size_t len);
+  size_t sendStringf(size_t x, size_t y, const AttrColor& fg,
+                     const AttrColor& bg, const char* fmt, ...);
   void setColors(AttrColor fg, AttrColor bg);
-  void writeCursor(int x, int y);
-  void writeChar(uint32_t c, int x, int y);
+  void writeCursor(size_t x, size_t y);
+  void writeChar(uint32_t c, size_t x, size_t y);
   void run();
   void requestQuitEventLoop() { quitEventLoop = true; }
   void requestQuitPromptLoop() { quitPromptLoop = true; }
@@ -59,8 +60,8 @@ public:
   void switchToBuff(const std::string& name);
   void killCurrBuff();
   void killOtherBuffs();
-  int currBuffId() const { return getWindow().currBuffId(); }
-  int buffSize() const { return (int)buffs.size(); }
+  size_t currBuffId() const { return getWindow().currBuffId(); }
+  size_t buffSize() const { return buffs.size(); }
   void createScratchBuff(bool switchToIt=false);
   void createReadOnlyBuff(const std::string& name, const std::string& contents,
                           bool switchToIt=false);
@@ -99,15 +100,15 @@ private:
   void clearScreen();
   void resize();
   void clearBackBuff();
-  void sendCell(int x, int y, const Cell& c) { backbuff.at(x, y) = c; }
+  void sendCell(size_t x, size_t y, const Cell& c) { backbuff.at(x, y) = c; }
   void writef(const char* fmt, ...);
   void draw();
   void loadFiles();
   void bufResize();
   const AttrColor& getColor(const std::string& name) const;
-  int cmBarHeight() const;
-  void deleteBuffer(int idx);
-  void setCurrBuff(int i) { getWindow().setCurrBuff(i); }
+  size_t cmBarHeight() const;
+  void deleteBuffer(size_t idx);
+  void setCurrBuff(size_t i) { getWindow().setCurrBuff(i); }
   void checkForModifiedBuffer(Buffer* mlb);
 };
 

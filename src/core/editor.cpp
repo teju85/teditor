@@ -101,7 +101,7 @@ void Editor::saveBuffer(Buffer& buf) {
   if(buf.save(fileName)) CMBAR_MSG(*this, "Wrote %s\n", fileName.c_str());
 }
 
-int Editor::cmBarHeight() const {
+size_t Editor::cmBarHeight() const {
   if(cmdMsgBarActive && cmBar->usingChoices())
     return Option::get("cmBar::multiheight").getInt();
   return Option::get("cmBar::height").getInt();
@@ -119,7 +119,7 @@ void Editor::runCmd(const std::string& cmd) {
 
 void Editor::createScratchBuff(bool switchToIt) {
   buffs.push_back("*scratch");
-  if(switchToIt) setCurrBuff((int)buffs.size() - 1);
+  if(switchToIt) setCurrBuff(buffs.size() - 1);
 }
 
 void Editor::createReadOnlyBuff(const std::string& name,
@@ -127,7 +127,7 @@ void Editor::createReadOnlyBuff(const std::string& name,
   auto* buf = buffs.push_back(name);
   buf->insert(contents);
   buf->makeReadOnly();
-  if(switchToIt) setCurrBuff((int)buffs.size() - 1);
+  if(switchToIt) setCurrBuff(buffs.size() - 1);
 }
 
 void Editor::loadFiles() {
@@ -144,8 +144,8 @@ void Editor::loadFiles() {
   DEBUG("loadFiles: ended\n");
 }
 
-void Editor::load(const std::string& file, int line) {
-  int i = 0;
+void Editor::load(const std::string& file, size_t line) {
+  size_t i = 0;
   for (const auto& buf : buffs) {
     if (buf->getFileName() == file) {
       setCurrBuff(i);
@@ -159,11 +159,11 @@ void Editor::load(const std::string& file, int line) {
   auto* buf = new Buffer;
   buf->load(file, line);
   buffs.push_back(buf);
-  setCurrBuff((int)buffs.size() - 1);
+  setCurrBuff(buffs.size() - 1);
 }
 
 void Editor::switchToBuff(const std::string& name) {
-  int idx = 0;
+  size_t idx = 0;
   for(const auto* buff : buffs) {
     if(name == buff->bufferName()) {
       setCurrBuff(idx);
@@ -179,13 +179,13 @@ void Editor::killCurrBuff() {
     createScratchBuff(true);
     return;
   }
-  int i = currBuffId();
-  if(i >= (int)buffs.size()) i = 0;
+  auto i = currBuffId();
+  if(i >= buffs.size()) i = 0;
   setCurrBuff(i);
 }
 
 void Editor::killOtherBuffs() {
-  for(int i=0;i<(int)buffs.size();++i) {
+  for (size_t i = 0; i < buffs.size(); ++i) {
     if(i != currBuffId()) {
       deleteBuffer(i);
       if(i < currBuffId()) setCurrBuff(currBuffId() - 1);
@@ -194,12 +194,12 @@ void Editor::killOtherBuffs() {
   }
 }
 
-void Editor::deleteBuffer(int idx) {
+void Editor::deleteBuffer(size_t idx) {
   Buffer* buf = buffs[idx];
   checkForModifiedBuffer(buffs[currBuffId()]);
   auto& f = buf->getFileName();
   if(!f.empty()) {
-    int line = buf->getPoint().y;
+    auto line = buf->getPoint().y;
     fileshist.add(f, line);
   }
   buffs.erase(idx);
@@ -274,11 +274,11 @@ void Editor::writef(const char* fmt, ...) {
   Terminal::getInstance().puts(buf);
 }
 
-int Editor::sendString(int x, int y, const AttrColor& fg,
-                       const AttrColor& bg, const char* str, int len) {
+size_t Editor::sendString(size_t x, size_t y, const AttrColor& fg,
+                          const AttrColor& bg, const char* str, size_t len) {
   DEBUG("Editor::sendString: x,y=%d,%d len=%d str='%s'\n", x, y, len, str);
   Cell c = {0, fg, bg};
-  int count = 0;
+  size_t count = 0;
   while(count < len) {
     count += Utf8::char2unicode(&c.ch, str+count);
     sendCell(x, y, c);
@@ -287,15 +287,15 @@ int Editor::sendString(int x, int y, const AttrColor& fg,
   return count;
 }
 
-int Editor::sendChar(int x, int y, const AttrColor& fg, const AttrColor& bg,
-                     char c) {
+size_t Editor::sendChar(size_t x, size_t y, const AttrColor& fg,
+                        const AttrColor& bg, char c) {
   Cell ce = {(Chr)c, fg, bg};
   sendCell(x, y, ce);
   return 1;
 }
 
-int Editor::sendStringf(int x, int y, const AttrColor& fg,
-                        const AttrColor& bg, const char* fmt, ...) {
+size_t Editor::sendStringf(size_t x, size_t y, const AttrColor& fg,
+                           const AttrColor& bg, const char* fmt, ...) {
   va_list vl;
   va_start(vl, fmt);
   std::string buf = format(fmt, vl);
@@ -348,11 +348,11 @@ void Editor::writeLiteral(const char* fmt, ...) {
   Terminal::getInstance().puts(buf);
 }
 
-void Editor::writeCursor(int x, int y) {
-  writeLiteral("\033[%d;%dH", y+1, x+1);
+void Editor::writeCursor(size_t x, size_t y) {
+  writeLiteral("\033[%d;%dH", y + 1, x + 1);
 }
 
-void Editor::writeChar(uint32_t c, int x, int y) {
+void Editor::writeChar(uint32_t c, size_t x, size_t y) {
   char buf[8];
   int bw = Utf8::unicode2char(buf, c);
   if(!c) buf[0] = ' '; // replace 0 with whitespace
@@ -410,7 +410,7 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
   selectCmBar();
   if(kcMap == nullptr) kcMap = &(cmBar->getKeyCmdMap());
   if(choices != nullptr) cmBar->setChoices(choices);
-  cmBar->setMinLoc((int)msg.size());
+  cmBar->setMinLoc(msg.size());
   bufResize();
   quitPromptLoop = cancelPromptLoop = false;
   cmBar->insert(msg.c_str());
@@ -461,7 +461,7 @@ void Editor::draw() {
 }
 
 void Editor::bufResize() {
-  int ht = cmBarHeight();
+  auto ht = cmBarHeight();
   windows.resize(ht);
 }
 
@@ -471,13 +471,13 @@ void Editor::render() {
     term.disableResize();
     resize();
   }
-  int h = (int)frontbuff.h();
-  int w = (int)frontbuff.w();
-  for(int y=0;y<h;++y) {
-    for(int x=0;x<w;) {
+  auto h = frontbuff.h();
+  auto w = frontbuff.w();
+  for (size_t y = 0; y < h; ++y) {
+    for (size_t x = 0; x < w;) {
       const Cell& back = backbuff.at(x, y);
       Cell& front = frontbuff.at(x, y);
-      int wid = back.width();
+      auto wid = back.width();
       if(wid < 1) wid = 1;
       ULTRA_DEBUG("render: y,x=%d,%d back=%u,%hu,%hu front=%u,%hu,%hu\n",
                   y, x, back.ch, back.fg, back.bg, front.ch, front.fg,
@@ -491,7 +491,7 @@ void Editor::render() {
       // if character exceeds the screen width
       if(x >= w - wid + 1) {
         ASSERT(false, "Character exceeding screen width is not supported!");
-        for (int i=x;i<w;++i) writeChar(' ', i, y);
+        for (size_t i = x; i < w; ++i) writeChar(' ', i, y);
       } else {
         writeChar(back.ch, x, y);
       }
