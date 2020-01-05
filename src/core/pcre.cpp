@@ -13,8 +13,8 @@ Match::Match(const std::string& s): groups(PCRE2_ERROR_NOMATCH), str(s),
                                     matches(), namedMatches() {
 }
 
-const MatchLoc& Match::getLoc(int i) const {
-  ASSERT((i >= 0) && (i < groups),
+const MatchLoc& Match::getLoc(size_t i) const {
+  ASSERT((i >= 0) && (i < (size_t)groups),
          "Match::get Invalid index '%d'! [0, %d)", i, groups);
   return matches[i];
 }
@@ -26,7 +26,7 @@ const MatchLoc& Match::getLoc(const std::string& name) const {
   return itr->second;
 }
 
-std::string Match::get(int i) const {
+std::string Match::get(size_t i) const {
   const auto& loc = getLoc(i);
   return str.substr(loc.x, loc.y);
 }
@@ -108,7 +108,7 @@ void Pcre::storeNamedGroups(Match& m) {
   }
 }
 
-Match Pcre::find(const std::string& str, int loc) {
+Match Pcre::find(const std::string& str, size_t loc) {
   Match m(str);
   char* subject = (char*)str.c_str();
   m.groups = pcre2_match(re, (PCRE2_SPTR)subject, str.size(), loc, 0,

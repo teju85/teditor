@@ -39,7 +39,7 @@ void Parser::parse(const std::string& src, Tree& tree) {
   tree.tree = t;
 }
 
-Parser::Node Parser::Node::operator[](int idx) {
+Parser::Node Parser::Node::operator[](size_t idx) {
   Node ret;
   ret.node = ts_node_child(node, idx);
   return ret;

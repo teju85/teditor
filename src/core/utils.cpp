@@ -42,8 +42,8 @@ std::string env(const std::string& s) {
   return val == nullptr? "" : val;
 }
 
-bool startsWith(const char* s1, int len1, const char* s2) {
-  for(int n=0;*s2 && (n < len1);++s1,++s2,++n) {
+bool startsWith(const char* s1, size_t len1, const char* s2) {
+  for (size_t n = 0; *s2 && (n < len1); ++s1, ++s2, ++n) {
     if(*s1 != *s2) return false;
   }
   return *s2 == 0;
@@ -57,10 +57,10 @@ Strings split(const std::string &str, char delim) {
   return res;
 }
 
-std::string join(const Strings &s, char delim, int start, int end) {
+std::string join(const Strings &s, char delim, size_t start, size_t end) {
   std::string ret;
-  if(end < 0) end = (int)s.size();
-  for(int i=start;i<end;++i) {
+  if (end == 0) end = s.size();
+  for (size_t i = start; i < end; ++i) {
     if(i > start) ret += delim;
     ret += s[i];
   }
@@ -118,7 +118,7 @@ CmdStatus check_output(const std::string& cmd) {
     (void)system(cmd.c_str());
     return ret;
   }
-  const int MaxBuff = 8192;
+  const size_t MaxBuff = 8192;
   int out_fd[2], err_fd[2];
   int status = pipe(out_fd);
   ASSERT(status >= 0, "Pipe failed for command '%s' [status=%d]!",

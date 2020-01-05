@@ -61,9 +61,9 @@ bool operator>(const struct timeval& ta, const struct timeval& tb);
 std::string env(const std::string& s);
 std::string expandEnvVars(const std::string& str);
 
-bool startsWith(const char* s1, int len, const char* s2);
+bool startsWith(const char* s1, size_t len, const char* s2);
 Strings split(const std::string &s, char delim);
-std::string join(const Strings& s, char delim, int start=0, int end=-1);
+std::string join(const Strings& s, char delim, size_t start = 0, size_t end = 0);
 
 std::string num2str(int num);
 int str2num(const std::string& str);

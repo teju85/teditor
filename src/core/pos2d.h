@@ -100,13 +100,9 @@ struct Pos2d {
 };
 
 
-/** integer pos2d */
-typedef Pos2d<int> Pos2di;
 /** unsigned integer pos2d */
 typedef Pos2d<unsigned> Pos2du;
-/** size_t pos2d */
-typedef Pos2d<size_t> Pos2ds;
 /** cursor */
-typedef Pos2ds Point;
+typedef Pos2d<size_t> Point;
 
 } // end namespace teditor

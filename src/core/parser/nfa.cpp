@@ -80,7 +80,7 @@ void NFA::reset() {
   stepThroughSplitStates();
 }
 
-void NFA::step(char c, const Pos2ds& pos) {
+void NFA::step(char c, const Point& pos) {
   acs.next().clear();
   for (auto& a : acs.current()) {
     auto& next = acs.next();
@@ -118,7 +118,7 @@ void NFA::stepThroughSplitStates() {
   acs.update();
 }
 
-void NFA::checkForSplitState(NFA::State* st, const Pos2ds& pos, Actives& ac) {
+void NFA::checkForSplitState(NFA::State* st, const Point& pos, Actives& ac) {
   if (st == nullptr) return;
   st->matchPos = pos;
   if (st->c != Specials::Split) {

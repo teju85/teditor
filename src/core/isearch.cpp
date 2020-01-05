@@ -71,7 +71,7 @@ void ISearch::searchLine(const std::string& str, std::vector<size_t>& res) {
   while(loc < len) {
     loc = str.find(curr, loc);
     if(loc == std::string::npos) break;
-    res.push_back((int)loc);
+    res.push_back(loc);
     loc += curr.size();
   }
 }

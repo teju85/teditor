@@ -36,7 +36,7 @@ public:
   class Node {
   public:
     /** gets the child at the given index of the current node */
-    Node operator[](int idx);
+    Node operator[](size_t idx);
 
     /** node type as a numerical ID */
     SymId id() const { return ts_node_symbol(node); }
@@ -45,7 +45,7 @@ public:
     std::string type() const { return std::string(ts_node_type(node)); }
 
     /** number of child nodes of this node */
-    int childCount() const { return ts_node_child_count(node); }
+    size_t childCount() const { return (size_t)ts_node_child_count(node); }
 
     /** node starting point */
     Pos2du start() const;

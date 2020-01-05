@@ -30,13 +30,13 @@ public:
   bool empty() const { return count() == PCRE2_ERROR_NOMATCH; }
 
   /** returns the i-th numbered match */
-  std::string get(int i) const;
+  std::string get(size_t i) const;
 
   /** returns the named match */
   std::string get(const std::string& name) const;
 
   /** returns the i-th numbered match location */
-  const MatchLoc& getLoc(int i) const;
+  const MatchLoc& getLoc(size_t i) const;
 
   /** returns the named match location */
   const MatchLoc& getLoc(const std::string& name) const;
@@ -78,7 +78,7 @@ public:
    * @param loc from where to start finding
    * @return the match data
    */
-  Match find(const std::string& str, int loc=0);
+  Match find(const std::string& str, size_t loc = 0);
 
   /**
    * @brief main function to find all matches in the input string
