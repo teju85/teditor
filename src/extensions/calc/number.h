@@ -93,10 +93,19 @@ struct Number {
     }
     return ret;
   }
+
+  static const Num e;   ///< constant e
+  static const Num pi;  ///< constant pi
 };  // struct Number
 
 #undef B_OP
 #undef OP
+
+template <typename IntT, typename FloatT>
+const Number<IntT, FloatT> Number<IntT, FloatT>::e((FloatT)M_E);
+
+template <typename IntT, typename FloatT>
+const Number<IntT, FloatT> Number<IntT, FloatT>::pi((FloatT)M_PI);
 
 
 // operator overloads
@@ -147,8 +156,12 @@ ALG_FUNC(tanh);
 ALG_FUNC(asinh);
 ALG_FUNC(acosh)
 ALG_FUNC(atanh);
+ALG_FUNC(sqrt);
 ALG_FUNC(cbrt);
 ALG_FUNC(ceil);
+ALG_FUNC(log);
+ALG_FUNC(log10);
+ALG_FUNC(exp);
 #undef ALG_FUNC
 
 typedef Number<int32_t, float> Num32;

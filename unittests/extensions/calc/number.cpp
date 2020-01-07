@@ -11,7 +11,7 @@ namespace calc {
 
 #define FLT_CHECK(n, val)                       \
   REQUIRE_FALSE(n.isInt);                       \
-  REQUIRE(n.f == val)
+  REQUIRE(n.f == Approx(val))
 
 TEST_CASE("Number") {
   SECTION("default ctor") {
@@ -107,6 +107,31 @@ TEST_CASE("Number") {
     FLT_CHECK(m, 0.f);
     m = asin(n);
     FLT_CHECK(m, 0.f);
+  }
+  SECTION("log and log10") {
+    Num32 n(1.f);
+    auto m = log(n);
+    FLT_CHECK(m, 0.f);
+    m = log10(n);
+    FLT_CHECK(m, 0.f);
+  }
+  SECTION("sqrt and cbrt") {
+    Num32 n(1.f);
+    auto m = sqrt(n);
+    FLT_CHECK(m, 1.f);
+    m = cbrt(n);
+    FLT_CHECK(m, 1.f);
+  }
+  SECTION("exp") {
+    Num32 n(0.f);
+    auto m = exp(n);
+    FLT_CHECK(m, 1.f);
+  }
+  SECTION("e and pi") {
+    Num32 n(Num32::e);
+    FLT_CHECK(n, 2.71828f);
+    n = Num32::pi;
+    FLT_CHECK(n, 3.14159f);
   }
 }
 
