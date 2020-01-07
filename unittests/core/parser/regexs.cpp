@@ -45,5 +45,13 @@ TEST_CASE("Regexs::HexInt") {
   REQUIRE(nfa.find("12345") == NFA::NoMatch);
 }
 
+TEST_CASE("Regexs::Variable") {
+  NFA nfa(Regexs::Variable);
+  REQUIRE(nfa.find("1") == NFA::NoMatch);
+  REQUIRE(nfa.find("_a") == 1);
+  REQUIRE(nfa.find("abc") == 2);
+  REQUIRE(nfa.find("Abc") == 2);
+}
+
 }  // namespace parser
 }  // namespace teditor

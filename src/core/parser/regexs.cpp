@@ -10,5 +10,7 @@ const std::string Regexs::Integer("[-+]?[0-9]+");
 
 const std::string Regexs::HexInt("0[xX][a-fA-F0-9]+");
 
+const std::string Regexs::Variable("[a-zA-Z_][a-zA-Z0-9_]*");
+
 }  // namespace parser
 }  // namespace teditor
