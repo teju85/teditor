@@ -22,6 +22,7 @@ TEST_CASE("Regexs::FloatingPt") {
   REQUIRE(nfa.find("-1.2e1") == 5);
   REQUIRE(nfa.find("-1.2E1") == 5);
   REQUIRE(nfa.find("-.2e1") == 4);
+  REQUIRE(nfa.find("-.2") == 2);
   REQUIRE(nfa.find("hello") == NFA::NoMatch);
   REQUIRE(nfa.find("1ea") == 0);
 }
