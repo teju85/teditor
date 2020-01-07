@@ -3,6 +3,11 @@
 #include <stdint.h>
 #include <cmath>
 
+namespace std {
+template <typename T> T sq(T in) { return in * in; }
+template <typename T> T cube(T in) { return in * in * in; }
+};  // namespace std
+
 namespace teditor {
 namespace calc {
 
@@ -176,6 +181,8 @@ ALG_FUNC(exp);
 ALG_FUNC(floor);
 ALG_FUNC(ceil);
 ALG_FUNC(round);
+ALG_FUNC(sq);
+ALG_FUNC(cube);
 #undef ALG_FUNC
 
 #define ALG_FUNC2(name)                                                 \

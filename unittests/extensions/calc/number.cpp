@@ -151,6 +151,11 @@ TEST_CASE("Number") {
   SECTION("nan") {
     REQUIRE(std::isnan(Num32::nan.f));
   }
+  SECTION("sq and cube") {
+    Num32 n(2.f);
+    FLT_CHECK(sq(n), 4.f);
+    FLT_CHECK(cube(n), 8.f);
+  }
 }
 
 #undef FLT_CHECK
