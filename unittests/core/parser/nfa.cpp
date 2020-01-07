@@ -252,5 +252,23 @@ TEST_CASE("NFA::Groups") {
   }
 }
 
+TEST_CASE("NFA::FloatingPointParser") {
+  NFA nfa("[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)([eE][+-]?[0-9]+)?");
+  REQUIRE(nfa.find("1") == 0);
+  REQUIRE(nfa.find("+1") == 1);
+  REQUIRE(nfa.find("-1") == 1);
+  REQUIRE(nfa.find("1.") == 1);
+  REQUIRE(nfa.find("1.2") == 2);
+  REQUIRE(nfa.find("1.2e-1") == 5);
+  REQUIRE(nfa.find("1.2E-1") == 5);
+  REQUIRE(nfa.find("1.2e+1") == 5);
+  REQUIRE(nfa.find("1.2E+1") == 5);
+  REQUIRE(nfa.find("1.2e1") == 4);
+  REQUIRE(nfa.find("1.2E1") == 4);
+  REQUIRE(nfa.find("-1.2e1") == 5);
+  REQUIRE(nfa.find("-1.2E1") == 5);
+  REQUIRE(nfa.find("-.2e1") == 4);
+}
+
 } // end namespace parser
 } // end namespace teditor
