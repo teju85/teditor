@@ -9,8 +9,8 @@ namespace parser {
  * @brief A collection of commonly used Regular expressions
  */
 struct Regexs {
-  /** parsing a floating point number */
-  static const std::string FloatingPt;
+  static const std::string FloatingPt;   ///< floating point number
+  static const std::string Integer;      ///< integer
 };  // struct Regexs
 
 }  // namespace parser

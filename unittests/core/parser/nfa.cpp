@@ -1,5 +1,4 @@
 #include "core/parser/nfa.h"
-#include "core/parser/regexs.h"
 #include "catch.hpp"
 #include <string>
 
@@ -251,24 +250,6 @@ TEST_CASE("NFA::Groups") {
     REQUIRE(nfa.find("ac") == NFA::NoMatch);
     REQUIRE(nfa.find("ca") == NFA::NoMatch);
   }
-}
-
-TEST_CASE("NFA::FloatingPointParser") {
-  NFA nfa(Regexs::FloatingPt);
-  REQUIRE(nfa.find("1") == 0);
-  REQUIRE(nfa.find("+1") == 1);
-  REQUIRE(nfa.find("-1") == 1);
-  REQUIRE(nfa.find("1.") == 1);
-  REQUIRE(nfa.find("1.2") == 2);
-  REQUIRE(nfa.find("1.2e-1") == 5);
-  REQUIRE(nfa.find("1.2E-1") == 5);
-  REQUIRE(nfa.find("1.2e+1") == 5);
-  REQUIRE(nfa.find("1.2E+1") == 5);
-  REQUIRE(nfa.find("1.2e1") == 4);
-  REQUIRE(nfa.find("1.2E1") == 4);
-  REQUIRE(nfa.find("-1.2e1") == 5);
-  REQUIRE(nfa.find("-1.2E1") == 5);
-  REQUIRE(nfa.find("-.2e1") == 4);
 }
 
 } // end namespace parser
