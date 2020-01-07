@@ -1,4 +1,5 @@
 #include "core/parser/nfa.h"
+#include "core/parser/regexs.h"
 #include "catch.hpp"
 #include <string>
 
@@ -253,7 +254,7 @@ TEST_CASE("NFA::Groups") {
 }
 
 TEST_CASE("NFA::FloatingPointParser") {
-  NFA nfa("[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)([eE][+-]?[0-9]+)?");
+  NFA nfa(Regexs::FloatingPt);
   REQUIRE(nfa.find("1") == 0);
   REQUIRE(nfa.find("+1") == 1);
   REQUIRE(nfa.find("-1") == 1);
