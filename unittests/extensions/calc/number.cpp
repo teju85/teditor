@@ -133,6 +133,21 @@ TEST_CASE("Number") {
     n = Num32::pi;
     FLT_CHECK(n, 3.14159f);
   }
+  SECTION("floor and ceil and round") {
+    Num32 n1(1.2f), n2(1.8f);
+    FLT_CHECK(floor(n1), 1.f);
+    FLT_CHECK(ceil(n1), 2.f);
+    FLT_CHECK(round(n1), 1.f);
+    FLT_CHECK(round(n2), 2.f);
+  }
+  SECTION("pow") {
+    Num32 n1(1.2f), n2(2.f);
+    FLT_CHECK(pow(n1, n2), 1.44f);
+  }
+  SECTION("hypot") {
+    Num32 n1(3.f), n2(4.f);
+    FLT_CHECK(hypot(n1, n2), 5.f);
+  }
 }
 
 #undef FLT_CHECK

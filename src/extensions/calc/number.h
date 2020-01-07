@@ -158,11 +158,26 @@ ALG_FUNC(acosh)
 ALG_FUNC(atanh);
 ALG_FUNC(sqrt);
 ALG_FUNC(cbrt);
-ALG_FUNC(ceil);
 ALG_FUNC(log);
 ALG_FUNC(log10);
 ALG_FUNC(exp);
+ALG_FUNC(floor);
+ALG_FUNC(ceil);
+ALG_FUNC(round);
 #undef ALG_FUNC
+
+#define ALG_FUNC2(name)                                                 \
+  template <typename I, typename F>                                     \
+  Number<I, F> name(const Number<I, F>& in1, const Number<I, F>& in2) { \
+    Number<I, F> out;                                                   \
+    out.isInt = false;                                                  \
+    out.f = std::name(in1.isInt ? F(in1.i) : in1.f,                     \
+                      in2.isInt ? F(in2.i) : in2.f);                    \
+    return out;                                                         \
+  }
+ALG_FUNC2(pow);
+ALG_FUNC2(hypot);
+#undef ALG_FUNC2
 
 typedef Number<int32_t, float> Num32;
 typedef Number<int64_t, double> Num64;
