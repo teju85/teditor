@@ -33,5 +33,12 @@ TEST_CASE("Regexs::Integer") {
   REQUIRE(nfa.find("-3701") == 4);
 }
 
+TEST_CASE("Regexs::HexInt") {
+  NFA nfa(Regexs::HexInt);
+  REQUIRE(nfa.find("0x1") == 2);
+  REQUIRE(nfa.find("0X1") == 2);
+  REQUIRE(nfa.find("0X1aA") == 4);
+}
+
 }  // namespace parser
 }  // namespace teditor

@@ -11,6 +11,7 @@ namespace parser {
 struct Regexs {
   static const std::string FloatingPt;   ///< floating point number
   static const std::string Integer;      ///< integer
+  static const std::string HexInt;       ///< hexadecimal integer
 };  // struct Regexs
 
 }  // namespace parser

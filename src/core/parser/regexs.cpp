@@ -8,5 +8,7 @@ const std::string
 
 const std::string Regexs::Integer("[-+]?[0-9]+");
 
+const std::string Regexs::HexInt("0[xX][a-fA-F0-9]+");
+
 }  // namespace parser
 }  // namespace teditor
