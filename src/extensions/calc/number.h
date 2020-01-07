@@ -151,8 +151,25 @@ Number<I, F> operator/(const Number<I, F>& a, const Number<I, F>& b) {
   return ret;
 }
 
-// other functions
-#define ALG_FUNC(name)                                  \
+// generic functions
+#define FUNC(name)                              \
+  template <typename I, typename F>             \
+  Number<I, F> name(const Number<I, F>& in) {   \
+    Number<I, F> out;                           \
+    out.isInt = in.isInt;                       \
+    if (out.isInt) {                            \
+      out.i = std::name(in.i);                  \
+    } else {                                    \
+      out.f = std::name(in.f);                  \
+    }                                           \
+    return out;                                 \
+  }
+FUNC(sq);
+FUNC(cube);
+#undef FUNC
+
+// floating point functions
+#define FP_FUNC(name)                                   \
   template <typename I, typename F>                     \
   Number<I, F> name(const Number<I, F>& in) {           \
     Number<I, F> out;                                   \
@@ -160,32 +177,30 @@ Number<I, F> operator/(const Number<I, F>& a, const Number<I, F>& b) {
     out.f = std::name(in.isInt ? F(in.i) : in.f);       \
     return out;                                         \
   }
-ALG_FUNC(abs);
-ALG_FUNC(sin);
-ALG_FUNC(cos)
-ALG_FUNC(tan);
-ALG_FUNC(asin);
-ALG_FUNC(acos)
-ALG_FUNC(atan);
-ALG_FUNC(sinh);
-ALG_FUNC(cosh)
-ALG_FUNC(tanh);
-ALG_FUNC(asinh);
-ALG_FUNC(acosh)
-ALG_FUNC(atanh);
-ALG_FUNC(sqrt);
-ALG_FUNC(cbrt);
-ALG_FUNC(log);
-ALG_FUNC(log10);
-ALG_FUNC(exp);
-ALG_FUNC(floor);
-ALG_FUNC(ceil);
-ALG_FUNC(round);
-ALG_FUNC(sq);
-ALG_FUNC(cube);
-#undef ALG_FUNC
+FP_FUNC(abs);
+FP_FUNC(sin);
+FP_FUNC(cos)
+FP_FUNC(tan);
+FP_FUNC(asin);
+FP_FUNC(acos)
+FP_FUNC(atan);
+FP_FUNC(sinh);
+FP_FUNC(cosh)
+FP_FUNC(tanh);
+FP_FUNC(asinh);
+FP_FUNC(acosh)
+FP_FUNC(atanh);
+FP_FUNC(sqrt);
+FP_FUNC(cbrt);
+FP_FUNC(log);
+FP_FUNC(log10);
+FP_FUNC(exp);
+FP_FUNC(floor);
+FP_FUNC(ceil);
+FP_FUNC(round);
+#undef FP_FUNC
 
-#define ALG_FUNC2(name)                                                 \
+#define FP_FUNC2(name)                                                  \
   template <typename I, typename F>                                     \
   Number<I, F> name(const Number<I, F>& in1, const Number<I, F>& in2) { \
     Number<I, F> out;                                                   \
@@ -194,9 +209,9 @@ ALG_FUNC(cube);
                       in2.isInt ? F(in2.i) : in2.f);                    \
     return out;                                                         \
   }
-ALG_FUNC2(pow);
-ALG_FUNC2(hypot);
-#undef ALG_FUNC2
+FP_FUNC2(pow);
+FP_FUNC2(hypot);
+#undef FP_FUNC2
 
 typedef Number<int32_t, float> Num32;
 typedef Number<int64_t, double> Num64;
