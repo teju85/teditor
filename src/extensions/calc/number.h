@@ -94,18 +94,22 @@ struct Number {
     return ret;
   }
 
-  static const Num e;   ///< constant e
-  static const Num pi;  ///< constant pi
+  static const Num e;    ///< constant e
+  static const Num pi;   ///< constant pi
+  static const Num nan;  ///< nan
 };  // struct Number
 
 #undef B_OP
 #undef OP
 
-template <typename IntT, typename FloatT>
-const Number<IntT, FloatT> Number<IntT, FloatT>::e((FloatT)M_E);
 
-template <typename IntT, typename FloatT>
-const Number<IntT, FloatT> Number<IntT, FloatT>::pi((FloatT)M_PI);
+#define CONST(var, val)                         \
+  template <typename I, typename F>             \
+  const Number<I, F> Number<I, F>::var((F)val)
+CONST(e, M_E);
+CONST(pi, M_PI);
+CONST(nan, NAN);
+#undef CONST
 
 
 // operator overloads

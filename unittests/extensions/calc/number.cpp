@@ -148,6 +148,9 @@ TEST_CASE("Number") {
     Num32 n1(3.f), n2(4.f);
     FLT_CHECK(hypot(n1, n2), 5.f);
   }
+  SECTION("nan") {
+    REQUIRE(std::isnan(Num32::nan.f));
+  }
 }
 
 #undef FLT_CHECK
