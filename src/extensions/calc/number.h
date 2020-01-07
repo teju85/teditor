@@ -94,9 +94,13 @@ struct Number {
     return ret;
   }
 
-  static const Num e;    ///< constant e
-  static const Num pi;   ///< constant pi
-  static const Num nan;  ///< nan
+  static const Num e;
+  static const Num pi;
+  static const Num nan;
+  static const Num log2e;
+  static const Num log10e;
+  static const Num sqrt2;
+  static const Num sqrt1_2;
 };  // struct Number
 
 #undef B_OP
@@ -109,6 +113,10 @@ struct Number {
 CONST(e, M_E);
 CONST(pi, M_PI);
 CONST(nan, NAN);
+CONST(log2e, M_LOG2E);
+CONST(log10e, M_LOG10E);
+CONST(sqrt2, M_SQRT2);
+CONST(sqrt1_2, M_SQRT1_2);
 #undef CONST
 
 
