@@ -25,6 +25,40 @@ TEST_CASE("Regexs::FloatingPt") {
   REQUIRE(nfa.find("-.2") == 2);
   REQUIRE(nfa.find("hello") == NFA::NoMatch);
   REQUIRE(nfa.find("1ea") == 0);
+  REQUIRE(nfa.find("a") == NFA::NoMatch);
+  REQUIRE(nfa.find("A") == NFA::NoMatch);
+  REQUIRE(nfa.find("z") == NFA::NoMatch);
+  REQUIRE(nfa.find("Z") == NFA::NoMatch);
+  REQUIRE(nfa.find("{") == NFA::NoMatch);
+  REQUIRE(nfa.find("`") == NFA::NoMatch);
+  REQUIRE(nfa.find("~") == NFA::NoMatch);
+  REQUIRE(nfa.find("!") == NFA::NoMatch);
+  REQUIRE(nfa.find("@") == NFA::NoMatch);
+  REQUIRE(nfa.find("#") == NFA::NoMatch);
+  REQUIRE(nfa.find("$") == NFA::NoMatch);
+  REQUIRE(nfa.find("%") == NFA::NoMatch);
+  REQUIRE(nfa.find("^") == NFA::NoMatch);
+  REQUIRE(nfa.find("&") == NFA::NoMatch);
+  REQUIRE(nfa.find("*") == NFA::NoMatch);
+  REQUIRE(nfa.find("(") == NFA::NoMatch);
+  REQUIRE(nfa.find(")") == NFA::NoMatch);
+  REQUIRE(nfa.find("_") == NFA::NoMatch);
+  REQUIRE(nfa.find("=") == NFA::NoMatch);
+  REQUIRE(nfa.find("{") == NFA::NoMatch);
+  REQUIRE(nfa.find("}") == NFA::NoMatch);
+  REQUIRE(nfa.find("[") == NFA::NoMatch);
+  REQUIRE(nfa.find("]") == NFA::NoMatch);
+  REQUIRE(nfa.find("|") == NFA::NoMatch);
+  REQUIRE(nfa.find("\\") == NFA::NoMatch);
+  REQUIRE(nfa.find(":") == NFA::NoMatch);
+  REQUIRE(nfa.find(";") == NFA::NoMatch);
+  REQUIRE(nfa.find("\"") == NFA::NoMatch);
+  REQUIRE(nfa.find("'") == NFA::NoMatch);
+  REQUIRE(nfa.find("<") == NFA::NoMatch);
+  REQUIRE(nfa.find(">") == NFA::NoMatch);
+  REQUIRE(nfa.find(",") == NFA::NoMatch);
+  REQUIRE(nfa.find("?") == NFA::NoMatch);
+  REQUIRE(nfa.find("/") == NFA::NoMatch);
 }
 
 TEST_CASE("Regexs::Integer") {
