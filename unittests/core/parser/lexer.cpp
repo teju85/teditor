@@ -18,12 +18,13 @@ enum TokenIds {
 };
 
 TEST_CASE("Lexer") {
-  Lexer lex({{Int,       Regexs::Integer},
-             {Float,     Regexs::FloatingPt},
+  Lexer lex({{Float,     Regexs::FloatingPt},
+             {Int,       Regexs::Integer},
              {BrktOpen,  "\\("},
              {BrktClose, "\\)"},
              {SemiColon, ";"},
              {Symbol,    Regexs::Variable}});
+  StringScanner sc("1 + 2");
 }
 
 } // end namespace parser
