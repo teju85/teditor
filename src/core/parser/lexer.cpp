@@ -30,28 +30,21 @@ Token Lexer::next(Scanner* sc) {
     // no match!
     if (nActives <= 0) {
       ret.end = pt;
-      break;
+      ret.type = Token::Unknown;
+      return ret;
     }
     // all matching regex's have only one matching active states remaining
     // then pick the longest matching one
     if (nMatches == 0 && nSoleMatches > 0) {
-      int i = 0;
-      for (auto n : nfas) {
-        if (n->isMatch(true)) {
-          const auto& mp = n->getMatchPos();
-          if (mp >= ret.end) {
-            ret.type = tokenDefs[i].type;
-            ret.end = mp;
-          }
-        }
-        ++i;
-      }
+      getLongestMatchingToken(ret, true);
       return ret;
     }
     // there is possibility of match being found in next sequence of chars. So,
     // continue with the next char from scanner
   }
-  if (sc->isEof()) ret.type = Token::End;
+  ret.type = Token::End;
+  // try to see if there are any matching states, if so, pick the longest one
+  getLongestMatchingToken(ret, false);
   return ret;
 }
 
@@ -67,6 +60,20 @@ void Lexer::step(char c, const Point& pt, int& nActives, int& nSoleMatches,
       else if (n->isMatch(false))
         ++nMatches;
     }
+  }
+}
+
+void Lexer::getLongestMatchingToken(Token& ret, bool lastRemainingState) {
+  int i = 0;
+  for (auto n : nfas) {
+    if (n->isMatch(lastRemainingState)) {
+      const auto& mp = n->getMatchPos();
+      if (mp >= ret.end) {
+        ret.type = tokenDefs[i].type;
+        ret.end = mp;
+      }
+    }
+    ++i;
   }
 }
 

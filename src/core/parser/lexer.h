@@ -52,6 +52,7 @@ struct Lexer {
   void reset() { for (auto n : nfas) n->reset(); }
   void step(char c, const Point& pt, int& nActives, int& nSoleMatches,
             int& nMatches);
+  void getLongestMatchingToken(Token& ret, bool lastRemainingState);
 };  // struct Lexer
 
 
