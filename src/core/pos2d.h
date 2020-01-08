@@ -11,6 +11,8 @@ namespace teditor {
  */
 template <typename T>
 struct Pos2d {
+  typedef T DataT;
+
   T x, y;
 
   Pos2d(T x_=0, T y_=0): x(x_), y(y_) {}
