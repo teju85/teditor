@@ -36,11 +36,12 @@ Token Lexer::next(Scanner* sc) {
       ret.type = Token::Unknown;
       return ret;
     }
+    if (consumed) continue;
     // all matching regex's have only one matching active states remaining
     // then pick the longest matching one
     if (nMatches == 0 && nSoleMatches > 0) {
       getLongestMatchingToken(ret, true);
-      if (!consumed) sc->rewind();
+      sc->rewind();
       return ret;
     }
     // there is possibility of match being found in next sequence of chars. So,
