@@ -3,7 +3,8 @@
 namespace teditor {
 namespace parser {
 
-char StringScanner::nextChar(Point& pt) {
+char StringScanner::next(Point& pt) {
+  ASSERT(!isEof(), "next: called after EOF has been hit!");
   auto c = str[currPos];
   pt.x = Point::DataT(currPos);
   pt.y = 0;
