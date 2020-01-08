@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <core/pos2d.h>
+#include <vector>
 
 namespace teditor {
 namespace parser {
@@ -23,7 +24,35 @@ struct Token {
 
   /** special reserved token for denoting EOF */
   static const uint32_t End;
+  /** special reserved token for denoting unknown token */
+  static const uint32_t Unknown;
 };  // struct Token
+
+
+/** A regex string and a unique type to identify a token during lexing */
+struct TokenDef {
+  std::string regex;
+  uint32_t type;
+};
+typedef std::vector<TokenDef> TokenDefs;
+
+
+class Scanner;
+struct NFA;
+/** Base lexing class for tokenizing the input stream */
+struct Lexer {
+  Lexer(const TokenDefs& t);
+  virtual ~Lexer() { for (auto t : nfas) delete t; }
+  virtual Token next(Scanner* sc);
+
+ private:
+  std::vector<NFA*> nfas;
+  TokenDefs tokenDefs;
+
+  void reset() { for (auto n : nfas) n->reset(); }
+  void step(char c, const Point& pt, int& nActives, int& nSoleMatches,
+            int& nMatches);
+};  // struct Lexer
 
 
 }  // namespace parser

@@ -1,9 +1,74 @@
+#include "scanner.h"
+#include "nfa.h"
 #include "lexer.h"
 
 namespace teditor {
 namespace parser {
 
 const uint32_t Token::End = uint32_t(-1);
+const uint32_t Token::Unknown = uint32_t(-2);
+
+Lexer::Lexer(const TokenDefs& t): nfas(), tokenDefs(t) {
+  for (auto td : tokenDefs) nfas.push_back(new NFA(td.regex));
+}
+
+Token Lexer::next(Scanner* sc) {
+  bool first = true;
+  Token ret;
+  ret.type = Token::Unknown;
+  reset();
+  while (!sc->isEof()) {
+    Point pt;
+    auto c = sc->next(pt);
+    if (first) {
+      ret.start = pt;
+      ret.end = pt;
+      first = false;
+    }
+    int nActives, nSoleMatches, nMatches;
+    step(c, pt, nActives, nSoleMatches, nMatches);
+    // no match!
+    if (nActives <= 0) {
+      ret.end = pt;
+      break;
+    }
+    // all matching regex's have only one matching active states remaining
+    // then pick the longest matching one
+    if (nMatches == 0 && nSoleMatches > 0) {
+      int i = 0;
+      for (auto n : nfas) {
+        if (n->isMatch(true)) {
+          const auto& mp = n->getMatchPos();
+          if (mp > ret.end) {
+            ret.type = tokenDefs[i].type;
+            ret.end = mp;
+          }
+        }
+        ++i;
+      }
+      return ret;
+    }
+    // there is possibility of match being found in next sequence of chars. So,
+    // continue with the next char from scanner
+  }
+  if (sc->isEof()) ret.type = Token::End;
+  return ret;
+}
+
+void Lexer::step(char c, const Point& pt, int& nActives, int& nSoleMatches,
+                 int& nMatches) {
+  nActives = nSoleMatches = nMatches = 0;
+  for (auto n : nfas) {
+    if (!n->areActiveStatesEmpty()) {
+      n->step(c, pt);
+      if (!n->areActiveStatesEmpty()) ++nActives;
+      if (n->isMatch(true))
+        ++nSoleMatches;
+      else if (n->isMatch(false))
+        ++nMatches;
+    }
+  }
+}
 
 }  // namespace parser
 }  // namespace teditor
