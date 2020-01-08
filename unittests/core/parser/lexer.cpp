@@ -13,6 +13,7 @@ enum TokenIds {
   Float,
   BrktOpen,
   BrktClose,
+  SemiColon,
   Symbol
 };
 
@@ -21,6 +22,7 @@ TEST_CASE("Lexer") {
              {Float,     Regexs::FloatingPt},
              {BrktOpen,  "\\("},
              {BrktClose, "\\)"},
+             {SemiColon, ";"},
              {Symbol,    Regexs::Variable}});
 }
 

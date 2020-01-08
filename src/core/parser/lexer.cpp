@@ -70,6 +70,8 @@ void Lexer::getLongestMatchingToken(Token& ret, bool lastRemainingState) {
   for (auto n : nfas) {
     if (n->isMatch(lastRemainingState)) {
       const auto& mp = n->getMatchPos();
+      // in case multiple tokens match at the same location, then give more
+      // preference to the ones defined at the end of the tokenDefs list!
       if (mp >= ret.end) {
         ret.type = tokenDefs[i].type;
         ret.end = mp;
