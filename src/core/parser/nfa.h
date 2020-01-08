@@ -39,6 +39,10 @@ struct NFA {
   ~NFA() { for (auto itr : states) delete itr; }
 
   /**
+   * @defgroup ExplicitMethods To manually step during regex match phase
+   * @{
+   */
+  /**
    * @brief checks if we have reached match state, indicating a regex match
    * @param lastStateRemaining if set to true, means that this will expect only
    *                           one state to be remaining which should be Match
@@ -46,7 +50,6 @@ struct NFA {
    * @return true if match has been found, else false
    */
   bool isMatch(bool lastStateRemaining = false) const;
-
   /**
    * @brief Tells if after the current `step()` whether there are any active
    *        states still remaining. So, this can be used to prematurely stop
@@ -54,27 +57,24 @@ struct NFA {
    * @return true if there are no more actives states, else false
    */
   bool areActiveStatesEmpty() const { return acs.current().empty(); }
-
   /**
    * @brief After the search has finished, use this to know the latest position
    *        of the match of the regex in the input string
    * @return if match found, its latest position in string, else NFA::NoMatch
    */
   const Point& getMatchPos() const { return matchState->matchPos; }
-
   /**
    * @brief Step through the NFA state using the current char
    * @param c current char
    * @param pos its position in the input string
    */
   void step(char c, const Point& pos);
-
   /**
-   * @brief Reset all the variables used during regex search
-   *
-   * This needs to be called once before beginning of every search
+   * @brief Reset all the variables used during regex search. This needs to be
+   *        called once before beginning of every search
    */
   void reset();
+  /** @} */
 
   /** represents case when regex didn't match anything */
   static const size_t NoMatch;
