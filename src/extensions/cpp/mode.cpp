@@ -1,6 +1,7 @@
 #include "../base/text.h"
 #include "core/buffer.h"
 #include "core/pcre.h"
+#include "core/parser/nfa.h"
 
 namespace teditor {
 namespace cpp {
@@ -8,7 +9,7 @@ namespace cpp {
 /** c++ mode */
 class CppMode: public text::TextMode {
 public:
-  CppMode(): text::TextMode("c++") {
+  CppMode(): text::TextMode("c++"), nspace("namespace.*{") {
     populateKeyMap<CppMode::Keys>(getKeyCmdMap());
     populateColorMap<CppMode::Colors>(getColorMap());
   }
@@ -19,11 +20,10 @@ public:
     auto& curr = buf.at(line);
     const auto& prevLine = prev.get();
     const auto& currLine = curr.get();
-    Pcre nspace("namespace .*?{");
     int prevInd;
-    if(nspace.isMatch(prevLine))
+    if (nspace.find(prevLine) != parser::NFA::NoMatch)
       prevInd = 0;
-    else if(prevLine[0] == '#')
+    else if (prevLine[0] == '#')
       prevInd = 0;
     else
       prevInd = prev.indentSize();
@@ -42,6 +42,8 @@ public:
 private:
   struct Keys { static std::vector<KeyCmdPair> All; };
   struct Colors { static std::vector<NameColorPair> All; };
+
+  parser::NFA nspace;
 };
 
 REGISTER_MODE(CppMode, "c++");
