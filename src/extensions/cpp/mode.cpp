@@ -1,6 +1,5 @@
 #include "../base/text.h"
 #include "core/buffer.h"
-#include "core/pcre.h"
 #include "core/parser/nfa.h"
 
 namespace teditor {
@@ -35,8 +34,8 @@ public:
   static Mode* create() { return new CppMode; }
 
   static bool modeCheck(const std::string& file) {
-    static Pcre reg("[.](cpp|c|cxx|cu|h|hpp|hxx|cuh)$");
-    return reg.isMatch(file);
+    static parser::NFA nfa(".*[.](cpp|c|cxx|cu|h|hpp|hxx|cuh)");
+    return nfa.find(file) != parser::NFA::NoMatch;
   }
 
 private:
