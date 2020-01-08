@@ -29,6 +29,8 @@ Token Lexer::next(Scanner* sc) {
     }
     int nActives, nSoleMatches, nMatches;
     step(c, pt, nActives, nSoleMatches, nMatches);
+    printf("char=%c na,ns,nm=%d,%d,%d pt=%d,%d\n", c, nActives, nSoleMatches,
+           nMatches, pt.x, pt.y);
     // no match!
     if (nActives <= 0) {
       ret.end = pt;
@@ -39,6 +41,7 @@ Token Lexer::next(Scanner* sc) {
     // then pick the longest matching one
     if (nMatches == 0 && nSoleMatches > 0) {
       getLongestMatchingToken(ret, true);
+      sc->rewind();
       return ret;
     }
     // there is possibility of match being found in next sequence of chars. So,

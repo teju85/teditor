@@ -17,7 +17,14 @@ void StringScanner::setStart(const Point& pt) {
   ASSERT(pt.x < len,
          "setStart: point cannot be greater than string length! pt=%d len=%d",
          pt.x, len);
-  currPos = pt.x;
+  startPos = currPos = pt.x;
+}
+
+void StringScanner::rewind() {
+  ASSERT(currPos > startPos,
+         "rewind: called after hitting start! curr=%lu start=%lu", currPos,
+         startPos);
+  --currPos;
 }
 
 }  // namespace parser
