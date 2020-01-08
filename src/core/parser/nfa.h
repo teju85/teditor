@@ -67,8 +67,9 @@ struct NFA {
    * @brief Step through the NFA state using the current char
    * @param c current char
    * @param pos its position in the input string
+   * @return true if input was consumed by any of the active states, else false
    */
-  void step(char c, const Point& pos);
+  bool step(char c, const Point& pos);
   /**
    * @brief Reset all the variables used during regex search. This needs to be
    *        called once before beginning of every search

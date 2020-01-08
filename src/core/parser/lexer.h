@@ -50,7 +50,7 @@ struct Lexer {
   TokenDefs tokenDefs;
 
   void reset();
-  void step(char c, const Point& pt, int& nActives, int& nSoleMatches,
+  bool step(char c, const Point& pt, int& nActives, int& nSoleMatches,
             int& nMatches);
   void getLongestMatchingToken(Token& ret, bool lastRemainingState);
 };  // struct Lexer

@@ -9,8 +9,9 @@ namespace teditor {
 namespace parser {
 
 enum TokenIds {
-  Int,
   Float,
+  Int,
+  Assignment,
   BrktOpen,
   BrktClose,
   SemiColon,
@@ -21,14 +22,15 @@ enum TokenIds {
 
 #define TOKEN_CHECK_STR(lex, sc, st, en, typ)  do {        \
     auto tok = lex.next(&sc);                              \
-    REQUIRE(tok.start == Point{st, 0});                    \
-    REQUIRE(tok.end == Point{en, 0});                      \
+    REQUIRE(tok.start == st);                              \
+    REQUIRE(tok.end == en);                                \
     REQUIRE(tok.type == typ);                              \
   } while(0)
 
 TEST_CASE("Lexer") {
   Lexer lex({{Float,      Regexs::FloatingPt},
              {Int,        Regexs::Integer},
+             {Assignment, "="},
              {BrktOpen,   "\\("},
              {BrktClose,  "\\)"},
              {SemiColon,  ";"},
@@ -38,14 +40,46 @@ TEST_CASE("Lexer") {
   SECTION("simple-arithmetic") {
     std::string expr("1 + 2");
     StringScanner sc(expr);
-    TOKEN_CHECK_STR(lex, sc, 0, 0, Int);
-    TOKEN_CHECK_STR(lex, sc, 1, 1, WhiteSpace);
-    TOKEN_CHECK_STR(lex, sc, 2, 2, Operators);
-    TOKEN_CHECK_STR(lex, sc, 3, 3, WhiteSpace);
-    TOKEN_CHECK_STR(lex, sc, 4, 4, Int);
-    TOKEN_CHECK_STR(lex, sc, 4, 4, Token::End);
+    TOKEN_CHECK_STR(lex, sc, Point(0, 0), Point(0, 0), Int);
+    TOKEN_CHECK_STR(lex, sc, Point(1, 0), Point(1, 0), WhiteSpace);
+    TOKEN_CHECK_STR(lex, sc, Point(2, 0), Point(2, 0), Operators);
+    TOKEN_CHECK_STR(lex, sc, Point(3, 0), Point(3, 0), WhiteSpace);
+    TOKEN_CHECK_STR(lex, sc, Point(4, 0), Point(4, 0), Int);
+    TOKEN_CHECK_STR(lex, sc, Point(-1, -1), Point(-1, -1), Token::End);
+  }
+  SECTION("simple-arithmetic-mixed-precision") {
+    std::string expr("1 + 2.3");
+    StringScanner sc(expr);
+    TOKEN_CHECK_STR(lex, sc, Point(0, 0), Point(0, 0), Int);
+    TOKEN_CHECK_STR(lex, sc, Point(1, 0), Point(1, 0), WhiteSpace);
+    TOKEN_CHECK_STR(lex, sc, Point(2, 0), Point(2, 0), Operators);
+    TOKEN_CHECK_STR(lex, sc, Point(3, 0), Point(3, 0), WhiteSpace);
+    TOKEN_CHECK_STR(lex, sc, Point(4, 0), Point(6, 0), Float);
+    TOKEN_CHECK_STR(lex, sc, Point(-1, -1), Point(-1, -1), Token::End);
+  }
+  SECTION("function-call") {
+    std::string expr("sin(2)");
+    StringScanner sc(expr);
+    TOKEN_CHECK_STR(lex, sc, Point(0, 0), Point(2, 0), Symbol);
+    TOKEN_CHECK_STR(lex, sc, Point(3, 0), Point(3, 0), BrktOpen);
+    TOKEN_CHECK_STR(lex, sc, Point(4, 0), Point(4, 0), Int);
+    TOKEN_CHECK_STR(lex, sc, Point(5, 0), Point(5, 0), BrktClose);
+    TOKEN_CHECK_STR(lex, sc, Point(-1, -1), Point(-1, -1), Token::End);
+  }
+  SECTION("disable-print") {
+    std::string expr("a = 123;");
+    StringScanner sc(expr);
+    TOKEN_CHECK_STR(lex, sc, Point(0, 0), Point(0, 0), Symbol);
+    TOKEN_CHECK_STR(lex, sc, Point(1, 0), Point(1, 0), WhiteSpace);
+    TOKEN_CHECK_STR(lex, sc, Point(2, 0), Point(2, 0), Assignment);
+    TOKEN_CHECK_STR(lex, sc, Point(3, 0), Point(3, 0), WhiteSpace);
+    TOKEN_CHECK_STR(lex, sc, Point(4, 0), Point(6, 0), Int);
+    TOKEN_CHECK_STR(lex, sc, Point(7, 0), Point(7, 0), SemiColon);
+    TOKEN_CHECK_STR(lex, sc, Point(-1, -1), Point(-1, -1), Token::End);
   }
 }
+
+#undef TOKEN_CHECK_STR
 
 } // end namespace parser
 } // end namespace teditor

@@ -80,7 +80,8 @@ void NFA::reset() {
   stepThroughSplitStates();
 }
 
-void NFA::step(char c, const Point& pos) {
+bool NFA::step(char c, const Point& pos) {
+  bool consumed = false;
   acs.next().clear();
   for (auto& a : acs.current()) {
     auto& next = acs.next();
@@ -89,6 +90,7 @@ void NFA::step(char c, const Point& pos) {
       continue;
     }
     if (a->isMatch(c)) {
+      consumed = true;
       if (a->next != nullptr) {
         a->next->matchPos = pos;
         next.insert(a->next);
@@ -101,6 +103,7 @@ void NFA::step(char c, const Point& pos) {
   }
   acs.update();
   stepThroughSplitStates();
+  return consumed;
 }
 
 bool NFA::isMatch(bool lastStateRemaining) const {

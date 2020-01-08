@@ -18,6 +18,7 @@ Token Lexer::next(Scanner* sc) {
   bool first = true;
   Token ret;
   ret.type = Token::Unknown;
+  ret.start = ret.end = Point{-1, -1};
   reset();
   while (!sc->isEof()) {
     Point pt;
@@ -28,9 +29,7 @@ Token Lexer::next(Scanner* sc) {
       first = false;
     }
     int nActives, nSoleMatches, nMatches;
-    step(c, pt, nActives, nSoleMatches, nMatches);
-    printf("char=%c na,ns,nm=%d,%d,%d pt=%d,%d\n", c, nActives, nSoleMatches,
-           nMatches, pt.x, pt.y);
+    bool consumed = step(c, pt, nActives, nSoleMatches, nMatches);
     // no match!
     if (nActives <= 0) {
       ret.end = pt;
@@ -41,7 +40,7 @@ Token Lexer::next(Scanner* sc) {
     // then pick the longest matching one
     if (nMatches == 0 && nSoleMatches > 0) {
       getLongestMatchingToken(ret, true);
-      sc->rewind();
+      if (!consumed) sc->rewind();
       return ret;
     }
     // there is possibility of match being found in next sequence of chars. So,
@@ -53,19 +52,21 @@ Token Lexer::next(Scanner* sc) {
   return ret;
 }
 
-void Lexer::step(char c, const Point& pt, int& nActives, int& nSoleMatches,
+bool Lexer::step(char c, const Point& pt, int& nActives, int& nSoleMatches,
                  int& nMatches) {
+  bool consumed = false;
   nActives = nSoleMatches = nMatches = 0;
+  int i = 0;
   for (auto n : nfas) {
     if (!n->areActiveStatesEmpty()) {
-      n->step(c, pt);
+      consumed |= n->step(c, pt);
       if (!n->areActiveStatesEmpty()) ++nActives;
-      if (n->isMatch(true))
-        ++nSoleMatches;
-      else if (n->isMatch(false))
-        ++nMatches;
+      if (n->isMatch(true)) ++nSoleMatches;
+      else if (n->isMatch(false)) ++nMatches;
     }
+    ++i;
   }
+  return consumed;
 }
 
 void Lexer::getLongestMatchingToken(Token& ret, bool lastRemainingState) {
