@@ -1,6 +1,6 @@
 #include "text.h"
 #include "core/buffer.h"
-#include "core/pcre.h"
+#include "core/parser/nfa.h"
 
 namespace teditor {
 namespace text {
@@ -23,8 +23,8 @@ int TextMode::indent(Buffer& buf, int line) {
 }
 
 bool TextMode::modeCheck(const std::string& file) {
-  static Pcre reg("[.]txt$");
-  return reg.isMatch(file);
+  static parser::NFA nfa(".*[.]txt");
+  return nfa.find(file) != parser::NFA::NoMatch;
 }
 
 std::vector<KeyCmdPair> TextMode::Keys::All = {
