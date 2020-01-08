@@ -39,7 +39,7 @@ Token Lexer::next(Scanner* sc) {
       for (auto n : nfas) {
         if (n->isMatch(true)) {
           const auto& mp = n->getMatchPos();
-          if (mp > ret.end) {
+          if (mp >= ret.end) {
             ret.type = tokenDefs[i].type;
             ret.end = mp;
           }
