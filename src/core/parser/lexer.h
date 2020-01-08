@@ -31,8 +31,8 @@ struct Token {
 
 /** A regex string and a unique type to identify a token during lexing */
 struct TokenDef {
-  std::string regex;
   uint32_t type;
+  std::string regex;
 };
 typedef std::vector<TokenDef> TokenDefs;
 
