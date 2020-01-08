@@ -25,5 +25,6 @@ struct Token {
   static const uint32_t End;
 };  // struct Token
 
+
 }  // namespace parser
 }  // namespace teditor
