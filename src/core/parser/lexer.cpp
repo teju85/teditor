@@ -12,6 +12,8 @@ Lexer::Lexer(const TokenDefs& t): nfas(), tokenDefs(t) {
   for (auto td : tokenDefs) nfas.push_back(new NFA(td.regex));
 }
 
+Lexer::~Lexer() { for (auto t : nfas) delete t; }
+
 Token Lexer::next(Scanner* sc) {
   bool first = true;
   Token ret;
@@ -76,6 +78,8 @@ void Lexer::getLongestMatchingToken(Token& ret, bool lastRemainingState) {
     ++i;
   }
 }
+
+void Lexer::reset() { for (auto n : nfas) n->reset(); }
 
 }  // namespace parser
 }  // namespace teditor

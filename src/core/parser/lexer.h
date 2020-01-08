@@ -42,14 +42,14 @@ struct NFA;
 /** Base lexing class for tokenizing the input stream */
 struct Lexer {
   Lexer(const TokenDefs& t);
-  virtual ~Lexer() { for (auto t : nfas) delete t; }
+  virtual ~Lexer();
   virtual Token next(Scanner* sc);
 
  private:
   std::vector<NFA*> nfas;
   TokenDefs tokenDefs;
 
-  void reset() { for (auto n : nfas) n->reset(); }
+  void reset();
   void step(char c, const Point& pt, int& nActives, int& nSoleMatches,
             int& nMatches);
   void getLongestMatchingToken(Token& ret, bool lastRemainingState);
