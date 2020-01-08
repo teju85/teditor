@@ -2,7 +2,6 @@
 
 #include <stdint.h>
 #include <core/pos2d.h>
-#include <vector>
 
 namespace teditor {
 namespace parser {
@@ -25,16 +24,6 @@ struct Token {
   /** special reserved token for denoting EOF */
   static const uint32_t End;
 };  // struct Token
-
-
-/** Represents a node in the parse tree */
-struct Node : public std::vector<Node*> {
-  /** current node contents */
-  Token token;
-
-  ~Node() { for (auto n : *this) delete n; }
-  bool isLeaf() const { return empty(); }
-};  // struct Node
 
 }  // namespace parser
 }  // namespace teditor
