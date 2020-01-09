@@ -65,7 +65,6 @@ std::vector<KeyCmdPair> ReadOnlyMode::Keys::All = {
   {"C-X 3", "split-vertically"},
   {"C-X 0", "clear-all-windows"},
   {"C-X o", "next-window"},
-  {"C-L C-D", "ledger"},
 };
 
 std::vector<NameColorPair> ReadOnlyMode::Colors::All = {
