@@ -28,13 +28,23 @@ Node* Node::getNode(const std::string& key) {
 
 bool Node::delNode(const Strings& keys, size_t pos) {
   if (keys.empty()) return false;
-  if (pos == keys.size() - 1) return leaf();
   auto itr = nodes.find(keys[pos]);
   if (itr == nodes.end()) return false;
-  auto erased = itr->second->delNode(keys, pos + 1);
-  if (erased) {
+  if (pos == keys.size() - 1) {
+    if (!itr->second->leaf()) return false;
     delete itr->second;
     nodes.erase(itr);
+    return true;
+  }
+  // recursively try to delete the nodes
+  auto erased = itr->second->delNode(keys, pos + 1);
+  if (erased) {
+    if (nodes.size() == 1) {  // this is the only path remaining in the tree
+      delete itr->second;
+      nodes.erase(itr);
+    } else {
+      erased = false;
+    }
   }
   return erased;
 }
@@ -65,7 +75,9 @@ void Trie::add(const std::string& keys, const std::string& str) {
 }
 
 void Trie::del(const std::string& keys) {
-  auto keySeq = split(keys, ' ');
+  Strings keySeq;
+  if (keys == " ") keySeq.push_back(keys);
+  else keySeq = split(keys, ' ');
   root->delNode(keySeq, 0);
 }
 
