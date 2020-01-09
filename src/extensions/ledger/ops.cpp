@@ -18,7 +18,7 @@ Buffer& getLedgerBuff(Editor& ed) {
 }
 
 DEF_CMD(
-  Ledger, "ledger", DEF_OP() {
+  LedgerTop, "ledger-top", DEF_OP() {
     auto& buf = getLedgerBuff(ed);
     Evaluate eval(Option::get("ledgerFile").getStr());
     eval.showTopAccounts(buf);
@@ -27,7 +27,7 @@ DEF_CMD(
   DEF_HELP() { return "Starts ledger-mode buffer, if not already done."; });
 
 DEF_CMD(
-  LedgerAll, "ledger-all", DEF_OP() {
+  Ledger, "ledger", DEF_OP() {
     auto& buf = getLedgerBuff(ed);
     Evaluate eval(Option::get("ledgerFile").getStr());
     eval.showAllAccounts(buf);
