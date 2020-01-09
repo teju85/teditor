@@ -21,6 +21,14 @@ DEF_CMD(
   },
   DEF_HELP() { return "Starts the calculator, if not already done."; });
 
+DEF_CMD(
+  InsertChar, "calc-insert-char", DEF_OP() {
+    auto& buf = ed.getBuff();
+    auto c = (char)ed.getKey();
+    buf.insert(c);
+  },
+  DEF_HELP() { return "Inserts currently pressed char into buffer."; });
+
 } // end namespace ops
 } // end namespace ledger
 } // end namespace teditor
