@@ -16,16 +16,9 @@ Node* Node::addNode(const std::string& key) {
   return itr->second;
 }
 
-void Node::delNode(const std::string& key) {
-  auto itr = nodes.find(key);
-  ASSERT(itr != nodes.end(), "delNode: key=%s not found!", key.c_str());
-  delete itr->second;
-  nodes.erase(itr);
-}
-
 Node* Node::getNode(const std::string& key) {
   auto itr = nodes.find(key);
-  return (itr == nodes.end())? nullptr : itr->second;
+  return itr == nodes.end() ? nullptr : itr->second;
 }
 
 void Node::makeLeaf(const std::string& d) {

@@ -12,7 +12,6 @@ public:
   Node(): nodes(), isLeaf(false), leafData() {}
   ~Node() { clear(); }
   Node* addNode(const std::string& key);
-  void delNode(const std::string& key);
   Node* getNode(const std::string& key);
   void makeLeaf(const std::string& d);
   bool leaf() const { return isLeaf; }
