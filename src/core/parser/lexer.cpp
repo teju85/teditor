@@ -7,6 +7,7 @@ namespace parser {
 
 const uint32_t Token::End = uint32_t(-1);
 const uint32_t Token::Unknown = uint32_t(-2);
+const uint32_t Token::Root = uint32_t(-3);
 
 Lexer::Lexer(const TokenDefs& t): nfas(), tokenDefs(t) {
   for (auto td : tokenDefs) nfas.push_back(new NFA(td.regex));

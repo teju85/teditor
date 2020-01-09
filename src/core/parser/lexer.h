@@ -26,6 +26,8 @@ struct Token {
   static const uint32_t End;
   /** special reserved token for denoting unknown token */
   static const uint32_t Unknown;
+  /** special reserved token for denoting root node */
+  static const uint32_t Root;
 };  // struct Token
 
 
