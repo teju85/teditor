@@ -24,8 +24,8 @@ REGISTER_MODE(LedgerMode, "ledger");
 
 
 std::vector<KeyCmdPair> LedgerMode::Keys::All = {
-  {"A", "ledger-all"},
-  {"T", "ledger"},
+  {"A", "ledger"},
+  {"T", "ledger-top"},
 };
 
 std::vector<NameColorPair> LedgerMode::Colors::All = {};
