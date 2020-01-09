@@ -25,6 +25,7 @@ REGISTER_MODE(CalcMode, "calc");
 
 
 std::vector<KeyCmdPair> CalcMode::Keys::All = {
+  {"q", ""},
 };
 
 std::vector<NameColorPair> CalcMode::Colors::All = {
