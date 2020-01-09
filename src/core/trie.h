@@ -12,7 +12,7 @@ public:
   Node(): nodes(), isLeaf(false), leafData() {}
   ~Node() { clear(); }
   Node* addNode(const std::string& key);
-  bool delNode(const Strings& keys, size_t pos);
+  void delNode(const Strings& keys, size_t pos);
   Node* getNode(const std::string& key);
   void makeLeaf(const std::string& d);
   bool leaf() const { return isLeaf; }
@@ -32,7 +32,7 @@ public:
   ~Trie();
   void add(const std::string& keys, const std::string& str);
   void del(const std::string& keys);
-  Node* getNode(const std::string& key) { return root->getNode(key); }
+  Node* getRoot() { return root; }
   void clear() { root->clear(); }
 
 private:

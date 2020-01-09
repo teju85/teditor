@@ -2,7 +2,6 @@
 
 #include "trie.h"
 
-
 namespace teditor {
 
 enum TrieStatus {
@@ -24,12 +23,13 @@ public:
   void add(const std::string& keySeq, const std::string& cmd);
   void add(const KeyCmdPair& pair) { add(pair.keySeq, pair.cmd); }
   TrieStatus traverse(const std::string& currKey);
-  void resetTraversal() { currNode = nullptr; }
+  void resetTraversal() { currNode = keyTree.getRoot(); }
   const std::string getCmd() const;
   void clear();
+  void eraseKey(const std::string& key);
 
 private:
-  std::unordered_map<std::string,std::string> key2cmd, cmd2key;
+  std::unordered_map<std::string, std::string> key2cmd, cmd2key;
   Trie keyTree;
   Node* currNode;
 };
@@ -38,7 +38,10 @@ private:
 template <typename Keys>
 void populateKeyMap(KeyCmdMap& kcm, bool clear=false) {
   if(clear) kcm.clear();
-  for(auto& kc : Keys::All) kcm.add(kc);
+  for(auto& kc : Keys::All) {
+    if (kc.cmd.empty()) kcm.eraseKey(kc.keySeq);
+    else kcm.add(kc);
+  }
 }
 
 }; // end namespace teditor
