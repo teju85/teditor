@@ -10,9 +10,9 @@ namespace parser {
 struct Node : public std::vector<Node*> {
   /** current node contents */
   Token token;
-
-  ~Node() { for (auto n : *this) delete n; }
+  ~Node();
   bool isLeaf() const { return empty(); }
+  void addChild(const Token& t);
 };  // struct Node
 
 }  // namespace parser
