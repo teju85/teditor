@@ -1,6 +1,8 @@
 #include "core/buffer.h"
 #include "core/option.h"
 #include "mode.h"
+#include "core/parser/scanner.h"
+#include "core/parser/regexs.h"
 
 namespace teditor {
 namespace calc {
@@ -9,12 +11,24 @@ CalcMode::CalcMode():
   text::TextMode("calc"), vars(), prompt(Option::get("calc:prompt").getStr()),
   lineSeparator(Option::get("calc:lineSeparator").getStr()),
   cmds(Option::get("calc:histFile").getStr(),
-       Option::get("calc:maxHistory").getInt()) {
+       Option::get("calc:maxHistory").getInt()), lex(nullptr) {
   populateKeyMap<CalcMode::Keys>(getKeyCmdMap());
   populateColorMap<CalcMode::Colors>(getColorMap());
+  lex = new parser::Lexer({{Float,      parser::Regexs::FloatingPt},
+                           {Int,        parser::Regexs::Integer},
+                           {Assignment, "="},
+                           {BrktOpen,   "\\("},
+                           {BrktClose,  "\\)"},
+                           {SemiColon,  ";"},
+                           {Symbol,     parser::Regexs::Variable},
+                           {Operators,  "[-+*/]"},
+                           {WhiteSpace, "\\s+"}});
 }
 
-CalcMode::~CalcMode() { cmds.store(); }
+CalcMode::~CalcMode() {
+  cmds.store();
+  delete lex;
+}
 
 Num64& CalcMode::getVar(const std::string& name) {
   auto itr = vars.find(name);

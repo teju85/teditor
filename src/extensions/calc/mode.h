@@ -7,7 +7,6 @@
 #include "core/utils.h"
 #include "core/editor.h"
 #include "core/parser/lexer.h"
-#include "core/parser/scanner.h"
 
 namespace teditor {
 namespace calc {
@@ -39,9 +38,7 @@ private:
   std::unordered_map<std::string, Num64> vars;
   std::string prompt, lineSeparator;
   History cmds;
-  ///@todo: enable
-  // parser::Lexer lex;
-  // BufferScanner scanner;
+  parser::Lexer* lex;
 };  // class CalcMode
 
 
