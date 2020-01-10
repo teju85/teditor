@@ -23,6 +23,27 @@ enum TokenIds {
   Divide,
   Power,
   Assignment,
+  Abs,
+  Sine,
+  Cosine,
+  Tangent,
+  ArcSince,
+  ArcCosine,
+  ArcTangent,
+  SineH,
+  CosineH,
+  TangentH,
+  ArcSineH,
+  ArcCosineH,
+  ArcTangentH,
+  Sqrt,
+  Cbrt,
+  Log,
+  Log10,
+  Exp,
+  Floor,
+  Ceil,
+  Round,
   WhiteSpace,
 };  // enum TokenIds
 
@@ -47,6 +68,7 @@ struct Parser {
   static const std::unordered_map<uint32_t, OpInfo> OpInfoMap;
 
   bool lexingDone(const parser::Token& tok);
+  Num64 computeBinaryOp(const Num64& a, const Num64& b, TokenIds op);
 };  // struct Parser
 
 }  // namespace calc
