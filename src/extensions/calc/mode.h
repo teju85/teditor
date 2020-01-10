@@ -13,6 +13,7 @@ namespace calc {
 class CalcMode: public text::TextMode {
 public:
   CalcMode();
+  ~CalcMode();
 
   static Mode* create() { return new CalcMode; }
   static bool modeCheck(const std::string& file) { return file == "*calc"; }

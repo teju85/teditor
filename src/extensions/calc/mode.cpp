@@ -14,6 +14,8 @@ CalcMode::CalcMode():
   populateColorMap<CalcMode::Colors>(getColorMap());
 }
 
+CalcMode::~CalcMode() { cmds.store(); }
+
 
 std::vector<KeyCmdPair> CalcMode::Keys::All = {
   {" ", "calc-insert-char"},
