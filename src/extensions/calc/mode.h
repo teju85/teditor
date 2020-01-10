@@ -6,6 +6,8 @@
 #include "number.h"
 #include "core/utils.h"
 #include "core/editor.h"
+#include "core/parser/lexer.h"
+#include "core/parser/scanner.h"
 
 namespace teditor {
 namespace calc {
@@ -37,7 +39,25 @@ private:
   std::unordered_map<std::string, Num64> vars;
   std::string prompt, lineSeparator;
   History cmds;
+  ///@todo: enable
+  // parser::Lexer lex;
+  // BufferScanner scanner;
 };  // class CalcMode
+
+
+/** Token types for Lexer */
+enum TokenIds {
+  Float,
+  Int,
+  Assignment,
+  BrktOpen,
+  BrktClose,
+  Comma,
+  SemiColon,
+  Symbol,
+  Operators,
+  WhiteSpace,
+};  // enum TokenIds
 
 }  // namespace calc
 }  // namespace teditor
