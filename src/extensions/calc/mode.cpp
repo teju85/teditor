@@ -1,69 +1,17 @@
 #include "core/buffer.h"
 #include "core/option.h"
 #include "mode.h"
-#include "core/parser/scanner.h"
-#include "core/parser/regexs.h"
 
 namespace teditor {
 namespace calc {
-
-enum TokenIds {
-  Float,
-  Int,
-  BrktOpen,
-  BrktClose,
-  Comma,
-  SemiColon,
-  Symbol,
-  Plus,
-  Minus,
-  Multiply,
-  Divide,
-  Power,
-  Assignment,
-  WhiteSpace,
-};  // enum TokenIds
-
-bool lexingDone(const parser::Token& tok) {
-  return tok.type == parser::Token::End || tok.type == parser::Token::Unknown;
-}
-
-void evaluateExpr(const std::string& expr, parser::Lexer* lex, VarMap& vars) {
-  if (expr.empty()) return;
-  parser::StringScanner sc(expr);
-  parser::Token tok;
-  tok.type = parser::Token::End;
-  do {
-    tok = lex->next(&sc);
-  } while(!lexingDone(tok));
-}
 
 CalcMode::CalcMode():
   text::TextMode("calc"), vars(), prompt(Option::get("calc:prompt").getStr()),
   lineSeparator(Option::get("calc:lineSeparator").getStr()),
   cmds(Option::get("calc:histFile").getStr(),
-       Option::get("calc:maxHistory").getInt()), lex(nullptr) {
+       Option::get("calc:maxHistory").getInt()), parser() {
   populateKeyMap<CalcMode::Keys>(getKeyCmdMap());
   populateColorMap<CalcMode::Colors>(getColorMap());
-  lex = new parser::Lexer({{Float,      parser::Regexs::FloatingPt},
-                           {Int,        parser::Regexs::Integer},
-                           {BrktOpen,   "\\("},
-                           {BrktClose,  "\\)"},
-                           {Comma,      ","},
-                           {SemiColon,  ";"},
-                           {Symbol,     parser::Regexs::Variable},
-                           {Plus,       "[+]"},
-                           {Minus,      "[-]"},
-                           {Multiply,   "[*]"},
-                           {Divide,     "/"},
-                           {Power,      "^"},
-                           {Assignment, "="},
-                           {WhiteSpace, "\\s+"}});
-}
-
-CalcMode::~CalcMode() {
-  cmds.store();
-  delete lex;
 }
 
 bool CalcMode::isPromptLine(Buffer& buf) const {
@@ -109,7 +57,8 @@ void CalcMode::evaluate(Buffer& buf, Editor& ed) {
     return;
   }
   auto expr = line.substr(prompt.size());
-  evaluateExpr(expr, lex, vars);
+  if (expr.empty()) return;
+  parser.evaluate(expr, vars);
   //@todo: fix this
   buf.insert(format("\nResult: %s\n", expr.c_str()));
   printHeader(buf);  // insert the next prompt

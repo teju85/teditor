@@ -6,7 +6,7 @@
 #include "number.h"
 #include "core/utils.h"
 #include "core/editor.h"
-#include "core/parser/lexer.h"
+#include "parser.h"
 
 namespace teditor {
 namespace calc {
@@ -17,7 +17,7 @@ typedef std::unordered_map<std::string, Num64> VarMap;
 class CalcMode: public text::TextMode {
 public:
   CalcMode();
-  ~CalcMode();
+  ~CalcMode() { cmds.store(); }
 
   static Mode* create() { return new CalcMode; }
   static bool modeCheck(const std::string& file) { return file == "*calc"; }
@@ -37,7 +37,7 @@ private:
   VarMap vars;
   std::string prompt, lineSeparator;
   History cmds;
-  parser::Lexer* lex;
+  Parser parser;
 };  // class CalcMode
 
 }  // namespace calc
