@@ -126,6 +126,11 @@ void registerAllOptions() {
   Option::add("tty", "/dev/tty", "Path to the tty file", Option::Type::String);
   Option::add("windowSplitter", "|", "Character used as window splitter",
               Option::Type::Char);
+  Option::add("calc:prompt", "expr> ", "Expression prompt during calc-mode",
+              Option::Type::String);
+  Option::add("calc:lineSeparator", std::string(80, '~'),
+              "Used for separating history from the prompt in calc-mode",
+              Option::Type::String);
 }
 
 void parseRcFile(const std::string& rc) {
