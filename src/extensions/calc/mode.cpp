@@ -64,6 +64,10 @@ void CalcMode::evaluate(Buffer& buf, Editor& ed) {
     CMBAR_MSG(ed, "Cannot evaluate a non-expr line!");
     return;
   }
+  auto expr = line.substr(prompt.size());
+  if (expr.empty()) return;
+  //@todo: fix this
+  buf.insert(format("\nResult: %s\n", expr.c_str()));
   // insert the next prompt
   printHeader(buf);
 }
