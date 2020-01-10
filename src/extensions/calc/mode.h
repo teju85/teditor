@@ -11,6 +11,8 @@
 namespace teditor {
 namespace calc {
 
+typedef std::unordered_map<std::string, Num64> VarMap;
+
 /** calc mode */
 class CalcMode: public text::TextMode {
 public:
@@ -24,9 +26,6 @@ public:
   bool isOnPrompt(Buffer& buf, bool includeTrailingSpace = false) const;
   bool isOnSeparator(Buffer& buf) const;
 
-  void addVar(const std::string& name, const Num64& var) { vars[name] = var; }
-  Num64& getVar(const std::string& name);
-
   void printHeader(Buffer& buf) const;
   void insertChar(Buffer& buf, char c, Editor& ed) const;
   void evaluate(Buffer& buf, Editor& ed);
@@ -35,7 +34,7 @@ private:
   struct Keys { static std::vector<KeyCmdPair> All; };
   struct Colors { static std::vector<NameColorPair> All; };
 
-  std::unordered_map<std::string, Num64> vars;
+  VarMap vars;
   std::string prompt, lineSeparator;
   History cmds;
   parser::Lexer* lex;

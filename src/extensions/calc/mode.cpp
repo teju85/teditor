@@ -7,6 +7,20 @@
 namespace teditor {
 namespace calc {
 
+bool lexingDone(const parser::Token& tok) {
+  return tok.type == parser::Token::End || tok.type == parser::Token::Unknown;
+}
+
+void evaluateExpr(const std::string& expr, parser::Lexer* lex, VarMap& vars) {
+  if (expr.empty()) return;
+  parser::StringScanner sc(expr);
+  parser::Token tok;
+  tok.type = parser::Token::End;
+  do {
+    tok = lex->next(&sc);
+  } while(!lexingDone(tok));
+}
+
 CalcMode::CalcMode():
   text::TextMode("calc"), vars(), prompt(Option::get("calc:prompt").getStr()),
   lineSeparator(Option::get("calc:lineSeparator").getStr()),
@@ -28,12 +42,6 @@ CalcMode::CalcMode():
 CalcMode::~CalcMode() {
   cmds.store();
   delete lex;
-}
-
-Num64& CalcMode::getVar(const std::string& name) {
-  auto itr = vars.find(name);
-  ASSERT(itr != vars.end(), "variable '%s' does not exist!", name.c_str());
-  return vars[name];
 }
 
 bool CalcMode::isPromptLine(Buffer& buf) const {
@@ -79,12 +87,7 @@ void CalcMode::evaluate(Buffer& buf, Editor& ed) {
     return;
   }
   auto expr = line.substr(prompt.size());
-  if (expr.empty()) return;
-  parser::StringScanner sc(expr);
-  parser::Token tok;
-  tok.type = parser::Token::End;
-  do {
-  } while(tok.type != parser::Token::End && tok.type != parser::Token::Unknown);
+  evaluateExpr(expr, lex, vars);
   //@todo: fix this
   buf.insert(format("\nResult: %s\n", expr.c_str()));
   printHeader(buf);  // insert the next prompt
