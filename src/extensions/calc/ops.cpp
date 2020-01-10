@@ -19,6 +19,7 @@ Buffer& getCalcBuff(Editor& ed) {
 DEF_CMD(
   Calc, "calc", DEF_OP() {
     auto& buf = getCalcBuff(ed);
+    buf.insert(Option::get("calc:lineSeparator").getStr() + '\n');
     buf.insert(Option::get("calc:prompt").getStr());
     ed.switchToBuff("*calc");
   },
