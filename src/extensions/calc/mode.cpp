@@ -22,6 +22,52 @@ Num64& CalcMode::getVar(const std::string& name) {
   return vars[name];
 }
 
+bool CalcMode::isPromptLine(Buffer& buf) const {
+  const auto& pt = buf.getPoint();
+  const auto& line = buf.at(pt.y).get();
+  return line.compare(0, prompt.size(), prompt) == 0;
+}
+
+bool CalcMode::isOnPrompt(Buffer& buf, bool includeTrailingSpace) const {
+  if (!isPromptLine(buf)) return false;
+  const auto& pt = buf.getPoint();
+  if (includeTrailingSpace) return pt.x <= (int)prompt.size();
+  return pt.x < (int)prompt.size();
+}
+
+bool CalcMode::isOnSeparator(Buffer& buf) const {
+  const auto& pt = buf.getPoint();
+  const auto& line = buf.at(pt.y).get();
+  return line == lineSeparator;
+}
+
+void CalcMode::printHeader(Buffer& buf) const {
+  buf.end();
+  if (isPromptLine(buf)) return;
+  buf.insert(lineSeparator + '\n');
+  buf.insert(prompt);
+}
+
+void CalcMode::insertChar(Buffer& buf, char c, Editor& ed) const {
+  if (isPromptLine(buf)) {
+    if (isOnPrompt(buf)) CMBAR_MSG(ed, "Cannot insert on prompt!");
+    else buf.insert(c);
+  } else {
+    CMBAR_MSG(ed, "Cannot insert on a non-prompt line!");
+  }
+}
+
+void CalcMode::evaluate(Buffer& buf, Editor& ed) {
+  const auto& pt = buf.getPoint();
+  const auto& line = buf.at(pt.y).get();
+  if (line.compare(0, prompt.size(), prompt) != 0) {
+    CMBAR_MSG(ed, "Cannot evaluate a non-expr line!");
+    return;
+  }
+  // insert the next prompt
+  printHeader(buf);
+}
+
 
 std::vector<KeyCmdPair> CalcMode::Keys::All = {
   {" ", "calc-insert-char"},
@@ -119,13 +165,15 @@ std::vector<KeyCmdPair> CalcMode::Keys::All = {
   {"|", "calc-insert-char"},
   {"}", ""},
   {"~", ""},
-  {"enter", ""},   ///@todo!
-  {"C-K", ""},
+  {"enter", "calc-enter"},
   {"C-U", ""},
   {"C-R", ""},
   {"C-Y", ""},
   {"C-W", ""},
-  {"tab", ""}
+  {"tab", ""},
+  {"backspace", "calc-backspace-char"},
+  {"del", "calc-delete-char"},
+  {"C-K", "calc-kill-line"},
 };
 
 std::vector<NameColorPair> CalcMode::Colors::All = {
