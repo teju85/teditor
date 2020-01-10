@@ -2,6 +2,7 @@
 #include "core/command.h"
 #include "core/isearch.h"
 #include "mode.h"
+#include "core/option.h"
 
 namespace teditor {
 namespace calc {
@@ -17,7 +18,8 @@ Buffer& getCalcBuff(Editor& ed) {
 
 DEF_CMD(
   Calc, "calc", DEF_OP() {
-    getCalcBuff(ed);
+    auto& buf = getCalcBuff(ed);
+    buf.insert(Option::get("calc:prompt").getStr());
     ed.switchToBuff("*calc");
   },
   DEF_HELP() { return "Starts the calculator, if not already done."; });
