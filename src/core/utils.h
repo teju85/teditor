@@ -136,7 +136,7 @@ class History : public Strings {
   /** adds an element back to history */
   void add(const std::string& elem);
 
-  Strings get() const { return *this; }
+  const Strings& get() const { return *this; }
 
  private:
   std::string file;

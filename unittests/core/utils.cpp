@@ -377,4 +377,28 @@ TEST_CASE("dos2unix") {
   REQUIRE(dos2unix("abcd\r\n") == "abcd\n");
 }
 
+TEST_CASE("History") {
+  std::string file("history.log");
+  History hist(file, 3);
+  REQUIRE(hist.max() == 3);
+  REQUIRE(hist.getFile() == file);
+  const auto& strs = hist.get();
+  REQUIRE(strs.size() == 0);
+  hist.add("1");
+  REQUIRE(strs.size() == 1);
+  hist.add("2");
+  REQUIRE(strs.size() == 2);
+  hist.add("2");  // duplicate
+  REQUIRE(strs.size() == 2);
+  hist.add("3");
+  REQUIRE(strs.size() == 3);
+  hist.add("4");
+  REQUIRE(strs.size() == 3);
+  hist.store();
+  History hist1(file, 2);
+  const auto& strs1 = hist1.get();
+  REQUIRE(strs1.size() == 2);
+  remove(file.c_str());
+}
+
 } // end namespace teditor
