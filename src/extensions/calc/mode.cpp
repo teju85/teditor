@@ -79,6 +79,7 @@ void CalcMode::evaluate(Buffer& buf, Editor& ed) {
     return;
   }
   auto expr = line.substr(prompt.size());
+  parser::StringScanner sc(expr);
   if (expr.empty()) return;
   //@todo: fix this
   buf.insert(format("\nResult: %s\n", expr.c_str()));
