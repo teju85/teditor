@@ -15,14 +15,6 @@ Buffer& getCalcBuff(Editor& ed) {
   return buf;
 }
 
-CalcMode* getMode(Buffer& b) {
-  auto sptr = b.getMode();
-  auto& n = b.modeName();
-  ASSERT(n == "calc", "getCalcMode: expected 'calc' mode but obtained '%s'!",
-         n.c_str());
-  return dynamic_cast<CalcMode*>(sptr.get());
-}
-
 DEF_CMD(
   Calc, "calc", DEF_OP() {
     getCalcBuff(ed);

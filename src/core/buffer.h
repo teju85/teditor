@@ -209,7 +209,13 @@ public:
   const std::string& modeName() const { return mode->name(); }
   void makeReadOnly();
   void setMode(ModePtr m) { mode = m; }
-  ModePtr getMode() { return mode; }
+
+  template <typename ModeT>
+  ModeT* getMode(const std::string& name) {
+    ASSERT(modeName() == name, "getMode: expected '%s' but obtained '%s'!",
+           name.c_str(), modeName().c_str());
+    return dynamic_cast<ModeT*>(mode.get());
+  }
 
 protected:
   /** holder for lines removed during keep-lines */
