@@ -18,6 +18,9 @@ public:
   static Mode* create() { return new CalcMode; }
   static bool modeCheck(const std::string& file) { return file == "*calc"; }
 
+  void addVar(const std::string& name, const Num64& var) { vars[name] = var; }
+  Num64& getVar(const std::string& name);
+
 private:
   struct Keys { static std::vector<KeyCmdPair> All; };
   struct Colors { static std::vector<NameColorPair> All; };

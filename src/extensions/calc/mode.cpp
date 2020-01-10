@@ -16,6 +16,12 @@ CalcMode::CalcMode():
 
 CalcMode::~CalcMode() { cmds.store(); }
 
+Num64& CalcMode::getVar(const std::string& name) {
+  auto itr = vars.find(name);
+  ASSERT(itr != vars.end(), "variable '%s' does not exist!", name.c_str());
+  return vars[name];
+}
+
 
 std::vector<KeyCmdPair> CalcMode::Keys::All = {
   {" ", "calc-insert-char"},
