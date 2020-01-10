@@ -7,6 +7,23 @@
 namespace teditor {
 namespace calc {
 
+enum TokenIds {
+  Float,
+  Int,
+  BrktOpen,
+  BrktClose,
+  Comma,
+  SemiColon,
+  Symbol,
+  Plus,
+  Minus,
+  Multiply,
+  Divide,
+  Power,
+  Assignment,
+  WhiteSpace,
+};  // enum TokenIds
+
 bool lexingDone(const parser::Token& tok) {
   return tok.type == parser::Token::End || tok.type == parser::Token::Unknown;
 }
@@ -35,7 +52,12 @@ CalcMode::CalcMode():
                            {Comma,      ","},
                            {SemiColon,  ";"},
                            {Symbol,     parser::Regexs::Variable},
-                           {Operators,  "[-+*/=]"},
+                           {Plus,       "[+]"},
+                           {Minus,      "[-]"},
+                           {Multiply,   "[*]"},
+                           {Divide,     "/"},
+                           {Power,      "^"},
+                           {Assignment, "="},
                            {WhiteSpace, "\\s+"}});
 }
 

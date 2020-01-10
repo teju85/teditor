@@ -40,19 +40,5 @@ private:
   parser::Lexer* lex;
 };  // class CalcMode
 
-
-/** Token types for Lexer */
-enum TokenIds {
-  Float,
-  Int,
-  BrktOpen,
-  BrktClose,
-  Comma,
-  SemiColon,
-  Symbol,
-  Operators,
-  WhiteSpace,
-};  // enum TokenIds
-
 }  // namespace calc
 }  // namespace teditor
