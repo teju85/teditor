@@ -28,8 +28,19 @@ DEF_CMD(
 DEF_CMD(
   InsertChar, "calc-insert-char", DEF_OP() {
     auto& buf = ed.getBuff();
-    auto c = (char)ed.getKey();
-    buf.insert(c);
+    const auto& pt = buf.getPoint();
+    auto& line = buf.at(pt.y).get();
+    const auto& prompt = Option::get("calc:prompt").getStr();
+    if (line.compare(0, prompt.size(), prompt) == 0) {
+      if (pt.x < (int)prompt.size()) {
+        CMBAR_MSG(ed, "Cannot insert on prompt!");
+      } else {
+        auto c = (char)ed.getKey();
+        buf.insert(c);
+      }
+    } else {
+      CMBAR_MSG(ed, "Cannot insert on a non-prompt line!");
+    }
   },
   DEF_HELP() { return "Inserts currently pressed char into buffer."; });
 
