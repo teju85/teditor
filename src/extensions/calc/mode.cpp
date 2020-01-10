@@ -16,12 +16,12 @@ CalcMode::CalcMode():
   populateColorMap<CalcMode::Colors>(getColorMap());
   lex = new parser::Lexer({{Float,      parser::Regexs::FloatingPt},
                            {Int,        parser::Regexs::Integer},
-                           {Assignment, "="},
                            {BrktOpen,   "\\("},
                            {BrktClose,  "\\)"},
+                           {Comma,      ","},
                            {SemiColon,  ";"},
                            {Symbol,     parser::Regexs::Variable},
-                           {Operators,  "[-+*/]"},
+                           {Operators,  "[-+*/=]"},
                            {WhiteSpace, "\\s+"}});
 }
 
@@ -79,8 +79,12 @@ void CalcMode::evaluate(Buffer& buf, Editor& ed) {
     return;
   }
   auto expr = line.substr(prompt.size());
-  parser::StringScanner sc(expr);
   if (expr.empty()) return;
+  parser::StringScanner sc(expr);
+  parser::Token tok;
+  tok.type = parser::Token::End;
+  do {
+  } while(tok.type != parser::Token::End && tok.type != parser::Token::Unknown);
   //@todo: fix this
   buf.insert(format("\nResult: %s\n", expr.c_str()));
   printHeader(buf);  // insert the next prompt

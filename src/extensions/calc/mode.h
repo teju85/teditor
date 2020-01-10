@@ -46,7 +46,6 @@ private:
 enum TokenIds {
   Float,
   Int,
-  Assignment,
   BrktOpen,
   BrktClose,
   Comma,
