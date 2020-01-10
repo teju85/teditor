@@ -68,8 +68,7 @@ void CalcMode::evaluate(Buffer& buf, Editor& ed) {
   if (expr.empty()) return;
   //@todo: fix this
   buf.insert(format("\nResult: %s\n", expr.c_str()));
-  // insert the next prompt
-  printHeader(buf);
+  printHeader(buf);  // insert the next prompt
 }
 
 
