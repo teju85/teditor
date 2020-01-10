@@ -14,6 +14,7 @@ class LedgerMode: public readonly::ReadOnlyMode {
 
   static Mode* create() { return new LedgerMode; }
   static bool modeCheck(const std::string& file) { return file == "*ledger"; }
+
   void showTopAccounts(Buffer& buf) const;
   void showAllAccounts(Buffer& buf) const;
 

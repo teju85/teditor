@@ -1,8 +1,8 @@
 #include "core/editor.h"
 #include "core/command.h"
 #include "core/isearch.h"
-#include "evaluate.h"
 #include "core/option.h"
+#include "mode.h"
 
 namespace teditor {
 namespace ledger {
@@ -20,8 +20,8 @@ Buffer& getLedgerBuff(Editor& ed) {
 DEF_CMD(
   LedgerTop, "ledger-top", DEF_OP() {
     auto& buf = getLedgerBuff(ed);
-    Evaluate eval(Option::get("ledgerFile").getStr());
-    eval.showTopAccounts(buf);
+    auto* mode = buf.getMode<ledger::LedgerMode>("ledger");
+    mode->showTopAccounts(buf);
     ed.switchToBuff("*ledger");
   },
   DEF_HELP() { return "Starts ledger-mode buffer, if not already done."; });
@@ -29,8 +29,8 @@ DEF_CMD(
 DEF_CMD(
   Ledger, "ledger", DEF_OP() {
     auto& buf = getLedgerBuff(ed);
-    Evaluate eval(Option::get("ledgerFile").getStr());
-    eval.showAllAccounts(buf);
+    auto* mode = buf.getMode<ledger::LedgerMode>("ledger");
+    mode->showAllAccounts(buf);
     ed.switchToBuff("*ledger");
   },
   DEF_HELP() { return "Shows all account transaction summary."; });
