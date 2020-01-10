@@ -27,5 +27,11 @@ void StringScanner::rewind() {
   --currPos;
 }
 
+std::string StringScanner::at(const Point& begin, const Point& end) {
+  std::string ret;
+  if (begin.x <= end.x) ret = str.substr(begin.x, end.x - begin.x + 1);
+  return ret;
+}
+
 }  // namespace parser
 }  // namespace teditor

@@ -14,6 +14,7 @@ class Scanner {
   virtual char next(Point& pt) = 0;
   virtual bool isEof() const = 0;
   virtual void rewind() = 0;
+  virtual std::string at(const Point& begin, const Point& end) = 0;
 };  // class Scanner
 
 
@@ -24,6 +25,7 @@ class StringScanner : public Scanner {
   char next(Point& pt) override;
   bool isEof() const override { return currPos >= str.size(); }
   void rewind() override;
+  std::string at(const Point& begin, const Point& end) override;
 
  private:
   std::string str;
