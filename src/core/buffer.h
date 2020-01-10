@@ -209,6 +209,7 @@ public:
   const std::string& modeName() const { return mode->name(); }
   void makeReadOnly();
   void setMode(ModePtr m) { mode = m; }
+  ModePtr getMode() { return mode; }
 
 protected:
   /** holder for lines removed during keep-lines */

@@ -1,6 +1,7 @@
 #include "core/editor.h"
 #include "core/command.h"
 #include "core/isearch.h"
+#include "mode.h"
 
 namespace teditor {
 namespace calc {
@@ -12,6 +13,14 @@ Buffer& getCalcBuff(Editor& ed) {
   if (newOne)
     buf.setMode(Mode::createMode(Mode::inferMode(buf.bufferName(), false)));
   return buf;
+}
+
+CalcMode* getMode(Buffer& b) {
+  auto sptr = b.getMode();
+  auto& n = b.modeName();
+  ASSERT(n == "calc", "getCalcMode: expected 'calc' mode but obtained '%s'!",
+         n.c_str());
+  return reinterpret_cast<CalcMode*>(sptr.get());
 }
 
 DEF_CMD(
@@ -30,5 +39,5 @@ DEF_CMD(
   DEF_HELP() { return "Inserts currently pressed char into buffer."; });
 
 } // end namespace ops
-} // end namespace ledger
+} // end namespace calc
 } // end namespace teditor

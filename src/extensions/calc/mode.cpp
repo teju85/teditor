@@ -1,27 +1,16 @@
-#include "../base/text.h"
 #include "core/buffer.h"
+#include "core/option.h"
+#include "mode.h"
 
 namespace teditor {
 namespace calc {
 
-/** calc mode */
-class CalcMode: public text::TextMode {
-public:
-  CalcMode(): text::TextMode("calc") {
-    populateKeyMap<CalcMode::Keys>(getKeyCmdMap());
-    populateColorMap<CalcMode::Colors>(getColorMap());
-  }
-
-  static Mode* create() { return new CalcMode; }
-
-  static bool modeCheck(const std::string& file) { return file == "*calc"; }
-
-private:
-  struct Keys { static std::vector<KeyCmdPair> All; };
-  struct Colors { static std::vector<NameColorPair> All; };
-};
-
-REGISTER_MODE(CalcMode, "calc");
+CalcMode::CalcMode():
+  text::TextMode("calc"), vars(), prompt(Option::get("calc:prompt").getStr()),
+  lineSeparator(Option::get("calc:lineSeparator").getStr()) {
+  populateKeyMap<CalcMode::Keys>(getKeyCmdMap());
+  populateColorMap<CalcMode::Colors>(getColorMap());
+}
 
 
 std::vector<KeyCmdPair> CalcMode::Keys::All = {
@@ -131,6 +120,8 @@ std::vector<KeyCmdPair> CalcMode::Keys::All = {
 
 std::vector<NameColorPair> CalcMode::Colors::All = {
 };
+
+REGISTER_MODE(CalcMode, "calc");
 
 } // end namespace calc
 } // end namespace teditor
