@@ -111,4 +111,36 @@ bool iStrFind(const std::string& line, const std::string& str);
 void dos2unix(std::string& in);
 std::string dos2unix(const std::string& in);
 
+
+/**
+ * @brief Container to store history (files-visited or command-history, etc)
+ */
+class History : public Strings {
+ public:
+  /**
+   * @brief Ctor
+   * @param f file where to persist history on disk
+   * @param _max maximum history items to be stored
+   */
+  History(const std::string& f, int _max);
+
+  int max() const { return maxLen; }
+  const std::string& getFile() const { return file; }
+
+  /** prunes the history length to `max()` */
+  void prune();
+
+  /** store the history list back to the file */
+  void store() const;
+
+  /** adds an element back to history */
+  void add(const std::string& elem);
+
+  Strings get() const { return *this; }
+
+ private:
+  std::string file;
+  int maxLen;
+};  // class History
+
 } // end namespace teditor

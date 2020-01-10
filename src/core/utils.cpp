@@ -266,4 +266,37 @@ std::string dos2unix(const std::string& in) {
   return out;
 }
 
+
+History::History(const std::string& f, int _max): file(f), maxLen(_max) {
+  if (!isFile(file)) return;
+  auto arr = slurpToArr(file);
+  for (const auto& a : arr) push_back(a);
+  prune();
+}
+
+void History::prune() {
+  if ((int)size() > maxLen) erase(begin() + maxLen, end());
+}
+
+void History::store() const {
+  if (empty()) return;
+  FILE* fp = fopen(file.c_str(), "w");
+  ASSERT(fp != nullptr, "History::store: Failed to open file '%s'!",
+         file.c_str());
+  for (const auto& line : * this) fprintf(fp, "%s\n", line.c_str());
+  fclose(fp);
+}
+
+void History::add(const std::string& elem) {
+  // remove duplicates
+  for (size_t i = 0; i < size(); ++i) {
+    if (at(i) == elem) {
+      erase(begin() + i);
+      --i;
+    }
+  }
+  insert(begin(), elem);
+  prune();
+}
+
 } // end namespace teditor
