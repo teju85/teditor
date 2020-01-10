@@ -66,7 +66,7 @@ public:
                           bool switchToIt=false);
   void selectCmBar() { cmdMsgBarActive = true; }
   void unselectCmBar() { cmdMsgBarActive = false; }
-  Strings fileHistoryToString() const { return fileshist.toString(); }
+  Strings fileHistoryToString() const { return fileshist.get(); }
   Strings buffNamesToString() const { return buffs.namesList(); }
   void saveBuffer(Buffer& buf);
   key_t getKey() const { return Terminal::getInstance().mk.getKey(); }

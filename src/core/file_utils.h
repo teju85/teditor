@@ -96,27 +96,13 @@ class DirCache {
 
 
 /** Stores visited files history */
-class FilesHist: public std::vector<FileInfo> {
-public:
-  FilesHist(const std::string& f, int max);
-
-  /** prune the history if it crosses 'maxLen' */
-  void prune();
-
-  /** store the history list back to a file */
-  void store() const;
-
-  /** adds a element into the history */
+class FilesHist: public History {
+ public:
+  FilesHist(const std::string& file, int _max): History(file, _max) {}
   void add(const std::string& file, int line);
 
-  /** generate string version of the history */
-  Strings toString() const;
-
-private:
-  /** file which is used to load/store the history */
-  std::string file;
-  /** max files in the history */
-  int maxLen;
+ protected:
+  bool isDuplicate(const std::string& a, const std::string& b) const override;
 };  // class FilesHist
 
 } // end namespace teditor

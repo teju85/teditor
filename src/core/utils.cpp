@@ -290,13 +290,17 @@ void History::store() const {
 void History::add(const std::string& elem) {
   // remove duplicates
   for (size_t i = 0; i < size(); ++i) {
-    if (at(i) == elem) {
+    if (isDuplicate(at(i), elem)) {
       erase(begin() + i);
       --i;
     }
   }
   insert(begin(), elem);
   prune();
+}
+
+bool History::isDuplicate(const std::string& a, const std::string& b) const {
+  return a == b;
 }
 
 } // end namespace teditor

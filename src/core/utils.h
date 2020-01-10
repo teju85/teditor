@@ -138,6 +138,9 @@ class History : public Strings {
 
   const Strings& get() const { return *this; }
 
+ protected:
+  virtual bool isDuplicate(const std::string& a, const std::string& b) const;
+
  private:
   std::string file;
   int maxLen;
