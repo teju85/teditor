@@ -20,7 +20,7 @@ CalcMode* getMode(Buffer& b) {
   auto& n = b.modeName();
   ASSERT(n == "calc", "getCalcMode: expected 'calc' mode but obtained '%s'!",
          n.c_str());
-  return reinterpret_cast<CalcMode*>(sptr.get());
+  return dynamic_cast<CalcMode*>(sptr.get());
 }
 
 DEF_CMD(

@@ -22,7 +22,7 @@ private:
 
   std::unordered_map<std::string, Num64> vars;
   std::string prompt, lineSeparator;
-};
+};  // class CalcMode
 
 }  // namespace calc
 }  // namespace teditor
