@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <string>
 #include "number.h"
+#include "core/utils.h"
 
 namespace teditor {
 namespace calc {
@@ -22,6 +23,7 @@ private:
 
   std::unordered_map<std::string, Num64> vars;
   std::string prompt, lineSeparator;
+  History cmds;
 };  // class CalcMode
 
 }  // namespace calc

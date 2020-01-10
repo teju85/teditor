@@ -7,7 +7,9 @@ namespace calc {
 
 CalcMode::CalcMode():
   text::TextMode("calc"), vars(), prompt(Option::get("calc:prompt").getStr()),
-  lineSeparator(Option::get("calc:lineSeparator").getStr()) {
+  lineSeparator(Option::get("calc:lineSeparator").getStr()),
+  cmds(Option::get("calc:histFile").getStr(),
+       Option::get("calc:maxHistory").getInt()) {
   populateKeyMap<CalcMode::Keys>(getKeyCmdMap());
   populateColorMap<CalcMode::Colors>(getColorMap());
 }

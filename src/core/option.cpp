@@ -131,6 +131,12 @@ void registerAllOptions() {
   Option::add("calc:lineSeparator", std::string(80, '~'),
               "Used for separating history from the prompt in calc-mode",
               Option::Type::String);
+  Option::add("calc:histFile", "<homeFolder>/calc-history",
+              "Path to history file for calc-mode commands",
+              Option::Type::String);
+  Option::add("calc:maxHistory", "50",
+              "History size for storing all calc-mode commands",
+              Option::Type::Integer);
 }
 
 void parseRcFile(const std::string& rc) {
