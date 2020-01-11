@@ -17,12 +17,14 @@ enum TokenIds {
   Comma,
   SemiColon,
   Symbol,
+  Assignment,
   Plus,
   Minus,
   Multiply,
   Divide,
   Power,
-  Assignment,
+  Sq,
+  Cube,
   Abs,
   Sine,
   Cosine,
@@ -44,6 +46,8 @@ enum TokenIds {
   Floor,
   Ceil,
   Round,
+  ToInt,
+  ToFloat,
   WhiteSpace,
 };  // enum TokenIds
 
@@ -63,12 +67,15 @@ struct Parser {
     bool leftAssoc;
   };
 
+  std::unordered_map<uint32_t, OpInfo> OpInfoMap;
+  parser::TokenDefs Tokens;
   parser::Lexer* lex;
-
-  static const std::unordered_map<uint32_t, OpInfo> OpInfoMap;
 
   bool lexingDone(const parser::Token& tok);
   Num64 computeBinaryOp(const Num64& a, const Num64& b, TokenIds op);
+  Num64 computeUnaryFunc(TokenIds funcId, const Num64& a);
+  bool isBinaryOp(TokenIds id) { return (Assignment <= id) && (id <= Power); }
+  bool isUnaryFunc(TokenIds id) { return (Sq <= id) && (id <= ToFloat); }
 };  // struct Parser
 
 }  // namespace calc
