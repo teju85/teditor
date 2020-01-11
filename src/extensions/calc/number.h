@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 #include <cmath>
+#include <string>
+#include "core/utils.h"
 
 namespace std {
 template <typename T> T sq(T in) { return in * in; }
@@ -32,6 +34,39 @@ namespace calc {
     return f op b.f;                                    \
   } while(0)
 
+namespace {
+template <typename T>
+T toNumber(const std::string& str, bool& processed);
+template <>
+int32_t toNumber(const std::string& str, bool& processed) {
+  size_t pos;
+  auto i = std::stoi(str, &pos);
+  processed = pos == str.size();
+  return i;
+}
+template <>
+int64_t toNumber(const std::string& str, bool& processed) {
+  size_t pos;
+  auto i = std::stol(str, &pos);
+  processed = pos == str.size();
+  return i;
+}
+template <>
+float toNumber(const std::string& str, bool& processed) {
+  size_t pos;
+  auto i = std::stof(str, &pos);
+  processed = pos == str.size();
+  return i;
+}
+template <>
+double toNumber(const std::string& str, bool& processed) {
+  size_t pos;
+  auto i = std::stod(str, &pos);
+  processed = pos == str.size();
+  return i;
+}
+}  // anonymous namespace
+
 /**
  * @brief Core number used for computing in the calculator
  * @tparam IntT integer type
@@ -53,6 +88,22 @@ struct Number {
   Number(IntT v) : i(v), isInt(true) {}
   Number(FloatT v) : f(v), isInt(false) {}
   Number(const Num& n) : i(n.i), isInt(n.isInt) {}
+  Number(const std::string& str) : i(0), isInt(true) {
+    bool processed;
+    IntT tmpi = toNumber<IntT>(str, processed);
+    if (processed) {
+      isInt = true;
+      i = tmpi;
+      return;
+    }
+    FloatT tmpf = toNumber<FloatT>(str, processed);
+    if (processed) {
+      isInt = false;
+      f = tmpf;
+      return;
+    }
+    ASSERT(false, "Incorrect number passed '%s'!", str.c_str());
+  }
 
   const Num& operator=(const Num& n) {
     i = n.i;

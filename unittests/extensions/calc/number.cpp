@@ -13,6 +13,9 @@ namespace calc {
   REQUIRE_FALSE(n.isInt);                       \
   REQUIRE(n.f == Approx(val))
 
+// used mainly for testing of catching exceptions
+Num32 createNum(const std::string& str) { return Num32(str); }
+
 TEST_CASE("Number") {
   SECTION("default ctor") {
     Num32 n;
@@ -155,6 +158,19 @@ TEST_CASE("Number") {
     Num32 n(2.f);
     FLT_CHECK(sq(n), 4.f);
     FLT_CHECK(cube(n), 8.f);
+  }
+  SECTION("str-to-int") {
+    Num32 n1("123"), n2("-123");
+    INT_CHECK(n1, 123);
+    INT_CHECK(n2, -123);
+  }
+  SECTION("str-to-float") {
+    Num32 n1("123.4"), n2("-123.4");
+    FLT_CHECK(n1, 123.4f);
+    FLT_CHECK(n2, -123.4f);
+  }
+  SECTION("incorrect number string") {
+    REQUIRE_THROWS(createNum("hello"));
   }
 }
 
