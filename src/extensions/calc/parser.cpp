@@ -35,7 +35,7 @@ Parser::Parser():
     {Sine,        "sin("},
     {Cosine,      "cos("},
     {Tangent,     "tan("},
-    {ArcSince,    "asin("},
+    {ArcSine,     "asin("},
     {ArcCosine,   "acos("},
     {ArcTangent,  "atan("},
     {SineH,       "sinh("},
@@ -96,7 +96,7 @@ Num64 Parser::computeUnaryFunc(TokenIds funcId, const Num64& a) {
   case Sine:        return sin(a);
   case Cosine:      return cos(a);
   case Tangent:     return tan(a);
-  case ArcSince:    return asin(a);
+  case ArcSine:     return asin(a);
   case ArcCosine:   return acos(a);
   case ArcTangent:  return atan(a);
   case SineH:       return sinh(a);

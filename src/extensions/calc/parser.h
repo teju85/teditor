@@ -31,7 +31,7 @@ enum TokenIds {
   Sine,
   Cosine,
   Tangent,
-  ArcSince,
+  ArcSine,
   ArcCosine,
   ArcTangent,
   SineH,
