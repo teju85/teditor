@@ -79,7 +79,7 @@ std::vector<KeyCmdPair> CalcMode::Keys::All = {
   {"*", "calc-insert-char"},
   {"+", "calc-insert-char"},
   {"=", "calc-insert-char"},
-  {",", "calc-insert-char"},
+  {",", ""},
   {"-", "calc-insert-char"},
   {".", "calc-insert-char"},
   {"/", "calc-insert-char"},

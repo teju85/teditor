@@ -14,15 +14,17 @@ enum TokenIds {
   Int,
   BrktOpen,
   BrktClose,
-  Comma,
   SemiColon,
   Symbol,
+  // add all binary operators from here //
   Assignment,
   Plus,
   Minus,
   Multiply,
   Divide,
   Power,
+  // add all binary operators till here //
+  // add all unary functions from here //
   Sq,
   Cube,
   Abs,
@@ -48,6 +50,7 @@ enum TokenIds {
   Round,
   ToInt,
   ToFloat,
+  // add all unary functions till here //
   WhiteSpace,
 };  // enum TokenIds
 

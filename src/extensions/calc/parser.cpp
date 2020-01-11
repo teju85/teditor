@@ -21,7 +21,6 @@ Parser::Parser():
     {Int,         parser::Regexs::Integer},
     {BrktOpen,    "\\("},
     {BrktClose,   "\\)"},
-    {Comma,       ","},
     {SemiColon,   ";"},
     {Symbol,      parser::Regexs::Variable},
     {Assignment,  "="},
