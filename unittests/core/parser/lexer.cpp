@@ -27,6 +27,13 @@ enum TokenIds {
     REQUIRE(tok.end == en);                                \
   } while(0)
 
+#define CHECK_IGNORE(lex, sc, st, en, typ, ign)  do {      \
+    auto tok = lex.nextWithIgnore(&sc, ign);               \
+    REQUIRE(tok.type == typ);                              \
+    REQUIRE(tok.start == st);                              \
+    REQUIRE(tok.end == en);                                \
+  } while(0)
+
 TEST_CASE("Lexer") {
   Lexer lex({{Float,      Regexs::FloatingPt},
              {Int,        Regexs::Integer},
@@ -109,9 +116,18 @@ TEST_CASE("Lexer") {
     TOKEN_CHECK_STR(lex, sc, Point(9, 0), Point(12, 0), Int);
     TOKEN_CHECK_STR(lex, sc, Point(-1, -1), Point(-1, -1), Token::End);
   }
+  SECTION("simple-arithmetic with ignore whitespace") {
+    std::string expr("1 + 2");
+    StringScanner sc(expr);
+    CHECK_IGNORE(lex, sc, Point(0, 0), Point(0, 0), Int, WhiteSpace);
+    CHECK_IGNORE(lex, sc, Point(2, 0), Point(2, 0), Operators, WhiteSpace);
+    CHECK_IGNORE(lex, sc, Point(4, 0), Point(4, 0), Int, WhiteSpace);
+    CHECK_IGNORE(lex, sc, Point(-1, -1), Point(-1, -1), Token::End, WhiteSpace);
+  }
 }
 
 #undef TOKEN_CHECK_STR
+#undef CHECK_IGNORE
 
 } // end namespace parser
 } // end namespace teditor

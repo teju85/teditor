@@ -15,6 +15,12 @@ Lexer::Lexer(const TokenDefs& t): nfas(), tokenDefs(t) {
 
 Lexer::~Lexer() { for (auto t : nfas) delete t; }
 
+Token Lexer::nextWithIgnore(Scanner* sc, uint32_t ignoreType) {
+  auto tok = next(sc);
+  while (tok.type == ignoreType) tok = next(sc);
+  return tok;
+}
+
 Token Lexer::next(Scanner* sc) {
   bool first = true;
   Token ret;

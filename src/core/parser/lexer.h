@@ -46,6 +46,7 @@ struct Lexer {
   Lexer(const TokenDefs& t);
   virtual ~Lexer();
   virtual Token next(Scanner* sc);
+  Token nextWithIgnore(Scanner* sc, uint32_t ignoreType);
 
  private:
   std::vector<NFA*> nfas;
