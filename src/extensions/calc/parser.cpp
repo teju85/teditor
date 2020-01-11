@@ -68,12 +68,17 @@ void Parser::evaluate(const std::string& expr, VarMap& vars) {
 }
 
 void Parser::evaluate(parser::Scanner *sc, VarMap& vars) {
+  evaluateExpr(sc, vars, 1);
+}
+
+Num64 Parser::evaluateExpr(parser::Scanner *sc, VarMap& vars, int precedence) {
   auto tok = lex->next(sc);
-  if (lexingDone(tok)) return;
+  if (lexingDone(tok)) return Num64();
   if (tok.type == WhiteSpace) {
     tok = lex->next(sc);
-    if (lexingDone(tok)) return;
+    if (lexingDone(tok)) return Num64();
   }
+  return Num64();
   ///@todo:
 }
 

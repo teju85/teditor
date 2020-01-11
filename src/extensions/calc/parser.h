@@ -79,6 +79,7 @@ struct Parser {
   Num64 computeUnaryFunc(TokenIds funcId, const Num64& a);
   bool isBinaryOp(TokenIds id) { return (Assignment <= id) && (id <= Power); }
   bool isUnaryFunc(TokenIds id) { return (Sq <= id) && (id <= ToFloat); }
+  Num64 evaluateExpr(parser::Scanner *sc, VarMap& vars, int precedence);
 };  // struct Parser
 
 }  // namespace calc
