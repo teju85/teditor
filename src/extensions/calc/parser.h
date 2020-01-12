@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include "number.h"
 #include <string>
+#include <stack>
 
 namespace teditor {
 namespace calc {
@@ -55,6 +56,7 @@ enum TokenIds {
 };  // enum TokenIds
 
 typedef std::unordered_map<std::string, Num64> VarMap;
+typedef std::stack<Num64> NumStack;
 
 /** expression parser and evaluator */
 struct Parser {
@@ -79,7 +81,9 @@ struct Parser {
   Num64 computeUnaryFunc(TokenIds funcId, const Num64& a);
   bool isBinaryOp(TokenIds id) { return (Assignment <= id) && (id <= Power); }
   bool isUnaryFunc(TokenIds id) { return (Sq <= id) && (id <= ToFloat); }
-  Num64 evaluateExpr(parser::Scanner *sc, VarMap& vars, int precedence);
+  bool isNumber(TokenIds id) { return id == Float || id == Int; }
+  void evaluateExpr(parser::Scanner *sc, VarMap& vars, int precedence,
+                    NumStack& stack);
 };  // struct Parser
 
 }  // namespace calc
