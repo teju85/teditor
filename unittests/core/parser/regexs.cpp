@@ -87,5 +87,16 @@ TEST_CASE("Regexs::Variable") {
   REQUIRE(nfa.find("Abc") == 2);
 }
 
+TEST_CASE("Regexs::Newline") {
+  NFA nfa(Regexs::Newline);
+  REQUIRE(nfa.find("\r") == 0);
+  REQUIRE(nfa.find("\n") == 0);
+  REQUIRE(nfa.find("\r\n") == 1);
+  REQUIRE(nfa.find("\n\n\n") == 2);
+  REQUIRE(nfa.find("_a") == NFA::NoMatch);
+  REQUIRE(nfa.find("abc") == NFA::NoMatch);
+  REQUIRE(nfa.find(" ") == NFA::NoMatch);
+}
+
 }  // namespace parser
 }  // namespace teditor

@@ -13,6 +13,7 @@ struct Regexs {
   static const std::string Integer;      ///< integer
   static const std::string HexInt;       ///< hexadecimal integer
   static const std::string Variable;     ///< variable names in a program
+  static const std::string Newline;      ///< newline (windows as well as unix)
 };  // struct Regexs
 
 }  // namespace parser
