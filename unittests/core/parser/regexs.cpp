@@ -98,5 +98,14 @@ TEST_CASE("Regexs::Newline") {
   REQUIRE(nfa.find(" ") == NFA::NoMatch);
 }
 
+TEST_CASE("Regexs::DQuotedStr") {
+  NFA nfa(Regexs::DQuotedStr);
+  REQUIRE(nfa.find("\"Hello World\"") == 12);
+  REQUIRE(nfa.find("\"It's time for \\\"fun\\\"") == 21);
+  REQUIRE(nfa.find("\"\\\"unmatched double-quote\"") == 25);
+  REQUIRE(nfa.find("\"\"") == 1);
+  REQUIRE(nfa.find("no quotes") == NFA::NoMatch);
+}
+
 }  // namespace parser
 }  // namespace teditor

@@ -14,5 +14,8 @@ const std::string Regexs::Variable("[a-zA-Z_][a-zA-Z0-9_]*");
 
 const std::string Regexs::Newline("[\r\n]+");
 
+// 4 backslashes to avoid '.' from being escaped away during regex compilation!
+const std::string Regexs::DQuotedStr("(\"(\\\\.|[^\"])+\")|(\"\")");
+
 }  // namespace parser
 }  // namespace teditor
