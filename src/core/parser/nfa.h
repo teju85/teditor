@@ -36,6 +36,18 @@ struct NFA {
    */
   size_t find(const std::string& str, size_t start = 0, size_t end = 0);
 
+  /**
+   * @brief Tries for regex match starting from anywhere in the string
+   * @param str the input string
+   * @param matchStartPos will contain the starting location of the longest
+   *                      match, if found, else, NFA::NoMatch
+   * @param start location from where to start searching
+   * @param end location (minus 1) till where to search
+   * @return the location of the longest match, else returns NFA::NoMatch
+   */
+  size_t findAny(const std::string& str, size_t& matchStartPos,
+                 size_t start = 0, size_t end = 0);
+
   ~NFA() { for (auto itr : states) delete itr; }
 
   /**

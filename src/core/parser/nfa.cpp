@@ -73,6 +73,20 @@ size_t NFA::find(const std::string& str, size_t start, size_t end) {
   return getMatchPos().x;
 }
 
+size_t NFA::findAny(const std::string& str, size_t& matchStartPos, size_t start,
+                    size_t end) {
+  if (end == 0) end = str.size();
+  size_t endPos = matchStartPos = NFA::NoMatch;
+  for (; start < end; ++start) {
+    endPos = find(str, start, end);
+    if (endPos != NFA::NoMatch) {
+      matchStartPos = start;
+      break;
+    }
+  }
+  return endPos;
+}
+
 void NFA::reset() {
   matchState->matchPos = {(int)NoMatch, (int)NoMatch};
   acs.current().clear();

@@ -252,5 +252,29 @@ TEST_CASE("NFA::Groups") {
   }
 }
 
+#define FIND_ANY(nfa, str, refStart, refEnd)    do {                    \
+    size_t startPos;                                                    \
+    auto pos = nfa.findAny(str, startPos);                              \
+    REQUIRE(pos == refEnd);                                             \
+    REQUIRE(startPos == refStart);                                      \
+  } while(0)
+
+TEST_CASE("NFA::findany") {
+  SECTION("simple1") {
+    NFA nfa("a");
+    FIND_ANY(nfa, "a", 0, 0);
+    FIND_ANY(nfa, "b", NFA::NoMatch, NFA::NoMatch);
+    FIND_ANY(nfa, "hello", NFA::NoMatch, NFA::NoMatch);
+    FIND_ANY(nfa, "hallo", 1, 1);
+  }
+  SECTION("simple2") {
+    NFA nfa("abc");
+    FIND_ANY(nfa, "acb", NFA::NoMatch, NFA::NoMatch);
+    FIND_ANY(nfa, "hello-abc", 6, 8);
+  }
+}
+
+#undef FIND_ANY
+
 } // end namespace parser
 } // end namespace teditor
