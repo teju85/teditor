@@ -7,7 +7,6 @@
 #include "key_cmd_map.h"
 #include "command.h"
 #include "line.h"
-#include "pcre.h"
 #include "mode.h"
 #include "pos2d.h"
 #include <stack>
@@ -56,10 +55,10 @@ public:
   void sortRegion();
   /**
    * @brief Keep/Remove lines that match the input regex.
-   * @param pc the regular expression that needs to be matched
+   * @param regex the regular expression that needs to be matched
    * @param keep whether to keep the matching lines or remove them
    */
-  void keepRemoveLines(Pcre& pc, bool keep);
+  void keepRemoveLines(parser::NFA& regex, bool keep);
   /** clear buffer contents */
   virtual void clear();
   /** @} */

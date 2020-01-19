@@ -499,7 +499,7 @@ Point Buffer::screen2buffer(const Point& loc, const Point& start,
   return res;
 }
 
-void Buffer::keepRemoveLines(Pcre& pc, bool keep) {
+void Buffer::keepRemoveLines(parser::NFA& regex, bool keep) {
   OpData op;
   op.type = OpKeepRemoveLines;
   op.after = {0, 0};
@@ -514,7 +514,8 @@ void Buffer::keepRemoveLines(Pcre& pc, bool keep) {
   }
   for(int i = small.y; i <= big.y; ++i) {
     auto str = at(i).get();
-    bool match = pc.isMatch(str);
+    size_t tmp;
+    bool match = regex.findAny(str, tmp) != parser::NFA::NoMatch;
     if((match && keep) || (!match && !keep)) continue;
     lines.erase(lines.begin() + i);
     op.rlines.push_back({str, i});
