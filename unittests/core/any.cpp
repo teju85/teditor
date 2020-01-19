@@ -57,4 +57,16 @@ TEST_CASE("Any") {
   }
 }
 
+TEST_CASE("assignment") {
+  Any<bool, int, float, std::string> obj;
+  obj.set<int>(123);
+  REQUIRE(obj.is<int>());
+  Any<bool, int, float, std::string> obj1(obj);
+  REQUIRE(obj1.is<int>());
+  REQUIRE(obj1.get<int>() == 123);
+  Any<bool, int, float, std::string> obj2 = obj;
+  REQUIRE(obj2.is<int>());
+  REQUIRE(obj2.get<int>() == 123);
+}
+
 }  // namespace teditor

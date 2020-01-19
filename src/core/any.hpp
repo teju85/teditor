@@ -19,14 +19,16 @@ struct Impl<Head, Rest...> {
     else Impl<Rest...>::destroy(id, data);
   }
 
-  static void move(const std::type_index& id, void* newData, void* oldData) {
+  static void move(const std::type_index& id, void* newData,
+                   const void* oldData) {
     if (id == typeid(Head))
-      new(newData) Head(std::move(*reinterpret_cast<Head*>(oldData)));
+      new(newData) Head(std::move(*reinterpret_cast<const Head*>(oldData)));
     else
       Impl<Rest...>::move(id, newData, oldData);
   }
 
-  static void copy(const std::type_index& id, void* newData, void* oldData) {
+  static void copy(const std::type_index& id, void* newData,
+                   const void* oldData) {
     if (id == typeid(Head))
       new(newData) Head(*reinterpret_cast<const Head*>(oldData));
     else
@@ -36,9 +38,11 @@ struct Impl<Head, Rest...> {
 
 template <>
 struct Impl<> {
-  static void destroy(const std::type_index& id, void* data) {}
-  static void move(const std::type_index& id, void* newData, void* oldData) {}
-  static void copy(const std::type_index& id, void* newData, void* oldData) {}
+  static void destroy(const std::type_index& id, const void* data) {}
+  static void move(const std::type_index& id, void* newData,
+                   const void* oldData) {}
+  static void copy(const std::type_index& id, void* newData,
+                   const void* oldData) {}
 };
 /// struct Impl ///
 
