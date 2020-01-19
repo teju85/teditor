@@ -8,10 +8,14 @@
 
 namespace teditor {
 
+/**
+ * @brief Data structure to help store any of the pre-defined data types.
+ *        Such a thing will be useful, for eg, to support storing json objects
+ */
 template <typename... Types>
 struct Any {
  private:
-  size_t type;
+  std::type_info type;
   std::aligned_union<Types...>::type data;
 
   /// struct Impl ///
@@ -19,20 +23,20 @@ struct Any {
 
   template <typename Head, typename... Rest>
   struct Impl<Head, Rest...> {
-    static void destroy(size_t id, void* data) {
-      if (id == typeid(Head).hash_code()) reinterpret_cast<T*>(data)->~Head();
+    static void destroy(const std::type_info& id, void* data) {
+      if (id == typeid(Head)) reinterpret_cast<T*>(data)->~Head();
       else Impl<Rest..>::destroy(id, data);
     }
 
-    static void move(size_t id, void* newData, void* oldData) {
-      if (id == typeid(Head).hash_code())
+    static void move(const std::type_info& id, void* newData, void* oldData) {
+      if (id == typeid(Head))
         new(newData) Head(std::move(*reinterpret_cast<Head*>(oldData)));
       else
         Impl<Rest...>::move(id, newData, oldData);
     }
 
-    static void copy(size_t id, void* newData, void* oldData) {
-      if (id == typeid(Head).hash_code())
+    static void copy(const std::type_info& id, void* newData, void* oldData) {
+      if (id == typeid(Head))
         new(newData) Head(*reinterpret_cast<const Head*>(oldData));
       else
         Impl<Rest...>::copy(id, newData, oldData);
@@ -41,13 +45,13 @@ struct Any {
 
   template <>
   struct Impl<> {
-    static void destroy(size_t id, void* data) {}
-    static void move(size_t id, void* newData, void* oldData) {}
-    static void copy(size_t id, void* newData, void* oldData) {}
+    static void destroy(const std::type_info& id, void* data) {}
+    static void move(const std::type_info& id, void* newData, void* oldData) {}
+    static void copy(const std::type_info& id, void* newData, void* oldData) {}
   };
   /// struct Impl ///
 
-  size_t invalidType() const { return typeid(void).hash_code(); }
+  std::type_info invalidType() const { return typeid(void); }
 
  public:
   Any(): type(invalidType()) {}
@@ -75,15 +79,14 @@ struct Any {
   }
 
   template <typename T>
-  bool is() const { return type == typeid(T).hash_code(); }
+  bool is() const { return type == typeid(T); }
 
   bool valid() const { return type != invalidType(); }
 
   template <typename T>
   T& get() {
-    ASSERT(type == typeid(T).hash_code(),
-           "Any::get invalid type requested (%s:%lu)! storage-type hash=%lu ",
-           typeid(T).name(), typeid(T).hash_code(), type);
+    ASSERT(type == typeid(T), "Any::get requested-type=%s! storage-type=%s",
+           typeid(T).name(), type.name());
     return *reinterpret_cast<T*>(&data);
   }
 };  // struct Any
