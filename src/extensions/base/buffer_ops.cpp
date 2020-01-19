@@ -85,9 +85,9 @@ void keepRemoveLines(Editor& ed, bool keep) {
   auto& buf = ed.getBuff();
   auto regex = ed.prompt(keep ? "Keep Regex: " : "Remove Regex: ");
   if (regex.empty()) return;
-  Pcre pc(regex, true);
+  parser::NFA nfa(regex);
   auto before = buf.length();
-  buf.keepRemoveLines(pc, keep);
+  buf.keepRemoveLines(nfa, keep);
   auto after = buf.length();
   CMBAR_MSG(ed, "Removed %d lines\n", before - after);
 }

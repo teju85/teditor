@@ -13,6 +13,7 @@
 #include <vector>
 #include <unordered_set>
 #include "file_utils.h"
+#include "parser/nfa.h"
 
 namespace teditor {
 

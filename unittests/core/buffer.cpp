@@ -288,99 +288,99 @@ TEST_CASE("Buffer::KeepLinesNoMatches") {
   REQUIRE(1 == ml.length());
 }
 
-// TEST_CASE("Buffer::KeepLinesSomeMatches") {
-//   Buffer ml;
-//   setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
-//   REQUIRE(21 == ml.length());
-//   REQUIRE(Point(0, 0) == ml.getPoint());
-//   Pcre pc("include");
-//   ml.keepRemoveLines(pc, true);
-//   REQUIRE(12 == ml.length());
-//   REQUIRE(ml.isModified());
-//   // undo
-//   ml.undo();
-//   REQUIRE(21 == ml.length());
-//   REQUIRE("#ifndef _GNU_SOURCE" == ml.at(0).get());
-//   REQUIRE("" == ml.at(20).get());
-//   // redo
-//   ml.redo();
-//   REQUIRE(12 == ml.length());
-// }
+TEST_CASE("Buffer::KeepLinesSomeMatches") {
+  Buffer ml;
+  setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
+  REQUIRE(21 == ml.length());
+  REQUIRE(Point(0, 0) == ml.getPoint());
+  parser::NFA nfa("include");
+  ml.keepRemoveLines(nfa, true);
+  REQUIRE(12 == ml.length());
+  REQUIRE(ml.isModified());
+  // undo
+  ml.undo();
+  REQUIRE(21 == ml.length());
+  REQUIRE("#ifndef _GNU_SOURCE" == ml.at(0).get());
+  REQUIRE("" == ml.at(20).get());
+  // redo
+  ml.redo();
+  REQUIRE(12 == ml.length());
+}
 
-// TEST_CASE("Buffer::KeepLinesAllMatches") {
-//   Buffer ml;
-//   setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
-//   REQUIRE(4 == ml.length());
-//   REQUIRE(Point(0, 0) == ml.getPoint());
-//   Pcre pc(".");  // this unfortunately removes empty lines!
-//   ml.keepRemoveLines(pc, true);
-//   REQUIRE(3 == ml.length());
-//   REQUIRE(ml.isModified());
-//   // undo
-//   ml.undo();
-//   REQUIRE(4 == ml.length());
-//   REQUIRE("* Hello" == ml.at(0).get());
-//   // redo
-//   ml.redo();
-//   REQUIRE(3 == ml.length());
-// }
+TEST_CASE("Buffer::KeepLinesAllMatches") {
+  Buffer ml;
+  setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
+  REQUIRE(4 == ml.length());
+  REQUIRE(Point(0, 0) == ml.getPoint());
+  parser::NFA nfa(".");  // this unfortunately removes empty lines!
+  ml.keepRemoveLines(nfa, true);
+  REQUIRE(3 == ml.length());
+  REQUIRE(ml.isModified());
+  // undo
+  ml.undo();
+  REQUIRE(4 == ml.length());
+  REQUIRE("* Hello" == ml.at(0).get());
+  // redo
+  ml.redo();
+  REQUIRE(3 == ml.length());
+}
 
-// TEST_CASE("Buffer::RemoveLinesNoMatches") {
-//   Buffer ml;
-//   setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
-//   REQUIRE(21 == ml.length());
-//   REQUIRE(Point(0, 0) == ml.getPoint());
-//   Pcre pc("not there");
-//   ml.keepRemoveLines(pc, false);
-//   REQUIRE(21 == ml.length());
-//   REQUIRE_FALSE(ml.isModified());
-//   // undo
-//   ml.undo();
-//   REQUIRE(21 == ml.length());
-//   REQUIRE("#ifndef _GNU_SOURCE" == ml.at(0).get());
-//   REQUIRE("" == ml.at(20).get());
-//   // redo
-//   ml.redo();
-//   REQUIRE(21 == ml.length());
-// }
+TEST_CASE("Buffer::RemoveLinesNoMatches") {
+  Buffer ml;
+  setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
+  REQUIRE(21 == ml.length());
+  REQUIRE(Point(0, 0) == ml.getPoint());
+  parser::NFA nfa("not there");
+  ml.keepRemoveLines(nfa, false);
+  REQUIRE(21 == ml.length());
+  REQUIRE_FALSE(ml.isModified());
+  // undo
+  ml.undo();
+  REQUIRE(21 == ml.length());
+  REQUIRE("#ifndef _GNU_SOURCE" == ml.at(0).get());
+  REQUIRE("" == ml.at(20).get());
+  // redo
+  ml.redo();
+  REQUIRE(21 == ml.length());
+}
 
-// TEST_CASE("Buffer::RemoveLinesSomeMatches") {
-//   Buffer ml;
-//   setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
-//   REQUIRE(21 == ml.length());
-//   REQUIRE(Point(0, 0) == ml.getPoint());
-//   Pcre pc("include");
-//   ml.keepRemoveLines(pc, false);
-//   REQUIRE(9 == ml.length());
-//   REQUIRE(ml.isModified());
-//   // undo
-//   ml.undo();
-//   REQUIRE(21 == ml.length());
-//   REQUIRE("#ifndef _GNU_SOURCE" == ml.at(0).get());
-//   REQUIRE("" == ml.at(20).get());
-//   // redo
-//   ml.redo();
-//   REQUIRE(9 == ml.length());
-// }
+TEST_CASE("Buffer::RemoveLinesSomeMatches") {
+  Buffer ml;
+  setupBuff(ml, {0, 0}, {30, 10}, "samples/sample.cxx");
+  REQUIRE(21 == ml.length());
+  REQUIRE(Point(0, 0) == ml.getPoint());
+  parser::NFA nfa("include");
+  ml.keepRemoveLines(nfa, false);
+  REQUIRE(9 == ml.length());
+  REQUIRE(ml.isModified());
+  // undo
+  ml.undo();
+  REQUIRE(21 == ml.length());
+  REQUIRE("#ifndef _GNU_SOURCE" == ml.at(0).get());
+  REQUIRE("" == ml.at(20).get());
+  // redo
+  ml.redo();
+  REQUIRE(9 == ml.length());
+}
 
-// TEST_CASE("Buffer::RemoveLinesAllMatches") {
-//   Buffer ml;
-//   setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
-//   REQUIRE(4 == ml.length());
-//   REQUIRE(Point(0, 0) == ml.getPoint());
-//   Pcre pc(".");
-//   ml.keepRemoveLines(pc, false);
-//   REQUIRE(1 == ml.length());
-//   REQUIRE(ml.isModified());
-//   // undo
-//   ml.undo();
-//   ///@todo: check this out (this is eating one line!)
-//   REQUIRE(3 == ml.length());
-//   REQUIRE("* Hello" == ml.at(0).get());
-//   // redo
-//   ml.redo();
-//   REQUIRE(1 == ml.length());
-// }
+TEST_CASE("Buffer::RemoveLinesAllMatches") {
+  Buffer ml;
+  setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
+  REQUIRE(4 == ml.length());
+  REQUIRE(Point(0, 0) == ml.getPoint());
+  parser::NFA nfa(".");
+  ml.keepRemoveLines(nfa, false);
+  REQUIRE(1 == ml.length());
+  REQUIRE(ml.isModified());
+  // undo
+  ml.undo();
+  ///@todo: check this out (this is eating one line!)
+  REQUIRE(3 == ml.length());
+  REQUIRE("* Hello" == ml.at(0).get());
+  // redo
+  ml.redo();
+  REQUIRE(1 == ml.length());
+}
 
 TEST_CASE("Buffer::MatchCurrentParen") {
   Buffer ml;
