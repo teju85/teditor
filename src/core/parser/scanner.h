@@ -2,6 +2,7 @@
 
 #include <string>
 #include "core/pos2d.h"
+#include "core/buffer.h"
 
 namespace teditor {
 namespace parser {
@@ -30,6 +31,20 @@ class StringScanner : public Scanner {
   size_t currPos;
   size_t startPos;
 };  // class StringScanner
+
+
+class BufferScanner : public Scanner {
+ public:
+  BufferScanner(Buffer& b);
+  char next(Point& pt) override;
+  bool isEof() const override { return end == buf.getPoint(); }
+  void rewind() override { buf.left(); }
+  std::string at(const Point& begin, const Point& end) override;
+
+ private:
+  Buffer& buf;
+  Point currPos, end;
+};  // class BufferScanner
 
 }  // namespace parser
 }  // namespace teditor

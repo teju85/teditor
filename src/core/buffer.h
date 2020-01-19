@@ -174,6 +174,8 @@ public:
   bool isRegionActive() const { return region != Point(-1, -1); }
   /** Returns the string that represents the currently highlighted region */
   std::string regionAsStr() const;
+  /** helper method to return the string in the given region */
+  std::string regionAsStr(const Point& start, const Point& end) const;
   /** start a mark (or region) */
   void startRegion() { region = cu; }
   /** stop the currently active mark (or region) */
@@ -340,9 +342,6 @@ protected:
   /** clear the input stack (esp useful while clearing redo stack) */
   void clearStack(OpStack& st);
   /** @} */
-
-  /** helper method to return the string in the given region */
-  std::string regionAsStr(const Point& start, const Point& end) const;
 
   friend class Editor;
 };
