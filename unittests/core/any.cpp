@@ -48,6 +48,13 @@ TEST_CASE("Any") {
     REQUIRE_THROWS(obj.get<float>());
     REQUIRE_THROWS(obj.get<std::string>());
   }
+  SECTION("get and set") {
+    obj.set<int>(123);
+    REQUIRE(obj.is<int>());
+    REQUIRE(obj.get<int>() == 123);
+    obj.get<int>() = 456;
+    REQUIRE(obj.get<int>() == 456);
+  }
 }
 
 }  // namespace teditor
