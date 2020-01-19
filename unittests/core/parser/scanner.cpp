@@ -28,10 +28,6 @@ TEST_CASE("StringScanner") {
   CHECK_SCANNER(ss, 11, pt);
   REQUIRE(ss.isEof());
   REQUIRE_THROWS(ss.next(pt));
-  ss.setStart({11, 0});
-  CHECK_SCANNER(ss, 11, pt);
-  REQUIRE(ss.isEof());
-  REQUIRE_THROWS(ss.setStart({12, 0}));
   REQUIRE("ello" == ss.at(Point(1, 0), Point(4, 0)));
 }
 

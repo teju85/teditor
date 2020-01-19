@@ -12,14 +12,6 @@ char StringScanner::next(Point& pt) {
   return c;
 }
 
-void StringScanner::setStart(const Point& pt) {
-  auto len = Point::DataT(str.size());
-  ASSERT(pt.x < len,
-         "setStart: point cannot be greater than string length! pt=%d len=%d",
-         pt.x, len);
-  startPos = currPos = pt.x;
-}
-
 void StringScanner::rewind() {
   ASSERT(currPos > startPos,
          "rewind: called after hitting start! curr=%lu start=%lu", currPos,
