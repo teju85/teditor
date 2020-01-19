@@ -107,5 +107,17 @@ TEST_CASE("Regexs::DQuotedStr") {
   REQUIRE(nfa.find("no quotes") == NFA::NoMatch);
 }
 
+TEST_CASE("Regexs::Whitespace") {
+  NFA nfa(Regexs::Whitespace);
+  REQUIRE(nfa.find(" ") == 0);
+  REQUIRE(nfa.find("\t") == 0);
+  REQUIRE(nfa.find("\r") == 0);
+  REQUIRE(nfa.find("\n") == 0);
+  REQUIRE(nfa.find("\r\n") == 1);
+  REQUIRE(nfa.find("\n\n\n") == 2);
+  REQUIRE(nfa.find("_a") == NFA::NoMatch);
+  REQUIRE(nfa.find("abc") == NFA::NoMatch);
+}
+
 }  // namespace parser
 }  // namespace teditor

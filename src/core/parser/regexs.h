@@ -15,6 +15,7 @@ struct Regexs {
   static const std::string Variable;     ///< variable names in a program
   static const std::string Newline;      ///< newline (windows as well as unix)
   static const std::string DQuotedStr;   ///< double-quoted string
+  static const std::string Whitespace;   ///< all whitespace chars
 };  // struct Regexs
 
 }  // namespace parser
