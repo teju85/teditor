@@ -1,9 +1,6 @@
 [submodule "external/pcre2"]
 	path = external/pcre2
 	url = https://github.com/teju85/pcre2
-[submodule "external/Catch2"]
-	path = external/Catch2
-	url = https://github.com/catchorg/Catch2
 [submodule "external/tree-sitter"]
 	path = external/tree-sitter
 	url = https://github.com/tree-sitter/tree-sitter
