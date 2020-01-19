@@ -33,7 +33,7 @@ PCRE2_LIB      := $(PCRE2_BINDIR)/lib/libpcre2-8.a
 PCRE2_INCLUDE  := $(PCRE2_BINDIR)/include
 PCRE2_DIR      := external/pcre2
 
-CATCH2_DIR     := external/Catch2
+CATCH2_DIR     := bin/Catch2
 
 TS_DIR         := external/tree-sitter
 TS_BINDIR      := $(BINDIR)/tree-sitter
@@ -104,7 +104,7 @@ $(EXE): $(MAIN_OBJS) $(CORE_OBJS) $(LIBRARIES)
 	fi
 	$(PREFIX)$(LD) $(LDFLAGS) -o $@ $^
 
-tests: $(TESTEXE)
+tests: $(CATCH2_DIR) $(TESTEXE)
 	$(TESTEXE)
 
 $(TESTEXE): $(CORE_OBJS) $(TEST_OBJS) $(LIBRARIES)
@@ -146,6 +146,9 @@ stats:
 doc:
 	rm -rf $(DOCDIR)
 	doxygen Doxyfile
+
+$(CATCH2_DIR):
+	$(PREFIX)git clone --recursive https://github.com/catchorg/Catch2 $@
 
 pcre2: $(PCRE2_LIB)
 
