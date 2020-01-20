@@ -1,36 +1,43 @@
 #pragma once
 
 #include <stdint.h>
+#include "lexer.h"
 
 namespace teditor {
 namespace parser {
 
+template <uint32_t _id>
 struct GrammarNode {
+  static constexpr uint32_t TokenId = _id;
 };  // struct GrammarNode
 
 
-template <typename uint32_t>
-struct tok : public GrammarNode {
+struct eps : public GrammarNode<Lexer::Empty> {
+};  // struct eps
+
+
+template <uint32_t _id>
+struct tok : public GrammarNode<_id> {
 };  // struct tok
 
 
-template <typename Args...>
-struct one : public GrammarNode {
+template <uint32_t _id, typename Args...>
+struct one : public GrammarNode<_id> {
 };  // struct one
 
 
-template <typename Gnode>
-struct plus : public GrammarNode {
+template <uint32_t _id, typename Gnode>
+struct plus : public GrammarNode<_id> {
 };  // struct plus
 
 
-template <typename Gnode>
-struct star : public GrammarNode {
+template <uint32_t _id, typename Gnode>
+struct star : public GrammarNode<_id> {
 };  // struct star
 
 
-template <typename Gnode>
-struct opt : public GrammarNode {
+template <uint32_t _id, typename Gnode>
+struct opt : public GrammarNode<_id> {
 };  // struct opt
 
 }  // namespace parser
