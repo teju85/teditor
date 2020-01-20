@@ -40,5 +40,10 @@ template <uint32_t _id, typename Gnode>
 struct opt : public GrammarNode<_id> {
 };  // struct opt
 
+
+template <uint32_t _id, typename Args...>
+struct seq : public GrammarNode<_id> {
+};  // struct seq
+
 }  // namespace parser
 }  // namespace teditor
