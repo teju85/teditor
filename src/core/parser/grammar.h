@@ -15,7 +15,7 @@ struct LL1Table :
 class Grammar {
  public:
   Grammar(): nameToId(), terminals(), nonTerminals(), tNames(), ntNames(),
-             start() {}
+             ntNameToEqnIds(), start() {}
 
   void addTerminal(const std::string& name, const std::string& regex);
   void addNonTerminal(const std::string& name,
@@ -38,6 +38,7 @@ class Grammar {
   std::vector<NonTerminal> nonTerminals;
   std::vector<std::string> tNames;
   std::vector<std::string> ntNames;
+  std::unordered_map<std::string, std::vector<uint32_t>> ntNameToEqnIds;
   std::string start;
 
   bool isTerminal(const std::string& sym) const;

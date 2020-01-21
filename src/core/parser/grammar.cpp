@@ -25,12 +25,15 @@ void Grammar::addNonTerminal(const std::string& name,
                              const std::vector<std::string>& syms) {
   auto itr = nameToId.find(name);
   uint32_t id;
+  auto prodId = uint32_t(nonTerminals.size());
   if (itr == nameToId.end()) {
     id = uint32_t(terminals.size() + ntNames.size());
     nameToId[name] = id;
+    ntNameToEqnIds[name] = {prodId};
     ntNames.push_back(name);
   } else {
     id = itr->second;
+    ntNameToEqnIds[name].push_back(prodId);
   }
   nonTerminals.push_back({id, syms});
 }
