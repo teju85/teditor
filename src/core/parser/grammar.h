@@ -37,6 +37,7 @@ class Grammar {
 
   bool isTerminal(const std::string& sym) const;
   bool isTerminal(uint32_t id) const { return id < terminals.size(); }
+  uint32_t getId(const std::string& name) const;
 };  // class Grammar
 
 }  // namespace parser

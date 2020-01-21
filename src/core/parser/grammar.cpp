@@ -41,7 +41,10 @@ void Grammar::markStart(const std::string& name) {
   start = itr->second;
 }
 
-uint32_t Grammar::getId(const std::string& name) {
+uint32_t Grammar::getId(const std::string& name) const {
+  const auto itr = nameToId.find(name);
+  ASSERT(itr != nameToId.end(), "getId: no symbol named '%s'!", name.c_str());
+  return itr->second;
 }
 
 }  // namespace parser
