@@ -7,8 +7,7 @@ namespace parser {
 bool Grammar::isTerminal(const std::string& sym) const {
   auto itr = nameToId.find(sym);
   if (itr == nameToId.end()) return false;
-  if (itr->second.size() == 1) return isTerminal(itr->second[0]);
-  return false;
+  return isTerminal(itr->second);
 }
 
 void Grammar::addTerminal(const std::string& name, const std::string& regex) {
@@ -18,28 +17,31 @@ void Grammar::addTerminal(const std::string& name, const std::string& regex) {
          "addTerminal: Symbol with name '%s' already exists!", name.c_str());
   auto id = uint32_t(terminals.size());
   terminals.push_back(TokenDef{id, regex});
-  nameToId[name] = {id};
+  nameToId[name] = id;
 }
 
 void Grammar::addNonTerminal(const std::string& name,
                              const std::vector<std::string>& syms) {
-  auto id = uint32_t(terminals.size() + nonTerminals.size());
-  nonTerminals.push_back({id, syms});
   auto itr = nameToId.find(name);
-  if (itr != nameToId.end()) itr->second.push_back(id);
-  else nameToId[name] = {id};
+  uint32_t id;
+  if (itr == nameToId.end()) {
+    id = uint32_t(terminals.size() + ntNames.size());
+    nameToId[name] = id;
+    ntNames.push_back(name);
+  } else {
+    id = itr->second;
+  }
+  nonTerminals.push_back({id, syms});
 }
 
 void Grammar::markStart(const std::string& name) {
   auto itr = nameToId.find(name);
   ASSERT(itr != nameToId.end(), "markStart: production '%s' does not exist!",
          name.c_str());
-  ASSERT(itr->second.size() == 1,
-         "markStart: production '%s' does not have unique mapping! [len=%lu]",
-         name.c_str(), itr->second.size());
-  ASSERT(!isTerminal(name), "markStart: start rule '%s' is a terminal!",
-         name.c_str());
-  start = itr->second[0];
+  start = itr->second;
+}
+
+uint32_t Grammar::getId(const std::string& name) {
 }
 
 }  // namespace parser
