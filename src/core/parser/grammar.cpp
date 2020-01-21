@@ -34,13 +34,6 @@ void Grammar::addNonTerminal(const std::string& name,
   nonTerminals.push_back({id, syms});
 }
 
-void Grammar::markStart(const std::string& name) {
-  auto itr = nameToId.find(name);
-  ASSERT(itr != nameToId.end(), "markStart: production '%s' does not exist!",
-         name.c_str());
-  start = itr->second;
-}
-
 uint32_t Grammar::getId(const std::string& name) const {
   const auto itr = nameToId.find(name);
   ASSERT(itr != nameToId.end(), "getId: no symbol named '%s'!", name.c_str());

@@ -19,7 +19,7 @@ class Grammar {
   void addTerminal(const std::string& name, const std::string& regex);
   void addNonTerminal(const std::string& name,
                       const std::vector<std::string>& syms);
-  void markStart(const std::string& name);
+  void markStart(const std::string& name) { start = getId(name); }
 
  private:
   struct NonTerminal {
