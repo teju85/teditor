@@ -20,7 +20,7 @@ class Grammar {
   void addTerminal(const std::string& name, const std::string& regex);
   void addNonTerminal(const std::string& name,
                       const std::vector<std::string>& syms);
-  void markStart(const std::string& name) { start = getId(name); }
+  void markStart(const std::string& name) { start = name; }
 
   uint32_t getId(const std::string& name) const;
   std::string getName(uint32_t id) const;
@@ -38,7 +38,7 @@ class Grammar {
   std::vector<NonTerminal> nonTerminals;
   std::vector<std::string> tNames;
   std::vector<std::string> ntNames;
-  uint32_t start;
+  std::string start;
 
   bool isTerminal(const std::string& sym) const;
   bool isTerminal(uint32_t id) const { return id < terminals.size(); }
