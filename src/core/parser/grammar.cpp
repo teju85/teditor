@@ -29,11 +29,11 @@ void Grammar::addNonTerminal(const std::string& name,
   if (itr == nameToId.end()) {
     id = uint32_t(terminals.size() + ntNames.size());
     nameToId[name] = id;
-    ntNameToEqnIds[name] = {prodId};
+    ntNameToProdIds[name] = {prodId};
     ntNames.push_back(name);
   } else {
     id = itr->second;
-    ntNameToEqnIds[name].push_back(prodId);
+    ntNameToProdIds[name].push_back(prodId);
   }
   nonTerminals.push_back({id, syms});
 }

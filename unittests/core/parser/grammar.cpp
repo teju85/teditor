@@ -21,6 +21,13 @@ TEST_CASE("Grammar Construction") {
   REQUIRE("Int" == g.getName(0));
   REQUIRE("+" == g.getName(1));
   REQUIRE("Add" == g.getName(2));
+  REQUIRE(g.isTerminal("Int"));
+  REQUIRE(g.isTerminal("+"));
+  REQUIRE_FALSE(g.isTerminal("Add"));
+  REQUIRE_FALSE(g.isTerminal("NotThere"));
+  REQUIRE(g.isTerminal(0));
+  REQUIRE(g.isTerminal(1));
+  REQUIRE_FALSE(g.isTerminal(2));
 }
 
 } // end namespace parser
