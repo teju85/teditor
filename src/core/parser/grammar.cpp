@@ -17,6 +17,7 @@ void Grammar::addTerminal(const std::string& name, const std::string& regex) {
          "addTerminal: Symbol with name '%s' already exists!", name.c_str());
   auto id = uint32_t(terminals.size());
   terminals.push_back(TokenDef{id, regex});
+  tNames.push_back(name);
   nameToId[name] = id;
 }
 
@@ -38,6 +39,10 @@ uint32_t Grammar::getId(const std::string& name) const {
   const auto itr = nameToId.find(name);
   ASSERT(itr != nameToId.end(), "getId: no symbol named '%s'!", name.c_str());
   return itr->second;
+}
+
+std::string Grammar::getName(uint32_t id) const {
+  return isTerminal(id) ? tNames[id] : ntNames[id - terminals.size()];
 }
 
 }  // namespace parser
