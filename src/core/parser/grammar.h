@@ -8,11 +8,13 @@
 namespace teditor {
 namespace parser {
 
+struct LL1Table :
+  public std::unordered_map<uint32_t, std::unordered_map<uint32_t, uint32_t>> {
+};
+
 class Grammar {
  public:
   Grammar(): nameToId(), terminals(), nonTerminals(), start() {}
-
-  bool isTerminal(const std::string& sym) const;
 
   void addTerminal(const std::string& name, const std::string& regex);
   void addNonTerminal(const std::string& name,
@@ -32,6 +34,7 @@ class Grammar {
   std::vector<NonTerminal> nonTerminals;
   uint32_t start;
 
+  bool isTerminal(const std::string& sym) const;
   bool isTerminal(uint32_t id) const { return id < terminals.size(); }
 };  // class Grammar
 
