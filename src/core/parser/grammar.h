@@ -12,6 +12,21 @@ struct LL1Table :
   public std::unordered_map<uint32_t, std::unordered_map<uint32_t, uint32_t>> {
 };
 
+
+/**
+ * @brief Definition of a non-terminal production in the grammar
+ */
+struct NonTerminal {
+  /** unique id of the lhs non-terminal symbol of this production */
+  uint32_t lhsId;
+  /** list of terminal/non-terminal symbols in the rhs of this production */
+  std::vector<std::string> rhs;
+
+  /** whether the current production is an 'epsilon' or not */
+  bool isEps() const { return rhs.empty(); }
+};  // struct NonTerminal
+
+
 class Grammar {
  public:
   Grammar(): nameToId(), terminals(), nonTerminals(), tNames(), ntNames(),
@@ -28,13 +43,6 @@ class Grammar {
   bool isTerminal(uint32_t id) const { return id < terminals.size(); }
 
  private:
-  struct NonTerminal {
-    uint32_t lhsId;
-    std::vector<std::string> rhs;
-
-    bool isEps() const { return rhs.empty(); }
-  };  // struct NonTerminal
-
   std::unordered_map<std::string, uint32_t> nameToId;
   TokenDefs terminals;
   std::vector<NonTerminal> nonTerminals;
