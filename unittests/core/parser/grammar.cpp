@@ -13,7 +13,7 @@ TEST_CASE("Grammar Construction") {
   REQUIRE_THROWS(g.addTerminal("Int", Regexs::Integer));
   g.addNonTerminal("Add", {"Int", "+", "Int"});
   // can't add terminals after adding non-terminals!
-  REQUIRE_THROWS(g.addTerminal("+", "[+]"));
+  REQUIRE_THROWS(g.addTerminal("-", "[-]"));
   REQUIRE(0 == g.getId("Int"));
   REQUIRE(1 == g.getId("+"));
   REQUIRE(2 == g.getId("Add"));
