@@ -20,7 +20,8 @@ struct LLTableFirsts {
 
   LLTableFirsts(const Grammar& g);
 
-  FirstArr firstStrs;  // for all strings of symbols in production rules
+  FirstMap firstNT;    // for every non-terminal in the grammar
+  FirstArr firstStrs;  // for strings of symbols in every production
 
  private:
   uint32_t epsId;
@@ -28,7 +29,7 @@ struct LLTableFirsts {
 
   // recursive function with memoization for evaluating individual non-terminal
   // symbol's FIRST set
-  const First& getFirstFor(const Grammar& g, uint32_t id, FirstMap& firstNT);
+  const First& getFirstFor(const Grammar& g, uint32_t id);
 };  // struct LLTableFirst
 
 }  // namespace parser

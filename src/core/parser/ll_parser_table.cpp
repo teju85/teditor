@@ -4,18 +4,17 @@
 namespace teditor {
 namespace parser {
 
-LLTableFirsts::LLTableFirsts(const Grammar& g): firstStrs(),
+LLTableFirsts::LLTableFirsts(const Grammar& g): firstNT(), firstStrs(),
                                                 epsId(g.getId(Grammar::Eps)),
                                                 eofId(g.getId(Grammar::Eof)) {
   const auto nProds = g.numProductions();
-  LLTableFirsts::FirstMap firstNT;  // for every non-terminal
   for (uint32_t i = 0; i < nProds; ++i) {
     LLTableFirsts::First prodFirst;
     const auto& rhs = g.getRhs(i);
     // take a union of all symbols in the RHS, while checking for 'eps'
     for (const auto& r : rhs) {
       auto rid = g.getId(r);
-      const auto& f = getFirstFor(g, rid, firstNT);
+      const auto& f = getFirstFor(g, rid);
       for (auto fi : f) prodFirst.insert(fi);
       // if FIRST(rhs) doesn't contain 'eps', then halt
       if (f.find(epsId) == f.end()) break;
@@ -24,8 +23,8 @@ LLTableFirsts::LLTableFirsts(const Grammar& g): firstStrs(),
   }
 }
 
-const LLTableFirsts::First& LLTableFirsts::getFirstFor(
-  const Grammar& g, uint32_t id, LLTableFirsts::FirstMap& firstNT) {
+const LLTableFirsts::First& LLTableFirsts::getFirstFor(const Grammar& g,
+                                                       uint32_t id) {
   // if FIRST(id) already exists, just return it
   const auto itr = firstNT.find(id);
   if (itr != firstNT.end()) return itr->second;
@@ -41,7 +40,7 @@ const LLTableFirsts::First& LLTableFirsts::getFirstFor(
         myFirst.insert(rid);
         continue;
       }
-      const auto& f = getFirstFor(g, rid, firstNT);
+      const auto& f = getFirstFor(g, rid);
       for (auto fi : f) myFirst.insert(fi);
       // if FIRST(rid) doesn't contain 'eps', then halt
       if (f.find(epsId) == f.end()) break;
