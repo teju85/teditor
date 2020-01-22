@@ -6,8 +6,8 @@ namespace parser {
 Grammar::Grammar(const std::vector<TerminalDef>& terms,
                  const std::vector<NonTerminalDef>& nonterms,
                  const std::string& startSym):
-  nameToId(), terminals(), nonTerminals(), tNames(), ntNames(),
-  ntNameToProdIds(), start(startSym) {
+  nameToId(), terminals(), prods(), tNames(), ntNames(), ntNameToProdIds(),
+  start(startSym) {
   for (const auto& t : terms) addTerminal(t.first, t.second);
   for (const auto& nt : nonterms) addNonTerminal(nt.first, nt.second);
 }
@@ -31,7 +31,7 @@ void Grammar::addTerminal(const std::string& name, const std::string& regex) {
 void Grammar::addNonTerminal(const std::string& name, const Strings& syms) {
   auto itr = nameToId.find(name);
   uint32_t id;
-  auto prodId = uint32_t(nonTerminals.size());
+  auto prodId = uint32_t(prods.size());
   if (itr == nameToId.end()) {
     id = uint32_t(terminals.size() + ntNames.size());
     nameToId[name] = id;
@@ -41,7 +41,7 @@ void Grammar::addNonTerminal(const std::string& name, const Strings& syms) {
     id = itr->second;
     ntNameToProdIds[name].push_back(prodId);
   }
-  nonTerminals.push_back({id, syms});
+  prods.push_back({id, syms});
 }
 
 uint32_t Grammar::getId(const std::string& sym) const {

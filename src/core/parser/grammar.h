@@ -80,13 +80,13 @@ class Grammar {
    * @param pid production id
    * @return list of symbols appearing in this production rule
    */
-  const Strings& getRhs(uint32_t pid) const { return nonTerminals[pid].rhs; }
+  const Strings& getRhs(uint32_t pid) const { return prods[pid].rhs; }
 
   /** returns total number of non-terminal symbols in the grammar */
   uint32_t numNonTerminals() const { return uint32_t(ntNameToProdIds.size()); }
 
   /** returns total number of production rules in this grammar */
-  uint32_t numProductions() const { return uint32_t(nonTerminals.size()); }
+  uint32_t numProductions() const { return uint32_t(prods.size()); }
 
  private:
   struct NonTerminal {
@@ -97,7 +97,7 @@ class Grammar {
 
   std::unordered_map<std::string, uint32_t> nameToId;
   TokenDefs terminals;
-  std::vector<NonTerminal> nonTerminals;
+  std::vector<NonTerminal> prods;
   Strings tNames;
   Strings ntNames;
   std::unordered_map<std::string, std::vector<uint32_t>> ntNameToProdIds;
