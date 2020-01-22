@@ -13,6 +13,7 @@ TEST_CASE("Grammar Construction") {
       {"Add", {"Int", "+", "Int"}}
     },
     "Add");
+
   REQUIRE(0 == g.getId("Int"));
   REQUIRE(1 == g.getId("+"));
   REQUIRE(2 == g.getId("Add"));
@@ -27,6 +28,15 @@ TEST_CASE("Grammar Construction") {
   REQUIRE(g.isTerminal(0));
   REQUIRE(g.isTerminal(1));
   REQUIRE_FALSE(g.isTerminal(2));
+
+  REQUIRE_THROWS(g.getProdIds("Int"));
+  REQUIRE_THROWS(g.getProdIds("NotThere"));
+  auto pids = g.getProdIds("Add");
+  REQUIRE(1 == pids.size());
+  REQUIRE(0 == pids[0]);
+  pids = g.getProdIds(g.getId("Add"));
+  REQUIRE(1 == pids.size());
+  REQUIRE(0 == pids[0]);
 }
 
 } // end namespace parser

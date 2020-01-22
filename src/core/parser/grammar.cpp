@@ -28,8 +28,7 @@ void Grammar::addTerminal(const std::string& name, const std::string& regex) {
   nameToId[name] = id;
 }
 
-void Grammar::addNonTerminal(const std::string& name,
-                             const std::vector<std::string>& syms) {
+void Grammar::addNonTerminal(const std::string& name, const Strings& syms) {
   auto itr = nameToId.find(name);
   uint32_t id;
   auto prodId = uint32_t(nonTerminals.size());
@@ -53,6 +52,19 @@ uint32_t Grammar::getId(const std::string& sym) const {
 
 std::string Grammar::getName(uint32_t id) const {
   return isTerminal(id) ? tNames[id] : ntNames[id - terminals.size()];
+}
+
+const std::vector<uint32_t>& Grammar::getProdIds(const std::string& sym) const {
+  ASSERT(!isTerminal(sym), "getProdIds: symbol '%s' is a Terminal!",
+         sym.c_str());
+  const auto itr = ntNameToProdIds.find(sym);
+  ASSERT(itr != ntNameToProdIds.end(), "getProdIds: symbol '%s' is unknown!",
+         sym.c_str());
+  return itr->second;
+}
+
+const std::vector<uint32_t>& Grammar::getProdIds(uint32_t id) const {
+  return getProdIds(getName(id));
 }
 
 }  // namespace parser
