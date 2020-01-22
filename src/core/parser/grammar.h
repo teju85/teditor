@@ -82,6 +82,12 @@ class Grammar {
    */
   const Strings& getRhs(uint32_t pid) const { return nonTerminals[pid].rhs; }
 
+  /** returns total number of non-terminal symbols in the grammar */
+  uint32_t numNonTerminals() const { return uint32_t(ntNameToProdIds.size()); }
+
+  /** returns total number of production rules in this grammar */
+  uint32_t numProductions() const { return uint32_t(nonTerminals.size()); }
+
  private:
   struct NonTerminal {
     uint32_t lhsId;

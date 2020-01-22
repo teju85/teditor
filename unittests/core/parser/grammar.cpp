@@ -43,6 +43,9 @@ TEST_CASE("Grammar Construction") {
   REQUIRE("Int" == rhs[0]);
   REQUIRE("+" == rhs[1]);
   REQUIRE("Int" == rhs[2]);
+
+  REQUIRE(1 == g.numNonTerminals());
+  REQUIRE(1 == g.numProductions());
 }
 
 } // end namespace parser
