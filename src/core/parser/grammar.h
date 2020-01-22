@@ -81,6 +81,13 @@ class Grammar {
    */
   const Strings& getRhs(uint32_t pid) const { return prods[pid].rhs; }
 
+  /**
+   * @brief Gets lhs ID for a given production id
+   * @param pid production id
+   * @return id of the symbol in the lhs for this production rule
+   */
+  uint32_t getLhs(uint32_t pid) const { return prods[pid].lhsId; }
+
   /** returns total number of non-terminal symbols in the grammar */
   uint32_t numNonTerminals() const { return uint32_t(ntNameToProdIds.size()); }
 
