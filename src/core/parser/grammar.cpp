@@ -20,8 +20,6 @@ bool Grammar::isTerminal(const std::string& sym) const {
 }
 
 void Grammar::addTerminal(const std::string& name, const std::string& regex) {
-  ASSERT(nonTerminals.empty(),
-         "addTerminal: cannot be called after calling addNonTerminal!");
   ASSERT(nameToId.find(name) == nameToId.end(),
          "addTerminal: Symbol with name '%s' already exists!", name.c_str());
   auto id = uint32_t(terminals.size());
@@ -47,9 +45,9 @@ void Grammar::addNonTerminal(const std::string& name,
   nonTerminals.push_back({id, syms});
 }
 
-uint32_t Grammar::getId(const std::string& name) const {
-  const auto itr = nameToId.find(name);
-  ASSERT(itr != nameToId.end(), "getId: no symbol named '%s'!", name.c_str());
+uint32_t Grammar::getId(const std::string& sym) const {
+  const auto itr = nameToId.find(sym);
+  ASSERT(itr != nameToId.end(), "getId: no symbol named '%s'!", sym.c_str());
   return itr->second;
 }
 

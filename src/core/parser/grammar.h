@@ -36,7 +36,7 @@ class Grammar {
           const std::vector<NonTerminalDef>& nonterms,
           const std::string& startSym);
 
-  uint32_t getId(const std::string& name) const;
+  uint32_t getId(const std::string& sym) const;
   std::string getName(uint32_t id) const;
   bool isTerminal(const std::string& sym) const;
   bool isTerminal(uint32_t id) const { return id < terminals.size(); }
