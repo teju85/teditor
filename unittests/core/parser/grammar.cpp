@@ -22,7 +22,7 @@ TEST_CASE("Grammar Construction") {
   REQUIRE(0 == g.getId("Int"));
   REQUIRE(1 == g.getId("+"));
   REQUIRE(2 == g.getId("-"));
-  REQUIRE(3 == g.getId("eps"));
+  REQUIRE(3 == g.getId(Grammar::Eps));
   REQUIRE(4 == g.getId("Add"));
   REQUIRE(5 == g.getId("Sub"));
   REQUIRE(6 == g.getId("Expr"));
@@ -31,7 +31,7 @@ TEST_CASE("Grammar Construction") {
   REQUIRE("Int" == g.getName(0));
   REQUIRE("+" == g.getName(1));
   REQUIRE("-" == g.getName(2));
-  REQUIRE("eps" == g.getName(3));
+  REQUIRE(Grammar::Eps == g.getName(3));
   REQUIRE("Add" == g.getName(4));
   REQUIRE("Sub" == g.getName(5));
   REQUIRE("Expr" == g.getName(6));
@@ -40,7 +40,7 @@ TEST_CASE("Grammar Construction") {
   REQUIRE(g.isTerminal("Int"));
   REQUIRE(g.isTerminal("+"));
   REQUIRE(g.isTerminal("-"));
-  REQUIRE_FALSE(g.isTerminal("eps"));
+  REQUIRE(g.isTerminal(Grammar::Eps));
   REQUIRE_FALSE(g.isTerminal("Add"));
   REQUIRE_FALSE(g.isTerminal("Sub"));
   REQUIRE_FALSE(g.isTerminal("Expr"));
@@ -49,7 +49,7 @@ TEST_CASE("Grammar Construction") {
   REQUIRE(g.isTerminal(0));
   REQUIRE(g.isTerminal(1));
   REQUIRE(g.isTerminal(2));
-  REQUIRE_FALSE(g.isTerminal(3));
+  REQUIRE(g.isTerminal(3));
   REQUIRE_FALSE(g.isTerminal(4));
   REQUIRE_FALSE(g.isTerminal(5));
   REQUIRE_FALSE(g.isTerminal(6));
@@ -61,19 +61,19 @@ TEST_CASE("Grammar Construction") {
   REQUIRE_THROWS(g.getProdIds("NotThere"));
   auto pids = g.getProdIds("Add");
   REQUIRE(1 == pids.size());
-  REQUIRE(1 == pids[0]);
+  REQUIRE(0 == pids[0]);
   pids = g.getProdIds(g.getId("Add"));
   REQUIRE(1 == pids.size());
-  REQUIRE(1 == pids[0]);
+  REQUIRE(0 == pids[0]);
 
-  auto rhs = g.getRhs(1);
+  auto rhs = g.getRhs(0);
   REQUIRE(3 == rhs.size());
   REQUIRE("Int" == rhs[0]);
   REQUIRE("+" == rhs[1]);
   REQUIRE("Int" == rhs[2]);
 
-  REQUIRE(5 == g.numNonTerminals());
-  REQUIRE(6 == g.numProductions());
+  REQUIRE(4 == g.numNonTerminals());
+  REQUIRE(5 == g.numProductions());
 }
 
 void badGrammar() {
