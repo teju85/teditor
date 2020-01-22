@@ -13,7 +13,7 @@ template <int k> struct LL;
 template <>
 struct LL<1> {
   LL(const Grammar& g): table(), lexer(g.getLexer()) {
-    ///@todo: implement
+    constructTable();
   }
 
  private:
@@ -23,6 +23,10 @@ struct LL<1> {
 
   Table table;
   std::shared_ptr<Lexer> lexer;
+
+  void constructTable() {
+    First firsts;
+  }
 };  // struct LL<1>
 
 }  // namespace parser

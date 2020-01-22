@@ -72,5 +72,24 @@ TEST_CASE("Grammar Construction") {
   REQUIRE(5 == g.numProductions());
 }
 
+void badGrammar() {
+  Grammar g({
+      {"Int", Regexs::Integer},
+      {"+", "[+]"},
+      {"-", "-"},
+    }, {
+      {"Add", {"Int", "+", "Int"}},
+      {"Sub", {"Int", "-", "Int"}},
+      {"Expr", {"Add"}},
+      {"-", {"Sub"}},   // existing terminal symbol used!!
+      {"Statement", {"Expr"}},
+    },
+    "Statement");
+}
+
+TEST_CASE("Bad Grammar") {
+  REQUIRE_THROWS(badGrammar());
+}
+
 } // end namespace parser
 } // end namespace teditor

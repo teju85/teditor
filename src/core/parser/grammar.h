@@ -87,6 +87,9 @@ class Grammar {
   /** returns total number of production rules in this grammar */
   uint32_t numProductions() const { return uint32_t(prods.size()); }
 
+  /** production-erasing symbol */
+  static const std::string Eps;
+
  private:
   struct NonTerminal {
     uint32_t lhsId;

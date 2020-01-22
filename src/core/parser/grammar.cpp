@@ -3,6 +3,8 @@
 namespace teditor {
 namespace parser {
 
+const std::string Grammar::Eps("eps");
+
 Grammar::Grammar(const std::vector<TerminalDef>& terms,
                  const std::vector<NonTerminalDef>& nonterms,
                  const std::string& startSym):
@@ -43,6 +45,8 @@ void Grammar::addNonTerminal(const std::string& name, const Strings& syms) {
     ntNameToProdIds[name] = {prodId};
     ntNames.push_back(name);
   } else {
+    ASSERT(!isTerminal(name), "addNonTerminal: symbol '%s' is a terminal!",
+           name.c_str());
     id = itr->second;
     ntNameToProdIds[name].push_back(prodId);
   }
