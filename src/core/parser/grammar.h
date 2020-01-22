@@ -75,6 +75,13 @@ class Grammar {
    */
   const std::string& getStart() const { return start; }
 
+  /**
+   * @brief Gets rhs for a given production id
+   * @param pid production id
+   * @return list of symbols appearing in this production rule
+   */
+  const Strings& getRhs(uint32_t pid) const { return nonTerminals[pid].rhs; }
+
  private:
   struct NonTerminal {
     uint32_t lhsId;

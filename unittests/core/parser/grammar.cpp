@@ -37,6 +37,12 @@ TEST_CASE("Grammar Construction") {
   pids = g.getProdIds(g.getId("Add"));
   REQUIRE(1 == pids.size());
   REQUIRE(0 == pids[0]);
+
+  auto rhs = g.getRhs(0);
+  REQUIRE(3 == rhs.size());
+  REQUIRE("Int" == rhs[0]);
+  REQUIRE("+" == rhs[1]);
+  REQUIRE("Int" == rhs[2]);
 }
 
 } // end namespace parser
