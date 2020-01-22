@@ -13,7 +13,7 @@ template <int k> struct LL;
 template <>
 struct LL<1> {
   LL(const Grammar& g): table(), lexer(g.getLexer()) {
-    constructTable();
+    constructTable(g);
   }
 
  private:
@@ -24,8 +24,13 @@ struct LL<1> {
   Table table;
   std::shared_ptr<Lexer> lexer;
 
-  void constructTable() {
+  void constructTable(const Grammar& g) {
     First firsts;
+    auto nProds = g.numProductions();
+    for (uint32_t i = 0; i < nProds; ++i) {
+      for (const auto& rhs : g.getRhs(i)) {
+      }
+    }
   }
 };  // struct LL<1>
 

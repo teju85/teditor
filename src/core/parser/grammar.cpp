@@ -11,6 +11,7 @@ Grammar::Grammar(const std::vector<TerminalDef>& terms,
   nameToId(), terminals(), prods(), tNames(), ntNames(), ntNameToProdIds(),
   start(startSym) {
   for (const auto& t : terms) addTerminal(t.first, t.second);
+  addNonTerminal(Eps, {});  // special erasing production
   for (const auto& nt : nonterms) addNonTerminal(nt.first, nt.second);
 }
 
