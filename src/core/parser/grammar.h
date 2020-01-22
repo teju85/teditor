@@ -5,14 +5,10 @@
 #include <string>
 #include "lexer.h"
 #include <core/utils.h>
+#include <memory>
 
 namespace teditor {
 namespace parser {
-
-struct LL1Table :
-  public std::unordered_map<uint32_t, std::unordered_map<uint32_t, uint32_t>> {
-};
-
 
 class Grammar {
  public:
@@ -30,6 +26,9 @@ class Grammar {
   Grammar(const std::vector<TerminalDef>& terms,
           const std::vector<NonTerminalDef>& nonterms,
           const std::string& startSym);
+
+  /** Get the lexer object made out of terminals */
+  std::shared_ptr<Lexer> getLexer() const;
 
   /**
    * @brief Gets unique id of the input symbole

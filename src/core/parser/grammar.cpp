@@ -12,6 +12,11 @@ Grammar::Grammar(const std::vector<TerminalDef>& terms,
   for (const auto& nt : nonterms) addNonTerminal(nt.first, nt.second);
 }
 
+std::shared_ptr<Lexer> Grammar::getLexer() const {
+  std::shared_ptr<Lexer> lex(new Lexer(terminals));
+  return lex;
+}
+
 // all terminals appear before the non-terminals
 bool Grammar::isTerminal(const std::string& sym) const {
   auto itr = nameToId.find(sym);
