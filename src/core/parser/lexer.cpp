@@ -10,7 +10,9 @@ const uint32_t Token::Unknown = uint32_t(-2);
 const uint32_t Token::Root = uint32_t(-3);
 
 Lexer::Lexer(const TokenDefs& t): nfas(), tokenDefs(t) {
-  for (auto td : tokenDefs) nfas.push_back(new NFA(td.regex));
+  for (auto td : tokenDefs) {
+    if (!td.regex.empty()) nfas.push_back(new NFA(td.regex));
+  }
 }
 
 Lexer::~Lexer() { for (auto t : nfas) delete t; }
