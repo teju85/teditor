@@ -4,6 +4,7 @@ namespace teditor {
 namespace parser {
 
 const std::string Grammar::Eps("eps");
+const std::string Grammar::Eof("$");
 
 Grammar::Grammar(const std::vector<TerminalDef>& terms,
                  const std::vector<NonTerminalDef>& nonterms,
@@ -12,6 +13,7 @@ Grammar::Grammar(const std::vector<TerminalDef>& terms,
   start(startSym) {
   for (const auto& t : terms) addTerminal(t.first, t.second);
   addTerminal(Eps, "");  // special erasing terminal
+  addTerminal(Eof, "");  // special end-of-file terminal
   for (const auto& nt : nonterms) addNonTerminal(nt.first, nt.second);
 }
 

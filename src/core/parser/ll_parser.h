@@ -14,7 +14,7 @@ template <>
 struct LL<1> {
   LL(const Grammar& g): table(), lexer(g.getLexer()),
                         epsId(g.getId(Grammar::Eps)) {
-    constructViaFirsts(g);
+    constructTable(g);
   }
 
  private:
@@ -28,10 +28,10 @@ struct LL<1> {
   typedef std::unordered_set<uint32_t> First;
   typedef std::unordered_map<uint32_t, First> FirstMap;
 
-  void constructViaFirsts(const Grammar& g) {
+  void constructTable(const Grammar& g) {
     FirstMap firsts;
     const auto nProds = g.numProductions();
-    // for each production ...
+    // construct FIRST sets
     for (uint32_t i = 0; i < nProds; ++i) {
       First prodFirst;
       // take a union of all symbols in the RHS, while checking for 'eps'
@@ -42,7 +42,7 @@ struct LL<1> {
         // if FIRST(rhs) doesn't contain 'eps', then halt
         if (f.find(epsId) == f.end()) break;
       }
-      // populate the parse table
+      // populate the parse table based on FIRST sets
       auto lid = g.getLhs(i);
       auto itr = table.find(lid);
       if (itr == table.end()) {
@@ -57,6 +57,10 @@ struct LL<1> {
                tok, g.getName(tok).c_str(), itr2->second);
         itr->second[tok] = i;
       }
+    }
+    // construct FOLLOW sets
+    FirstMap follows;
+    for (uint32_t i = 0; i < nProds; ++i) {
     }
   }
 

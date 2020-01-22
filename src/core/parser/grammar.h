@@ -97,6 +97,9 @@ class Grammar {
   /** production-erasing symbol */
   static const std::string Eps;
 
+  /** end-of-file symbol */
+  static const std::string Eof;
+
  private:
   struct NonTerminal {
     uint32_t lhsId;
