@@ -33,8 +33,6 @@ struct LL<1> {
     const auto nProds = g.numProductions();
     // for each production ...
     for (uint32_t i = 0; i < nProds; ++i) {
-      auto lid = g.getLhs(i);
-      if (lid == epsId) continue;
       First prodFirst;
       // take a union of all symbols in the RHS, while checking for 'eps'
       for (const auto& rhs : g.getRhs(i)) {
@@ -45,6 +43,7 @@ struct LL<1> {
         if (f.find(epsId) == f.end()) break;
       }
       // populate the parse table
+      auto lid = g.getLhs(i);
       auto itr = table.find(lid);
       if (itr == table.end()) {
         table[lid] = TokenToProd();
@@ -70,15 +69,11 @@ struct LL<1> {
     const auto& pids = g.getProdIds(id);
     First myFirst;
     for (auto p : pids) {
-      // take a union of all symbols in the RHS, while checking for 'eps' and
-      // terminal symbols
+      // take a union of FIRST of all symbols in the RHS
       for (const auto& rhs : g.getRhs(p)) {
         auto rid = g.getId(rhs);
         if (g.isTerminal(rid)) {
           myFirst.insert(rid);
-          continue;
-        } else if (rid == epsId) {
-          prodFirst.insert(epsId);
           continue;
         }
         const auto& f = getFirstFor(g, rid, firsts);
