@@ -29,13 +29,12 @@ struct NonTerminal {
 
 class Grammar {
  public:
-  Grammar(): nameToId(), terminals(), nonTerminals(), tNames(), ntNames(),
-             ntNameToProdIds(), start() {}
+  typedef std::pair<std::string, std::string> TerminalDef;
+  typedef std::pair<std::string, std::vector<std::string>> NonTerminalDef;
 
-  void addTerminal(const std::string& name, const std::string& regex);
-  void addNonTerminal(const std::string& name,
-                      const std::vector<std::string>& syms);
-  void markStart(const std::string& name) { start = name; }
+  Grammar(const std::vector<TerminalDef>& terms,
+          const std::vector<NonTerminalDef>& nonterms,
+          const std::string& startSym);
 
   uint32_t getId(const std::string& name) const;
   std::string getName(uint32_t id) const;
@@ -50,6 +49,10 @@ class Grammar {
   std::vector<std::string> ntNames;
   std::unordered_map<std::string, std::vector<uint32_t>> ntNameToProdIds;
   std::string start;
+
+  void addTerminal(const std::string& name, const std::string& regex);
+  void addNonTerminal(const std::string& name,
+                      const std::vector<std::string>& syms);
 };  // class Grammar
 
 }  // namespace parser

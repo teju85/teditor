@@ -3,6 +3,15 @@
 namespace teditor {
 namespace parser {
 
+Grammar::Grammar(const std::vector<TerminalDef>& terms,
+                 const std::vector<NonTerminalDef>& nonterms,
+                 const std::string& startSym):
+  nameToId(), terminals(), nonTerminals(), tNames(), ntNames(),
+  ntNameToProdIds(), start(startSym) {
+  for (const auto& t : terms) addTerminal(t.first, t.second);
+  for (const auto& nt : nonterms) addNonTerminal(nt.first, nt.second);
+}
+
 // all terminals appear before the non-terminals
 bool Grammar::isTerminal(const std::string& sym) const {
   auto itr = nameToId.find(sym);
