@@ -19,6 +19,11 @@ LLTableFirsts::LLTableFirsts(const Grammar& g): firstNT(), firstStrs(),
       // if FIRST(rhs) doesn't contain 'eps', then halt
       if (f.find(epsId) == f.end()) break;
     }
+    // update FIRST(lhs)
+    auto lhsId = g.getLhs(i);
+    if (firstNT.find(lhsId) == firstNT.end()) firstNT[lhsId] = First();
+    for (auto p : prodFirst) firstNT[lhsId].insert(p);
+    // store the FIRST(rhs) for this production
     firstStrs.push_back(prodFirst);
   }
 }
