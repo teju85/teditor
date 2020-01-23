@@ -37,9 +37,10 @@ const LLTableFirsts::First& LLTableFirsts::getFirstFor(
   const Grammar& g, uint32_t id, std::vector<uint32_t>& stack) {
   auto stackItr = std::find(stack.begin(), stack.end(), id);
   if (stackItr != stack.end()) {
-    std::string error = format("%s", g.getName(stack[0]).c_str());
-    for (uint32_t i = 1; i < uint32_t(stack.size()); ++i)
-      error += format(" -> %s", g.getName(stack[i]).c_str());
+    std::string error;
+    for (uint32_t i = 0; i < uint32_t(stack.size()); ++i)
+      error += format("%s -> ", g.getName(stack[i]).c_str());
+    error += format("%s", g.getName(id).c_str());
     ASSERT(false, "Left recursion found! %s", error.c_str());
   }
   // if FIRST(id) already exists, just return it
