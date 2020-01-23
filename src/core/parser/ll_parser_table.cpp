@@ -23,6 +23,7 @@ LLTableFirsts::LLTableFirsts(const Grammar& g): firstNT(), firstStrs(),
   }
 }
 
+///@todo: detect left recursion
 const LLTableFirsts::First& LLTableFirsts::getFirstFor(const Grammar& g,
                                                        uint32_t id) {
   // if FIRST(id) already exists, just return it
