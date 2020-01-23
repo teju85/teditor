@@ -29,7 +29,8 @@ struct LLTableFirsts {
 
   // recursive function with memoization for evaluating individual non-terminal
   // symbol's FIRST set
-  const First& getFirstFor(const Grammar& g, uint32_t id);
+  const First& getFirstFor(const Grammar& g, uint32_t id,
+                           std::vector<uint32_t>& stack);
 };  // struct LLTableFirst
 
 }  // namespace parser
