@@ -33,7 +33,6 @@ LLTableFirsts::LLTableFirsts(const Grammar& g): firstNT(), firstStrs(),
   }
 }
 
-///@todo: detect left recursion
 const LLTableFirsts::First& LLTableFirsts::getFirstFor(
   const Grammar& g, uint32_t id, std::vector<uint32_t>& stack) {
   auto stackItr = std::find(stack.begin(), stack.end(), id);
