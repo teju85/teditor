@@ -1,4 +1,4 @@
-#include "core/parser/ll_parser_table.h"
+#include "core/parser/ll_parser.h"
 #include "core/parser/grammar.h"
 #include "core/parser/regexs.h"
 #include "catch.hpp"
@@ -39,7 +39,7 @@ std::vector<Grammar::NonTerminalDef>& getProds() {
 
 TEST_CASE("FIRST") {
   Grammar g(getTokens(), getProds(), "E");
-  LLTableFirsts first(g);
+  LL_1::Firsts first(g);
   SECTION("E") {
     auto itr = first.firstNT.find(g.getId("E"));
     REQUIRE(itr != first.firstNT.end());
