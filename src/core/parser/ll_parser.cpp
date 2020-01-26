@@ -84,9 +84,19 @@ void LL_1::constructTable(const Grammar& g) {
 //   return firsts.find(id)->second;
 // }
 
-LL_1::Firsts::Firsts(const Grammar& g): firstNT(), firstStrs(),
-                                        epsId(g.getId(Grammar::Eps)),
-                                        eofId(g.getId(Grammar::Eof)) {
+LL_1::Sets::Sets(const Grammar& g): epsId(g.getId(Grammar::Eps)),
+                                    eofId(g.getId(Grammar::Eof)) {
+}
+
+bool LL_1::Sets::has(const LL_1::Sets::Set& f, uint32_t id) const {
+  return f.find(id) != f.end();
+}
+
+bool LL_1::Sets::has(const LL_1::Sets::SetMap& f, uint32_t id) const {
+  return f.find(id) != f.end();
+}
+
+LL_1::Firsts::Firsts(const Grammar& g): LL_1::Sets(g), firstNT(), firstStrs() {
   const auto nProds = g.numProductions();
   for (uint32_t i = 0; i < nProds; ++i) {
     std::vector<uint32_t> stack;
@@ -100,10 +110,10 @@ LL_1::Firsts::Firsts(const Grammar& g): firstNT(), firstStrs(),
       const auto& f = getFirstFor(g, rid, stack);
       for (auto fi : f) prodFirst.insert(fi);
       // if FIRST(rhs) doesn't contain 'eps', then halt
-      if (f.find(epsId) == f.end()) break;
+      if (!has(f, epsId)) break;
     }
     // update FIRST(lhs)
-    if (firstNT.find(lid) == firstNT.end()) firstNT[lid] = First();
+    if (!has(firstNT, lid)) firstNT[lid] = First();
     for (auto p : prodFirst) firstNT[lid].insert(p);
     // store the FIRST(rhs) for this production
     firstStrs.push_back(prodFirst);
@@ -145,13 +155,20 @@ const LL_1::Firsts::First& LL_1::Firsts::getFirstFor(
         const auto& f = getFirstFor(g, rid, stack);
         for (auto fi : f) myFirst.insert(fi);
         // if FIRST(rid) doesn't contain 'eps', then halt
-        if (f.find(epsId) == f.end()) break;
+        if (!has(f, epsId)) break;
       }
     }
     stack.pop_back();
   } // if (g.isTerminal...) ... else 
   firstNT[id] = myFirst;
   return firstNT.find(id)->second;
+}
+
+LL_1::Follows::Follows(const Grammar& g, const LL_1::Firsts& f):
+  followNT(), epsId(g.getId(Grammar::Eps)), eofId(g.getId(Grammar::Eof)) {
+  const auto nProds = g.numProductions();
+  for (uint32_t i = 0; i < nProds; ++i) {
+  }
 }
 
 }  // namespace parser
