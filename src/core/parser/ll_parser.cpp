@@ -100,7 +100,7 @@ LL_1::Firsts::Firsts(const Grammar& g): LL_1::Sets(g), firstNT(), firstStrs() {
   const auto nProds = g.numProductions();
   for (uint32_t i = 0; i < nProds; ++i) {
     std::vector<uint32_t> stack;
-    LL_1::Firsts::First prodFirst;
+    LL_1::Sets::Set prodFirst;
     auto lid = g.getLhs(i);
     const auto& rhs = g.getRhs(i);
     stack.push_back(lid);
@@ -113,7 +113,7 @@ LL_1::Firsts::Firsts(const Grammar& g): LL_1::Sets(g), firstNT(), firstStrs() {
       if (!has(f, epsId)) break;
     }
     // update FIRST(lhs)
-    if (!has(firstNT, lid)) firstNT[lid] = First();
+    if (!has(firstNT, lid)) firstNT[lid] = LL_1::Sets::Set();
     for (auto p : prodFirst) firstNT[lid].insert(p);
     // store the FIRST(rhs) for this production
     firstStrs.push_back(prodFirst);
@@ -165,7 +165,7 @@ const LL_1::Firsts::First& LL_1::Firsts::getFirstFor(
 }
 
 LL_1::Follows::Follows(const Grammar& g, const LL_1::Firsts& f):
-  followNT(), epsId(g.getId(Grammar::Eps)), eofId(g.getId(Grammar::Eof)) {
+  LL_1::Sets::Sets(g), followNT() {
   const auto nProds = g.numProductions();
   for (uint32_t i = 0; i < nProds; ++i) {
   }

@@ -38,36 +38,25 @@ struct LL_1 {
     Firsts(const Grammar& g);
 
     /** FIRST for every non-terminal in the grammar */
-    FirstMap firstNT;
+    SetMap firstNT;
     /** FIRST for every rhs in the productions in the grammar */
-    FirstArr firstStrs;
+    SetArr firstStrs;
 
    private:
-    uint32_t epsId;
-    uint32_t eofId;
-
     // recursive function with memoization for evaluating individual
     // non-terminal symbol's FIRST set
-    const First& getFirstFor(const Grammar& g, uint32_t id,
-                             std::vector<uint32_t>& stack);
+    const Set& getFirstFor(const Grammar& g, uint32_t id,
+                           std::vector<uint32_t>& stack);
   };  // struct Firsts
 
   /**
    * @brief Contains FOLLOW set for all non-terminals in the current grammar
    */
-  struct Follows {
-    typedef Firsts::First Follow;
-    typedef Firsts::FirstMap FollowMap;
-    typedef Firsts::FirstArr FollowArr;
-
+  struct Follows : public Sets {
     Follows(const Grammar& g, const Firsts& f);
 
     /** FOLLOW for every non-terminal in the grammar */
-    FollowMap followNT;
-
-   private:
-    uint32_t epsId;
-    uint32_t eofId;
+    SetMap followNT;
   };  // struct Follows
 
  private:
