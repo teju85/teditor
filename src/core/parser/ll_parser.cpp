@@ -106,6 +106,12 @@ void LL_1::Sets::add(LL_1::Sets::SetMap& sm, const LL_1::Sets::Set& s,
   add(itr->second, s);
 }
 
+size_t LL_1::Sets::size(const SetMap& sm) const {
+  size_t len = 0;
+  for (const auto& itr : sm) len += itr.second.size();
+  return len;
+}
+
 LL_1::Firsts::Firsts(const Grammar& g): LL_1::Sets(g), firstNT(), firstStrs() {
   const auto nProds = g.numProductions();
   for (uint32_t i = 0; i < nProds; ++i) {

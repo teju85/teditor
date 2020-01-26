@@ -40,6 +40,39 @@ std::vector<Grammar::NonTerminalDef>& getProds() {
 TEST_CASE("FIRST") {
   Grammar g(getTokens(), getProds(), "E");
   LL_1::Firsts first(g);
+  REQUIRE(15 == first.size(first.firstNT));
+  SECTION("Terminals") {
+    auto id = g.getId(Grammar::Eps);
+    auto itr = first.firstNT.find(id);
+    REQUIRE(itr != first.firstNT.end());
+    auto set = itr->second;
+    REQUIRE(1 == set.size());
+    REQUIRE(set.end() != set.find(id));
+    id = g.getId("(");
+    itr = first.firstNT.find(id);
+    REQUIRE(itr != first.firstNT.end());
+    set = itr->second;
+    REQUIRE(1 == set.size());
+    REQUIRE(set.end() != set.find(id));
+    id = g.getId("Int");
+    itr = first.firstNT.find(id);
+    REQUIRE(itr != first.firstNT.end());
+    set = itr->second;
+    REQUIRE(1 == set.size());
+    REQUIRE(set.end() != set.find(id));
+    id = g.getId("+");
+    itr = first.firstNT.find(id);
+    REQUIRE(itr != first.firstNT.end());
+    set = itr->second;
+    REQUIRE(1 == set.size());
+    REQUIRE(set.end() != set.find(id));
+    id = g.getId("*");
+    itr = first.firstNT.find(id);
+    REQUIRE(itr != first.firstNT.end());
+    set = itr->second;
+    REQUIRE(1 == set.size());
+    REQUIRE(set.end() != set.find(id));
+  }
   SECTION("E") {
     auto itr = first.firstNT.find(g.getId("E"));
     REQUIRE(itr != first.firstNT.end());
