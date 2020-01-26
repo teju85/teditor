@@ -96,6 +96,16 @@ bool LL_1::Sets::has(const LL_1::Sets::SetMap& f, uint32_t id) const {
   return f.find(id) != f.end();
 }
 
+void LL_1::Sets::add(LL_1::Sets::SetMap& sm, const LL_1::Sets::Set& s,
+                     uint32_t id) const {
+  auto itr = sm.find(id);
+  if (itr == sm.end()) {
+    sm.insert(std::make_pair(id, LL_1::Sets::Set()));
+    itr = sm.find(id);
+  }
+  for (auto p : s) itr->second.insert(p);
+}
+
 LL_1::Firsts::Firsts(const Grammar& g): LL_1::Sets(g), firstNT(), firstStrs() {
   const auto nProds = g.numProductions();
   for (uint32_t i = 0; i < nProds; ++i) {
@@ -113,8 +123,7 @@ LL_1::Firsts::Firsts(const Grammar& g): LL_1::Sets(g), firstNT(), firstStrs() {
       if (!has(f, epsId)) break;
     }
     // update FIRST(lhs)
-    if (!has(firstNT, lid)) firstNT[lid] = LL_1::Sets::Set();
-    for (auto p : prodFirst) firstNT[lid].insert(p);
+    add(firstNT, prodFirst, lid);
     // store the FIRST(rhs) for this production
     firstStrs.push_back(prodFirst);
     stack.pop_back();

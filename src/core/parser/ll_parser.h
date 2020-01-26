@@ -19,6 +19,7 @@ struct LL_1 {
     Sets(const Grammar& g);
     bool has(const Set& f, uint32_t id) const;
     bool has(const SetMap& f, uint32_t id) const;
+    void add(SetMap& sm, const Set& s, uint32_t id) const;
 
    protected:
     uint32_t epsId, eofId;
