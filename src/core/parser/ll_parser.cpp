@@ -12,8 +12,7 @@ LL_1::LL_1(const Grammar& g): table(), lexer(g.getLexer()) {
 
 void LL_1::constructTable(const Grammar& g) {
   LL_1::Firsts firsts(g);
-  // auto start = g.getId(g.getStart());
-  // follows[start] = {eofId};
+  LL_1::Follows follows(g, firsts);
   const auto nProds = g.numProductions();
   for (uint32_t i = 0; i < nProds; ++i) {
     const auto& prodFirst = firsts.firstStrs[i];
