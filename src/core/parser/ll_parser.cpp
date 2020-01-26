@@ -46,44 +46,6 @@ void LL_1::constructTable(const Grammar& g) {
   }
 }
 
-// const First& LL_1::getFollowFor(const Grammar& g, uint32_t id,
-//                                 const FirstMap& firsts, FirstMap& follows) {
-//   // if FOLLOW(id) already exists, just return it
-//   const auto itr = follows.find(id);
-//   if (itr != follows.end()) return itr->second;
-//   // else, compute it recursively via all of the production rules, where this
-//   // symbol occurs in lhs and get their union
-//   const auto& pids = g.getProdIds(id);
-//   for (auto p : pids) {
-//     const auto& rhs = g.getRhs(p);
-//     if (rhs.size() >= 3) {
-//       // FIRST(last_symbol) -> FOLLOW(last_but_one_symbol)
-//       auto last = g.getId(rhs.back());
-//       auto lastButOne = g.getId(rhs[rhs.size() - 2]);
-//       if (follows.find(lastButOne) == follows.end())
-//         follows[lastButOne] = First();
-//       const auto& f = getFirstFor(g, last, firsts);
-//       for (auto fi : f) {
-//         if (fi != epsId) follows[lastButOne].insert(fi);
-//       }
-//       // FOLLOW(lhs) -> FOLLOW(rhs_last_but_one_symbol)
-//       if (f.find(epsId) != f.end()) {
-//         const auto& f= getFollowFor(g, lid, firsts, follows);
-//         for (auto fi : f) follows[lastButOne].insert(fi);
-//       }
-//     }
-//     // FOLLOW(lhs) -> FOLLOW(rhs_last_symbol)
-//     if(rhs.size() >= 2) {
-//       auto lastId = g.getId(rhs.back());
-//       if (follows.find(lastId) == follows.end()) follows[lastId] = First();
-//       const auto& f = getFollowFor(g, lid, firsts, follows);
-//       for (auto fi : f) follows[lastId].insert(fi);
-//     }
-//   }
-//   firsts[id] = myFirst;
-//   return firsts.find(id)->second;
-// }
-
 LL_1::Sets::Sets(const Grammar& g): epsId(g.getId(Grammar::Eps)),
                                     eofId(g.getId(Grammar::Eof)) {
 }
@@ -104,6 +66,22 @@ void LL_1::Sets::add(LL_1::Sets::SetMap& sm, const LL_1::Sets::Set& s,
     itr = sm.find(id);
   }
   add(itr->second, s);
+}
+
+void LL_1::Sets::addExcept(SetMap& sm, const Set& s, uint32_t id,
+                           uint32_t except) const {
+  auto itr = sm.find(id);
+  if (itr == sm.end()) {
+    sm.insert(std::make_pair(id, LL_1::Sets::Set()));
+    itr = sm.find(id);
+  }
+  addExcept(itr->second, s, except);
+}
+
+void LL_1::Sets::addExcept(Set& a, const Set& b, uint32_t except) const {
+  for (auto bi : b) {
+    if (bi != except) a.insert(bi);
+  }
 }
 
 size_t LL_1::Sets::size(const SetMap& sm) const {
@@ -186,7 +164,42 @@ LL_1::Follows::Follows(const Grammar& g, const LL_1::Firsts& f):
   size_t prevLen = 0, currLen = size(followNT);
   while(prevLen != currLen) {
     for (uint32_t i = 0; i < nProds; ++i) {
-    }
+      const auto& rhs = g.getRhs(i);
+      auto lhs = g.getLhs(i);
+      // FOLLOW(B) = FIRST(beta) for all productions: N -> alpha B beta
+      LL_1::Sets::Set firsts;
+      bool epsFoundSoFar = true;
+      for (auto r = rhs.size() - 1; r > 0; --r) {
+        auto rid = g.getId(rhs[r]);
+        auto nextId = g.getId(rhs[r - 1]);
+        if (g.isTerminal(rid)) {
+          firsts.insert(rid);
+          epsFoundSoFar = epsFoundSoFar && (rid == epsId);
+        } else {
+          auto itr = f.firstNT.find(rid);
+          ASSERT(itr != f.firstNT.end(), "Follows: Unknown rhs=%s for lhs=%s!",
+                 g.getName(rid).c_str(), g.getName(lhs).c_str());
+          addExcept(firsts, itr->second, epsId);
+          epsFoundSoFar = epsFoundSoFar && has(itr->second, epsId);
+        }
+        if (!g.isTerminal(nextId)) {
+          addExcept(followNT, firsts, nextId, epsId);
+          if (epsFoundSoFar) followNT[nextId].insert(eofId);
+        }
+      }
+      // FOLLOW(B) = FOLLOW(N) for all productions: N -> alpha B
+      auto rid = g.getId(rhs.back());
+      auto litr = followNT.find(lhs);
+      ASSERT(litr != followNT.end(), "Follows: unknown lhs=%s!",
+             g.getName(lhs).c_str());
+      // only if B is a non-terminal!
+      if (!g.isTerminal(rid)) addExcept(followNT, litr->second, rid, epsId);
+      // if there's a production N -> B alpha, and FIRST(alpha) contains eps
+      if (epsFoundSoFar && rhs.size() > 1) {
+        rid = g.getId(rhs.front());
+        addExcept(followNT, litr->second, rid, epsId);
+      }
+    }  // for i = 0 ...
     prevLen = currLen;
     currLen = sizeof(followNT);
   }

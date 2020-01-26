@@ -21,6 +21,8 @@ struct LL_1 {
     bool has(const SetMap& f, uint32_t id) const;
     void add(SetMap& sm, const Set& s, uint32_t id) const;
     void add(Set& a, const Set& b) const { for (auto bi : b) a.insert(bi); }
+    void addExcept(Set& a, const Set& b, uint32_t except) const;
+    void addExcept(SetMap& sm, const Set& s, uint32_t id, uint32_t except) const;
     size_t size(const SetMap& sm) const;
 
    protected:

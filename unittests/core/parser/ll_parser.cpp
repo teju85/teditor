@@ -115,5 +115,56 @@ TEST_CASE("FIRST") {
   }
 }
 
+TEST_CASE("FOLLOW") {
+  Grammar g(getTokens(), getProds(), "E");
+  LL_1::Firsts first(g);
+  LL_1::Follows follow(g, first);
+  REQUIRE(14 == follow.size(follow.followNT));
+  SECTION("E") {
+    auto itr = follow.followNT.find(g.getId("E"));
+    REQUIRE(itr != follow.followNT.end());
+    auto set = itr->second;
+    REQUIRE(2 == set.size());
+    REQUIRE(set.end() != set.find(g.getId(")")));
+    REQUIRE(set.end() != set.find(g.getId(Grammar::Eof)));
+  }
+  SECTION("T") {
+    auto itr = follow.followNT.find(g.getId("T"));
+    REQUIRE(itr != follow.followNT.end());
+    auto set = itr->second;
+    REQUIRE(3 == set.size());
+    REQUIRE(set.end() != set.find(g.getId("+")));
+    REQUIRE(set.end() != set.find(g.getId(")")));
+    REQUIRE(set.end() != set.find(g.getId(Grammar::Eof)));
+  }
+  SECTION("F") {
+    auto itr = follow.followNT.find(g.getId("F"));
+    REQUIRE(itr != follow.followNT.end());
+    auto set = itr->second;
+    REQUIRE(4 == set.size());
+    REQUIRE(set.end() != set.find(g.getId("+")));
+    REQUIRE(set.end() != set.find(g.getId(")")));
+    REQUIRE(set.end() != set.find(g.getId("*")));
+    REQUIRE(set.end() != set.find(g.getId(Grammar::Eof)));
+  }
+  SECTION("R") {
+    auto itr = follow.followNT.find(g.getId("R"));
+    REQUIRE(itr != follow.followNT.end());
+    auto set = itr->second;
+    REQUIRE(2 == set.size());
+    REQUIRE(set.end() != set.find(g.getId(")")));
+    REQUIRE(set.end() != set.find(g.getId(Grammar::Eof)));
+  }
+  SECTION("S") {
+    auto itr = follow.followNT.find(g.getId("S"));
+    REQUIRE(itr != follow.followNT.end());
+    auto set = itr->second;
+    REQUIRE(3 == set.size());
+    REQUIRE(set.end() != set.find(g.getId("+")));
+    REQUIRE(set.end() != set.find(g.getId(")")));
+    REQUIRE(set.end() != set.find(g.getId(Grammar::Eof)));
+  }
+}
+
 } // end namespace parser
 } // end namespace teditor
