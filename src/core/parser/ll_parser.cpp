@@ -182,7 +182,13 @@ const LL_1::Sets::Set& LL_1::Firsts::getFirstFor(
 LL_1::Follows::Follows(const Grammar& g, const LL_1::Firsts& f):
   LL_1::Sets::Sets(g), followNT() {
   const auto nProds = g.numProductions();
-  for (uint32_t i = 0; i < nProds; ++i) {
+  followNT[g.getStartId()] = {eofId};
+  size_t prevLen = 0, currLen = size(followNT);
+  while(prevLen != currLen) {
+    for (uint32_t i = 0; i < nProds; ++i) {
+    }
+    prevLen = currLen;
+    currLen = sizeof(followNT);
   }
 }
 

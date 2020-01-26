@@ -75,6 +75,12 @@ class Grammar {
   const std::string& getStart() const { return start; }
 
   /**
+   * @brief Returns the id of the start symbol for this grammar
+   * @return the start symbol id
+   */
+  uint32_t getStartId() const { return getId(start); }
+
+  /**
    * @brief Gets rhs for a given production id
    * @param pid production id
    * @return list of symbols appearing in this production rule
