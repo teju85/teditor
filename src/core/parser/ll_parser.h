@@ -20,6 +20,7 @@ struct LL_1 {
     bool has(const Set& f, uint32_t id) const;
     bool has(const SetMap& f, uint32_t id) const;
     void add(SetMap& sm, const Set& s, uint32_t id) const;
+    void add(Set& a, const Set& b) const { for (auto bi : b) a.insert(bi); }
 
    protected:
     uint32_t epsId, eofId;

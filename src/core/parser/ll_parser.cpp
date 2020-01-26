@@ -103,7 +103,7 @@ void LL_1::Sets::add(LL_1::Sets::SetMap& sm, const LL_1::Sets::Set& s,
     sm.insert(std::make_pair(id, LL_1::Sets::Set()));
     itr = sm.find(id);
   }
-  for (auto p : s) itr->second.insert(p);
+  add(itr->second, s);
 }
 
 LL_1::Firsts::Firsts(const Grammar& g): LL_1::Sets(g), firstNT(), firstStrs() {
@@ -118,8 +118,8 @@ LL_1::Firsts::Firsts(const Grammar& g): LL_1::Sets(g), firstNT(), firstStrs() {
     for (const auto& r : rhs) {
       auto rid = g.getId(r);
       const auto& f = getFirstFor(g, rid, stack);
-      for (auto fi : f) prodFirst.insert(fi);
-      // if FIRST(rhs) doesn't contain 'eps', then halt
+      add(prodFirst, f);
+      // if FIRST(rhs_i) doesn't contain 'eps', then halt
       if (!has(f, epsId)) break;
     }
     // update FIRST(lhs)
@@ -162,7 +162,7 @@ const LL_1::Sets::Set& LL_1::Firsts::getFirstFor(
           else continue;
         }
         const auto& f = getFirstFor(g, rid, stack);
-        for (auto fi : f) myFirst.insert(fi);
+        add(myFirst, f);
         // if FIRST(rid) doesn't contain 'eps', then halt
         if (!has(f, epsId)) break;
       }
