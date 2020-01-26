@@ -6,7 +6,8 @@
 namespace teditor {
 namespace parser {
 
-LL_1::LL_1(const Grammar& g): table(), lexer(g.getLexer()) {
+LL_1::LL_1(const Grammar& g): table(), lexer(g.getLexer()),
+                              epsId(g.getId(Grammar::Eps)) {
   constructTable(g);
 }
 
@@ -22,6 +23,7 @@ void LL_1::constructTable(const Grammar& g) {
       table[lid] = TokenToProd();
       itr = table.find(lid);
     }
+    // populate the parse table based on FIRST sets
     for (const auto& tok : prodFirst) {
       auto itr2 = itr->second.find(tok);
       ASSERT(itr2 == itr->second.end(),
@@ -30,18 +32,20 @@ void LL_1::constructTable(const Grammar& g) {
              tok, g.getName(tok).c_str(), itr2->second);
       itr->second[tok] = i;
     }
-    // // populate the parse table based on FOLLOW sets
-    // if (prodFirst.find(epsId) != f.end()) {
-    //   const auto& f = getFollowFor(g, lid, firsts, follows);
-    //   for (const auto& tok : f) {
-    //     auto itr2 = itr->second.find(tok);
-    //     ASSERT(itr2 == itr->second.end(),
-    //            "LL<1>: symbol=%u(%s) found a conflict in parseTable for"
-    //            " token=%u(%s) at production=%u!", lid, g.getName(lid).c_str(),
-    //            tok, g.getName(tok).c_str(), itr2->second);
-    //     itr->second[tok] = i;
-    //   }
-    // }
+    // populate the parse table based on FOLLOW sets
+    if (firsts.has(prodFirst, epsId)) {
+      const auto fitr = follows.followNT.find(lid);
+      ASSERT(fitr != follows.followNT.end(), "LL<1>: lhs-symbol=%u(%s) not"
+             " found in the FOLLOW table!", lid, g.getName(lid).c_str());
+      for (const auto& tok : fitr->second) {
+        auto itr2 = itr->second.find(tok);
+        ASSERT(itr2 == itr->second.end(),
+               "LL<1>: symbol=%u(%s) found a conflict in parseTable for"
+               " token=%u(%s) at production=%u!", lid, g.getName(lid).c_str(),
+               tok, g.getName(tok).c_str(), itr2->second);
+        itr->second[tok] = i;
+      }
+    }
   }
 }
 

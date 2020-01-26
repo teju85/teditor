@@ -166,5 +166,10 @@ TEST_CASE("FOLLOW") {
   }
 }
 
+TEST_CASE("LL<1>") {
+  Grammar g(getTokens(), getProds(), "E");
+  LL_1 parser(g);
+}
+
 } // end namespace parser
 } // end namespace teditor

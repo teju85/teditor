@@ -66,6 +66,7 @@ struct LL_1 {
 
   Table table;
   std::shared_ptr<Lexer> lexer;
+  uint32_t epsId;
 
   void constructTable(const Grammar& g);
 };  // struct LL_1
