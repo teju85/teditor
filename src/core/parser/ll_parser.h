@@ -32,10 +32,6 @@ struct LL_1 {
    * @brief Contains FIRST set for all non-terminals in the current grammar
    */
   struct Firsts : public Sets {
-    typedef std::unordered_set<uint32_t> First;
-    typedef std::unordered_map<uint32_t, First> FirstMap;
-    typedef std::vector<First> FirstArr;
-
     Firsts(const Grammar& g);
 
     /** FIRST for every non-terminal in the grammar */

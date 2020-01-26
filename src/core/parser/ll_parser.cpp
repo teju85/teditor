@@ -130,7 +130,7 @@ LL_1::Firsts::Firsts(const Grammar& g): LL_1::Sets(g), firstNT(), firstStrs() {
   }
 }
 
-const LL_1::Firsts::First& LL_1::Firsts::getFirstFor(
+const LL_1::Sets::Set& LL_1::Firsts::getFirstFor(
   const Grammar& g, uint32_t id, std::vector<uint32_t>& stack) {
   auto stackItr = std::find(stack.begin(), stack.end(), id);
   if (stackItr != stack.end()) {
@@ -143,7 +143,7 @@ const LL_1::Firsts::First& LL_1::Firsts::getFirstFor(
   // if FIRST(id) already exists, just return it
   const auto itr = firstNT.find(id);
   if (itr != firstNT.end()) return itr->second;
-  LL_1::Firsts::First myFirst;
+  LL_1::Sets::Set myFirst;
   // else if it is a terminal, just return it
   if (g.isTerminal(id)) {
     myFirst.insert(id);
