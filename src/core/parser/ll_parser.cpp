@@ -6,7 +6,7 @@
 namespace teditor {
 namespace parser {
 
-LL_1::LL_1(const Grammar& g): table(), lexer(g.getLexer()),
+LL_1::LL_1(const Grammar& g): table(), lexer(g.getLexer()), grammar(g),
                               epsId(g.getId(Grammar::Eps)) {
   constructTable(g);
 }
@@ -25,6 +25,7 @@ void LL_1::constructTable(const Grammar& g) {
     }
     // populate the parse table based on FIRST sets
     for (const auto& tok : prodFirst) {
+      if (tok == epsId) continue;
       auto itr2 = itr->second.find(tok);
       ASSERT(itr2 == itr->second.end(),
              "LL<1>: symbol=%u(%s) found a conflict in parseTable for"
@@ -47,6 +48,32 @@ void LL_1::constructTable(const Grammar& g) {
       }
     }
   }
+  for (const auto t : table) {
+    for (const auto tok : t.second) {
+      printf(" '%s' <-> '%s' ---> %u\n", g.getName(t.first).c_str(),
+             g.getName(tok.first).c_str(), tok.second);
+    }
+  }
+}
+
+bool LL_1::hasEntryFor(uint32_t sym, uint32_t tok) const {
+  const auto itr = table.find(sym);
+  if (itr == table.end()) return false;
+  const auto itr2 = itr->second.find(tok);
+  return itr2 != itr->second.end();
+}
+
+uint32_t LL_1::operator()(uint32_t sym, uint32_t tok) const {
+  const auto itr = table.find(sym);
+  if (itr != table.end()) {
+    const auto itr2 = itr->second.find(tok);
+    if (itr2 != itr->second.end()) return itr2->second;
+  }
+  ASSERT(false, "getEntryFor: no match for sym=%u tok=%u!\n", sym, tok);
+}
+
+uint32_t LL_1::operator()(const std::string& sym, const std::string& tok) const {
+  return (*this)(grammar.getId(sym), grammar.getId(tok));
 }
 
 LL_1::Sets::Sets(const Grammar& g): epsId(g.getId(Grammar::Eps)),

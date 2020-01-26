@@ -30,7 +30,31 @@ struct LL_1 {
   };
 
  public:
+  /**
+   * @brief Constructs the parser based on the input grammar
+   * @param g input grammar
+   */
   LL_1(const Grammar& g);
+
+  /**
+   * @brief Checks if there's an entry in the parse table for the current
+   *        non-terminal and the terminal
+   * @param sym the non-terminal symbol
+   * @param tok terminal (aka token)
+   * @return true if there is an element associated with this pair, else false
+   */
+  bool hasEntryFor(uint32_t sym, uint32_t tok) const;
+
+  /**
+   * @brief Gets the parse table entry for current non-terminal and terminal
+   * @param sym the non-terminal symbol
+   * @param tok terminal (aka token)
+   * @return the production id (if there's no entry, an exception is raised)
+   * @{
+   */
+  uint32_t operator()(uint32_t sym, uint32_t tok) const;
+  uint32_t operator()(const std::string& sym, const std::string& tok) const;
+  /** @} */
 
   /**
    * @brief Contains FIRST set for all non-terminals in the current grammar
@@ -66,6 +90,7 @@ struct LL_1 {
 
   Table table;
   std::shared_ptr<Lexer> lexer;
+  const Grammar& grammar;
   uint32_t epsId;
 
   void constructTable(const Grammar& g);

@@ -169,6 +169,20 @@ TEST_CASE("FOLLOW") {
 TEST_CASE("LL<1>") {
   Grammar g(getTokens(), getProds(), "E");
   LL_1 parser(g);
+  REQUIRE(0 == parser("E", "Int"));
+  REQUIRE(0 == parser("E", "("));
+  REQUIRE(1 == parser("T", "Int"));
+  REQUIRE(1 == parser("T", "("));
+  REQUIRE(4 == parser("S", "+"));
+  REQUIRE(5 == parser("S", "*"));
+  REQUIRE(4 == parser("S", ")"));
+  REQUIRE(4 == parser("S", "$"));
+  REQUIRE(7 == parser("R", "+"));
+  //REQUIRE(6 == parser("R", "*"));  ///@todo check this!
+  REQUIRE(6 == parser("R", ")"));
+  REQUIRE(6 == parser("R", "$"));
+  REQUIRE(2 == parser("F", "Int"));
+  REQUIRE(3 == parser("F", "("));
 }
 
 } // end namespace parser
