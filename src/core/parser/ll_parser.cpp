@@ -48,12 +48,6 @@ void LL_1::constructTable(const Grammar& g) {
       }
     }
   }
-  for (const auto t : table) {
-    for (const auto tok : t.second) {
-      printf(" '%s' <-> '%s' ---> %u\n", g.getName(t.first).c_str(),
-             g.getName(tok.first).c_str(), tok.second);
-    }
-  }
 }
 
 bool LL_1::hasEntryFor(uint32_t sym, uint32_t tok) const {
@@ -61,6 +55,10 @@ bool LL_1::hasEntryFor(uint32_t sym, uint32_t tok) const {
   if (itr == table.end()) return false;
   const auto itr2 = itr->second.find(tok);
   return itr2 != itr->second.end();
+}
+
+bool LL_1::hasEntryFor(const std::string& sym, const std::string& tok) const {
+  return hasEntryFor(grammar.getId(sym), grammar.getId(tok));
 }
 
 uint32_t LL_1::operator()(uint32_t sym, uint32_t tok) const {

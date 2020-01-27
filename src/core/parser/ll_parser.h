@@ -42,8 +42,11 @@ struct LL_1 {
    * @param sym the non-terminal symbol
    * @param tok terminal (aka token)
    * @return true if there is an element associated with this pair, else false
+   * @{
    */
   bool hasEntryFor(uint32_t sym, uint32_t tok) const;
+  bool hasEntryFor(const std::string& sym, const std::string& tok) const;
+  /** @} */
 
   /**
    * @brief Gets the parse table entry for current non-terminal and terminal
