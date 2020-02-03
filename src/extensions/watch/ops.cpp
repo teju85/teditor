@@ -16,6 +16,11 @@ Buffer& getWatchBuff(Editor& ed) {
 }
 
 DEF_CMD(
+  Watch, "watch", DEF_OP() {
+  },
+  DEF_HELP() { return "Start a watch command."; });
+
+DEF_CMD(
   WatchStop, "watch-stop", DEF_OP() {
     //auto& buf = getWatchBuff(ed);
     //auto* mode = buf.getMode<watch::WatchMode>("watch");
