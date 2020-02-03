@@ -17,22 +17,30 @@ Buffer& getWatchBuff(Editor& ed) {
 
 DEF_CMD(
   Watch, "watch", DEF_OP() {
+    auto& buf = getWatchBuff(ed);
+    ed.switchToBuff("*watch");
+    auto* mode = buf.getMode<watch::WatchMode>("watch");
+    auto cmd = ed.prompt("Command to watch: ");
+    if (cmd.empty()) return;
+    mode->start(&buf, cmd);
   },
   DEF_HELP() { return "Start a watch command."; });
 
 DEF_CMD(
   WatchStop, "watch-stop", DEF_OP() {
-    //auto& buf = getWatchBuff(ed);
-    //auto* mode = buf.getMode<watch::WatchMode>("watch");
+    auto& buf = getWatchBuff(ed);
     ed.switchToBuff("*watch");
+    auto* mode = buf.getMode<watch::WatchMode>("watch");
+    mode->stop();
   },
   DEF_HELP() { return "Stops the underlying watch command."; });
 
 DEF_CMD(
   WatchRestart, "watch-restart", DEF_OP() {
-    //auto& buf = getWatchBuff(ed);
-    //auto* mode = buf.getMode<watch::WatchMode>("watch");
+    auto& buf = getWatchBuff(ed);
     ed.switchToBuff("*watch");
+    auto* mode = buf.getMode<watch::WatchMode>("watch");
+    mode->restart();
   },
   DEF_HELP() { return "Restarts the underlying watch command."; });
 
