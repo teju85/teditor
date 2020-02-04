@@ -169,23 +169,23 @@ TEST_CASE("FOLLOW") {
 TEST_CASE("LL<1>") {
   Grammar g(getTokens(), getProds(), "E");
   LL_1 parser(g);
-  REQUIRE(0 == parser("E", "Int"));
-  REQUIRE(0 == parser("E", "("));
+  REQUIRE(0 == parser.getEntryFor("E", "Int"));
+  REQUIRE(0 == parser.getEntryFor("E", "("));
   REQUIRE_FALSE(parser.hasEntryFor("E", "$"));
-  REQUIRE(1 == parser("T", "Int"));
-  REQUIRE(1 == parser("T", "("));
+  REQUIRE(1 == parser.getEntryFor("T", "Int"));
+  REQUIRE(1 == parser.getEntryFor("T", "("));
   REQUIRE_FALSE(parser.hasEntryFor("T", ")"));
-  REQUIRE(4 == parser("S", "+"));
-  REQUIRE(5 == parser("S", "*"));
-  REQUIRE(4 == parser("S", ")"));
-  REQUIRE(4 == parser("S", "$"));
+  REQUIRE(4 == parser.getEntryFor("S", "+"));
+  REQUIRE(5 == parser.getEntryFor("S", "*"));
+  REQUIRE(4 == parser.getEntryFor("S", ")"));
+  REQUIRE(4 == parser.getEntryFor("S", "$"));
   REQUIRE_FALSE(parser.hasEntryFor("S", "("));
-  REQUIRE(7 == parser("R", "+"));
-  REQUIRE(6 == parser("R", ")"));
-  REQUIRE(6 == parser("R", "$"));
+  REQUIRE(7 == parser.getEntryFor("R", "+"));
+  REQUIRE(6 == parser.getEntryFor("R", ")"));
+  REQUIRE(6 == parser.getEntryFor("R", "$"));
   REQUIRE_FALSE(parser.hasEntryFor("R", "Int"));
-  REQUIRE(2 == parser("F", "Int"));
-  REQUIRE(3 == parser("F", "("));
+  REQUIRE(2 == parser.getEntryFor("F", "Int"));
+  REQUIRE(3 == parser.getEntryFor("F", "("));
   REQUIRE_FALSE(parser.hasEntryFor("F", ")"));
 }
 

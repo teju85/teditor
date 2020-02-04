@@ -55,8 +55,8 @@ struct LL_1 {
    * @return the production id (if there's no entry, an exception is raised)
    * @{
    */
-  uint32_t operator()(uint32_t sym, uint32_t tok) const;
-  uint32_t operator()(const std::string& sym, const std::string& tok) const;
+  uint32_t getEntryFor(uint32_t sym, uint32_t tok) const;
+  uint32_t getEntryFor(const std::string& sym, const std::string& tok) const;
   /** @} */
 
   /**

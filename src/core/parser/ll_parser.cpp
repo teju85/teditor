@@ -61,7 +61,7 @@ bool LL_1::hasEntryFor(const std::string& sym, const std::string& tok) const {
   return hasEntryFor(grammar.getId(sym), grammar.getId(tok));
 }
 
-uint32_t LL_1::operator()(uint32_t sym, uint32_t tok) const {
+uint32_t LL_1::getEntryFor(uint32_t sym, uint32_t tok) const {
   const auto itr = table.find(sym);
   if (itr != table.end()) {
     const auto itr2 = itr->second.find(tok);
@@ -70,8 +70,9 @@ uint32_t LL_1::operator()(uint32_t sym, uint32_t tok) const {
   ASSERT(false, "getEntryFor: no match for sym=%u tok=%u!\n", sym, tok);
 }
 
-uint32_t LL_1::operator()(const std::string& sym, const std::string& tok) const {
-  return (*this)(grammar.getId(sym), grammar.getId(tok));
+uint32_t LL_1::getEntryFor(const std::string& sym,
+                           const std::string& tok) const {
+  return getEntryFor(grammar.getId(sym), grammar.getId(tok));
 }
 
 LL_1::Sets::Sets(const Grammar& g): epsId(g.getId(Grammar::Eps)),
