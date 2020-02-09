@@ -25,10 +25,18 @@ const Command& getCmd(const std::string& cmd) {
   return itr->second;
 }
 
-Strings allCmdNames() {
+Strings allCmdNames(const std::string& mn) {
   auto& cs = cmds();
   Strings ret;
-  for(const auto itr : cs) ret.push_back(itr.first);
+  if (mn.empty()) {
+    for(const auto itr : cs) ret.push_back(itr.first);
+  } else {
+    auto name = mn + "::";
+    for(const auto itr : cs) {
+      if (itr.first.compare(0, name.size(), name) == 0)
+        ret.push_back(itr.first);
+    }
+  }
   return ret;
 }
 

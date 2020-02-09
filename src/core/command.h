@@ -31,8 +31,11 @@ typedef std::unordered_map<std::string,Command> CommandMap;
  * @return the command object
  */
 const Command& getCmd(const std::string& cmd);
-/** Accessor function to the list of command names */
-Strings allCmdNames();
+/**
+ * @brief Accessor function to the list of command names
+ * @param mn mode name
+ * @return all command names that have been registered under this mode */
+Strings allCmdNames(const std::string& mn="");
 /** @} */
 
 
