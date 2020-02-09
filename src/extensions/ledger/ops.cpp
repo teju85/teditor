@@ -1,7 +1,5 @@
 #include "core/editor.h"
 #include "core/command.h"
-#include "core/isearch.h"
-#include "core/option.h"
 #include "mode.h"
 
 namespace teditor {
