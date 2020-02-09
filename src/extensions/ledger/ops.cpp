@@ -8,7 +8,7 @@ namespace teditor {
 namespace ledger {
 namespace ops {
 
-Buffer& getLedgerBuff(Editor& ed) {
+Buffer& getLedgerShowBuff(Editor& ed) {
   bool newOne;
   auto& buf = ed.getBuff("*ledger", true, newOne);
   if (newOne)
@@ -18,7 +18,7 @@ Buffer& getLedgerBuff(Editor& ed) {
 
 DEF_CMD(
   LedgerTop, "ledger-top", DEF_OP() {
-    auto& buf = getLedgerBuff(ed);
+    auto& buf = getLedgerShowBuff(ed);
     auto* mode = buf.getMode<ledger::LedgerShowMode>("ledger-show");
     mode->showTopAccounts(buf);
     ed.switchToBuff("*ledger");
@@ -27,7 +27,7 @@ DEF_CMD(
 
 DEF_CMD(
   Ledger, "ledger", DEF_OP() {
-    auto& buf = getLedgerBuff(ed);
+    auto& buf = getLedgerShowBuff(ed);
     auto* mode = buf.getMode<ledger::LedgerShowMode>("ledger-show");
     mode->showAllAccounts(buf);
     ed.switchToBuff("*ledger");
