@@ -11,9 +11,8 @@ namespace ops {
 Buffer& getLedgerBuff(Editor& ed) {
   bool newOne;
   auto& buf = ed.getBuff("*ledger", true, newOne);
-  if (newOne) {
+  if (newOne)
     buf.setMode(Mode::createMode(Mode::inferMode(buf.bufferName(), false)));
-  }
   return buf;
 }
 

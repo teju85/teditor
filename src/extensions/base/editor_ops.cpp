@@ -107,7 +107,7 @@ DEF_CMD(
     try {
       ed.runCmd(cmd);
     } catch(const std::runtime_error& e) {
-      CMBAR_MSG(ed, "Unknown command: %s!\n", cmd.c_str());
+      CMBAR_MSG(ed, "Unknown command: %s! Reason: %s\n", cmd.c_str(), e.what());
     }
   },
   DEF_HELP() {
