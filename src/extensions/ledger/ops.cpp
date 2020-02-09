@@ -18,18 +18,28 @@ Buffer& getLedgerShowBuff(Editor& ed) {
 
 DEF_CMD(
   LedgerTop, "ledger-top", DEF_OP() {
+    auto& currBuf = ed.getBuff();
+    if (currBuf.modeName() != "ledger") {
+      CMBAR_MSG(ed, "Current buffer doesn't have a ledger file in it!\n");
+      return;
+    }
     auto& buf = getLedgerShowBuff(ed);
     auto* mode = buf.getMode<ledger::LedgerShowMode>("ledger-show");
-    mode->showTopAccounts(buf);
+    mode->showTopAccounts(buf, currBuf.getFileName());
     ed.switchToBuff("*ledger");
   },
   DEF_HELP() { return "Starts ledger-mode buffer, if not already done."; });
 
 DEF_CMD(
   Ledger, "ledger", DEF_OP() {
+    auto& currBuf = ed.getBuff();
+    if (currBuf.modeName() != "ledger") {
+      CMBAR_MSG(ed, "Current buffer doesn't have a ledger file in it!\n");
+      return;
+    }
     auto& buf = getLedgerShowBuff(ed);
     auto* mode = buf.getMode<ledger::LedgerShowMode>("ledger-show");
-    mode->showAllAccounts(buf);
+    mode->showAllAccounts(buf, currBuf.getFileName());
     ed.switchToBuff("*ledger");
   },
   DEF_HELP() { return "Shows all account transaction summary."; });
