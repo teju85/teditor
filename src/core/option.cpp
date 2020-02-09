@@ -101,9 +101,6 @@ void registerAllOptions() {
               Option::Type::String);
   Option::add("iCaseSearch", "NO", "Perform case insensitive searches",
               Option::Type::Boolean);
-  Option::add("ledgerFile", "<homeFolder>/ledger.lg",
-              "Path to the ledger file used for personal accounting",
-              Option::Type::String);
   Option::add("logLevel", "-1", "Spew verbosity. Higher value means more spews",
               Option::Type::Integer);
   Option::add("maxHistory", "25", "History size for storing all files visited",

@@ -42,10 +42,6 @@ homeFolder $HOME/.teditor
 # Type: Integer
 logLevel -1
 
-# Path to the ledger file used for personal accounting
-# Type: String
-ledgerFile <homeFolder>/ledger.lg
-
 # Path to the dir containing the org notes
 # Type: String
 orgNotesDir <homeFolder>/org
