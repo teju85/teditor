@@ -1,16 +1,27 @@
 #pragma once
 
 #include "../base/readonly.h"
+#include "../base/text.h"
 #include "core/buffer.h"
 #include "parser.h"
 
 namespace teditor {
 namespace ledger {
 
-/** ledger mode */
-class LedgerMode: public readonly::ReadOnlyMode {
+/** ledger file edit mode */
+class LedgerMode : public text::TextMode {
  public:
-  LedgerMode();
+  LedgerMode(): text::TextMode("ledger") {}
+
+  static Mode* create() { return new LedgerMode; }
+  static bool modeCheck(const std::string& file);
+};  // class LedgerMode
+
+
+/** ledger show mode */
+class LedgerShowMode: public readonly::ReadOnlyMode {
+ public:
+  LedgerShowMode();
 
   static Mode* create() { return new LedgerMode; }
   static bool modeCheck(const std::string& file) { return file == "*ledger"; }
@@ -25,7 +36,7 @@ class LedgerMode: public readonly::ReadOnlyMode {
   std::string ledgerFile;
 
   void printHeader(Buffer& buf, Parser& p) const;
-};  // class LedgerMode
+};  // class LedgerShowMode
 
 }  // namespace ledger
 }  // namespace teditor

@@ -1,16 +1,25 @@
 #include "mode.h"
 #include "core/option.h"
+#include "core/parser/nfa.h"
 
 namespace teditor {
 namespace ledger {
 
-LedgerMode::LedgerMode(): readonly::ReadOnlyMode("ledger"),
-                          ledgerFile(Option::get("ledgerFile").getStr()) {
-  populateKeyMap<LedgerMode::Keys>(getKeyCmdMap());
-  populateColorMap<LedgerMode::Colors>(getColorMap());
+bool LedgerMode::modeCheck(const std::string& file) {
+  static parser::NFA nfa(".*[.]lg");
+  return nfa.find(file) != parser::NFA::NoMatch;
 }
 
-void LedgerMode::showTopAccounts(Buffer& buf) const {
+REGISTER_MODE(LedgerMode, "ledger");
+
+LedgerShowMode::LedgerShowMode():
+  readonly::ReadOnlyMode("ledger-show"),
+  ledgerFile(Option::get("ledgerFile").getStr()) {
+  populateKeyMap<LedgerShowMode::Keys>(getKeyCmdMap());
+  populateColorMap<LedgerShowMode::Colors>(getColorMap());
+}
+
+void LedgerShowMode::showTopAccounts(Buffer& buf) const {
   Parser p(ledgerFile);
   printHeader(buf, p);
   buf.insert("### Top-level accounts ###\n");
@@ -26,7 +35,7 @@ void LedgerMode::showTopAccounts(Buffer& buf) const {
   buf.insert(format("%12s  %-16s\n", valStr.c_str(), "Total"));
 }
 
-void LedgerMode::showAllAccounts(Buffer& buf) const {
+void LedgerShowMode::showAllAccounts(Buffer& buf) const {
   Parser p(ledgerFile);
   printHeader(buf, p);
   printHeader(buf, p);
@@ -44,7 +53,7 @@ void LedgerMode::showAllAccounts(Buffer& buf) const {
   buf.insert(format("%12s  %-16s\n", valStr.c_str(), "total"));
 }
 
-void LedgerMode::printHeader(Buffer& buf, Parser& p) const {
+void LedgerShowMode::printHeader(Buffer& buf, Parser& p) const {
   buf.clear();
   buf.insert("############################################################\n"
              "            Welcome to your personal ledger!\n"
@@ -57,15 +66,14 @@ void LedgerMode::printHeader(Buffer& buf, Parser& p) const {
   buf.insert(s);
 }
 
-REGISTER_MODE(LedgerMode, "ledger");
+REGISTER_MODE(LedgerShowMode, "ledger-show");
 
-
-std::vector<KeyCmdPair> LedgerMode::Keys::All = {
+std::vector<KeyCmdPair> LedgerShowMode::Keys::All = {
   {"A", "ledger"},
   {"T", "ledger-top"},
 };
 
-std::vector<NameColorPair> LedgerMode::Colors::All = {};
+std::vector<NameColorPair> LedgerShowMode::Colors::All = {};
 
 }  // end namespace ledger
 }  // end namespace teditor
