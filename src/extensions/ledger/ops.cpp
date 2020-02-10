@@ -15,7 +15,7 @@ Buffer& getLedgerShowBuff(Editor& ed) {
 }
 
 DEF_CMD(
-  LedgerTop, "ledger-top", DEF_OP() {
+  LedgerTop, "ledger::top", DEF_OP() {
     auto& currBuf = ed.getBuff();
     if (currBuf.modeName() != "ledger") {
       CMBAR_MSG(ed, "Current buffer doesn't have a ledger file in it!\n");
@@ -29,7 +29,7 @@ DEF_CMD(
   DEF_HELP() { return "Starts ledger-mode buffer, if not already done."; });
 
 DEF_CMD(
-  Ledger, "ledger", DEF_OP() {
+  Ledger, "ledger::all", DEF_OP() {
     auto& currBuf = ed.getBuff();
     if (currBuf.modeName() != "ledger") {
       CMBAR_MSG(ed, "Current buffer doesn't have a ledger file in it!\n");
