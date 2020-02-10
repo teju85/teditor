@@ -56,7 +56,7 @@ public:
                            const Buffer& b, bool isHighlighted) = 0;
 
   /** list of all command names that are registered under this mode */
-  virtual Strings cmdNames() const { return allCmdNames(); }
+  virtual Strings cmdNames() const;
 
   /**
    * @brief Helper to create mode object of the named mode
