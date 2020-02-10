@@ -219,6 +219,8 @@ public:
     return dynamic_cast<ModeT*>(mode.get());
   }
 
+  Strings cmdNames() const { return mode->cmdNames(); }
+
 protected:
   /** holder for lines removed during keep-lines */
   struct RemovedLine {

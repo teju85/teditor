@@ -5,6 +5,7 @@
 #include <memory>
 #include "utils.h"
 #include "colors.h"
+#include "command.h"
 
 namespace teditor {
 
@@ -53,6 +54,9 @@ public:
   /** get color for the given line */
   virtual void getColorFor(AttrColor& fg, AttrColor& bg, int lineNum, int pos,
                            const Buffer& b, bool isHighlighted) = 0;
+
+  /** list of all command names that are registered under this mode */
+  virtual Strings cmdNames() const { return allCmdNames(); }
 
   /**
    * @brief Helper to create mode object of the named mode

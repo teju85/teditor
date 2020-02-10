@@ -17,7 +17,7 @@ DEF_CMD(
 
 DEF_CMD(
   HelpCommand, "help-command", DEF_OP() {
-    StringChoices sc(allCmdNames());
+    StringChoices sc(ed.getBuff().cmdNames());
     auto cmd = ed.prompt("Help for Cmd? ", nullptr, &sc);
     if(cmd.empty()) return;
     try {
@@ -101,7 +101,7 @@ DEF_CMD(
 
 DEF_CMD(
   RunCommand, "run-command", DEF_OP() {
-    StringChoices sc(allCmdNames());
+    StringChoices sc(ed.getBuff().cmdNames());
     auto cmd = ed.prompt("Cmd: ", nullptr, &sc);
     if(cmd.empty()) return;
     try {

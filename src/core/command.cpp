@@ -18,6 +18,8 @@ CmdRegistrar::CmdRegistrar(const std::string& cmd, OperateFunc op,
   c[cmd] = std::make_pair(op, help);
 }
 
+bool defaultCmdFilterOp(const std::string& name) { return true; }
+
 const Command& getCmd(const std::string& cmd) {
   auto& c = cmds();
   const auto itr = c.find(cmd);
@@ -25,10 +27,11 @@ const Command& getCmd(const std::string& cmd) {
   return itr->second;
 }
 
-Strings allCmdNames() {
+Strings allCmdNames(CmdFilterOp filterOp) {
   auto& cs = cmds();
   Strings ret;
-  for(const auto itr : cs) ret.push_back(itr.first);
+  for(const auto itr : cs)
+    if (filterOp(itr.first)) ret.push_back(itr.first);
   return ret;
 }
 

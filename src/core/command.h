@@ -19,6 +19,11 @@ typedef std::string (*HelpFunc)(Editor& ed);
 typedef std::pair<OperateFunc, HelpFunc> Command;
 /** list of all currently registered commands */
 typedef std::unordered_map<std::string,Command> CommandMap;
+/** command name filter */
+typedef bool (*CmdFilterOp)(const std::string&);
+
+/** default command name filter */
+bool defaultCmdFilterOp(const std::string& name);
 
 
 /**
@@ -33,8 +38,11 @@ typedef std::unordered_map<std::string,Command> CommandMap;
 const Command& getCmd(const std::string& cmd);
 /**
  * @brief Accessor function to the list of command names
- * @return all command names that have been registered under this mode */
-Strings allCmdNames();
+ * @param filterOp filter to be applied on the command names. If the filter
+ *                 returns a true for a given command name, it will be added
+ *                 in the output.
+ * @return command names which pass the filter test */
+Strings allCmdNames(CmdFilterOp filterOp = defaultCmdFilterOp);
 /** @} */
 
 
