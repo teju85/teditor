@@ -26,7 +26,7 @@ DEF_CMD(
   DEF_HELP() { return "Starts the calculator, if not already done."; });
 
 DEF_CMD(
-  InsertChar, "calc-insert-char", DEF_OP() {
+  InsertChar, "calc::insert-char", DEF_OP() {
     auto& buf = ed.getBuff();
     auto* mode = buf.getMode<CalcMode>("calc");
     mode->insertChar(buf, (char)ed.getKey(), ed);
@@ -34,7 +34,7 @@ DEF_CMD(
   DEF_HELP() { return "Inserts currently pressed char into buffer."; });
 
 DEF_CMD(
-  Evaluate, "calc-enter", DEF_OP() {
+  Evaluate, "calc::enter", DEF_OP() {
     auto& buf = ed.getBuff();
     auto* mode = buf.getMode<CalcMode>("calc");
     mode->evaluate(buf, ed);
@@ -42,7 +42,7 @@ DEF_CMD(
   DEF_HELP() { return "Evaluate the current expression"; });
 
 DEF_CMD(
-  BackspaceChar, "calc-backspace-char", DEF_OP() {
+  BackspaceChar, "calc::backspace-char", DEF_OP() {
     auto& buf = ed.getBuff();
     auto* mode = buf.getMode<CalcMode>("calc");
     if (buf.isRegionActive()) buf.stopRegion();
@@ -57,7 +57,7 @@ DEF_CMD(
   });
 
 DEF_CMD(
-  DeleteChar, "calc-delete-char", DEF_OP() {
+  DeleteChar, "calc::delete-char", DEF_OP() {
     auto& buf = ed.getBuff();
     auto* mode = buf.getMode<CalcMode>("calc");
     if (buf.isRegionActive()) buf.stopRegion();
@@ -72,7 +72,7 @@ DEF_CMD(
   });
 
 DEF_CMD(
-  KillLine, "calc-kill-line", DEF_OP() {
+  KillLine, "calc::kill-line", DEF_OP() {
     auto& buf = ed.getBuff();
     auto* mode = buf.getMode<CalcMode>("calc");
     if (buf.isRegionActive()) buf.stopRegion();
