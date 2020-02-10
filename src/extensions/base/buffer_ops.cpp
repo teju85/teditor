@@ -20,22 +20,22 @@ DEF_CMD(
   DEF_HELP() { return "Redo the previous undo in this buffer."; });
 
 DEF_CMD(
-  InsertChar, "insert-char", DEF_OP() {
+  InsertChar, ".insert-char", DEF_OP() {
     auto& buf = ed.getBuff();
-    if(buf.isRegionActive()) ed.runCmd("backspace-char");
+    if(buf.isRegionActive()) ed.runCmd(".backspace-char");
     auto c = (char)ed.getKey();
     buf.insert(c);
   },
   DEF_HELP() { return "Inserts currently pressed char into buffer."; });
 
-DEF_CMD(BackspaceChar, "backspace-char",
+DEF_CMD(BackspaceChar, ".backspace-char",
         DEF_OP() { ed.getBuff().remove(); },
         DEF_HELP() {
           return "Removes the char to the left of cursor, or if a region is"
             " active, will remove it instead.";
         });
 
-DEF_CMD(DeleteChar, "delete-char",
+DEF_CMD(DeleteChar, ".delete-char",
         DEF_OP() { ed.getBuff().remove(true); },
         DEF_HELP() {
           return "Removes the char on the cursor, or if a region is active,"
