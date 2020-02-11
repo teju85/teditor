@@ -13,7 +13,8 @@ Parser::Parser():
     {"FVal",  parser::Regexs::FloatingPt},
     {"(",     "\\("},
     {")",     "\\)"},
-    {";",     ";"},
+    ///@todo: enable
+    //{";",     ";"},
     {"Var",   parser::Regexs::Variable},
     // add all binary operators from here //
     {"=",     "="},
@@ -21,51 +22,28 @@ Parser::Parser():
     {"-",     "-"},
     {"*",     "[*]"},
     {"/",     "/"},
-    {"^",     "^"},
+    ///@todo: enable
+    //{"^",     "^"},
     // add all binary operators till here //
-    // add all unary functions from here //
-    {"sq",    "sq\\("},
-    {"cube",  "cube\\("},
-    {"abs",   "abs\\("},
-    {"sin",   "sin\\("},
-    {"cos",   "cos\\("},
-    {"tan",   "tan\\("},
-    {"asin",  "asin\\("},
-    {"acos",  "acos\\("},
-    {"atan",  "atan\\("},
-    {"sinh",  "sinh\\("},
-    {"cosh",  "cosh\\("},
-    {"tanh",  "tanh\\("},
-    {"asinh", "asinh\\("},
-    {"acosh", "acosh\\("},
-    {"atanh", "atanh\\("},
-    {"sqrt",  "sqrt\\("},
-    {"cbrt",  "cbrt\\("},
-    {"log",   "log\\("},
-    {"log10", "log10\\("},
-    {"exp",   "exp\\("},
-    {"floor", "floor\\("},
-    {"ceil",  "ceil\\("},
-    {"round", "round\\("},
-    {"int",   "int\\("},
-    {"float", "float\\("},
-    // add all unary functions till here //
+    // assumed to be all unary functions only!
+    {"Func" , "[a-zA-Z_][a-zA-Z0-9_]*\\("},
     {"space", "\\s+"},
   }, {
     {"Num",  {"IVal"}},
     {"Num",  {"FVal"}},
-    {"Add",  {"Num", "+", "Num"}},
-    {"Sub",  {"Num", "-", "Num"}},
-    {"Expr", {"Add"}},
-    {"Expr", {"Sub"}},
-    {"Expr", {"(", "Expr", ")"}},
+    {"R",    {parser::Grammar::Eps}},
+    {"S",    {parser::Grammar::Eps}},
+    {"Fac",  {"Num"}},
+    {"Term", {"Fac", "S"}},
+    {"Expr", {"Term", "R"}},
+    {"R",    {"+", "Expr"}},
+    {"R",    {"-", "Expr"}},
+    {"S",    {"*", "Term"}},
+    {"S",    {"/", "Term"}},
+    {"Fac",  {"(", "Expr", ")"}},
+    {"Fac",  {"Func", "Expr", ")"}},
   },
-    "Expr"),
-  unaries({
-    sq,    cube,  abs,   sin,   cos,     tan,   asin,   acos,   atan,  sinh,
-    cosh,  tanh,  asinh, acosh, atanh,   sqrt,  cbrt,   log,    log10, exp,
-    floor, ceil,  round, toInt, toFloat,}) {
-}
+    "Expr") {}
 
 bool Parser::lexingDone(const parser::Token& tok) {
   return tok.type == parser::Token::End || tok.type == parser::Token::Unknown;
@@ -99,18 +77,37 @@ Num64 Parser::computeBinaryOp(const Num64& a, const Num64& b, uint32_t id) {
   return Num64();
 }
 
-Num64 Parser::computeUnaryFunc(const Num64& a, uint32_t funcId) {
-  auto id = funcId - grammar.getId("sq");
-  if (id >= unaries.size()) return Num64();
-  return unaries[id](a);
+Num64 Parser::computeUnaryFunc(const Num64& a, const std::string& func) {
+  if ("sq(" == func)    return sq(a);
+  if ("cube(" == func)  return cube(a);
+  if ("abs(" == func)   return abs(a);
+  if ("sin(" == func)   return sin(a);
+  if ("cos(" == func)   return cos(a);
+  if ("tan(" == func)   return tan(a);
+  if ("asin(" == func)  return asin(a);
+  if ("acos(" == func)  return acos(a);
+  if ("atan(" == func)  return atan(a);
+  if ("sinh(" == func)  return sinh(a);
+  if ("cosh(" == func)  return cosh(a);
+  if ("tanh(" == func)  return tanh(a);
+  if ("asinh(" == func) return asinh(a);
+  if ("acosh(" == func) return acosh(a);
+  if ("atanh(" == func) return atanh(a);
+  if ("sqrt(" == func)  return sqrt(a);
+  if ("cbrt(" == func)  return cbrt(a);
+  if ("log(" == func)   return log(a);
+  if ("log10(" == func) return log10(a);
+  if ("exp(" == func)   return exp(a);
+  if ("floor(" == func) return floor(a);
+  if ("ceil(" == func)  return ceil(a);
+  if ("round(" == func) return round(a);
+  if ("int(" == func)   return toInt(a);
+  if ("float(" == func) return toFloat(a);
+  return Num64();
 }
 
 bool Parser::isBinaryOp(uint32_t id) {
   return grammar.getId("=") <= id && id <= grammar.getId("^");
-}
-
-bool Parser::isUnaryFunc(uint32_t id) {
-  return grammar.getId("sq") <= id && id <= grammar.getId("float");
 }
 
 }  // namespace calc
