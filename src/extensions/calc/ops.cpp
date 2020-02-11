@@ -26,7 +26,7 @@ DEF_CMD(
   DEF_HELP() { return "Starts the calculator, if not already done."; });
 
 DEF_CMD(
-  InsertChar, "calc::insert-char", DEF_OP() {
+  InsertChar, ".calc::insert-char", DEF_OP() {
     auto& buf = ed.getBuff();
     auto* mode = buf.getMode<CalcMode>("calc");
     mode->insertChar(buf, (char)ed.getKey(), ed);
