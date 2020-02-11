@@ -42,10 +42,10 @@ void CalcMode::printHeader(Buffer& buf) const {
 
 void CalcMode::insertChar(Buffer& buf, char c, Editor& ed) const {
   if (isPromptLine(buf)) {
-    if (isOnPrompt(buf)) CMBAR_MSG(ed, "Cannot insert on prompt!");
+    if (isOnPrompt(buf)) CMBAR_MSG(ed, "Cannot insert on prompt!\n");
     else buf.insert(c);
   } else {
-    CMBAR_MSG(ed, "Cannot insert on a non-prompt line!");
+    CMBAR_MSG(ed, "Cannot insert on a non-prompt line!\n");
   }
 }
 
@@ -53,7 +53,7 @@ void CalcMode::evaluate(Buffer& buf, Editor& ed) {
   const auto& pt = buf.getPoint();
   const auto& line = buf.at(pt.y).get();
   if (line.compare(0, prompt.size(), prompt) != 0) {
-    CMBAR_MSG(ed, "Cannot evaluate a non-expr line!");
+    CMBAR_MSG(ed, "Cannot evaluate a non-expr line!\n");
     return;
   }
   auto expr = line.substr(prompt.size());
