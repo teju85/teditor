@@ -8,55 +8,64 @@ namespace teditor {
 namespace calc {
 
 Parser::Parser():
-  OpInfoMap({
-    {Assignment, {1, true}},
-    {Plus,       {2, true}},
-    {Minus,      {2, true}},
-    {Multiply,   {3, true}},
-    {Divide,     {3, true}},
-    {Power,      {4, false}}
-  }),
-  Tokens({
-    {Float,       parser::Regexs::FloatingPt},
-    {Int,         parser::Regexs::Integer},
-    {BrktOpen,    "\\("},
-    {BrktClose,   "\\)"},
-    {SemiColon,   ";"},
-    {Symbol,      parser::Regexs::Variable},
-    {Assignment,  "="},
-    {Plus,        "[+]"},
-    {Minus,       "[-]"},
-    {Multiply,    "[*]"},
-    {Divide,      "/"},
-    {Power,       "^"},
-    {Sq,          "sq\\("},
-    {Cube,        "cube\\("},
-    {Abs,         "abs\\("},
-    {Sine,        "sin\\("},
-    {Cosine,      "cos\\("},
-    {Tangent,     "tan\\("},
-    {ArcSine,     "asin\\("},
-    {ArcCosine,   "acos\\("},
-    {ArcTangent,  "atan\\("},
-    {SineH,       "sinh\\("},
-    {CosineH,     "cosh\\("},
-    {TangentH,    "tanh\\("},
-    {ArcSineH,    "asinh\\("},
-    {ArcCosineH,  "acosh\\("},
-    {ArcTangentH, "atanh\\("},
-    {Sqrt,        "sqrt\\("},
-    {Cbrt,        "cbrt\\("},
-    {Log,         "log\\("},
-    {Log10,       "log10\\("},
-    {Exp,         "exp\\("},
-    {Floor,       "floor\\("},
-    {Ceil,        "ceil\\("},
-    {Round,       "round\\("},
-    {ToInt,       "int\\("},
-    {ToFloat,     "float\\("},
-    {WhiteSpace,  "\\s+"}
-  }),
-  lex(new parser::Lexer(Tokens)) {}
+  grammar({
+    {"IVal",  parser::Regexs::Integer},
+    {"FVal",  parser::Regexs::FloatingPt},
+    {"(",     "\\("},
+    {")",     "\\)"},
+    {";",     ";"},
+    {"Var",   parser::Regexs::Variable},
+    // add all binary operators from here //
+    {"=",     "="},
+    {"+",     "[+]"},
+    {"-",     "-"},
+    {"*",     "[*]"},
+    {"/",     "/"},
+    {"^",     "^"},
+    // add all binary operators till here //
+    // add all unary functions from here //
+    {"sq",    "sq\\("},
+    {"cube",  "cube\\("},
+    {"abs",   "abs\\("},
+    {"sin",   "sin\\("},
+    {"cos",   "cos\\("},
+    {"tan",   "tan\\("},
+    {"asin",  "asin\\("},
+    {"acos",  "acos\\("},
+    {"atan",  "atan\\("},
+    {"sinh",  "sinh\\("},
+    {"cosh",  "cosh\\("},
+    {"tanh",  "tanh\\("},
+    {"asinh", "asinh\\("},
+    {"acosh", "acosh\\("},
+    {"atanh", "atanh\\("},
+    {"sqrt",  "sqrt\\("},
+    {"cbrt",  "cbrt\\("},
+    {"log",   "log\\("},
+    {"log10", "log10\\("},
+    {"exp",   "exp\\("},
+    {"floor", "floor\\("},
+    {"ceil",  "ceil\\("},
+    {"round", "round\\("},
+    {"int",   "int\\("},
+    {"float", "float\\("},
+    // add all unary functions till here //
+    {"space", "\\s+"},
+  }, {
+    {"Num",  {"IVal"}},
+    {"Num",  {"FVal"}},
+    {"Add",  {"Num", "+", "Num"}},
+    {"Sub",  {"Num", "-", "Num"}},
+    {"Expr", {"Add"}},
+    {"Expr", {"Sub"}},
+    {"Expr", {"(", "Expr", ")"}},
+  },
+    "Expr"),
+  unaries({
+    sq,    cube,  abs,   sin,   cos,     tan,   asin,   acos,   atan,  sinh,
+    cosh,  tanh,  asinh, acosh, atanh,   sqrt,  cbrt,   log,    log10, exp,
+    floor, ceil,  round, toInt, toFloat,}) {
+}
 
 bool Parser::lexingDone(const parser::Token& tok) {
   return tok.type == parser::Token::End || tok.type == parser::Token::Unknown;
@@ -68,58 +77,40 @@ void Parser::evaluate(const std::string& expr, VarMap& vars) {
 }
 
 void Parser::evaluate(parser::Scanner *sc, VarMap& vars) {
+  auto lex = grammar.getLexer();
   NumStack stack;
-  evaluateExpr(sc, vars, 1, stack);
+  evaluateExpr(lex, sc, vars, stack);
 }
 
-void Parser::evaluateExpr(parser::Scanner *sc, VarMap& vars, int precedence,
-                          NumStack& stack) {
-  auto tok = lex->nextWithIgnore(sc, WhiteSpace);
+void Parser::evaluateExpr(std::shared_ptr<parser::Lexer>& lex,
+                          parser::Scanner *sc, VarMap& vars, NumStack& stack) {
+  auto tok = lex->nextWithIgnore(sc, grammar.getId("space"));
   if (lexingDone(tok)) return;
   //if (isNumber(tok.type))
   ///@todo:
 }
 
-Num64 Parser::computeBinaryOp(const Num64& a, const Num64& b, TokenIds op) {
-  switch(op) {
-  case Plus:     return a + b;
-  case Minus:    return a - b;
-  case Multiply: return a * b;
-  case Divide:   return a / b;
-  case Power:    return pow(a, b);
-  default:       return Num64();
-  };
+Num64 Parser::computeBinaryOp(const Num64& a, const Num64& b, uint32_t id) {
+  if (id == grammar.getId("+")) return a + b;
+  if (id == grammar.getId("-")) return a - b;
+  if (id == grammar.getId("*")) return a * b;
+  if (id == grammar.getId("/")) return a / b;
+  if (id == grammar.getId("^")) return pow(a, b);
+  return Num64();
 }
 
-Num64 Parser::computeUnaryFunc(TokenIds funcId, const Num64& a) {
-  switch(funcId) {
-  case Sq:          return sq(a);
-  case Cube:        return cube(a);
-  case Abs:         return abs(a);
-  case Sine:        return sin(a);
-  case Cosine:      return cos(a);
-  case Tangent:     return tan(a);
-  case ArcSine:     return asin(a);
-  case ArcCosine:   return acos(a);
-  case ArcTangent:  return atan(a);
-  case SineH:       return sinh(a);
-  case CosineH:     return cosh(a);
-  case TangentH:    return tanh(a);
-  case ArcSineH:    return asinh(a);
-  case ArcCosineH:  return acosh(a);
-  case ArcTangentH: return atanh(a);
-  case Sqrt:        return sqrt(a);
-  case Cbrt:        return cbrt(a);
-  case Log:         return log(a);
-  case Log10:       return log10(a);
-  case Exp:         return exp(a);
-  case Floor:       return floor(a);
-  case Ceil:        return ceil(a);
-  case Round:       return round(a);
-  case ToInt:       return a.toInt();
-  case ToFloat:     return a.toFloat();
-  default:          return Num64();
-  };
+Num64 Parser::computeUnaryFunc(const Num64& a, uint32_t funcId) {
+  auto id = funcId - grammar.getId("sq");
+  if (id >= unaries.size()) return Num64();
+  return unaries[id](a);
+}
+
+bool Parser::isBinaryOp(uint32_t id) {
+  return grammar.getId("=") <= id && id <= grammar.getId("^");
+}
+
+bool Parser::isUnaryFunc(uint32_t id) {
+  return grammar.getId("sq") <= id && id <= grammar.getId("float");
 }
 
 }  // namespace calc

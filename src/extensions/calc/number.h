@@ -250,6 +250,10 @@ FP_FUNC(floor);
 FP_FUNC(ceil);
 FP_FUNC(round);
 #undef FP_FUNC
+template <typename I, typename F>
+Number<I, F> toInt(const Number<I, F>& a) { return a.toInt(); }
+template <typename I, typename F>
+Number<I, F> toFloat(const Number<I, F>& a) { return a.toFloat(); }
 
 #define FP_FUNC2(name)                                                  \
   template <typename I, typename F>                                     \
