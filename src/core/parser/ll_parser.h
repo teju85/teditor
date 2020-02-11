@@ -1,6 +1,7 @@
 #pragma once
 
 #include "grammar.h"
+#include "parser.h"
 #include <unordered_map>
 #include <unordered_set>
 #include <memory>
@@ -35,6 +36,11 @@ struct LL_1 {
    * @param g input grammar
    */
   LL_1(const Grammar& g);
+
+  /**
+   *
+   */
+  Node parse(Scanner* sc);
 
   /**
    * @brief Checks if there's an entry in the parse table for the current

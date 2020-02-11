@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <core/pos2d.h>
 #include <vector>
+#include <unordered_set>
 
 namespace teditor {
 namespace parser {
@@ -46,6 +47,8 @@ struct Lexer {
   Lexer(const TokenDefs& t);
   virtual ~Lexer();
   virtual Token next(Scanner* sc);
+  Token nextWithIgnore(Scanner* sc,
+                       const std::unordered_set<uint32_t>& ignoreTypes);
   Token nextWithIgnore(Scanner* sc, uint32_t ignoreType);
 
  private:
