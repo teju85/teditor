@@ -12,6 +12,7 @@ namespace ledger {
 class LedgerMode : public text::TextMode {
  public:
   LedgerMode(): text::TextMode("ledger") {}
+  Strings cmdNames() const;
 
   static Mode* create() { return new LedgerMode; }
   static bool modeCheck(const std::string& file);

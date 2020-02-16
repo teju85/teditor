@@ -10,6 +10,13 @@ bool LedgerMode::modeCheck(const std::string& file) {
   return nfa.find(file) != parser::NFA::NoMatch;
 }
 
+bool cmdFilterOp(const std::string& name) {
+  return name[0] != '.' && name.find("ledger::") == 0;
+}
+
+Strings LedgerMode::cmdNames() const { return allCmdNames(cmdFilterOp); }
+
+
 REGISTER_MODE(LedgerMode, "ledger");
 
 LedgerShowMode::LedgerShowMode(): readonly::ReadOnlyMode("ledger-show") {
