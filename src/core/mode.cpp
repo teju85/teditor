@@ -22,12 +22,10 @@ Strings allModeNames() {
   return ret;
 }
 
-bool baseModeCmdFilterOp(const std::string& name) {
-  return !(name[0] == '.' || name.find("::") != std::string::npos);
-}
-
 Strings Mode::cmdNames() const {
-  return allCmdNames(baseModeCmdFilterOp);
+  return allCmdNames([](const std::string& name) {
+    return !(name[0] == '.' || name.find("::") != std::string::npos);
+  });
 }
 
 Mode::Registrar::Registrar(const std::string& mode, ModeCreator fptr,
