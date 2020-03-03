@@ -16,14 +16,13 @@ Parser::Parser():
     ///@todo: enable
     //{";",     ";"},
     {"Var",   parser::Regexs::Variable},
-    // add all binary operators from here //
     {"=",     "="},
+    // add all binary operators from here //
     {"+",     "[+]"},
     {"-",     "-"},
     {"*",     "[*]"},
     {"/",     "/"},
-    ///@todo: enable
-    //{"^",     "^"},
+    {"^",     "^"},
     // add all binary operators till here //
     // assumed to be all unary functions only!
     {"Func" , "[a-zA-Z_][a-zA-Z0-9_]*\\("},
@@ -35,15 +34,17 @@ Parser::Parser():
     {"S",    {parser::Grammar::Eps}},
     {"Fac",  {"Num"}},
     {"Term", {"Fac", "S"}},
-    {"Expr", {"Term", "R"}},
+    {"rhs",  {"Term", "R"}},
     {"R",    {"+", "Expr"}},
     {"R",    {"-", "Expr"}},
     {"S",    {"*", "Term"}},
     {"S",    {"/", "Term"}},
     {"Fac",  {"(", "Expr", ")"}},
     {"Fac",  {"Func", "Expr", ")"}},
+    {"Stmt", {"rhs"}},
+    {"Stmt", {"lhs", "=", "rhs"}},
   },
-    "Expr") {}
+    "Stmt") {}
 
 bool Parser::lexingDone(const parser::Token& tok) {
   return tok.type == parser::Token::End || tok.type == parser::Token::Unknown;
@@ -107,7 +108,7 @@ Num64 Parser::computeUnaryFunc(const Num64& a, const std::string& func) {
 }
 
 bool Parser::isBinaryOp(uint32_t id) {
-  return grammar.getId("=") <= id && id <= grammar.getId("^");
+  return grammar.getId("+") <= id && id <= grammar.getId("^");
 }
 
 }  // namespace calc
