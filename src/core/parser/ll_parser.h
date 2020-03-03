@@ -38,9 +38,14 @@ struct LL_1 {
   LL_1(const Grammar& g);
 
   /**
-   *
+   * @brief Main parse logic to output the parse-tree
+   * @param sc scanner for the underlying text
+   * @param ignoreTypes set of tokens to be ignored while lexing
+   * @{
    */
   Node parse(Scanner* sc);
+  Node parse(Scanner* sc, const std::unordered_set<uint32_t>& ignoreTypes);
+  /** @} */
 
   /**
    * @brief Checks if there's an entry in the parse table for the current
