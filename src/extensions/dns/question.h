@@ -16,6 +16,13 @@ struct Question {
   }
 
   /**
+   * @brief Helper method to construct A-record queries
+   * @param u the url whose IP needs to be queried
+   * @return the question
+   */
+  static Question ArecordQuery(const std::string& u);
+
+  /**
    * @brief Serialize header contents to the network
    * @param buff buffer which will be transmitted out
    * @return number of bytes written to this buffer

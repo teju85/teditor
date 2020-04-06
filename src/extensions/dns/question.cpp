@@ -4,6 +4,15 @@
 namespace teditor {
 namespace dns {
 
+
+Question Question::ArecordQuery(const std::string& u) {
+  Question q;
+  q.url = u;
+  q.qtype = 1;
+  q.qclass = 1;
+  return q;
+}
+
 int Question::serialize(char *buff) {
   return 0;
 }
