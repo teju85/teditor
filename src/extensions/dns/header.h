@@ -16,10 +16,25 @@ struct Header {
              rcode(0), qdcount(0), ancount(0), nscount(0), arcount(0) {
   }
 
+  /**
+   * @brief Helper method to construct a query header
+   * @param nQuestions number of questions in this message
+   * @return the query header
+   */
   static Header Query(uint16_t nQuestions = 1);
 
+  /**
+   * @brief Serialize header contents to the network
+   * @param buff buffer which will be transmitted out
+   * @return number of bytes written to this buffer
+   */
   int serialize(char *buff);
 
+  /**
+   * @brief Deserialize header contents from the network
+   * @param buff buffer which has been received
+   * @return number of bytes read from this buffer
+   */
   int deserialize(char *buff);
 
   bool operator==(const Header &that) const;
