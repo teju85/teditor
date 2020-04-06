@@ -1,6 +1,7 @@
 #include "core/editor.h"
 #include "core/command.h"
 #include "core/option.h"
+#include "core/net_utils.h"
 
 namespace teditor {
 namespace editor {
@@ -242,6 +243,23 @@ DEF_CMD(
             cmd.c_str(), res.status, res.output.c_str());
   },
   DEF_HELP() { return "Starts task manager UI. Only for windows!"; });
+
+DEF_CMD(
+  DNSLookup, "dns",
+  DEF_OP() {
+    std::string url = ed.prompt("URL: ");
+    if (url.empty()) return;
+    std::string res;
+    try {
+      res = dnsLookup(url);
+    } catch (const std::runtime_error& e) {
+      res = e.what();
+    } catch (...) {
+      res = "Unknown exception occured!";
+    }
+    CMBAR_MSG(ed, "%s\n", res.c_str());
+  },
+  DEF_HELP() { return "Prints the result of DNS lookup of a given URL"; });
 
 } // end namespace ops
 } // end namespace editor

@@ -18,6 +18,7 @@ std::string dnsLookup(const std::string& url, const std::string& domain) {
   ASSERT(flag == 0, "dnsLookup failed! flag=%d getaddrinfo=%s\n", flag,
          gai_strerror(flag));
   std::stringstream oss;
+  oss << "URL:" << url;
   for(auto *p = res; p != NULL; p = p->ai_next) {
     auto *sa = p->ai_addr;
     const int maxlen = 2048;
@@ -25,17 +26,17 @@ std::string dnsLookup(const std::string& url, const std::string& domain) {
     s[0]= '\0';
     switch(sa->sa_family) {
     case AF_INET:
-      oss << "IPv4: ";
+      oss << " IPv4:";
       inet_ntop(AF_INET, &(((struct sockaddr_in *)sa)->sin_addr), s, maxlen);
       oss << s;
       break;
     case AF_INET6:
-      oss << "IPv6: ";
+      oss << " IPv6:";
       inet_ntop(AF_INET6, &(((struct sockaddr_in6 *)sa)->sin6_addr), s, maxlen);
       oss << s;
       break;
     default:
-      oss << "Bad IP version!";
+      oss << " Bad IP version!";
     };
   }
   freeaddrinfo(res);
