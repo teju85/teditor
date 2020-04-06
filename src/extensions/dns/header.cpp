@@ -13,23 +13,23 @@ Header Header::Query(uint16_t nQuestions) {
   return h;
 }
 
-int Header::serialize(char *buff) {
+void Header::serialize(char *buff) {
   auto *src = reinterpret_cast<uint16_t*>(this);
   auto *dst = reinterpret_cast<uint16_t*>(buff);
   for (int i = 0; i < NumFields; ++i) {
     dst[i] = htons(src[i]);
   }
-  return sizeof(Header);
 }
 
-int Header::deserialize(char *buff) {
+void Header::deserialize(char *buff) {
   auto *src = reinterpret_cast<uint16_t*>(buff);
   auto *dst = reinterpret_cast<uint16_t*>(this);
   for (int i = 0; i < NumFields; ++i) {
     dst[i] = ntohs(src[i]);
   }
-  return sizeof(Header);
 }
+
+int Header::size() const { return sizeof(Header); }
 
 bool Header::operator==(const Header &that) const {
   return id == that.id && qr == that.qr && opcode == that.opcode &&
