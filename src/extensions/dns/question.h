@@ -25,22 +25,26 @@ struct Question {
   /**
    * @brief Serialize header contents to the network
    * @param buff buffer which will be transmitted out
-   * @return number of bytes written to this buffer
    */
-  int serialize(char *buff);
+  void serialize(char *buff);
 
   /**
    * @brief Deserialize header contents from the network
    * @param buff buffer which has been received
-   * @return number of bytes read from this buffer
    */
-  int deserialize(char *buff);
+  void deserialize(char *buff);
+
+  int size() const;
 
   bool operator==(const Question &that) const;
 
   std::string url;
   uint16_t qtype;
   uint16_t qclass;
+
+ private:
+  void writeShort(uint16_t val, char *buff);
+  uint16_t readShort(char *buff);
 };  // struct Question
 
 }  // namespace dns
