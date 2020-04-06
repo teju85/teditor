@@ -4,7 +4,6 @@
 namespace teditor {
 namespace dns {
 
-
 Question Question::ArecordQuery(const std::string& u) {
   Question q;
   q.url = u;
