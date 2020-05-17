@@ -501,11 +501,4 @@ void Editor::render() {
   Terminal::getInstance().flush();
 }
 
-int Editor::peekEvent(int timeoutMs) {
-  struct timeval tv;
-  tv.tv_sec = timeoutMs / 1000;
-  tv.tv_usec = (timeoutMs - (tv.tv_sec * 1000)) * 1000;
-  return Terminal::getInstance().waitAndFill(&tv);
-}
-
 } // end namespace teditor

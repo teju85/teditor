@@ -92,7 +92,6 @@ private:
    */
   void render();
   int pollEvent() { return Terminal::getInstance().waitAndFill(nullptr); }
-  int peekEvent(int timeoutMs);
   /** @} */
 
   void writeLiteral(const char* fmt, ...);
