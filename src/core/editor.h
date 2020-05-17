@@ -1,7 +1,6 @@
 #pragma once
 
 #include "buffer.h"
-#include "terminal.h"
 #include <stdarg.h>
 #include <string>
 #include <vector>
@@ -69,7 +68,7 @@ public:
   Strings fileHistoryToString() const { return fileshist.get(); }
   Strings buffNamesToString() const { return buffs.namesList(); }
   void saveBuffer(Buffer& buf);
-  key_t getKey() const { return Terminal::getInstance().mk.getKey(); }
+  key_t getKey() const;
   bool splitVertically() { return windows.splitVertically(); }
   void clearAllWindows() { return windows.clearAll(); }
   void incrementCurrWin() { windows.incrementCurrWin(); }
@@ -91,7 +90,7 @@ private:
    * @{
    */
   void render();
-  int pollEvent() { return Terminal::getInstance().waitAndFill(nullptr); }
+  int pollEvent();
   /** @} */
 
   void writeLiteral(const char* fmt, ...);

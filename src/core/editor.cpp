@@ -18,6 +18,7 @@
 #include "mode.h"
 #include "key_cmd_map.h"
 #include "option.h"
+#include "terminal.h"
 
 namespace teditor {
 
@@ -500,5 +501,9 @@ void Editor::render() {
   }
   Terminal::getInstance().flush();
 }
+
+int Editor::pollEvent() { return Terminal::getInstance().waitAndFill(nullptr); }
+
+key_t Editor::getKey() const { return Terminal::getInstance().mk.getKey(); }
 
 } // end namespace teditor
