@@ -22,7 +22,7 @@ class LedgerShowMode: public readonly::ReadOnlyMode {
   struct Keys { static std::vector<KeyCmdPair> All; };
   struct Colors { static std::vector<NameColorPair> All; };
 
-  void printHeader(Buffer& buf, Parser& p) const;
+  void printHeader(Buffer& buf, const Date& min, const Date& max) const;
 };  // class LedgerShowMode
 
 }  // namespace ledger

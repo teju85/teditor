@@ -35,7 +35,9 @@ LedgerShowMode::LedgerShowMode(): readonly::ReadOnlyMode("ledger-show") {
 void LedgerShowMode::showTopAccounts(Buffer& buf,
                                      const std::string& file) const {
   Parser p(file);
-  printHeader(buf, p);
+  Date min("0/0/0"), max("0/0/0");
+  p.minmaxDates(min, max);
+  printHeader(buf, min, max);
   buf.insert("### Top-level accounts ###\n");
   auto top = p.topAccounts();
   double total = 0.0;
@@ -52,7 +54,9 @@ void LedgerShowMode::showTopAccounts(Buffer& buf,
 void LedgerShowMode::showAllAccounts(Buffer& buf,
                                      const std::string& file) const {
   Parser p(file);
-  printHeader(buf, p);
+  Date min("0/0/0"), max("0/0/0");
+  p.minmaxDates(min, max);
+  printHeader(buf, min, max);
   buf.insert("### All accounts ###\n");
   auto all = p.allAccounts();
   double total = 0.0;
@@ -67,14 +71,13 @@ void LedgerShowMode::showAllAccounts(Buffer& buf,
   buf.insert(format("%12s  %-16s\n", valStr.c_str(), "total"));
 }
 
-void LedgerShowMode::printHeader(Buffer& buf, Parser& p) const {
+void LedgerShowMode::printHeader(Buffer& buf, const Date& min,
+                                 const Date& max) const {
   buf.clear();
   buf.insert("############################################################\n"
              "            Welcome to your personal ledger!\n"
              "############################################################\n"
              "\n");
-  Date min("0/0/0"), max("0/0/0");
-  p.minmaxDates(min, max);
   auto s = format("### Dates: %d/%d/%d to %d/%d/%d ###\n\n",
                   min.year, min.month, min.day, max.year, max.month, max.day);
   buf.insert(s);
