@@ -1,21 +1,29 @@
 #include "mode.h"
+#include "../base/text.h"
 #include "core/option.h"
 #include "core/parser/nfa.h"
 
 namespace teditor {
 namespace ledger {
 
-bool LedgerMode::modeCheck(const std::string& file) {
-  static parser::NFA nfa(".*[.]lg");
-  return nfa.find(file) != parser::NFA::NoMatch;
-}
+/** ledger file edit mode */
+class LedgerMode : public text::TextMode {
+ public:
+  LedgerMode(): text::TextMode("ledger") {}
 
-Strings LedgerMode::cmdNames() const {
-  return allCmdNames([](const std::string& name) {
-    return name[0] != '.' && name.find("ledger::") == 0;
-  });
-}
+  Strings cmdNames() const {
+    return allCmdNames([](const std::string& name) {
+      return name[0] != '.' && name.find("ledger::") == 0;
+    });
+  }
 
+  static Mode* create() { return new LedgerMode; }
+
+  static bool modeCheck(const std::string& file) {
+    static parser::NFA nfa(".*[.]lg");
+    return nfa.find(file) != parser::NFA::NoMatch;
+  }
+};  // class LedgerMode
 
 REGISTER_MODE(LedgerMode, "ledger");
 
@@ -31,7 +39,7 @@ void LedgerShowMode::showTopAccounts(Buffer& buf,
   buf.insert("### Top-level accounts ###\n");
   auto top = p.topAccounts();
   double total = 0.0;
-  for(const auto& t : top) {
+  for (const auto& t : top) {
     total += t.balance();
     auto valStr = format("%.2lf", t.balance());
     buf.insert(format("%12s  %-16s\n", valStr.c_str(), t.name().c_str()));
@@ -49,7 +57,7 @@ void LedgerShowMode::showAllAccounts(Buffer& buf,
   buf.insert("### All accounts ###\n");
   auto all = p.allAccounts();
   double total = 0.0;
-  for(const auto& a : all) {
+  for (const auto& a : all) {
     const auto& name = a.name();
     if(name[0] != ' ' || name[1] != ' ') total += a.balance();
     auto valStr = format("%.2lf", a.balance());
