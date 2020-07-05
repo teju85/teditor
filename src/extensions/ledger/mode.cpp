@@ -53,7 +53,6 @@ void LedgerShowMode::showAllAccounts(Buffer& buf,
                                      const std::string& file) const {
   Parser p(file);
   printHeader(buf, p);
-  printHeader(buf, p);
   buf.insert("### All accounts ###\n");
   auto all = p.allAccounts();
   double total = 0.0;
