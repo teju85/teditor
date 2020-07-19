@@ -2,9 +2,34 @@
 #include <fstream>
 #include <map>
 #include "parser.h"
+#include <vector>
+#include "core/parser/grammar.h"
+#include "core/parser/regexs.h"
 
 namespace teditor {
 namespace ledger {
+
+std::vector<parser::Grammar::TerminalDef>& getTokens() {
+  static std::vector<parser::Grammar::TerminalDef> tokens = {
+    {"Comment", "#.*"},
+    {"Name", "\\S+"},
+    {"Sentence", ".*"},
+    {"Date", "\\d\\d\\d\\d/\\d\\d?/\\d\\d?"},  // YYYY/MM/DD or YYYY/M/D
+    {"Number", parser::Regexs::FloatingPt},
+    {"Newline", parser::Regexs::Newline},
+    {"Space", "\\s+"},
+    {"AccountStart", "account\\s+"},
+    {"AccountDescription", "  description\\s+"},
+    {"AccountAlias", "  alias\\s+"},
+  };
+  return tokens;
+}
+
+std::vector<parser::Grammar::NonTerminalDef>& getProds() {
+  static std::vector<parser::Grammar::NonTerminalDef> prods = {
+  };
+  return prods;
+}
 
 Parser::Parser(const std::string& f):
   file(f), trans(), accts(),
