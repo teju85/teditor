@@ -32,7 +32,7 @@ account Assets:Bank2:SB
 2018/8/5 Gas Station
   Expenses:Auto:TireRepair                700
   Cash
-# no space between successive account definitions is also valid!
+# no space between successive transaction definitions is also valid!
 2018/8/6 Hospital
   Expenses:Medical:BabyVaccination       8594
   Bank1
