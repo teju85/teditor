@@ -31,6 +31,11 @@ std::vector<parser::Grammar::NonTerminalDef>& getProds() {
   return prods;
 }
 
+parser::Grammar& getGrammar() {
+  static parser::Grammar grammar(getTokens(), getProds(), "");
+  return grammar;
+}
+
 Parser::Parser(const std::string& f):
   file(f), trans(), accts(),
   accState(), accRx("^account\\s+(\\S+)"), accDescRx("^  description\\s+(.*)"),
