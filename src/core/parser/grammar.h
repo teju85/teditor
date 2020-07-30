@@ -18,7 +18,6 @@ class Grammar {
   typedef std::pair<std::string, Strings> NonTerminalDef;
 
   /**
-   * @brief ctor
    * @param terms list of lexer tokens for this grammar
    * @param nonterms list of production rules for this grammar
    * @param startSym starting production rule for this grammar
@@ -30,18 +29,10 @@ class Grammar {
   /** Get the lexer object made out of terminals */
   std::shared_ptr<Lexer> getLexer() const;
 
-  /**
-   * @brief Gets unique id of the input symbole
-   * @param sym input symbol
-   * @return unique id
-   */
+  /** Gets unique id of the input symbol */
   uint32_t getId(const std::string& sym) const;
 
-  /**
-   * @brief Gets symbol name corresponding to the unique id
-   * @param id unique id
-   * @return symbol name
-   */
+  /** Gets symbol name corresponding to the unique id */
   std::string getName(uint32_t id) const;
 
   /**
@@ -68,16 +59,10 @@ class Grammar {
   const std::vector<uint32_t>& getProdIds(uint32_t id) const;
   /** @} */
 
-  /**
-   * @brief Gets the start symbol for this grammar
-   * @return the name of the symbol
-   */
+  /** Gets the start symbol for this grammar */
   const std::string& getStart() const { return start; }
 
-  /**
-   * @brief Returns the id of the start symbol for this grammar
-   * @return the start symbol id
-   */
+  /** Returns the id of the start symbol for this grammar */
   uint32_t getStartId() const { return getId(start); }
 
   /**
