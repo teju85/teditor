@@ -25,14 +25,8 @@ std::vector<parser::Grammar::TerminalDef>& getTokens() {
   return tokens;
 }
 
-std::vector<parser::Grammar::NonTerminalDef>& getProds() {
-  static std::vector<parser::Grammar::NonTerminalDef> prods = {
-  };
-  return prods;
-}
-
 parser::Grammar& getGrammar() {
-  static parser::Grammar grammar(getTokens(), getProds(), "");
+  static parser::Grammar grammar(getTokens(), {}, "");
   return grammar;
 }
 
