@@ -11,7 +11,7 @@ namespace ledger {
 
 std::vector<parser::Grammar::TerminalDef>& getTokens() {
   static std::vector<parser::Grammar::TerminalDef> tokens = {
-    {"Comment", "#.*"},
+    {"Comment", "#[^\r\n]*"},
     {"Name", "\\S+"},
     {"Sentence", ".*"},
     {"Date", "\\d\\d\\d\\d/\\d\\d?/\\d\\d?"},  // YYYY/MM/DD or YYYY/M/D
