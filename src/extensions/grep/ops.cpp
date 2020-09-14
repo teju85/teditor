@@ -25,6 +25,11 @@ DEF_CMD(
       return;
     }
     CMBAR_MSG(ed, "grep cmd = %s\n", cmd.c_str());
+    auto pwd = ed.getBuff().pwd();
+    if (cmd.back() == '.') {
+      cmd.pop_back();
+      cmd += pwd;
+    }
     auto res = check_output(cmd);
     if (res.status != 0) {
       CMBAR_MSG(ed, "grep failed. Exit status = %d\n", res.status);
@@ -33,7 +38,7 @@ DEF_CMD(
     }
     auto& buf = getGrepBuff(ed);
     buf.clear();
-    buf.insert("Grep\nCommand: " + cmd + "\npwd: " + buf.pwd() + "\n\n");
+    buf.insert("Grep\nCommand: " + cmd + "\npwd: " + pwd + "\n\n");
     buf.insert(res.output);
     buf.begin();
     ed.switchToBuff("*grep");
@@ -62,9 +67,11 @@ DEF_CMD(
     auto file = line.substr(0, fileEnd);
     // grep outputs 1-based line numbering
     auto lineNum = str2num(line.substr(fileEnd + 1, lineEnd = fileEnd)) - 1;
-    auto pwd = buf.at(2).get().substr(5);
-    if (pwd == ".") pwd = buf.pwd();
-    file = pwd + '/' + file;
+    if (file[0] != '/') {
+      auto pwd = buf.at(2).get().substr(5);
+      if (pwd == ".") pwd = buf.pwd();
+      file = pwd + '/' + file;
+    }
     ed.load(file, lineNum);
   },
   DEF_HELP() { return "Starts grep-mode buffer, if not already done."; });
