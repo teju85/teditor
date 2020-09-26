@@ -25,6 +25,7 @@ public:
   bool updateChoices(const std::string& str);
   std::string getFinalStr(int idx, const std::string& str) const;
   void updateMainBuffer(CmdMsgBar& cmBar);
+  void resetLocations(CmdMsgBar& cmBar);
 
   /** reset the search state */
   void reset();

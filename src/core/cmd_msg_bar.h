@@ -14,21 +14,24 @@ class CmdMsgBar;
 
 class Choices {
 public:
-  Choices(ChoicesFilter cf): filter(cf), optLoc(-1) {}
+  Choices(ChoicesFilter cf): filter(cf), choiceIdx(-1) {}
   virtual ~Choices() {}
   virtual const std::string& at(int idx) const = 0;
   virtual int size() const = 0;
   virtual bool updateChoices(const std::string& str) { return false; }
   virtual std::string getFinalStr(int idx, const std::string& str) const = 0;
   virtual void updateMainBuffer(CmdMsgBar& cmBar) {}
+  virtual void resetLocations(CmdMsgBar& cmBar);
   bool match(const std::string& line, const std::string& str) const;
   bool match(int idx, const std::string& str) const;
-  void setIdx(int idx) { optLoc = idx; }
-  int getIdx() const { return optLoc; }
+  void setChoiceIdx(int idx) { choiceIdx = idx; }
+  int getChoiceIdx() const { return choiceIdx; }
 
 private:
   ChoicesFilter filter;
-  int optLoc;
+  // only used to communicate the final choice of the user to the extensions
+  // that create these choice objects!
+  int choiceIdx;
 };
 
 
@@ -67,8 +70,10 @@ public:
   void up();
   void updateChoices();
   int getOptLoc() const { return optLoc; }
+  void setOptLoc(int loc) { optLoc = loc; }
   void lineUp(const Point& dim) override;
   void lineDown() override;
+  void setStartLine(int line) { startLine = line; }
 
 private:
   /** useful during prompts, so as to not cross into the message itself! */

@@ -15,6 +15,11 @@ bool Choices::match(int idx, const std::string& str) const {
   return match(at(idx), str);
 }
 
+void Choices::resetLocations(CmdMsgBar& cmBar) {
+  cmBar.setStartLine(0);
+  cmBar.setOptLoc(0);
+}
+
 
 StringChoices::StringChoices(const Strings& arr, ChoicesFilter cf):
   Choices(cf), options(arr) {
@@ -121,7 +126,7 @@ void CmdMsgBar::insert(char c) {
 void CmdMsgBar::updateChoices() {
   if(!usingChoices()) return;
   if(choices->updateChoices(getStr())) {
-    startLine = optLoc = 0;
+    choices->resetLocations(*this);
   }
   choices->updateMainBuffer(*this);
 }
@@ -152,8 +157,7 @@ void CmdMsgBar::down() {
 }
 
 void CmdMsgBar::up() {
-  if(!usingChoices())
-    return;
+  if(!usingChoices()) return;
   const auto str = getStr();
   for(int idx=optLoc-1;idx>=0;--idx) {
     if(choices->match(idx, str)) {

@@ -448,7 +448,7 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
   cmBar->clear();
   cmBar->setMinLoc(0);
   if(choices != nullptr) {
-    choices->setIdx(cmBar->getOptLoc());
+    choices->setChoiceIdx(cmBar->getOptLoc());
     cmBar->clearChoices();
   }
   unselectCmBar();

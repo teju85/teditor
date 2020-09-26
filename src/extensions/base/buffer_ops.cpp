@@ -206,7 +206,7 @@ DEF_CMD(
     ISearch is(ed.getWindow(), Option::get("iCaseSearch").getBool());
     is.reset();
     auto ret = ed.prompt("Search: ", nullptr, &is);
-    buf.gotoLine(!ret.empty()? is.getIdx() : pos.y, ed.getWindow().dim());
+    buf.gotoLine(!ret.empty()? is.getChoiceIdx() : pos.y, ed.getWindow().dim());
   },
   DEF_HELP() { return "Search and jump to the matching location."; });
 
