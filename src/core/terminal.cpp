@@ -157,23 +157,20 @@ Terminal::ColorSupport Terminal::colorSupported() const {
 }
 
 std::string Terminal::tryReading(const char* path, const char* term) const {
-  char tmp[3][2048];
+  char tmp[2048];
   // for unix
-  snprintf(tmp[0], sizeof(tmp[0]), "%s/%c/%s", path, term[0], term);
+  snprintf(tmp, sizeof(tmp), "%s/%c/%s", path, term[0], term);
+  try { return slurp(tmp); } catch (...) { }
   // for MacOS
-  snprintf(tmp[1], sizeof(tmp[1]), "%s/%x/%s", path, term[0], term);
+  snprintf(tmp, sizeof(tmp), "%s/%x/%s", path, term[0], term);
+  try { return slurp(tmp); } catch (...) { }
   // for WSL (does not seem to match '$TERM' with the file name!!)
   std::string termStr(term);
   for (size_t i = 0; i < termStr.size(); ++i) {
     if (termStr[i] == '-') termStr[i] = '+';
   }
-  snprintf(tmp[2], sizeof(tmp[2]), "%s/%c/%s", path, term[0], termStr.c_str());
-  // go through every path and see if we can load that file
-  constexpr auto NumTries = sizeof(tmp) / sizeof(tmp[0]);
-  for (size_t i = 0; i < NumTries; ++i) {
-    try { return slurp(tmp[i]); } catch (...) { }
-  }
-  return slurp(tmp[NumTries - 1]);
+  snprintf(tmp, sizeof(tmp), "%s/%c/%s", path, term[0], termStr.c_str());
+  return slurp(tmp);
 }
 
 std::string Terminal::loadTerminfo() const {
