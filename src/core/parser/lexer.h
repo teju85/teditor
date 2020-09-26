@@ -4,6 +4,7 @@
 #include <core/pos2d.h>
 #include <vector>
 #include <unordered_set>
+#include <ostream>
 
 namespace teditor {
 namespace parser {
@@ -29,6 +30,8 @@ struct Token {
   static const uint32_t Unknown;
   /** special reserved token for denoting root node */
   static const uint32_t Root;
+
+  friend std::ostream& operator<<(std::ostream& os, const Token& tok);
 };  // struct Token
 
 

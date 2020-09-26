@@ -5,15 +5,18 @@
 #include <vector>
 #include "core/parser/grammar.h"
 #include "core/parser/regexs.h"
+#include "core/parser/lexer.h"
+#include "core/parser/scanner.h"
+#include "core/buffer.h"
+#include <iostream>
 
 namespace teditor {
 namespace ledger {
 
 std::vector<parser::Grammar::TerminalDef>& getTokens() {
   static std::vector<parser::Grammar::TerminalDef> tokens = {
-    {"Comment", "#[^\r\n]*"},
-    {"Name", "\\S+"},
-    {"Sentence", ".*"},
+    {"Comment", "#[^\r\n]+"},
+    {"Name", "[^ \t\r\n#]+"},
     {"Date", "\\d\\d\\d\\d/\\d\\d?/\\d\\d?"},  // YYYY/MM/DD or YYYY/M/D
     {"Number", parser::Regexs::FloatingPt},
     {"Newline", parser::Regexs::Newline},
@@ -36,11 +39,29 @@ Parser::Parser(const std::string& f):
   accAliasRx("^  alias\\s+(\\S+)"),
   traRx("^(\\d+/\\d+/\\d+)\\s+(.*)"),
   traOpRx("^  (\\S+)\\s+(-?\\d+[.]?(\\d+)?)"), traOpDefRx("^  (\\S+)$") {
-  accState.clear();
   parse(file);
 }
 
 void Parser::parse(const std::string& f) {
+  parse2(f);
+}
+
+void Parser::parse2(const std::string& f) {
+  auto tmp = isAbs(f) ? f : rel2abs(getpwd(), f);
+  Buffer buff;
+  buff.load(tmp, 0);
+  parser::BufferScanner scanner(buff);
+  auto& g = getGrammar();
+  auto lexer = g.getLexer();
+  std::unordered_set<uint32_t> ignores{g.getId("Newline"), g.getId("Space")};
+  parser::Token token;
+  do {
+    token = lexer->nextWithIgnore(&scanner, ignores);
+    std::cout << token << (token.isEof() ? "$" : g.getName(token.type)) << "\n";
+  } while (!token.isEof());
+}
+
+void Parser::parse1(const std::string& f) {
   std::fstream fp;
   fp.open(f.c_str(), std::fstream::in);
   ASSERT(fp.is_open(), "Failed to read ledger file '%s'", f.c_str());
