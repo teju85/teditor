@@ -9,6 +9,13 @@ const uint32_t Token::End = uint32_t(-1);
 const uint32_t Token::Unknown = uint32_t(-2);
 const uint32_t Token::Root = uint32_t(-3);
 
+
+std::ostream& operator<<(std::ostream& os, const Token& tok) {
+  os << "type=" << tok.type << " start=" << tok.start.y << "," << tok.start.x
+     << " end=" << tok.end.y << "," << tok.end.x;
+  return os;
+}
+
 Lexer::Lexer(const TokenDefs& t): nfas(), tokenDefs(t) {
   for (auto td : tokenDefs) {
     if (!td.regex.empty()) nfas.push_back(new NFA(td.regex));
