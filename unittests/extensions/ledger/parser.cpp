@@ -67,5 +67,13 @@ TEST_CASE("Parser::incorrect - no_alias") {
   REQUIRE_THROWS_AS(parse("samples/ledger/no_alias.lg"), std::runtime_error);
 }
 
+TEST_CASE("real-test") {
+  Parser p("/home/snanditale/.teditor/ledger-in.lg");
+  auto top = p.allAccounts();
+  int64_t bal = 0;
+  for(const auto& a : top) bal += a.rawBalance();
+  REQUIRE(0 == bal);
+}
+
 } // end namespace ledger
 } // end namespace teditor
