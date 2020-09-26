@@ -9,8 +9,7 @@ Very minimal set of pre-reqs are needed for this project.
 ** Compile time
 1. GNU-make (>= 4.2.1)
 2. G++ (>= 5.4.0)
-3. autoconf and automake - for building pcre2
-4. doxygen (>= 1.8.13) - for documentation generation
+3. doxygen (>= 1.8.13) - for documentation generation
 ** Runtime
 1. curl - for downloading from web
 2. mintty - for running the editor

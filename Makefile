@@ -28,11 +28,6 @@ TESTEXE        := $(BINDIR)/tests
 
 MKDIR_P        := mkdir -p
 
-PCRE2_BINDIR   := $(shell pwd)/$(BINDIR)/pcre2
-PCRE2_LIB      := $(PCRE2_BINDIR)/lib/libpcre2-8.a
-PCRE2_INCLUDE  := $(PCRE2_BINDIR)/include
-PCRE2_DIR      := external/pcre2
-
 CATCH2_DIR     := bin/Catch2
 
 TS_DIR         := external/tree-sitter
@@ -41,12 +36,11 @@ TS_LIB         := $(TS_BINDIR)/libts.a
 
 INCLUDES       := $(SRC) \
                   $(TESTS) \
-                  $(PCRE2_INCLUDE) \
                   $(CATCH2_DIR)/single_include/catch2 \
                   $(TS_DIR)/src \
                   $(TS_DIR)/include \
                   $(TS_DIR)/externals/utf8proc
-LIBRARIES      := $(PCRE2_LIB) $(TS_LIB)
+LIBRARIES      := $(TS_LIB)
 INCS           := $(foreach inc,$(INCLUDES),-I$(inc))
 CC             := gcc
 CCFLAGS        := -std=c99 $(INCS)
@@ -127,7 +121,7 @@ clean:
 	rm -rf $(TEST_OBJS) $(TESTEXE)
 	rm -rf $(DEPFILES)
 
-clean_all: clean pcre2-clean tree-sitter-clean
+clean_all: clean tree-sitter-clean
 	rm -rf $(BINDIR) $(DOCDIR)
 
 debug:
@@ -149,19 +143,6 @@ doc:
 
 $(CATCH2_DIR):
 	$(PREFIX)git clone --recursive https://github.com/catchorg/Catch2 $@
-
-pcre2: $(PCRE2_LIB)
-
-$(PCRE2_LIB):
-	cd $(PCRE2_DIR) && \
-	    git update-index --assume-unchanged Makefile.in aclocal.m4 configure && \
-	    ./configure --prefix=$(PCRE2_BINDIR) && \
-	    make -j && \
-	    make install
-
-pcre2-clean:
-	cd $(PCRE2_DIR) && \
-	    make clean
 
 
 TS_RT_OBJ      := $(TS_BINDIR)/runtime.o
