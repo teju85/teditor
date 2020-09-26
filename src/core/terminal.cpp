@@ -157,21 +157,21 @@ Terminal::ColorSupport Terminal::colorSupported() const {
 }
 
 std::string Terminal::tryReading(const char* path, const char* term) const {
-  char tmp1[2048], tmp2[2048], tmp3[2048];
-  snprintf(tmp1, sizeof(tmp1), "%s/%c/%s", path, term[0], term);
+  char tmp[3][2048];
+  // for unix
+  snprintf(tmp[0], sizeof(tmp[0]), "%s/%c/%s", path, term[0], term);
   // for MacOS
-  snprintf(tmp2, sizeof(tmp2), "%s/%x/%s", path, term[0], term);
+  snprintf(tmp[1], sizeof(tmp[1]), "%s/%x/%s", path, term[0], term);
   // for WSL
   std::string termStr(term);
   for (size_t i = 0; i < termStr.size(); ++i) {
     if (termStr[i] == '-') termStr[i] = '+';
   }
-  snprintf(tmp3, sizeof(tmp1), "%s/%c/%s", path, term[0], termStr.c_str());
-  try {
-    return slurp(tmp1);
-  } catch(const std::runtime_error& e) {
-    return slurp(tmp2);
+  snprintf(tmp[2], sizeof(tmp[2]), "%s/%c/%s", path, term[0], termStr.c_str());
+  for (int i = 0; i < 3; ++i) {
+    try { return slurp(tmp[i]); } catch (...) { }
   }
+  return slurp(tmp[2]);
 }
 
 std::string Terminal::loadTerminfo() const {
