@@ -8,7 +8,7 @@ namespace ledger {
 TEST_CASE("Parser::sample") {
   Parser p("samples/ledger/sample.lg");
   const auto& trans = p.transactions();
-  REQUIRE(6 == trans.size());
+  REQUIRE(7 == trans.size());
   const auto& accts = p.accounts();
   REQUIRE(12 == accts.size());
   for(const auto& t : trans) REQUIRE(0 == t.rawBalance());
@@ -18,7 +18,7 @@ TEST_CASE("Parser::reload") {
   Parser p("samples/ledger/sample.lg");
   {
     const auto& trans = p.transactions();
-    REQUIRE(6 == trans.size());
+    REQUIRE(7 == trans.size());
     const auto& accts = p.accounts();
     REQUIRE(12 == accts.size());
     for(const auto& t : trans) REQUIRE(0 == t.rawBalance());
@@ -26,7 +26,7 @@ TEST_CASE("Parser::reload") {
   p.reload();
   {
     const auto& trans = p.transactions();
-    REQUIRE(6 == trans.size());
+    REQUIRE(7 == trans.size());
     const auto& accts = p.accounts();
     REQUIRE(12 == accts.size());
     for(const auto& t : trans) REQUIRE(0 == t.rawBalance());
@@ -56,7 +56,7 @@ TEST_CASE("Parser::minMaxDates") {
   Date min("0/0/0"), max("0/0/0");
   p.minmaxDates(min, max);
   REQUIRE(Date("2018/8/4") == min);
-  REQUIRE(Date("2018/9/9") == max);
+  REQUIRE(Date("2018/9/10") == max);
 }
 
 void parse(const std::string& file) {

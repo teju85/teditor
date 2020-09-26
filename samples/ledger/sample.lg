@@ -47,5 +47,9 @@ account Assets:Bank2:SB
   Bank1
 
 2018/9/9 Amazon
-  Expenses:Books:Wife                    5550.5
+  Expenses:Books:Wife                    5550.5  # ??
+  Liabilities:Bank2:CreditCard
+
+2018/9/10 Amazon another order
+  Expenses:Books:Wife                    5550.5  # duplicate order!
   Liabilities:Bank2:CreditCard

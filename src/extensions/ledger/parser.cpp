@@ -49,7 +49,8 @@ void Parser::parse(const std::string& f) {
   parser::BufferScanner scanner(buff);
   auto& g = getGrammar();
   auto lexer = g.getLexer();
-  std::unordered_set<uint32_t> ignores{g.getId("Space"), g.getId("Newline")};
+  std::unordered_set<uint32_t> ignores{
+    g.getId("Space"), g.getId("Newline"), g.getId("Comment")};
   parser::Token token;
   auto collectSentence = [&]() -> std::string {
     auto space = g.getId("Space");
