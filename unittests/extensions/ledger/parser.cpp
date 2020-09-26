@@ -59,5 +59,13 @@ TEST_CASE("Parser::minMaxDates") {
   REQUIRE(Date("2018/9/9") == max);
 }
 
+void parse(const std::string& file) {
+  Parser p(file);
+}
+
+TEST_CASE("Parser::incorrect - no_alias") {
+  REQUIRE_THROWS_AS(parse("samples/ledger/no_alias.lg"), std::runtime_error);
+}
+
 } // end namespace ledger
 } // end namespace teditor

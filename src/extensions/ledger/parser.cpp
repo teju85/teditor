@@ -15,7 +15,7 @@ namespace ledger {
 
 std::vector<parser::Grammar::TerminalDef>& getTokens() {
   static std::vector<parser::Grammar::TerminalDef> tokens = {
-    {"Comment", "#[^\r\n]+"},
+    {"Comment", "# [^\r\n]+"},
     {"Name", "[^ \t\r\n#]+"},
     {"Date", "\\d\\d\\d\\d/\\d\\d?/\\d\\d?"},  // YYYY/MM/DD or YYYY/M/D
     {"Number", parser::Regexs::FloatingPt},
@@ -43,80 +43,140 @@ Parser::Parser(const std::string& f):
 }
 
 void Parser::parse(const std::string& f) {
-  parse2(f);
-}
-
-void Parser::parse2(const std::string& f) {
   auto tmp = isAbs(f) ? f : rel2abs(getpwd(), f);
   Buffer buff;
   buff.load(tmp, 0);
   parser::BufferScanner scanner(buff);
   auto& g = getGrammar();
   auto lexer = g.getLexer();
-  std::unordered_set<uint32_t> ignores{g.getId("Newline"), g.getId("Space")};
+  std::unordered_set<uint32_t> ignores{g.getId("Space"), g.getId("Newline")};
   parser::Token token;
-  do {
-    token = lexer->nextWithIgnore(&scanner, ignores);
-    std::cout << token << (token.isEof() ? "$" : g.getName(token.type)) << "\n";
-  } while (!token.isEof());
-}
-
-void Parser::parse1(const std::string& f) {
-  std::fstream fp;
-  fp.open(f.c_str(), std::fstream::in);
-  ASSERT(fp.is_open(), "Failed to read ledger file '%s'", f.c_str());
-  std::string str;
-  size_t line;
-  while(std::getline(fp, str)) {
-    // empty line or comments
-    if(str.empty() || str[0] == '#') continue;
-    // account definition
-    auto mAcc = accRx.find(str);
-    if(!mAcc.empty()) {
-      accState.name = mAcc.get(1);
-      while(true) {
-        ++line;
-        std::string s;
-        std::getline(fp, s);
-        auto m1 = accDescRx.find(s);
-        auto m2 = accAliasRx.find(s);
-        if(!m1.empty()) {
-          accState.desc = m1.get(1);
-        } else if(!m2.empty()) {
-          accState.als.insert(m2.get(1));
+  auto collectSentence = [&]() -> std::string {
+    auto space = g.getId("Space");
+    std::string ret;
+    do {
+      token = lexer->nextWithIgnore(&scanner, space);
+      if (token.type == g.getId("Name")) {
+        ret += " " + scanner.at(token.start, token.end);
+      }
+    } while (token.type == g.getId("Name"));
+    ASSERT(token.type == g.getId("Newline"),
+           "Sentence must end with a newline '%s'. Found token=%s",
+           ret.c_str(), g.getName(token.type).c_str());
+    return ret;
+  };
+  // main parser loop
+  token = lexer->nextWithIgnore(&scanner, ignores);
+  while (!token.isEof()) {
+    if (token.type == g.getId("AccountStart")) {  // account info
+      // name
+      token = lexer->nextWithIgnore(&scanner, ignores);
+      ASSERT(token.type == g.getId("Name"), "Invalid token after 'account'");
+      auto accName = scanner.at(token.start, token.end);
+      // description
+      token = lexer->nextWithIgnore(&scanner, ignores);
+      ASSERT(token.type == g.getId("AccountDescription"),
+             "Second line of account '%s' must be its description",
+             accName.c_str());
+      auto accDesc = collectSentence();
+      token = lexer->nextWithIgnore(&scanner, ignores);
+      ASSERT(token.type == g.getId("AccountAlias"),
+             "Account '%s' description must be followed by list of its aliases",
+             accName.c_str());
+      // alias
+      Aliases accAls;
+      do {
+        token = lexer->nextWithIgnore(&scanner, ignores);
+        ASSERT(token.type == g.getId("Name"),
+               "Account '%s' alias keyword must be followed by alias name",
+               accName.c_str());
+        accAls.insert(scanner.at(token.start, token.end));
+      } while (token.type == g.getId("AccountAlias"));
+      accts.push_back(Account(accName, accDesc, accAls));
+    } else if (token.type == g.getId("Date")) {  // transaction info
+      auto dateStr = scanner.at(token.start, token.end);
+      // description
+      auto desc = collectSentence();
+      token = lexer->nextWithIgnore(&scanner, ignores);
+      Transaction tr(dateStr, desc);
+      ASSERT(token.type == g.getId("Name"),
+             "Transaction start of '%s' must be followed by account name",
+             desc.c_str());
+      // accounts
+      while (token.type == g.getId("Name")) {
+        auto acc = scanner.at(token.start, token.end);
+        token = lexer->nextWithIgnore(&scanner, ignores);
+        if (token.type == g.getId("Number")) {
+          tr.add(acc, str2double(scanner.at(token.start, token.end)));
+          token = lexer->nextWithIgnore(&scanner, ignores);
         } else {
-          --line;
-          accts.push_back(Account(accState.name, accState.desc, accState.als));
-          accState.clear();
-          break;
+          tr.add(acc);
         }
       }
-      continue;
-    } // end account definition
-    // transactions
-    auto mTra = traRx.find(str);
-    if(!mTra.empty()) {
-      Transaction tr(mTra.get(1), mTra.get(2));
-      while(true) {
-        ++line;
-        std::string s;
-        std::getline(fp, s);
-        auto m1 = traOpRx.find(s);
-        auto m2 = traOpDefRx.find(s);
-        if(!m1.empty()) {
-          tr.add(m1.get(1), str2double(m1.get(2)));
-        } else if(!m2.empty()) {
-          tr.add(m2.get(1));
-        } else {
-          --line;
-          trans.push_back(tr);
-          break;
-        }
-      }
-    } // end transactions
-  } // end while
+      trans.push_back(tr);
+    } else {
+      token = lexer->nextWithIgnore(&scanner, ignores);
+    }
+  }  // while
   for(auto& t : trans) t.updateAccounts(accts);
 }
+
+// void Parser::parse(const std::string& f) {
+//   std::fstream fp;
+//   fp.open(f.c_str(), std::fstream::in);
+//   ASSERT(fp.is_open(), "Failed to read ledger file '%s'", f.c_str());
+//   std::string str;
+//   size_t line;
+//   while(std::getline(fp, str)) {
+//     // empty line or comments
+//     if(str.empty() || str[0] == '#') continue;
+//     // account definition
+//     auto mAcc = accRx.find(str);
+//     if(!mAcc.empty()) {
+//       accState.name = mAcc.get(1);
+//       while(true) {
+//         ++line;
+//         std::string s;
+//         std::getline(fp, s);
+//         auto m1 = accDescRx.find(s);
+//         auto m2 = accAliasRx.find(s);
+//         if(!m1.empty()) {
+//           accState.desc = m1.get(1);
+//         } else if(!m2.empty()) {
+//           accState.als.insert(m2.get(1));
+//         } else {
+//           --line;
+//           accts.push_back(Account(accState.name, accState.desc, accState.als));
+//           accState.clear();
+//           break;
+//         }
+//       }
+//       continue;
+//     } // end account definition
+//     // transactions
+//     auto mTra = traRx.find(str);
+//     if(!mTra.empty()) {
+//       Transaction tr(mTra.get(1), mTra.get(2));
+//       while(true) {
+//         ++line;
+//         std::string s;
+//         std::getline(fp, s);
+//         auto m1 = traOpRx.find(s);
+//         auto m2 = traOpDefRx.find(s);
+//         if(!m1.empty()) {
+//           tr.add(m1.get(1), str2double(m1.get(2)));
+//         } else if(!m2.empty()) {
+//           tr.add(m2.get(1));
+//         } else {
+//           --line;
+//           trans.push_back(tr);
+//           break;
+//         }
+//       }
+//     } // end transactions
+//   } // end while
+//   for(auto& t : trans) t.updateAccounts(accts);
+// }
 
 void Parser::reload() {
   trans.clear();

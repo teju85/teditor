@@ -58,8 +58,6 @@ private:
   Pcre traRx, traOpRx, traOpDefRx;
 
   void parse(const std::string& f);
-  void parse1(const std::string& f);
-  void parse2(const std::string& f);
 };
 
 } // end namespace ledger
