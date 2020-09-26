@@ -62,7 +62,7 @@ void ISearch::searchBuffer() {
 
 void ISearch::resetLocations(CmdMsgBar& cmBar) {
   cmBar.setStartLine(ml.getPoint().y);
-  cmBar.setOptLoc(0);
+  cmBar.setOptLoc(ml.getPoint().y);
 }
 
 void ISearch::updateMainBuffer(CmdMsgBar& cmBar) {
