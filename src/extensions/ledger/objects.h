@@ -6,7 +6,6 @@
 #include <vector>
 #include <stdio.h>
 #include <stdint.h>
-#include <iostream>
 
 namespace teditor {
 namespace ledger {
@@ -112,7 +111,6 @@ public:
     nam(n), dat(dateStr), accts() {}
 
   void add(const std::string& acct, double val) {
-    std::cout << nam << " acc=" << acct << " val=" << val << "\n";
     accts.push_back(AccInfo(acct, int64_t(val * 100.0)));
   }
 
@@ -120,7 +118,6 @@ public:
   void add(const std::string& acct) {
     int64_t val = 0;
     for(const auto& a : accts) val += a.second;
-    std::cout << nam << " acc=" << acct << " val=" << -val << "\n";
     accts.push_back(AccInfo(acct, -val));
   }
 
