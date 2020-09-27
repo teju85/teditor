@@ -27,7 +27,7 @@ class Grammar {
           const std::string& startSym);
 
   /** Get the lexer object made out of terminals */
-  std::shared_ptr<Lexer> getLexer() const;
+  std::shared_ptr<Lexer> getLexer() const { return lexer; }
 
   /** Gets unique id of the input symbol */
   uint32_t getId(const std::string& sym) const;
@@ -105,6 +105,7 @@ class Grammar {
   Strings ntNames;
   std::unordered_map<std::string, std::vector<uint32_t>> ntNameToProdIds;
   std::string start;
+  std::shared_ptr<Lexer> lexer;
 
   void addTerminal(const std::string& name, const std::string& regex);
   void addNonTerminal(const std::string& name, const Strings& syms);

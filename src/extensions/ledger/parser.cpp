@@ -33,8 +33,7 @@ parser::Grammar& getGrammar() {
   return grammar;
 }
 
-Parser::Parser(const std::string& f):
-  file(f), trans(), accts() {
+Parser::Parser(const std::string& f): file(f), trans(), accts() {
   parse(file);
 }
 
