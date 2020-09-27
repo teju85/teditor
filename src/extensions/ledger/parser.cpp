@@ -44,74 +44,83 @@ void Parser::parse(const std::string& f) {
   parser::BufferScanner scanner(buff);
   auto& g = getGrammar();
   auto lexer = g.getLexer();
-  std::unordered_set<uint32_t> ignores{
-    g.getId("Space"), g.getId("Newline"), g.getId("Comment")};
+  auto id_AccountStart = g.getId("AccountStart"),
+    id_Newline = g.getId("Newline"), id_Comment = g.getId("Comment"),
+    id_Space = g.getId("Space"), id_Name = g.getId("Name"),
+    id_AccountDescription = g.getId("AccountDescription"),
+    id_AccountAlias = g.getId("AccountAlias"),
+    id_Date = g.getId("Date"), id_Number = g.getId("Number");
+  std::unordered_set<uint32_t> ignores{id_Space, id_Newline, id_Comment};
   parser::Token token;
+  // to get the matched string
+  auto getString = [&]() -> std::string {
+    return scanner.at(token.start, token.end);
+  };
+  // to collect a full sentence from the current line
   auto collectSentence = [&]() -> std::string {
-    auto space = g.getId("Space");
     std::string ret;
     do {
-      token = lexer->nextWithIgnore(&scanner, space);
-      if (token.type == g.getId("Name")) {
-        ret += " " + scanner.at(token.start, token.end);
-      }
-    } while (token.type == g.getId("Name"));
-    ASSERT(token.type == g.getId("Newline"),
+      token = lexer->nextWithIgnore(&scanner, id_Space);
+      if (token.type == id_Name) ret += " " + getString();
+    } while (token.type == id_Name);
+    ASSERT(token.type == id_Newline,
            "Sentence must end with a newline '%s'. Found token=%s",
            ret.c_str(), g.getName(token.type).c_str());
     return ret;
   };
+  // reads next token
+  auto next = [&]() { token = lexer->nextWithIgnore(&scanner, ignores); };
   // main parser loop
-  token = lexer->nextWithIgnore(&scanner, ignores);
+  next();
   while (!token.isEof()) {
-    if (token.type == g.getId("AccountStart")) {  // account info
+    if (token.type == id_AccountStart) {  // account info
       // name
-      token = lexer->nextWithIgnore(&scanner, ignores);
-      ASSERT(token.type == g.getId("Name"), "Invalid token after 'account'");
-      auto accName = scanner.at(token.start, token.end);
+      next();
+      ASSERT(token.type == id_Name, "Invalid token after 'account'");
+      auto accName = getString();
       // description
-      token = lexer->nextWithIgnore(&scanner, ignores);
-      ASSERT(token.type == g.getId("AccountDescription"),
+      next();
+      ASSERT(token.type == id_AccountDescription,
              "Second line of account '%s' must be its description",
              accName.c_str());
       auto accDesc = collectSentence();
-      token = lexer->nextWithIgnore(&scanner, ignores);
-      ASSERT(token.type == g.getId("AccountAlias"),
+      next();
+      ASSERT(token.type == id_AccountAlias,
              "Account '%s' description must be followed by list of its aliases",
              accName.c_str());
       // alias
       Aliases accAls;
       do {
-        token = lexer->nextWithIgnore(&scanner, ignores);
-        ASSERT(token.type == g.getId("Name"),
+        next();
+        ASSERT(token.type == id_Name,
                "Account '%s' alias keyword must be followed by alias name",
                accName.c_str());
-        accAls.insert(scanner.at(token.start, token.end));
-      } while (token.type == g.getId("AccountAlias"));
+        accAls.insert(getString());
+      } while (token.type == id_AccountAlias);
       accts.push_back(Account(accName, accDesc, accAls));
-    } else if (token.type == g.getId("Date")) {  // transaction info
-      auto dateStr = scanner.at(token.start, token.end);
+    } else if (token.type == id_Date) {  // transaction info
+      auto dateStr = getString();
       // description
       auto desc = collectSentence();
-      token = lexer->nextWithIgnore(&scanner, ignores);
+      next();
       Transaction tr(dateStr, desc);
-      ASSERT(token.type == g.getId("Name"),
+      ASSERT(token.type == id_Name,
              "Transaction start of '%s' must be followed by account name",
              desc.c_str());
       // accounts
-      while (token.type == g.getId("Name")) {
-        auto acc = scanner.at(token.start, token.end);
-        token = lexer->nextWithIgnore(&scanner, ignores);
-        if (token.type == g.getId("Number")) {
-          tr.add(acc, str2double(scanner.at(token.start, token.end)));
-          token = lexer->nextWithIgnore(&scanner, ignores);
+      while (token.type == id_Name) {
+        auto acc = getString();
+        next();
+        if (token.type == id_Number) {
+          tr.add(acc, str2double(getString()));
+          next();
         } else {
           tr.add(acc);
         }
       }
       trans.push_back(tr);
     } else {
-      token = lexer->nextWithIgnore(&scanner, ignores);
+      next();
     }
   }  // while
   for(auto& t : trans) t.updateAccounts(accts);
