@@ -15,6 +15,13 @@ else
     PREFIX     := @
 endif
 
+OS_NAME        := $(shell uname -o)
+ifeq ($(OS_NAME),Cygwin)
+    STDCXX     := gnu++11
+else
+    STDCXX     := c++11
+endif
+
 BINDIR         := bin/$(TYPE)
 DEPDIR         := bin/.deps
 DOCDIR         := html
@@ -45,7 +52,7 @@ INCS           := $(foreach inc,$(INCLUDES),-I$(inc))
 CC             := gcc
 CCFLAGS        := -std=c99 $(INCS)
 CXX            := g++
-CXXFLAGS       := -std=gnu++11 -Wall -Werror $(INCS)
+CXXFLAGS       := -std=$(STDCXX) -Wall -Werror $(INCS)
 LD             := g++
 LDFLAGS        :=
 AR             := ar
