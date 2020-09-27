@@ -98,7 +98,8 @@ $(EXE): $(MAIN_OBJS) $(CORE_OBJS) $(LIBRARIES)
 	fi
 	$(PREFIX)$(LD) $(LDFLAGS) -o $@ $^
 
-tests: $(CATCH2_DIR) $(TESTEXE)
+tests: $(CATCH2_DIR)
+	$(MAKE) $(TESTEXE)
 	$(TESTEXE)
 
 $(TESTEXE): $(CORE_OBJS) $(TEST_OBJS) $(LIBRARIES)
