@@ -24,7 +24,7 @@ DEF_CMD(
     auto cmd = ed.prompt("Command to watch: ");
     if (cmd.empty()) return;
     CMBAR_MSG(ed, "Starting watch on '%s'...\n", cmd.c_str());
-    mode->start(&ed, &buf, cmd);
+    mode->start(&buf, cmd);
   },
   DEF_HELP() { return "Start a watch command."; });
 
@@ -39,7 +39,7 @@ DEF_CMD(
     if (sleep.empty()) return;
     CMBAR_MSG(ed, "Starting watch on '%s' with sleep-time=%s ms...\n",
               cmd.c_str(), sleep.c_str());
-    mode->start(&ed, &buf, cmd, str2num(sleep));
+    mode->start(&buf, cmd, str2num(sleep));
   },
   DEF_HELP() { return "Start a watch command."; });
 

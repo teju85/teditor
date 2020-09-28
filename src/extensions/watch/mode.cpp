@@ -3,7 +3,6 @@
 #include "core/utils.h"
 #include <chrono>
 #include <ctime>
-#include "core/editor.h"
 
 namespace teditor {
 namespace watch {
@@ -11,7 +10,7 @@ namespace watch {
 const int WatchMode::DefaultSleepMs = 1000;
 
 WatchMode::WatchMode():
-  readonly::ReadOnlyMode("watch"), editor(nullptr), buf(nullptr), watchCmd(),
+  readonly::ReadOnlyMode("watch"), buf(nullptr), watchCmd(),
   sleepMilliSec(DefaultSleepMs), alreadyRunning(false), runner() {
   populateKeyMap<WatchMode::Keys>(getKeyCmdMap());
   populateColorMap<WatchMode::Colors>(getColorMap());
@@ -29,17 +28,15 @@ void WatchMode::start() {
   auto lambda = [&]() {
     while (this->alreadyRunning) {
       this->writeOutput();
-      this->editor->refresh();
       std::this_thread::sleep_for(std::chrono::milliseconds(sleepMilliSec));
     }
   };
   runner.reset(new std::thread(lambda));
 }
 
-void WatchMode::start(Editor* ed, Buffer* b, const std::string& cmd, int sleepLenMs) {
+void WatchMode::start(Buffer* b, const std::string& cmd, int sleepLenMs) {
   if (cmd.empty()) return;
   if (alreadyRunning) stop();
-  editor = ed;
   buf = b;
   watchCmd = cmd;
   sleepMilliSec = sleepLenMs;
