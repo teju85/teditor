@@ -12,6 +12,7 @@
 #include "cmd_msg_bar.h"
 #include "window.h"
 #include "file_utils.h"
+#include <sys/time.h>
 
 namespace teditor {
 
@@ -84,6 +85,7 @@ private:
   ColorMap defcMap;
   KeyCmdMap ynMap;
   std::vector<FileInfo> files;
+  struct timeval timeout;
   FilesHist fileshist;
 
   /**

@@ -36,9 +36,11 @@ Editor::Editor(const std::vector<FileInfo>& _files):
   backbuff(), frontbuff(), lastfg(), lastbg(), cmBar(new CmdMsgBar), buffs(),
   cmBarArr(), windows(), quitEventLoop(false), quitPromptLoop(false),
   cancelPromptLoop(false), cmdMsgBarActive(false), defcMap(), ynMap(),
-  files(_files), fileshist(Option::get("histFile").getStr(),
-                           Option::get("maxHistory").getInt()) {
+  files(_files), timeout(),
+  fileshist(Option::get("histFile").getStr(), Option::get("maxHistory").getInt()) {
   DEBUG("Editor: ctor started\n");
+  timeout.tv_sec = 0;
+  timeout.tv_usec = Option::get("editor::pollTimeoutMs").getInt() * 1000;
   // This array is here only to make sure we get consistent interface to the
   // Window API.
   cmBarArr.push_back(cmBar);
@@ -215,6 +217,7 @@ void Editor::run() {
   std::string keySoFar, currKey;
   auto& term = Terminal::getInstance();
   while(true) {
+    refresh();
     auto& kcMap = getBuff().getKeyCmdMap();
     int status = pollEvent();
     DEBUG("Editor:run: status=%d meta=%u key=%u keystr='%s'\n", status,
@@ -223,7 +226,11 @@ void Editor::run() {
       MESSAGE(*this, "Editor:run:: Undefined sequence: %s\n",
               term.getOldSeq().c_str());
       continue;
-    } else if(status < 0) break;
+    } else if(status < 0) {
+      break;
+    } else if (status == 0) {
+      continue;
+    }
     switch(term.type) {
     case Event_Resize:
       clearBackBuff();
@@ -252,7 +259,6 @@ void Editor::run() {
     default:
       break;
     }
-    refresh();
     if(quitEventLoop) break;
   }
 }
@@ -498,7 +504,7 @@ void Editor::render() {
   Terminal::getInstance().flush();
 }
 
-int Editor::pollEvent() { return Terminal::getInstance().waitAndFill(nullptr); }
+int Editor::pollEvent() { return Terminal::getInstance().waitAndFill(&timeout); }
 
 key_t Editor::getKey() const { return Terminal::getInstance().mk.getKey(); }
 

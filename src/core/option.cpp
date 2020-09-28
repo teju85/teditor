@@ -86,6 +86,17 @@ std::string Option::type2str(Option::Type t) {
 void registerAllOptions() {
   Option::add("browserCmd", "cygstart firefox -private-window",
               "Command to fire up your favorite browser", Option::Type::String);
+  Option::add("calc:prompt", "expr> ", "Expression prompt during calc-mode",
+              Option::Type::String);
+  Option::add("calc:lineSeparator", std::string(80, '~'),
+              "Used for separating history from the prompt in calc-mode",
+              Option::Type::String);
+  Option::add("calc:histFile", "<homeFolder>/calc-history",
+              "Path to history file for calc-mode commands",
+              Option::Type::String);
+  Option::add("calc:maxHistory", "50",
+              "History size for storing all calc-mode commands",
+              Option::Type::Integer);
   Option::add("cmBar::height", "1", "Cmd-bar height", Option::Type::Integer);
   Option::add("cmBar::multiheight", "8", "Cmd-bar height during interaction",
               Option::Type::Integer);
@@ -93,6 +104,8 @@ void registerAllOptions() {
               Option::Type::String);
   Option::add("dnldProgOpts", "-s", "Options passed to <dnldProg>",
               Option::Type::String);
+  Option::add("editor::pollTimeoutMs", "50", "Input poll event timeout (in ms)",
+              Option::Type::Integer);
   Option::add("grepCmd", "grep -nH -e ", "Default grep command for prompting",
               Option::Type::String);
   Option::add("histFile", "<homeFolder>/history", "Path to history file",
@@ -121,19 +134,10 @@ void registerAllOptions() {
               Option::Type::Integer);
   Option::add("title", "teditor", "Window title", Option::Type::String);
   Option::add("tty", "/dev/tty", "Path to the tty file", Option::Type::String);
+  Option::add("watch::defaultTimeoutMs", "1000",
+              "Default timeout (in ms) between reruns", Option::Type::Integer);
   Option::add("windowSplitter", "|", "Character used as window splitter",
               Option::Type::Char);
-  Option::add("calc:prompt", "expr> ", "Expression prompt during calc-mode",
-              Option::Type::String);
-  Option::add("calc:lineSeparator", std::string(80, '~'),
-              "Used for separating history from the prompt in calc-mode",
-              Option::Type::String);
-  Option::add("calc:histFile", "<homeFolder>/calc-history",
-              "Path to history file for calc-mode commands",
-              Option::Type::String);
-  Option::add("calc:maxHistory", "50",
-              "History size for storing all calc-mode commands",
-              Option::Type::Integer);
 }
 
 void parseRcFile(const std::string& rc) {
