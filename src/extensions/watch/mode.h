@@ -2,6 +2,7 @@
 
 #include "../base/readonly.h"
 #include "core/buffer.h"
+#include <atomic>
 
 namespace teditor {
 namespace watch {
@@ -10,6 +11,7 @@ namespace watch {
 class WatchMode: public readonly::ReadOnlyMode {
  public:
   WatchMode();
+  ~WatchMode() { stop(); }
 
   Strings cmdNames() const;
 
@@ -18,8 +20,8 @@ class WatchMode: public readonly::ReadOnlyMode {
 
   void start(Buffer* buf, const std::string& cmd,
              int sleepLenMs = DefaultSleepMs);
-  void restart();
   void stop();
+  void restart() { stop(); start(); }
 
   int sleepTimeMs() const { return sleepMilliSec; }
 
@@ -32,9 +34,10 @@ class WatchMode: public readonly::ReadOnlyMode {
   Buffer* buf;  // NOT owned by this class
   std::string watchCmd;
   int sleepMilliSec;
-  bool alreadyRunning;
+  std::atomic<bool> alreadyRunning;
 
-  void writeOutput();
+  void start();
+  void writeOutput(const CmdStatus &res);
 };  // class WatchMode
 
 }  // namespace watch

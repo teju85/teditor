@@ -22,37 +22,30 @@ Strings WatchMode::cmdNames() const {
   });
 }
 
-void WatchMode::start(Buffer* b, const std::string& cmd, int sleepLenMs) {
-  if (cmd.empty()) return;
-  ///@todo: kill any existing async's
-  if (alreadyRunning) {
-  }
-  buf = b;
-  watchCmd = cmd;
+void WatchMode::start() {
+  if (watchCmd.empty() || alreadyRunning) return;
   alreadyRunning = true;
-  sleepMilliSec = sleepLenMs;
   ///@todo: do this in a loop with async!
-  writeOutput();
+  auto res = check_output(watchCmd);
+  writeOutput(res);
 }
 
-void WatchMode::restart() {
-  if (watchCmd.empty()) return;
-  ///@todo: kill any existing async's
-  if (alreadyRunning) {
-  }
-  ///@todo: do this in a loop with async!
-  writeOutput();
+void WatchMode::start(Buffer* b, const std::string& cmd, int sleepLenMs) {
+  if (cmd.empty()) return;
+  if (alreadyRunning) stop();
+  buf = b;
+  watchCmd = cmd;
+  sleepMilliSec = sleepLenMs;
+  start();
 }
 
 void WatchMode::stop() {
   if (!alreadyRunning) return;
-  buf = nullptr;
-  watchCmd.clear();
   alreadyRunning = false;
-  ///@todo: kill any existing async's
+  ///@todo: wait for the threads to stop
 }
 
-void WatchMode::writeOutput() {
+void WatchMode::writeOutput(const CmdStatus &res) {
   char timeStr[256] = {0};
   auto now = std::chrono::system_clock::now();
   auto asTime = std::chrono::system_clock::to_time_t(now);
@@ -62,7 +55,6 @@ void WatchMode::writeOutput() {
   auto str = format("Cmd     : %s\nRefresh : %d ms\n%s\n\n", watchCmd.c_str(),
                     sleepMilliSec, timeStr);
   buf->insert(str);
-  auto res = check_output(watchCmd);
   buf->insert("## Output\n");
   buf->insert(res.output);
   buf->insert("\n");
@@ -75,8 +67,8 @@ REGISTER_MODE(WatchMode, "watch");
 
 
 std::vector<KeyCmdPair> WatchMode::Keys::All = {
-  {"s", "watch-stop"},
-  {"r", "watch-restart"},
+  {"s", "watch::stop"},
+  {"r", "watch::restart"},
 };
 
 std::vector<NameColorPair> WatchMode::Colors::All = {};
