@@ -11,8 +11,10 @@ else
 endif
 ifeq ($(VERBOSE),1)
     PREFIX     :=
+    QUIET      :=
 else
     PREFIX     := @
+    QUIET      := --quiet
 endif
 
 OS_NAME        := $(shell uname -o)
@@ -34,6 +36,8 @@ EXE            := $(BINDIR)/teditor
 TESTEXE        := $(BINDIR)/tests
 
 MKDIR_P        := mkdir -p
+
+GIT_CLONE      := git clone $(QUIET) --recursive
 
 CATCH2_DIR     := bin/Catch2
 
@@ -151,7 +155,10 @@ doc:
 	doxygen Doxyfile
 
 $(CATCH2_DIR):
-	$(PREFIX)git clone --recursive https://github.com/catchorg/Catch2 $@
+	@if [ "$(VERBOSE)" = "0" ]; then \
+	    echo "Cloning   $@ ..."; \
+	fi
+	$(PREFIX)$(GIT_CLONE) https://github.com/catchorg/Catch2 $@
 
 
 TS_RT_OBJ      := $(TS_BINDIR)/runtime.o
