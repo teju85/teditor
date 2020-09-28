@@ -17,7 +17,7 @@ WatchMode::WatchMode():
 
 Strings WatchMode::cmdNames() const {
   return allCmdNames([](const std::string& name) {
-    return name[0] != '.' && name.find("watch::") == 0;
+    return (name[0] != '.' && name.find("watch::") == 0) || (name == "watch");
   });
 }
 
