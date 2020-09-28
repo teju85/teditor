@@ -101,23 +101,24 @@ teditor: $(EXE)
 
 $(EXE): $(MAIN_OBJS) $(CORE_OBJS) $(LIBRARIES)
 	@if [ "$(VERBOSE)" = "0" ]; then \
-	    echo "Building $@ ..."; \
+	    echo "Building  $@ ..."; \
 	fi
 	$(PREFIX)$(LD) $(LDFLAGS) -o $@ $^
 
-tests: $(CATCH2_DIR)
-	$(MAKE) $(TESTEXE)
+tests: $(TESTEXE)
 	$(TESTEXE)
+
+$(TEST_OBJS): $(CATCH2_DIR)
 
 $(TESTEXE): $(CORE_OBJS) $(TEST_OBJS) $(LIBRARIES)
 	@if [ "$(VERBOSE)" = "0" ]; then \
-	    echo "Building $@ ..."; \
+	    echo "Building  $@ ..."; \
 	fi
 	$(PREFIX)$(LD) $(LDFLAGS) -o $@ $^
 
 $(BINDIR)/%.o: %.cpp $(DEPDIR)/%.d
 	@if [ "$(VERBOSE)" = "0" ]; then \
-	    echo "Compiling $< ..."; \
+	    echo "Compiling CXX $< ..."; \
 	fi
 	$(PREFIX)$(MKDIR_P) $(shell dirname $@)
 	$(PREFIX)$(MKDIR_P) $(shell dirname $(DEPDIR)/$*d)
@@ -130,7 +131,7 @@ clean:
 	rm -rf $(DEPFILES)
 
 clean_all: clean tree-sitter-clean
-	rm -rf $(BINDIR) $(DOCDIR)
+	rm -rf $(BINDIR) $(DOCDIR) $(CATCH2_DIR)
 
 debug:
 	$(MAKE) DEBUG=1 -j teditor
@@ -163,25 +164,25 @@ TS_ALL_OBJS    := $(TS_RT_OBJ) \
 
 $(TS_LIB): $(TS_ALL_OBJS) | tree-sitter-make-dir
 	@if [ "$(VERBOSE)" = "0" ]; then \
-	    echo "Linking $@ ..."; \
+	    echo "Linking   $@ ..."; \
 	fi
 	$(PREFIX)$(AR) $(ARFLAGS) $@ $^
 
 $(TS_RT_OBJ): $(TS_DIR)/src/runtime/runtime.c
 	@if [ "$(VERBOSE)" = "0" ]; then \
-	    echo "Compiling $< ..."; \
+	    echo "Compiling C   $< ..."; \
 	fi
 	$(PREFIX)$(CC) -c $(CCFLAGS) -o $@ $<
 
 $(TS_BINDIR)/parser-%.o: $(TS_DIR)-%/src/parser.c
 	@if [ "$(VERBOSE)" = "0" ]; then \
-	    echo "Compiling $< ..."; \
+	    echo "Compiling C   $< ..."; \
 	fi
 	$(PREFIX)$(CC) -c $(CCFLAGS) -o $@ $<
 
 $(TS_BINDIR)/scanner-%.o: $(TS_DIR)-%/src/scanner.cc
 	@if [ "$(VERBOSE)" = "0" ]; then \
-	    echo "Compiling $< ..."; \
+	    echo "Compiling C   $< ..."; \
 	fi
 	$(PREFIX)$(CXX) $(CXXFLAGS) -c -o $@ $<
 
