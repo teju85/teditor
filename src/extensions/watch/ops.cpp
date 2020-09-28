@@ -27,6 +27,19 @@ DEF_CMD(
   DEF_HELP() { return "Start a watch command."; });
 
 DEF_CMD(
+  WatchSleep, "watch-sleep", DEF_OP() {
+    auto& buf = getWatchBuff(ed);
+    ed.switchToBuff("*watch");
+    auto* mode = buf.getMode<watch::WatchMode>("watch");
+    auto cmd = ed.prompt("Command to watch: ");
+    if (cmd.empty()) return;
+    auto sleep = ed.prompt("Sleep time (in ms) between retries: ");
+    if (sleep.empty()) return;
+    mode->start(&buf, cmd, str2num(sleep));
+  },
+  DEF_HELP() { return "Start a watch command."; });
+
+DEF_CMD(
   WatchStop, "watch::stop", DEF_OP() {
     auto& buf = getWatchBuff(ed);
     ed.switchToBuff("*watch");
