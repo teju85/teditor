@@ -3,15 +3,16 @@
 #include "core/utils.h"
 #include <chrono>
 #include <ctime>
+#include "core/editor.h"
 
 namespace teditor {
 namespace watch {
 
-const int WatchMode::DefaultSleepMs = 100;
+const int WatchMode::DefaultSleepMs = 1000;
 
-WatchMode::WatchMode(): readonly::ReadOnlyMode("watch"), buf(nullptr),
-                        watchCmd(), sleepMilliSec(DefaultSleepMs),
-                        alreadyRunning(false) {
+WatchMode::WatchMode():
+  readonly::ReadOnlyMode("watch"), editor(nullptr), buf(nullptr), watchCmd(),
+  sleepMilliSec(DefaultSleepMs), alreadyRunning(false), runner() {
   populateKeyMap<WatchMode::Keys>(getKeyCmdMap());
   populateColorMap<WatchMode::Colors>(getColorMap());
 }
@@ -25,14 +26,20 @@ Strings WatchMode::cmdNames() const {
 void WatchMode::start() {
   if (watchCmd.empty() || alreadyRunning) return;
   alreadyRunning = true;
-  ///@todo: do this in a loop with async!
-  auto res = check_output(watchCmd);
-  writeOutput(res);
+  auto lambda = [&]() {
+    while (this->alreadyRunning) {
+      this->writeOutput();
+      this->editor->refresh();
+      std::this_thread::sleep_for(std::chrono::milliseconds(sleepMilliSec));
+    }
+  };
+  runner.reset(new std::thread(lambda));
 }
 
-void WatchMode::start(Buffer* b, const std::string& cmd, int sleepLenMs) {
+void WatchMode::start(Editor* ed, Buffer* b, const std::string& cmd, int sleepLenMs) {
   if (cmd.empty()) return;
   if (alreadyRunning) stop();
+  editor = ed;
   buf = b;
   watchCmd = cmd;
   sleepMilliSec = sleepLenMs;
@@ -42,10 +49,11 @@ void WatchMode::start(Buffer* b, const std::string& cmd, int sleepLenMs) {
 void WatchMode::stop() {
   if (!alreadyRunning) return;
   alreadyRunning = false;
-  ///@todo: wait for the threads to stop
+  runner->join();
 }
 
-void WatchMode::writeOutput(const CmdStatus &res) {
+void WatchMode::writeOutput() {
+  auto res = check_output(watchCmd);
   char timeStr[256] = {0};
   auto now = std::chrono::system_clock::now();
   auto asTime = std::chrono::system_clock::to_time_t(now);

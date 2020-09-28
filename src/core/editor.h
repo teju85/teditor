@@ -72,6 +72,7 @@ public:
   bool splitVertically() { return windows.splitVertically(); }
   void clearAllWindows() { return windows.clearAll(); }
   void incrementCurrWin() { windows.incrementCurrWin(); }
+  void refresh() { draw(); render(); }
 
 private:
   CellBuffer backbuff, frontbuff;
