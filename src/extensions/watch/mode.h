@@ -21,7 +21,7 @@ class WatchMode: public readonly::ReadOnlyMode {
   static bool modeCheck(const std::string& file) { return file == "*watch"; }
 
   void start(Buffer* buf, const std::string& cmd,
-             int sleepLenMs = DefaultSleepMs);
+             int sleepLenMs = 0);
   void stop();
   void restart() { stop(); start(); }
 
@@ -31,10 +31,9 @@ class WatchMode: public readonly::ReadOnlyMode {
   struct Keys { static std::vector<KeyCmdPair> All; };
   struct Colors { static std::vector<NameColorPair> All; };
 
-  static const int DefaultSleepMs;
-
   Buffer* buf;  // NOT owned by this class
   std::string watchCmd;
+  int defaultSleepMilliSec;
   int sleepMilliSec;
   std::atomic<bool> alreadyRunning;
   std::shared_ptr<std::thread> runner;

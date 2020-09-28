@@ -7,11 +7,10 @@
 namespace teditor {
 namespace watch {
 
-const int WatchMode::DefaultSleepMs = 1000;
-
 WatchMode::WatchMode():
   readonly::ReadOnlyMode("watch"), buf(nullptr), watchCmd(),
-  sleepMilliSec(DefaultSleepMs), alreadyRunning(false), runner() {
+  defaultSleepMilliSec(Option::get("watch::defaultSleepMs").getInt()),
+  sleepMilliSec(defaultSleepMilliSec), alreadyRunning(false), runner() {
   populateKeyMap<WatchMode::Keys>(getKeyCmdMap());
   populateColorMap<WatchMode::Colors>(getColorMap());
 }
@@ -39,7 +38,7 @@ void WatchMode::start(Buffer* b, const std::string& cmd, int sleepLenMs) {
   if (alreadyRunning) stop();
   buf = b;
   watchCmd = cmd;
-  sleepMilliSec = sleepLenMs;
+  sleepMilliSec = sleepLenMs <= 0 ? defaultSleepMilliSec : sleepLenMs;
   start();
 }
 

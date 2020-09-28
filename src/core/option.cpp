@@ -134,8 +134,9 @@ void registerAllOptions() {
               Option::Type::Integer);
   Option::add("title", "teditor", "Window title", Option::Type::String);
   Option::add("tty", "/dev/tty", "Path to the tty file", Option::Type::String);
-  Option::add("watch::defaultTimeoutMs", "1000",
-              "Default timeout (in ms) between reruns", Option::Type::Integer);
+  Option::add("watch::defaultSleepMs", "1000",
+              "Default sleep duration (in ms) between reruns in watch-mode",
+              Option::Type::Integer);
   Option::add("windowSplitter", "|", "Character used as window splitter",
               Option::Type::Char);
 }
