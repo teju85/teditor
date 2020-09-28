@@ -27,7 +27,7 @@ DEF_CMD(
   DEF_HELP() { return "Start a watch command."; });
 
 DEF_CMD(
-  WatchStop, "watch-stop", DEF_OP() {
+  WatchStop, "watch::stop", DEF_OP() {
     auto& buf = getWatchBuff(ed);
     ed.switchToBuff("*watch");
     auto* mode = buf.getMode<watch::WatchMode>("watch");
@@ -36,7 +36,7 @@ DEF_CMD(
   DEF_HELP() { return "Stops the underlying watch command."; });
 
 DEF_CMD(
-  WatchRestart, "watch-restart", DEF_OP() {
+  WatchRestart, "watch::restart", DEF_OP() {
     auto& buf = getWatchBuff(ed);
     ed.switchToBuff("*watch");
     auto* mode = buf.getMode<watch::WatchMode>("watch");

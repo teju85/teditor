@@ -11,6 +11,8 @@ class WatchMode: public readonly::ReadOnlyMode {
  public:
   WatchMode();
 
+  Strings cmdNames() const;
+
   static Mode* create() { return new WatchMode; }
   static bool modeCheck(const std::string& file) { return file == "*watch"; }
 

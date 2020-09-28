@@ -16,6 +16,12 @@ WatchMode::WatchMode(): readonly::ReadOnlyMode("watch"), buf(nullptr),
   populateColorMap<WatchMode::Colors>(getColorMap());
 }
 
+Strings WatchMode::cmdNames() const {
+  return allCmdNames([](const std::string& name) {
+    return name[0] != '.' && name.find("watch::") == 0;
+  });
+}
+
 void WatchMode::start(Buffer* b, const std::string& cmd, int sleepLenMs) {
   if (cmd.empty()) return;
   ///@todo: kill any existing async's
