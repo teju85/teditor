@@ -1,6 +1,7 @@
 #include "core/editor.h"
 #include "core/command.h"
 #include "mode.h"
+#include "core/option.h"
 
 namespace teditor {
 namespace todo {
@@ -15,17 +16,11 @@ Buffer& getTodoShowBuff(Editor& ed) {
 }
 
 DEF_CMD(
-  TodoShowCmd, "todo::show", DEF_OP() {
-    auto& currBuf = ed.getBuff();
-    if (currBuf.modeName() != "todo") {
-      CMBAR_MSG(ed, "Current buffer doesn't have a todo file in it!\n");
-      return;
-    }
-    //auto& buf = getTodoShowBuff(ed);
-    //auto* mode = buf.getMode<todo::TodoShowMode>("todo-show");
-    ed.switchToBuff("*todo");
+  TodoOpen, "todo", DEF_OP() {
+    auto todoFile = Option::get("todo::file").getStr();
+    ed.load(todoFile, 0);
   },
-  DEF_HELP() { return "Starts todo-mode buffer, if not already done."; });
+  DEF_HELP() { return "Opens the todo file in a new buffer."; });
 
 } // end namespace ops
 } // end namespace todo

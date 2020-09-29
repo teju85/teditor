@@ -133,6 +133,9 @@ void registerAllOptions() {
   Option::add("tabSpaces", "2", "Number of spaces per tab",
               Option::Type::Integer);
   Option::add("title", "teditor", "Window title", Option::Type::String);
+  Option::add("todo::file", "<homeFolder>/tasks.todo",
+              "File containing list of tasks to todo and/or set reminders for",
+              Option::Type::String);
   Option::add("tty", "/dev/tty", "Path to the tty file", Option::Type::String);
   Option::add("watch::defaultSleepMs", "1000",
               "Default sleep duration (in ms) between reruns in watch-mode",
