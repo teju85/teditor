@@ -111,6 +111,8 @@ bool iStrFind(const std::string& line, const std::string& str);
 void dos2unix(std::string& in);
 std::string dos2unix(const std::string& in);
 
+std::string getCurrentTimeAsString();
+
 
 /**
  * @brief Container to store history (files-visited or command-history, etc)

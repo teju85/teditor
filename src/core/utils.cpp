@@ -13,7 +13,8 @@
 #include <iostream>
 #include <cctype>
 #include "file_utils.h"
-
+#include <chrono>
+#include <ctime>
 
 namespace teditor {
 
@@ -264,6 +265,15 @@ std::string dos2unix(const std::string& in) {
   std::string out(in);
   dos2unix(out);
   return out;
+}
+
+std::string getCurrentTimeAsString() {
+  char timeStr[256] = {0};
+  auto now = std::chrono::system_clock::now();
+  auto asTime = std::chrono::system_clock::to_time_t(now);
+  std::strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S %Z",
+                std::localtime(&asTime));
+  return std::string(timeStr);
 }
 
 

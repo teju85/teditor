@@ -2,7 +2,6 @@
 #include "core/option.h"
 #include "core/utils.h"
 #include <chrono>
-#include <ctime>
 
 namespace teditor {
 namespace watch {
@@ -50,14 +49,10 @@ void WatchMode::stop() {
 
 void WatchMode::writeOutput() {
   auto res = check_output(watchCmd);
-  char timeStr[256] = {0};
-  auto now = std::chrono::system_clock::now();
-  auto asTime = std::chrono::system_clock::to_time_t(now);
-  std::strftime(timeStr, sizeof(timeStr), "Time   : %Y-%m-%d %H:%M:%S",
-                std::localtime(&asTime));
+  auto curr = getCurrentTimeAsString();
   buf->clear();
-  auto str = format("Cmd     : %s\nRefresh : %d ms\n%s\n\n", watchCmd.c_str(),
-                    sleepMilliSec, timeStr);
+  auto str = format("Cmd     : %s\nRefresh : %d ms\nTime    : %s\n\n",
+                    watchCmd.c_str(), sleepMilliSec, curr.c_str());
   buf->insert(str);
   buf->insert("## Output\n");
   buf->insert(res.output);
