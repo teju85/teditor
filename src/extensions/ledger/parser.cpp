@@ -8,7 +8,6 @@
 #include "core/parser/lexer.h"
 #include "core/parser/scanner.h"
 #include "core/buffer.h"
-#include <iostream>
 
 namespace teditor {
 namespace ledger {
