@@ -115,6 +115,7 @@ TEST_CASE("TimeUtils::fromString") {
     ts = timeToStr(s);
     REQUIRE(ts == "2020-01-01 00:00:00");
   }
+  REQUIRE_THROWS_AS(timeFromStr("2020:01:01"), std::runtime_error);
 }
 
 } // end namespace teditor
