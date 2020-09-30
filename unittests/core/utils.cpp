@@ -32,25 +32,6 @@ TEST_CASE("Utils::same") {
     REQUIRE_FALSE(same(strs1, strs2));
 }
 
-void sleep(int timeMs) {
-    clock_t goal = timeMs + clock();
-    while (goal > clock());
-}
-
-bool compareTestFunc(struct timeval a, struct timeval b) {
-    return a > b;
-}
-
-TEST_CASE("Utils::Timeval") {
-    struct timeval ta, tb;
-    gettimeofday(&ta, NULL);
-    sleep(500);
-    gettimeofday(&tb, NULL);
-    REQUIRE(compareTestFunc(tb, ta));
-    REQUIRE_FALSE(compareTestFunc(ta, tb));
-    REQUIRE_FALSE(compareTestFunc(ta, ta));
-}
-
 TEST_CASE("Utils::isDir") {
     REQUIRE(isDir("src"));
     REQUIRE_FALSE(isDir("README.org"));

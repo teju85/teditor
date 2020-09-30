@@ -1,6 +1,6 @@
 #include "mode.h"
 #include "core/option.h"
-#include "core/utils.h"
+#include "core/time_utils.h"
 #include <chrono>
 
 namespace teditor {
@@ -49,7 +49,7 @@ void WatchMode::stop() {
 
 void WatchMode::writeOutput() {
   auto res = check_output(watchCmd);
-  auto curr = getCurrentTimeAsString();
+  auto curr = currentTimeToStr();
   buf->clear();
   auto str = format("Cmd     : %s\nRefresh : %d ms\nTime    : %s\n\n",
                     watchCmd.c_str(), sleepMilliSec, curr.c_str());

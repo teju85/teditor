@@ -32,12 +32,6 @@ std::string format(const char* fmt, ...) {
   return str;
 }
 
-bool operator>(const struct timeval& ta, const struct timeval& tb) {
-  if(ta.tv_sec > tb.tv_sec) return true;
-  if((ta.tv_sec == tb.tv_sec) && (ta.tv_usec > tb.tv_usec)) return true;
-  return false;
-}
-
 std::string env(const std::string& s) {
   auto* val = getenv(s.c_str());
   return val == nullptr? "" : val;
@@ -265,15 +259,6 @@ std::string dos2unix(const std::string& in) {
   std::string out(in);
   dos2unix(out);
   return out;
-}
-
-std::string getCurrentTimeAsString() {
-  char timeStr[256] = {0};
-  auto now = std::chrono::system_clock::now();
-  auto asTime = std::chrono::system_clock::to_time_t(now);
-  std::strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S %Z",
-                std::localtime(&asTime));
-  return std::string(timeStr);
 }
 
 

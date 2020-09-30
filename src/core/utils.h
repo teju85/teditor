@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <string>
 #include <stdexcept>
-#include <time.h>
 #include <vector>
 #include <stdarg.h>
 
@@ -55,8 +54,6 @@ bool same(const std::vector<T>& s1, const std::vector<T>& s2) {
   return std::equal(s1.begin(), s1.end(), s2.begin());
 }
 
-
-bool operator>(const struct timeval& ta, const struct timeval& tb);
 
 std::string env(const std::string& s);
 std::string expandEnvVars(const std::string& str);
@@ -110,8 +107,6 @@ bool iStrFind(const std::string& line, const std::string& str);
 
 void dos2unix(std::string& in);
 std::string dos2unix(const std::string& in);
-
-std::string getCurrentTimeAsString();
 
 
 /**
