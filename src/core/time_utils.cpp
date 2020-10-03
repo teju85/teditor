@@ -18,11 +18,20 @@ const std::string& timeFormat() {
   return fmt;
 }
 
-std::string timeToStr(const std::chrono::system_clock::time_point& pt) {
+struct tm toStructTm(const std::chrono::system_clock::time_point& pt) {
   auto asTime = std::chrono::system_clock::to_time_t(pt);
+  return *std::localtime(&asTime);
+}
+
+std::chrono::system_clock::time_point toTimePoint(struct tm& tm_) {
+  auto time_ = std::mktime(&tm_);
+  return std::chrono::system_clock::from_time_t(time_);
+}
+
+std::string timeToStr(const std::chrono::system_clock::time_point& pt) {
+  auto tm_ = toStructTm(pt);
   char timeStr[256] = {0};
-  std::strftime(
-    timeStr, sizeof(timeStr), timeFormat().c_str(), std::localtime(&asTime));
+  std::strftime(timeStr, sizeof(timeStr), timeFormat().c_str(), &tm_);
   return std::string(timeStr);
 }
 
@@ -41,13 +50,13 @@ std::chrono::system_clock::time_point timeFromStr(const std::string& dt) {
     struct tm t;
     std::memset(&t, 0, sizeof(struct tm));
     iss >> std::get_time(&t, f.c_str());
-    if (!iss.fail()) {
-      auto time_ = std::mktime(&t);
-      auto ret = std::chrono::system_clock::from_time_t(time_);
-      return ret;
-    }
+    if (!iss.fail()) return toTimePoint(t);
   }
   ASSERT(false, "Incorrect date-time string passed '%s'!", dt.c_str());
+}
+
+int dayOfWeek(const std::chrono::system_clock::time_point& pt) {
+  return toStructTm(pt).tm_wday;
 }
 
 }  // namespace teditor

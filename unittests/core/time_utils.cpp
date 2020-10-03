@@ -118,4 +118,19 @@ TEST_CASE("TimeUtils::fromString") {
   REQUIRE_THROWS_AS(timeFromStr("2020:01:01"), std::runtime_error);
 }
 
+TEST_CASE("dayOfWeek") {
+  REQUIRE(3 == dayOfWeek(timeFromStr("2020-09-30")));
+  REQUIRE(4 == dayOfWeek(timeFromStr("2020-10-01")));
+  REQUIRE(5 == dayOfWeek(timeFromStr("2020-10-02")));
+  REQUIRE(6 == dayOfWeek(timeFromStr("2020-10-03")));
+  REQUIRE(0 == dayOfWeek(timeFromStr("2020-10-04")));
+  REQUIRE(1 == dayOfWeek(timeFromStr("2020-10-05")));
+  REQUIRE(2 == dayOfWeek(timeFromStr("2020-10-06")));
+  REQUIRE(3 == dayOfWeek(timeFromStr("2020-10-07")));
+  REQUIRE(4 == dayOfWeek(timeFromStr("2020-10-08")));
+  REQUIRE(5 == dayOfWeek(timeFromStr("2020-10-09")));
+  REQUIRE(6 == dayOfWeek(timeFromStr("2020-10-10")));
+  REQUIRE(2 == dayOfWeek(timeFromStr("2020-10-06 12:00:10")));
+}
+
 } // end namespace teditor
