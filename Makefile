@@ -11,10 +11,10 @@ else
 endif
 ifeq ($(VERBOSE),1)
     PREFIX     :=
-    QUIET      :=
+    CURL_QUIET :=
 else
     PREFIX     := @
-    QUIET      := --quiet
+    CURL_QUIET := -s
 endif
 
 OS_NAME        := $(shell uname -o)
@@ -24,9 +24,10 @@ else
     STDCXX     := c++11
 endif
 
-BINDIR         := bin/$(TYPE)
-DEPDIR         := bin/.deps
-DOCDIR         := html
+BINROOT        := bin
+BINDIR         := $(BINROOT)/$(TYPE)
+DEPDIR         := $(BINROOT)/.deps
+DOCDIR         := $(BINROOT)/html
 
 SRC            := src
 TESTS          := unittests
@@ -37,13 +38,14 @@ TESTEXE        := $(BINDIR)/tests
 
 MKDIR_P        := mkdir -p
 
-GIT_CLONE      := git clone $(QUIET) --recursive
+CURL           := curl
 
-CATCH2_DIR     := bin/Catch2
+CATCH2_DIR     := $(BINROOT)/Catch2
+CATCH2_HEADER  := https://raw.githubusercontent.com/catchorg/Catch2/master/single_include/catch2/catch.hpp
 
 INCLUDES       := $(SRC) \
                   $(TESTS) \
-                  $(CATCH2_DIR)/single_include/catch2
+                  $(CATCH2_DIR)
 LIBRARIES      :=
 INCS           := $(foreach inc,$(INCLUDES),-I$(inc))
 CC             := gcc
@@ -127,8 +129,8 @@ clean:
 	rm -rf $(TEST_OBJS) $(TESTEXE)
 	rm -rf $(DEPFILES)
 
-clean_all: clean
-	rm -rf $(BINDIR) $(DOCDIR) $(CATCH2_DIR)
+clean_all:
+	rm -rf $(BINDIR)
 
 debug:
 	$(MAKE) DEBUG=1 -j teditor
@@ -145,13 +147,15 @@ stats:
 
 doc:
 	rm -rf $(DOCDIR)
+	$(MKDIR_P) $(BINDIR)
 	doxygen Doxyfile
 
 $(CATCH2_DIR):
 	@if [ "$(VERBOSE)" = "0" ]; then \
-	    echo "Cloning   $@ ..."; \
+	    echo "Downloading $@ ..."; \
 	fi
-	$(PREFIX)$(GIT_CLONE) https://github.com/catchorg/Catch2 $@
+	$(PREFIX)$(MKDIR_P) $@
+	$(PREFIX)$(CURL) $(CURL_QUIET) -o $@/catch.hpp $(CATCH2_HEADER)
 
 $(DEPFILES):
 
