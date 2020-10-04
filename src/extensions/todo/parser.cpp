@@ -15,13 +15,14 @@ namespace todo {
 std::vector<parser::Grammar::TerminalDef>& getTokens() {
   static std::vector<parser::Grammar::TerminalDef> tokens = {
     {"Comment", "# [^\r\n]+"},
-    // [Name]
-    {"Name", "\\[[^\\[\\]]+\\]"},
+    // different keywords
+    {"Keywords", "(on|for|repeat|until)"},
     // YYYY-MM-DD HH:MM:SS
-    {"Date", "(x|(\\d\\d\\d\\d))-(x|(\\d\\d))-(x|(\\d\\d)) "
-     "((x|(\\d\\d)):(x|(\\d\\d)):(x|(\\d\\d)))?"},
+    {"Date", "\\d\\d\\d\\d-\\d\\d-\\d\\d (\\d\\d:\\d\\d:\\d\\d)?"},
     // string
     {"String", "\"[^\"]*\""},
+    // repetition type
+    {"RepeatType", "(yearly|monthly|weekly|daily)"},
     {"Newline", parser::Regexs::Newline},
     {"Space", "\\s+"},
   };
@@ -31,10 +32,6 @@ std::vector<parser::Grammar::TerminalDef>& getTokens() {
 parser::Grammar& getGrammar() {
   static parser::Grammar grammar(getTokens(), {}, "");
   return grammar;
-}
-
-Parser::Parser(const std::string& f): file(f) {
-  parse(file);
 }
 
 void Parser::parse(const std::string& f) {

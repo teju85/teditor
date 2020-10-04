@@ -6,7 +6,7 @@ namespace todo {
 /** todo file parser! */
 class Parser {
 public:
-  Parser(const std::string& f);
+  Parser(const std::string& f): file(f) { reload(); }
 
   void reload() { parse(file); }
 
