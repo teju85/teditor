@@ -41,17 +41,10 @@ GIT_CLONE      := git clone $(QUIET) --recursive
 
 CATCH2_DIR     := bin/Catch2
 
-TS_DIR         := external/tree-sitter
-TS_BINDIR      := $(BINDIR)/tree-sitter
-TS_LIB         := $(TS_BINDIR)/libts.a
-
 INCLUDES       := $(SRC) \
                   $(TESTS) \
-                  $(CATCH2_DIR)/single_include/catch2 \
-                  $(TS_DIR)/src \
-                  $(TS_DIR)/include \
-                  $(TS_DIR)/externals/utf8proc
-LIBRARIES      := $(TS_LIB)
+                  $(CATCH2_DIR)/single_include/catch2
+LIBRARIES      :=
 INCS           := $(foreach inc,$(INCLUDES),-I$(inc))
 CC             := gcc
 CCFLAGS        := -std=c99 $(INCS)
@@ -134,7 +127,7 @@ clean:
 	rm -rf $(TEST_OBJS) $(TESTEXE)
 	rm -rf $(DEPFILES)
 
-clean_all: clean tree-sitter-clean
+clean_all: clean
 	rm -rf $(BINDIR) $(DOCDIR) $(CATCH2_DIR)
 
 debug:
@@ -159,45 +152,6 @@ $(CATCH2_DIR):
 	    echo "Cloning   $@ ..."; \
 	fi
 	$(PREFIX)$(GIT_CLONE) https://github.com/catchorg/Catch2 $@
-
-
-TS_RT_OBJ      := $(TS_BINDIR)/runtime.o
-TS_ALL_OBJS    := $(TS_RT_OBJ) \
-                  $(TS_BINDIR)/parser-c.o \
-                  $(TS_BINDIR)/parser-cpp.o \
-                  $(TS_BINDIR)/scanner-cpp.o \
-                  $(TS_BINDIR)/parser-javascript.o \
-                  $(TS_BINDIR)/parser-json.o
-
-$(TS_LIB): $(TS_ALL_OBJS) | tree-sitter-make-dir
-	@if [ "$(VERBOSE)" = "0" ]; then \
-	    echo "Linking   $@ ..."; \
-	fi
-	$(PREFIX)$(AR) $(ARFLAGS) $@ $^
-
-$(TS_RT_OBJ): $(TS_DIR)/src/runtime/runtime.c
-	@if [ "$(VERBOSE)" = "0" ]; then \
-	    echo "Compiling C   $< ..."; \
-	fi
-	$(PREFIX)$(CC) -c $(CCFLAGS) -o $@ $<
-
-$(TS_BINDIR)/parser-%.o: $(TS_DIR)-%/src/parser.c
-	@if [ "$(VERBOSE)" = "0" ]; then \
-	    echo "Compiling C   $< ..."; \
-	fi
-	$(PREFIX)$(CC) -c $(CCFLAGS) -o $@ $<
-
-$(TS_BINDIR)/scanner-%.o: $(TS_DIR)-%/src/scanner.cc
-	@if [ "$(VERBOSE)" = "0" ]; then \
-	    echo "Compiling C   $< ..."; \
-	fi
-	$(PREFIX)$(CXX) $(CXXFLAGS) -c -o $@ $<
-
-tree-sitter-make-dir:
-	$(PREFIX)$(MKDIR_P) $(TS_BINDIR)
-
-tree-sitter-clean:
-	rm -rf $(TS_ALL_OBJS) $(TS_LIB)
 
 $(DEPFILES):
 
