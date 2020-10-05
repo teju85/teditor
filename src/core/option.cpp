@@ -114,6 +114,8 @@ void registerAllOptions() {
               Option::Type::String);
   Option::add("iCaseSearch", "NO", "Perform case insensitive searches",
               Option::Type::Boolean);
+  Option::add("ledger::file", "<homeFolder>/ledger.lg",
+              "Ledger file for double-entry book-keeping", Option::Type::String);
   Option::add("logLevel", "-1", "Spew verbosity. Higher value means more spews",
               Option::Type::Integer);
   Option::add("maxHistory", "25", "History size for storing all files visited",

@@ -15,8 +15,8 @@ class LedgerShowMode: public readonly::ReadOnlyMode {
   static Mode* create() { return new LedgerShowMode; }
   static bool modeCheck(const std::string& file) { return file == "*ledger"; }
 
-  void showTopAccounts(Buffer& buf, const std::string& file) const;
-  void showAllAccounts(Buffer& buf, const std::string& file) const;
+  void showTopAccounts(Buffer& buf) const;
+  void showAllAccounts(Buffer& buf) const;
 
  private:
   struct Keys { static std::vector<KeyCmdPair> All; };

@@ -32,8 +32,8 @@ LedgerShowMode::LedgerShowMode(): readonly::ReadOnlyMode("ledger-show") {
   populateColorMap<LedgerShowMode::Colors>(getColorMap());
 }
 
-void LedgerShowMode::showTopAccounts(Buffer& buf,
-                                     const std::string& file) const {
+void LedgerShowMode::showTopAccounts(Buffer& buf) const {
+  auto file = Option::get("ledger::file").getStr();
   Parser p(file);
   Date min("0/0/0"), max("0/0/0");
   p.minmaxDates(min, max);
@@ -51,8 +51,8 @@ void LedgerShowMode::showTopAccounts(Buffer& buf,
   buf.insert(format("%12s  %-16s\n", valStr.c_str(), "Total"));
 }
 
-void LedgerShowMode::showAllAccounts(Buffer& buf,
-                                     const std::string& file) const {
+void LedgerShowMode::showAllAccounts(Buffer& buf) const {
+  auto file = Option::get("ledger::file").getStr();
   Parser p(file);
   Date min("0/0/0"), max("0/0/0");
   p.minmaxDates(min, max);
@@ -85,7 +85,10 @@ void LedgerShowMode::printHeader(Buffer& buf, const Date& min,
 
 REGISTER_MODE(LedgerShowMode, "ledger-show");
 
-std::vector<KeyCmdPair> LedgerShowMode::Keys::All = {};
+std::vector<KeyCmdPair> LedgerShowMode::Keys::All = {
+  {"a", "ledger::all"},
+  {"t", "ledger::top"}
+};
 
 std::vector<NameColorPair> LedgerShowMode::Colors::All = {};
 
