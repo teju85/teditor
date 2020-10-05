@@ -133,4 +133,59 @@ TEST_CASE("dayOfWeek") {
   REQUIRE(2 == dayOfWeek(timeFromStr("2020-10-06 12:00:10")));
 }
 
+TEST_CASE("addSecond") {
+  REQUIRE("2020-01-01 00:00:01" ==
+          timeToStr(addSecond(timeFromStr("2020-01-01"))));
+  REQUIRE("2020-01-01 00:01:00" ==
+          timeToStr(addSecond(timeFromStr("2020-01-01 00:00:59"))));
+  // hour end
+  REQUIRE("2020-01-01 12:00:00" ==
+          timeToStr(addSecond(timeFromStr("2020-01-01 11:59:59"))));
+  // day end
+  REQUIRE("2020-01-02 00:00:00" ==
+          timeToStr(addSecond(timeFromStr("2020-01-01 23:59:59"))));
+}
+
+TEST_CASE("addMinute") {
+  REQUIRE("2020-01-01 00:01:00" ==
+          timeToStr(addMinute(timeFromStr("2020-01-01"))));
+  // hour end
+  REQUIRE("2020-01-01 01:00:59" ==
+          timeToStr(addMinute(timeFromStr("2020-01-01 00:59:59"))));
+  // day end
+  REQUIRE("2020-01-02 00:00:00" ==
+          timeToStr(addMinute(timeFromStr("2020-01-01 23:59:00"))));
+}
+
+TEST_CASE("addHour") {
+  REQUIRE("2020-01-01 01:23:11" ==
+          timeToStr(addHour(timeFromStr("2020-01-01 00:23:11"))));
+  // day end
+  REQUIRE("2020-01-02 00:00:00" ==
+          timeToStr(addHour(timeFromStr("2020-01-01 23:00:00"))));
+}
+
+TEST_CASE("addDay") {
+  REQUIRE("2020-01-02 00:23:11" ==
+          timeToStr(addDay(timeFromStr("2020-01-01 00:23:11"))));
+  // month end
+  REQUIRE("2020-02-01 00:00:00" ==
+          timeToStr(addDay(timeFromStr("2020-01-31"))));
+  REQUIRE("2020-05-01 00:00:00" ==
+          timeToStr(addDay(timeFromStr("2020-04-30"))));
+  // leap year
+  REQUIRE("2020-02-29 00:00:00" ==
+          timeToStr(addDay(timeFromStr("2020-02-28"))));
+  REQUIRE("2019-03-01 00:00:00" ==
+          timeToStr(addDay(timeFromStr("2019-02-28"))));
+}
+
+TEST_CASE("addWeek") {
+  REQUIRE("2020-01-08 00:00:00" ==
+          timeToStr(addWeek(timeFromStr("2020-01-01"))));
+  // crossing month
+  REQUIRE("2020-10-05 00:00:00" ==
+          timeToStr(addWeek(timeFromStr("2020-09-28"))));
+}
+
 } // end namespace teditor

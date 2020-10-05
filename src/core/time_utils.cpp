@@ -4,6 +4,7 @@
 #include <vector>
 #include "utils.h"
 #include <cstring>
+#include <cstdlib>
 
 namespace teditor {
 
@@ -18,17 +19,17 @@ const std::string& timeFormat() {
   return fmt;
 }
 
-struct tm toStructTm(const std::chrono::system_clock::time_point& pt) {
+struct tm toStructTm(const TimePoint& pt) {
   auto asTime = std::chrono::system_clock::to_time_t(pt);
   return *std::localtime(&asTime);
 }
 
-std::chrono::system_clock::time_point toTimePoint(struct tm& tm_) {
+TimePoint toTimePoint(struct tm& tm_) {
   auto time_ = std::mktime(&tm_);
   return std::chrono::system_clock::from_time_t(time_);
 }
 
-std::string timeToStr(const std::chrono::system_clock::time_point& pt) {
+std::string timeToStr(const TimePoint& pt) {
   auto tm_ = toStructTm(pt);
   char timeStr[256] = {0};
   std::strftime(timeStr, sizeof(timeStr), timeFormat().c_str(), &tm_);
@@ -39,7 +40,7 @@ std::string currentTimeToStr() {
   return timeToStr(std::chrono::system_clock::now());
 }
 
-std::chrono::system_clock::time_point timeFromStr(const std::string& dt) {
+TimePoint timeFromStr(const std::string& dt) {
   static std::vector<std::string> fmts = {
     timeFormat(),
     "%Y-%m-%d %H:%M",
@@ -55,8 +56,28 @@ std::chrono::system_clock::time_point timeFromStr(const std::string& dt) {
   ASSERT(false, "Incorrect date-time string passed '%s'!", dt.c_str());
 }
 
-int dayOfWeek(const std::chrono::system_clock::time_point& pt) {
+int dayOfWeek(const TimePoint& pt) {
   return toStructTm(pt).tm_wday;
+}
+
+TimePoint addSecond(const TimePoint& pt) {
+  return pt + std::chrono::seconds(1);
+}
+
+TimePoint addMinute(const TimePoint& pt) {
+  return pt + std::chrono::seconds(60);
+}
+
+TimePoint addHour(const TimePoint& pt) {
+  return pt + std::chrono::seconds(60 * 60);
+}
+
+TimePoint addDay(const TimePoint& pt) {
+  return pt + std::chrono::seconds(24 * 60 * 60);
+}
+
+TimePoint addWeek(const TimePoint& pt) {
+  return pt + std::chrono::seconds(7 * 24 * 60 * 60);
 }
 
 }  // namespace teditor
