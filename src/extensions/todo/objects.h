@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <chrono>
+#include "core/time_utils.h"
 
 namespace teditor {
 namespace todo {
@@ -17,7 +17,8 @@ enum RepeatType {
 RepeatType strToRepeatType(const std::string& str);
 
 struct CalendarItem {
-  std::chrono::system_clock::time_point start, end;
+  TimePoint start;
+  TimePoint end;
   bool hasEnd;
   RepeatType repeat;
   std::string description;
