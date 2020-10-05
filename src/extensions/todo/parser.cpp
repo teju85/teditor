@@ -8,6 +8,7 @@
 #include "core/parser/lexer.h"
 #include "core/parser/scanner.h"
 #include "core/buffer.h"
+#include "core/time_utils.h"
 
 namespace teditor {
 namespace todo {
@@ -18,7 +19,7 @@ std::vector<parser::Grammar::TerminalDef>& getTokens() {
     // different keywords
     {"Keywords", "(on|for|repeat|until)"},
     // YYYY-MM-DD HH:MM:SS
-    {"Date", "\\d\\d\\d\\d-\\d\\d-\\d\\d (\\d\\d:\\d\\d:\\d\\d)?"},
+    {"Date", "\\d\\d\\d\\d-\\d\\d-\\d\\d( \\d\\d:\\d\\d:\\d\\d)?"},
     // string
     {"String", "\"[^\"]*\""},
     // repetition type
@@ -41,86 +42,64 @@ void Parser::parse(const std::string& f) {
   parser::BufferScanner scanner(buff);
   auto& g = getGrammar();
   auto lexer = g.getLexer();
-  // auto id_Comment = g.getId("Comment"), id_Name = g.getId("Name"),
-  //   id_Newline = g.getId("Newline"), id_Comment = g.getId("Comment"),
-  //   id_Space = g.getId("Space"), id_Name = g.getId("Name"),
-  //   id_AccountDescription = g.getId("AccountDescription"),
-  //   id_AccountAlias = g.getId("AccountAlias"),
-  //   id_Date = g.getId("Date"), id_Number = g.getId("Number");
-  // std::unordered_set<uint32_t> ignores{id_Space, id_Newline, id_Comment};
-  // parser::Token token;
-  // // to get the matched string
-  // auto getString = [&]() -> std::string {
-  //   return scanner.at(token.start, token.end);
-  // };
-  // // to collect a full sentence from the current line
-  // auto collectSentence = [&]() -> std::string {
-  //   std::string ret;
-  //   do {
-  //     token = lexer->nextWithIgnore(&scanner, id_Space);
-  //     if (token.type == id_Name) ret += " " + getString();
-  //   } while (token.type == id_Name);
-  //   ASSERT(token.type == id_Newline,
-  //          "Sentence must end with a newline '%s'. Found token=%s",
-  //          ret.c_str(), g.getName(token.type).c_str());
-  //   return ret;
-  // };
-  // // reads next token
-  // auto next = [&]() { token = lexer->nextWithIgnore(&scanner, ignores); };
-  // // main parser loop
-  // next();
-  // while (!token.isEof()) {
-  //   if (token.type == id_AccountStart) {  // account info
-  //     // name
-  //     next();
-  //     ASSERT(token.type == id_Name, "Invalid token after 'account'");
-  //     auto accName = getString();
-  //     // description
-  //     next();
-  //     ASSERT(token.type == id_AccountDescription,
-  //            "Second line of account '%s' must be its description",
-  //            accName.c_str());
-  //     auto accDesc = collectSentence();
-  //     next();
-  //     ASSERT(token.type == id_AccountAlias,
-  //            "Account '%s' description must be followed by list of its aliases",
-  //            accName.c_str());
-  //     // alias
-  //     Aliases accAls;
-  //     do {
-  //       next();
-  //       ASSERT(token.type == id_Name,
-  //              "Account '%s' alias keyword must be followed by alias name",
-  //              accName.c_str());
-  //       accAls.insert(getString());
-  //     } while (token.type == id_AccountAlias);
-  //     accts.push_back(Account(accName, accDesc, accAls));
-  //   } else if (token.type == id_Date) {  // transaction info
-  //     auto dateStr = getString();
-  //     // description
-  //     auto desc = collectSentence();
-  //     next();
-  //     Transaction tr(dateStr, desc);
-  //     ASSERT(token.type == id_Name,
-  //            "Transaction start of '%s' must be followed by account name",
-  //            desc.c_str());
-  //     // accounts
-  //     while (token.type == id_Name) {
-  //       auto acc = getString();
-  //       next();
-  //       if (token.type == id_Number) {
-  //         tr.add(acc, str2double(getString()));
-  //         next();
-  //       } else {
-  //         tr.add(acc);
-  //       }
-  //     }
-  //     trans.push_back(tr);
-  //   } else {
-  //     next();
-  //   }
-  // }  // while
-  // for(auto& t : trans) t.updateAccounts(accts);
+  auto id_Comment = g.getId("Comment"), id_Keywords = g.getId("Keywords"),
+    id_Date = g.getId("Date"), id_String = g.getId("String"),
+    id_RepeatType = g.getId("RepeatType"), id_Newline = g.getId("Newline"),
+    id_Space = g.getId("Space");
+  // reads next token
+  parser::Token token;
+  auto next = [&]() { token = lexer->nextWithIgnore(&scanner, id_Space); };
+  // to get the matched string
+  auto getString = [&]() -> std::string {
+    return scanner.at(token.start, token.end);
+  };
+  curr.clear();
+  items_.clear();
+  next();
+  while (!token.isEof()) {
+    if (token.type == id_Comment) {
+      next();
+      continue;
+    }
+    if (token.type == id_Newline) {
+      if (curr.hasStart) {
+        items_.push_back(curr);
+      }
+      curr.clear();
+      next();
+      continue;
+    }
+    ASSERT(token.type == id_Keywords, "Expected 'Keywords' token, found '%s'",
+           g.getName(token.type).c_str());
+    auto keyword = getString();
+    next();
+    auto value = getString();
+    if (keyword == "on") {  // on <date>
+      ASSERT(token.type == id_Date, "Expected 'Date' token, found '%s'",
+             g.getName(token.type).c_str());
+      curr.hasStart = true;
+      curr.start = timeFromStr(value);
+    } else if (keyword == "for") {  // for "description"
+      ASSERT(token.type == id_String, "Expected 'String' token, found '%s'",
+             g.getName(token.type).c_str());
+      curr.description = value;
+    } else if (keyword == "repeat") {  // repeat <repeatType>
+      ASSERT(token.type == id_RepeatType,
+             "Expected 'RepeatType' token, found '%s'",
+             g.getName(token.type).c_str());
+      curr.repeat = strToRepeatType(value);
+    } else if (keyword == "until") {  // until <date>
+      ASSERT(token.type == id_Date, "Expected 'Date' token, found '%s'",
+             g.getName(token.type).c_str());
+      curr.hasEnd = true;
+      curr.end = timeFromStr(value);
+    } else {
+      ASSERT(false, "Invalid keyword found '%s'", keyword.c_str());
+    }
+    next();
+  }
+  if (curr.hasStart) items_.push_back(curr);
+  curr.clear();
 }
 
 } // end namespace todo

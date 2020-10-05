@@ -15,5 +15,12 @@ RepeatType strToRepeatType(const std::string& str) {
   ASSERT(false, "Incorrect RepeatType string passed '%s'!", cstr);
 }
 
+void CalendarItem::clear() {
+  hasStart = false;
+  hasEnd = false;
+  repeat = Repeat_None;
+  description.clear();
+}
+
 }  // namespace todo
 }  // namespace teditor

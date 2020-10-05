@@ -15,5 +15,14 @@ TEST_CASE("RepeatType") {
   REQUIRE_THROWS_AS(strToRepeatType("bad-type"), std::runtime_error);
 }
 
+TEST_CASE("CalendarItem") {
+  CalendarItem item;
+  item.clear();
+  REQUIRE(!item.hasStart);
+  REQUIRE(!item.hasEnd);
+  REQUIRE(item.description.empty());
+  REQUIRE(item.repeat == Repeat_None);
+}
+
 }  // namespace todo
 }  // namespace teditor

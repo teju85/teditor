@@ -1,5 +1,7 @@
 #pragma once
 
+#include "objects.h"
+
 namespace teditor {
 namespace todo {
 
@@ -10,8 +12,12 @@ public:
 
   void reload() { parse(file); }
 
+  const CalendarItems& items() const { return items_; }
+
 private:
   std::string file;
+  CalendarItem curr;
+  CalendarItems items_;
 
   void parse(const std::string& f);
 };
