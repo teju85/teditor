@@ -60,24 +60,44 @@ int dayOfWeek(const TimePoint& pt) {
   return toStructTm(pt).tm_wday;
 }
 
+void addSecond(TimePoint& pt) { pt += std::chrono::seconds(1); }
+
+void addMinute(TimePoint& pt) { pt += std::chrono::seconds(60); }
+
+void addHour(TimePoint& pt) { pt += std::chrono::seconds(60 * 60); }
+
+void addDay(TimePoint& pt) { pt += std::chrono::seconds(24 * 60 * 60); }
+
+void addWeek(TimePoint& pt) { pt += std::chrono::seconds(7 * 24 * 60 * 60); }
+
 TimePoint addSecond(const TimePoint& pt) {
-  return pt + std::chrono::seconds(1);
+  TimePoint ret = pt;
+  addSecond(ret);
+  return ret;
 }
 
 TimePoint addMinute(const TimePoint& pt) {
-  return pt + std::chrono::seconds(60);
+  TimePoint ret = pt;
+  addMinute(ret);
+  return ret;
 }
 
 TimePoint addHour(const TimePoint& pt) {
-  return pt + std::chrono::seconds(60 * 60);
+  TimePoint ret = pt;
+  addHour(ret);
+  return ret;
 }
 
 TimePoint addDay(const TimePoint& pt) {
-  return pt + std::chrono::seconds(24 * 60 * 60);
+  TimePoint ret = pt;
+  addDay(ret);
+  return ret;
 }
 
 TimePoint addWeek(const TimePoint& pt) {
-  return pt + std::chrono::seconds(7 * 24 * 60 * 60);
+  TimePoint ret = pt;
+  addWeek(ret);
+  return ret;
 }
 
 }  // namespace teditor

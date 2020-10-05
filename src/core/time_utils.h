@@ -15,6 +15,12 @@ std::string currentTimeToStr();
 TimePoint timeFromStr(const std::string& dt);
 int dayOfWeek(const TimePoint& pt);
 
+void addSecond(TimePoint& pt);
+void addMinute(TimePoint& pt);
+void addHour(TimePoint& pt);
+void addDay(TimePoint& pt);
+void addWeek(TimePoint& pt);
+
 TimePoint addSecond(const TimePoint& pt);
 TimePoint addMinute(const TimePoint& pt);
 TimePoint addHour(const TimePoint& pt);
