@@ -1,7 +1,8 @@
-#include "mode.h"
 #include "../base/text.h"
 #include "core/option.h"
 #include "core/parser/nfa.h"
+#include "../base/readonly.h"
+#include "core/buffer.h"
 
 namespace teditor {
 namespace todo {
@@ -27,16 +28,28 @@ class TodoMode : public text::TextMode {
 
 REGISTER_MODE(TodoMode, "todo");
 
-TodoShowMode::TodoShowMode(): readonly::ReadOnlyMode("todo-show") {
-  populateKeyMap<TodoShowMode::Keys>(getKeyCmdMap());
-  populateColorMap<TodoShowMode::Colors>(getColorMap());
-}
 
-REGISTER_MODE(TodoShowMode, "todo-show");
+/** todo show mode */
+class TodoShowMode: public readonly::ReadOnlyMode {
+ public:
+  TodoShowMode(): readonly::ReadOnlyMode("todo-show") {
+    populateKeyMap<TodoShowMode::Keys>(getKeyCmdMap());
+    populateColorMap<TodoShowMode::Colors>(getColorMap());
+  }
+
+  static Mode* create() { return new TodoShowMode; }
+  static bool modeCheck(const std::string& file) { return file == "*todo"; }
+
+ private:
+  struct Keys { static std::vector<KeyCmdPair> All; };
+  struct Colors { static std::vector<NameColorPair> All; };
+};  // class TodoShowMode
 
 std::vector<KeyCmdPair> TodoShowMode::Keys::All = {};
 
 std::vector<NameColorPair> TodoShowMode::Colors::All = {};
+
+REGISTER_MODE(TodoShowMode, "todo-show");
 
 }  // end namespace todo
 }  // end namespace teditor
