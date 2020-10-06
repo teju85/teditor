@@ -16,6 +16,7 @@ struct Regexs {
   static const std::string Newline;      ///< newline (windows as well as unix)
   static const std::string DQuotedStr;   ///< double-quoted string
   static const std::string Whitespace;   ///< all whitespace chars
+  static const std::string DateTime;     ///< date/time regex
 };  // struct Regexs
 
 }  // namespace parser

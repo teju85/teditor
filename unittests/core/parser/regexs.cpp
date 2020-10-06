@@ -119,5 +119,13 @@ TEST_CASE("Regexs::Whitespace") {
   REQUIRE(nfa.find("abc") == NFA::NoMatch);
 }
 
+TEST_CASE("Regexs::DateTime") {
+  NFA nfa(Regexs::DateTime);
+  REQUIRE(nfa.find("2020-01-01") == 0);
+  REQUIRE(nfa.find("2020-1-1") == 0);
+  REQUIRE(nfa.find("2020-01-01 12:00:21") == 0);
+  REQUIRE(nfa.find("2020-Jan-1") == NFA::NoMatch);
+}
+
 }  // namespace parser
 }  // namespace teditor

@@ -19,7 +19,7 @@ std::vector<parser::Grammar::TerminalDef>& getTokens() {
     // different keywords
     {"Keywords", "(on|for|repeat|until)"},
     // YYYY-MM-DD HH:MM:SS
-    {"Date", "\\d\\d\\d\\d-\\d\\d-\\d\\d( \\d\\d:\\d\\d:\\d\\d)?"},
+    {"Date", parser::Regexs::DateTime},
     // string
     {"String", "\"[^\"]*\""},
     // repetition type
