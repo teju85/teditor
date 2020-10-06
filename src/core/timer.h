@@ -1,8 +1,9 @@
 #pragma once
 
-#include <chrono>
 #include <stdint.h>
-#include "utils.h"
+#include <unordered_map>
+#include <chrono>
+#include <string>
 
 namespace teditor {
 
@@ -12,31 +13,29 @@ namespace teditor {
 class Timer {
  public:
   Timer() : running(false) {}
-
-  void start() {
-    ASSERT(!running, "Timer is already running!");
-    _start = std::chrono::steady_clock::now();
-    running = true;
-  }
-
+  void start();
   bool isRunning() const { return running; }
-
-  /**
-   * @brief Stop the timer and measure the elapsed time
-   * @return the elapsed time in microseconds
-   */
-  uint64_t stop() {
-    ASSERT(running, "Timer is not running!");
-    using namespace std::chrono;
-    auto _stop = steady_clock::now();
-    running = false;
-    auto diff = duration_cast<microseconds>(_stop - _start).count();
-    return (uint64_t)diff;
-  }
+  void stop();
+  double elapsed();
 
  private:
   bool running;
-  std::chrono::steady_clock::time_point _start;
+  std::chrono::steady_clock::time_point start_;
+  std::chrono::steady_clock::time_point stop_;
 };  // class Timer
+
+typedef std::unordered_map<std::string, Timer> Timers;
+
+/** get the timer object of the given name */
+Timer& getTimer(const std::string& name);
+
+/** start a named timer */
+void tic(const std::string& name);
+
+/** stop the previously started named timer */
+void toc(const std::string& name);
+
+/** remove all the named timers created so far */
+void resetTimers();
 
 }  // namespace teditor
