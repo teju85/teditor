@@ -1,7 +1,8 @@
-#include "mode.h"
 #include "../base/text.h"
 #include "core/option.h"
 #include "core/parser/nfa.h"
+#include "../base/readonly.h"
+#include "core/buffer.h"
 
 namespace teditor {
 namespace ledger {
@@ -27,63 +28,21 @@ class LedgerMode : public text::TextMode {
 
 REGISTER_MODE(LedgerMode, "ledger");
 
-LedgerShowMode::LedgerShowMode(): readonly::ReadOnlyMode("ledger-show") {
-  populateKeyMap<LedgerShowMode::Keys>(getKeyCmdMap());
-  populateColorMap<LedgerShowMode::Colors>(getColorMap());
-}
-
-void LedgerShowMode::showTopAccounts(Buffer& buf) const {
-  auto file = Option::get("ledger::file").getStr();
-  Parser p(file);
-  Date min("0/0/0"), max("0/0/0");
-  p.minmaxDates(min, max);
-  printHeader(buf, min, max);
-  buf.insert("### Top-level accounts ###\n");
-  auto top = p.topAccounts();
-  double total = 0.0;
-  for (const auto& t : top) {
-    total += t.balance();
-    auto valStr = format("%.2lf", t.balance());
-    buf.insert(format("%12s  %-16s\n", valStr.c_str(), t.name().c_str()));
+/** ledger show mode */
+class LedgerShowMode: public readonly::ReadOnlyMode {
+ public:
+  LedgerShowMode(): readonly::ReadOnlyMode("ledger-show") {
+    populateKeyMap<LedgerShowMode::Keys>(getKeyCmdMap());
+    populateColorMap<LedgerShowMode::Colors>(getColorMap());
   }
-  buf.insert("------------------------------\n");
-  auto valStr = format("%.2lf", total);
-  buf.insert(format("%12s  %-16s\n", valStr.c_str(), "Total"));
-}
 
-void LedgerShowMode::showAllAccounts(Buffer& buf) const {
-  auto file = Option::get("ledger::file").getStr();
-  Parser p(file);
-  Date min("0/0/0"), max("0/0/0");
-  p.minmaxDates(min, max);
-  printHeader(buf, min, max);
-  buf.insert("### All accounts ###\n");
-  auto all = p.allAccounts();
-  double total = 0.0;
-  for (const auto& a : all) {
-    const auto& name = a.name();
-    if(name[0] != ' ' || name[1] != ' ') total += a.balance();
-    auto valStr = format("%.2lf", a.balance());
-    buf.insert(format("%12s  %-16s\n", valStr.c_str(), a.name().c_str()));
-  }
-  buf.insert("------------------------------\n");
-  auto valStr = format("%.2lf", total);
-  buf.insert(format("%12s  %-16s\n", valStr.c_str(), "total"));
-}
+  static Mode* create() { return new LedgerShowMode; }
+  static bool modeCheck(const std::string& file) { return file == "*ledger"; }
 
-void LedgerShowMode::printHeader(Buffer& buf, const Date& min,
-                                 const Date& max) const {
-  buf.clear();
-  buf.insert("############################################################\n"
-             "            Welcome to your personal ledger!\n"
-             "############################################################\n"
-             "\n");
-  auto s = format("### Dates: %d/%d/%d to %d/%d/%d ###\n\n",
-                  min.year, min.month, min.day, max.year, max.month, max.day);
-  buf.insert(s);
-}
-
-REGISTER_MODE(LedgerShowMode, "ledger-show");
+ private:
+  struct Keys { static std::vector<KeyCmdPair> All; };
+  struct Colors { static std::vector<NameColorPair> All; };
+};  // class LedgerShowMode
 
 std::vector<KeyCmdPair> LedgerShowMode::Keys::All = {
   {"a", "ledger::all"},
@@ -91,6 +50,8 @@ std::vector<KeyCmdPair> LedgerShowMode::Keys::All = {
 };
 
 std::vector<NameColorPair> LedgerShowMode::Colors::All = {};
+
+REGISTER_MODE(LedgerShowMode, "ledger-show");
 
 }  // end namespace ledger
 }  // end namespace teditor
