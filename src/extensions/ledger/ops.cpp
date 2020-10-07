@@ -2,6 +2,8 @@
 #include "core/command.h"
 #include "core/option.h"
 #include "parser.h"
+#include "core/time_utils.h"
+#include <sstream>
 
 namespace teditor {
 namespace ledger {
@@ -22,21 +24,21 @@ DEF_CMD(
   },
   DEF_HELP() { return "Opens the ledger file in a new buffer."; });
 
-void printHeader(Buffer& buf, const Date& min, const Date& max) {
+void printHeader(Buffer& buf, const TimePoint& min, const TimePoint& max) {
+  std::stringstream ss;
   buf.clear();
-  buf.insert("############################################################\n"
-             "            Welcome to your personal ledger!\n"
-             "############################################################\n"
-             "\n");
-  auto s = format("### Dates: %04d-%02d/-%02d to %04d-%02d/-%02d ###\n\n",
-                  min.year, min.month, min.day, max.year, max.month, max.day);
-  buf.insert(s);
+  ss << "############################################################\n"
+     << "            Welcome to your personal ledger!\n"
+     << "############################################################\n\n"
+     << "### Dates: " << timeToDateStr(min) << " to " << timeToDateStr(max)
+     << "\n\n";
+  buf.insert(ss.str());
 }
 
 void showTopAccounts(Buffer& buf) {
   auto file = Option::get("ledger::file").getStr();
   Parser p(file);
-  Date min("0-0-0"), max("0-0-0");
+  TimePoint min, max;
   p.minmaxDates(min, max);
   printHeader(buf, min, max);
   buf.insert("### Top-level accounts ###\n");
@@ -63,7 +65,7 @@ DEF_CMD(
 void showAllAccounts(Buffer& buf) {
   auto file = Option::get("ledger::file").getStr();
   Parser p(file);
-  Date min("0-0-0"), max("0-0-0");
+  TimePoint min, max;
   p.minmaxDates(min, max);
   printHeader(buf, min, max);
   buf.insert("### All accounts ###\n");

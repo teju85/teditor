@@ -14,14 +14,13 @@ bool operator>(const struct timeval& ta, const struct timeval& tb) {
   return false;
 }
 
-const std::string& timeFormat() {
-  static std::string fmt("%Y-%m-%d %H:%M:%S");
-  return fmt;
-}
-
 struct tm toStructTm(const TimePoint& pt) {
   auto asTime = std::chrono::system_clock::to_time_t(pt);
-  return *std::localtime(&asTime);
+  struct tm* t = std::localtime(&asTime);
+  struct tm ret;
+  memset(&ret, 0, sizeof(struct tm));
+  memcpy(&ret, t, sizeof(struct tm));
+  return ret;
 }
 
 TimePoint toTimePoint(struct tm& tm_) {
@@ -32,7 +31,7 @@ TimePoint toTimePoint(struct tm& tm_) {
 std::string timeToStr(const TimePoint& pt) {
   auto tm_ = toStructTm(pt);
   char timeStr[256] = {0};
-  std::strftime(timeStr, sizeof(timeStr), timeFormat().c_str(), &tm_);
+  std::strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", &tm_);
   return std::string(timeStr);
 }
 
@@ -48,23 +47,72 @@ std::string currentTimeToStr() {
 }
 
 TimePoint timeFromStr(const std::string& dt) {
-  static std::vector<std::string> fmts = {
-    timeFormat(),
-    "%Y-%m-%d %H:%M",
-    "%Y-%m-%d",
-  };
-  for (const auto& f : fmts) {
-    std::istringstream iss(dt);
-    struct tm t;
-    std::memset(&t, 0, sizeof(struct tm));
-    iss >> std::get_time(&t, f.c_str());
-    if (!iss.fail()) return toTimePoint(t);
+  struct tm t;
+  std::memset(&t, 0, sizeof(struct tm));
+  int state = 0;
+  for (auto c : dt) {
+    if (c == '-' && state < 2) {
+      ++state;
+      continue;
+    }
+    if (c == ' ' && state == 2) {
+      ++state;
+      continue;
+    }
+    if (c == ':' && state >= 3) {
+      ++state;
+      continue;
+    }
+    if ('0' > c || c > '9') {
+      state = -1;
+      break;
+    }
+    switch (state) {
+    case 0:
+      t.tm_year = t.tm_year * 10 + c - '0';
+      std::cout << dt << " state=" << state << " year=" << t.tm_year << "\n";
+      break;
+    case 1:
+      t.tm_mon = t.tm_mon * 10 + c - '0';
+      std::cout << dt << " state=" << state << " mon=" << t.tm_mon << "\n";
+      break;
+    case 2:
+      t.tm_mday = t.tm_mday * 10 + c - '0';
+      std::cout << dt << " state=" << state << " mday=" << t.tm_mday << "\n";
+      break;
+    case 3:
+      t.tm_hour = t.tm_hour * 10 + c - '0';
+      std::cout << dt << " state=" << state << " hour=" << t.tm_hour << "\n";
+      break;
+    case 4:
+      t.tm_min = t.tm_min * 10 + c - '0';
+      std::cout << dt << " state=" << state << " min=" << t.tm_min << "\n";
+      break;
+    case 5:
+      t.tm_sec = t.tm_sec * 10 + c - '0';
+      std::cout << dt << " state=" << state << " sec=" << t.tm_sec << "\n";
+      break;
+    };
   }
-  ASSERT(false, "Incorrect date-time string passed '%s'!", dt.c_str());
+  ASSERT(state == 2 || state == 4 || state == 5,
+         "Incorrect date-time string passed '%s'!", dt.c_str());
+  return toTimePoint(t);
 }
 
 int dayOfWeek(const TimePoint& pt) {
   return toStructTm(pt).tm_wday;
+}
+
+int year(const TimePoint& pt) {
+  return toStructTm(pt).tm_year;
+}
+
+int month(const TimePoint& pt) {
+  return toStructTm(pt).tm_mon;
+}
+
+int day(const TimePoint& pt) {
+  return toStructTm(pt).tm_mday;
 }
 
 void addSecond(TimePoint& pt) { pt += std::chrono::seconds(1); }

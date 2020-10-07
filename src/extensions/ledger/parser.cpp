@@ -16,7 +16,7 @@ std::vector<parser::Grammar::TerminalDef>& getTokens() {
   static std::vector<parser::Grammar::TerminalDef> tokens = {
     {"Comment", "# [^\r\n]+"},
     {"Name", "[^ \t\r\n#]+"},
-    {"Date", "\\d\\d\\d\\d-\\d\\d-\\d\\d"},  // YYYY/MM/DD or YYYY/M/D
+    {"Date", parser::Regexs::DateTime},
     {"Number", parser::Regexs::FloatingPt},
     {"Newline", parser::Regexs::Newline},
     {"Space", "\\s+"},
@@ -174,7 +174,7 @@ Accounts Parser::allAccounts(bool sort) const {
   return all;
 }
 
-void Parser::minmaxDates(Date& min, Date& max) const {
+void Parser::minmaxDates(TimePoint& min, TimePoint& max) const {
   bool first = true;
   for(const auto& t : trans) {
     if(first || t.date() < min) min = t.date();

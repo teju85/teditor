@@ -1,6 +1,7 @@
 #pragma once
 
 #include "objects.h"
+#include "core/time_utils.h"
 
 namespace teditor {
 namespace ledger {
@@ -32,7 +33,7 @@ public:
   Accounts allAccounts(bool sort = true) const;
 
   /** earliest and latest transaction dates */
-  void minmaxDates(Date& min, Date& max) const;
+  void minmaxDates(TimePoint& min, TimePoint& max) const;
 
 private:
   std::string file;

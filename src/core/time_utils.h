@@ -15,6 +15,9 @@ std::string timeToDateStr(const TimePoint& pt);
 std::string currentTimeToStr();
 TimePoint timeFromStr(const std::string& dt);
 int dayOfWeek(const TimePoint& pt);
+int year(const TimePoint& pt);
+int month(const TimePoint& pt);
+int day(const TimePoint& pt);
 
 void addSecond(TimePoint& pt);
 void addMinute(TimePoint& pt);

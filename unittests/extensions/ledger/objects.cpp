@@ -73,110 +73,15 @@ TEST_CASE("Accounts") {
   REQUIRE(0.0 == b.balance());
 }
 
-TEST_CASE("Date") {
-  SECTION("Correct") {
-    Date d("2019-08-09");
-    REQUIRE(2019 == d.year);
-    REQUIRE(8 == d.month);
-    REQUIRE(9 == d.day);
-    REQUIRE(d.validate());
-  }
-  SECTION("Correct - without leading zeros") {
-    Date d("2019-8-9");
-    REQUIRE(2019 == d.year);
-    REQUIRE(8 == d.month);
-    REQUIRE(9 == d.day);
-    REQUIRE(d.validate());
-  }
-  SECTION("Incorrect - year") {
-    Date d("0-8-9");
-    REQUIRE(!d.validate());
-  }
-  SECTION("Incorrect - month") {
-    Date d("2019-0-9");
-    REQUIRE(!d.validate());
-  }
-  SECTION("Incorrect - day1") {
-    Date d("2019-1-32");
-    REQUIRE(!d.validate());
-  }
-  SECTION("Incorrect - day2") {
-    Date d("2019-2-29");
-    REQUIRE(!d.validate());
-  }
-  SECTION("Incorrect - day3") {
-    Date d("2020-2-30");
-    REQUIRE(!d.validate());
-  }
-  SECTION("Incorrect - day4") {
-    Date d("2020-4-31");
-    REQUIRE(!d.validate());
-  }
-}
-
-TEST_CASE("Date::<") {
-  Date d1("2019-08-09");
-  Date d2("2019-08-09");
-  Date d3("2019-08-08");
-  Date d4("2019-08-10");
-  Date d5("2019-07-09");
-  Date d6("2019-09-09");
-  Date d7("2018-08-09");
-  Date d8("2020-08-09");
-  REQUIRE(!(d1 < d2));
-  REQUIRE(!(d1 < d3));
-  REQUIRE(d1 < d4);
-  REQUIRE(!(d1 < d5));
-  REQUIRE(d1 < d6);
-  REQUIRE(!(d1 < d7));
-  REQUIRE(d1 < d8);
-}
-
-TEST_CASE("Date::==") {
-  Date d1("2019-08-09");
-  Date d2("2019-08-09");
-  Date d3("2019-08-08");
-  Date d4("2019-08-10");
-  Date d5("2019-07-09");
-  Date d6("2019-09-09");
-  Date d7("2018-08-09");
-  Date d8("2020-08-09");
-  REQUIRE(d1 == d2);
-  REQUIRE(!(d1 == d3));
-  REQUIRE(!(d1 == d4));
-  REQUIRE(!(d1 == d5));
-  REQUIRE(!(d1 == d6));
-  REQUIRE(!(d1 == d7));
-  REQUIRE(!(d1 == d8));
-}
-
-TEST_CASE("Date::<=") {
-  Date d1("2019-08-09");
-  Date d2("2019-08-09");
-  Date d3("2019-08-08");
-  Date d4("2019-08-10");
-  Date d5("2019-07-09");
-  Date d6("2019-09-09");
-  Date d7("2018-08-09");
-  Date d8("2020-08-09");
-  REQUIRE(d1 <= d2);
-  REQUIRE(!(d1 <= d3));
-  REQUIRE(d1 <= d4);
-  REQUIRE(!(d1 <= d5));
-  REQUIRE(d1 <= d6);
-  REQUIRE(!(d1 <= d7));
-  REQUIRE(d1 <= d8);
-}
-
 TEST_CASE("Transaction") {
   Accounts acc;
   REQUIRE(0 == acc.size());
   Transaction t("2019-08-09", "trans");
   REQUIRE("trans" == t.name());
   const auto& d = t.date();
-  REQUIRE(2019 == d.year);
-  REQUIRE(8 == d.month);
-  REQUIRE(9 == d.day);
+  REQUIRE(2019 == year(d));
+  REQUIRE(8 == month(d));
+  REQUIRE(9 == day(d));
   SECTION("one credit and debit") {
     t.add("a1", 10.0);
     t.add("a2", -10.0);
