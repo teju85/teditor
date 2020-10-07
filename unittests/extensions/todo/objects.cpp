@@ -83,12 +83,16 @@ TEST_CASE("CalendarItem::getNextOccurence") {
     auto start = item.start;
     start = item.getNextOccurence(start);
     REQUIRE("2020-01-02" == timeToDateStr(start));
+    REQUIRE(start <= item.end);
     start = item.getNextOccurence(start);
     REQUIRE("2020-01-03" == timeToDateStr(start));
+    REQUIRE(start <= item.end);
     start = item.getNextOccurence(start);
     REQUIRE("2020-01-04" == timeToDateStr(start));
+    REQUIRE(start <= item.end);
     start = item.getNextOccurence(start);
     REQUIRE("2020-01-05" == timeToDateStr(start));
+    REQUIRE(start > item.end);
   }
 }
 
