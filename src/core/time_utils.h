@@ -11,6 +11,7 @@ bool operator>(const struct timeval& ta, const struct timeval& tb);
 struct tm toStructTm(const TimePoint& pt);
 TimePoint toTimePoint(struct tm& tm_);
 std::string timeToStr(const TimePoint& pt);
+std::string timeToDateStr(const TimePoint& pt);
 std::string currentTimeToStr();
 TimePoint timeFromStr(const std::string& dt);
 int dayOfWeek(const TimePoint& pt);

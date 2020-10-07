@@ -36,6 +36,13 @@ std::string timeToStr(const TimePoint& pt) {
   return std::string(timeStr);
 }
 
+std::string timeToDateStr(const TimePoint& pt) {
+  auto tm_ = toStructTm(pt);
+  char timeStr[256] = {0};
+  std::strftime(timeStr, sizeof(timeStr), "%Y-%m-%d", &tm_);
+  return std::string(timeStr);
+}
+
 std::string currentTimeToStr() {
   return timeToStr(std::chrono::system_clock::now());
 }
