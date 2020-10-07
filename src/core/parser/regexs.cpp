@@ -21,7 +21,7 @@ const std::string Regexs::Whitespace("[ \t\r\n]+");
 
 // YYYY-MM-DD HH:MM:SS
 const std::string Regexs::DateTime(
-  "\\d\\d\\d\\d-\\d?\\d-\\d?\\d( \\d?\\d:\\d?\\d:\\d?\\d)?");
+  "\\d\\d\\d\\d-\\d\\d-\\d\\d( \\d\\d:\\d\\d:\\d\\d)?");
 
 }  // namespace parser
 }  // namespace teditor
