@@ -5,7 +5,6 @@
 #include "utils.h"
 #include <cstring>
 #include <cstdlib>
-#include <iostream>
 
 namespace teditor {
 
@@ -86,9 +85,13 @@ void addMinute(TimePoint& pt) { pt += std::chrono::seconds(60); }
 
 void addHour(TimePoint& pt) { pt += std::chrono::seconds(60 * 60); }
 
-void addDay(TimePoint& pt) { pt += std::chrono::seconds(24 * 60 * 60); }
+void addDay(TimePoint& pt, int times) {
+  pt += std::chrono::seconds(times * 24 * 60 * 60);
+}
 
-void addWeek(TimePoint& pt) { pt += std::chrono::seconds(7 * 24 * 60 * 60); }
+void addWeek(TimePoint& pt, int times) {
+  pt += std::chrono::seconds(times * 7 * 24 * 60 * 60);
+}
 
 void addMonth(TimePoint& pt) {
   auto t = toStructTm(pt);
@@ -124,15 +127,15 @@ TimePoint addHour(const TimePoint& pt) {
   return ret;
 }
 
-TimePoint addDay(const TimePoint& pt) {
+TimePoint addDay(const TimePoint& pt, int times) {
   TimePoint ret = pt;
-  addDay(ret);
+  addDay(ret, times);
   return ret;
 }
 
-TimePoint addWeek(const TimePoint& pt) {
+TimePoint addWeek(const TimePoint& pt, int times) {
   TimePoint ret = pt;
-  addWeek(ret);
+  addWeek(ret, times);
   return ret;
 }
 
@@ -146,6 +149,12 @@ TimePoint addYear(const TimePoint& pt) {
   TimePoint ret = pt;
   addYear(ret);
   return ret;
+}
+
+void weekFor(TimePoint& start, TimePoint& end, const TimePoint& pt) {
+  auto dw = dayOfWeek(pt);
+  start = addDay(pt, -dw);
+  end = addDay(static_cast<const TimePoint&>(start), 6);
 }
 
 }  // namespace teditor

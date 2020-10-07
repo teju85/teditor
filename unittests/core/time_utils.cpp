@@ -193,30 +193,34 @@ TEST_CASE("addHour") {
 
 TEST_CASE("addDay") {
   REQUIRE("2020-01-02 00:23:11" ==
-          timeToStr(addDay(timeFromStr("2020-01-01 00:23:11"))));
+          timeToStr(addDay(timeFromStr("2020-01-01 00:23:11"), 1)));
+  REQUIRE("2020-01-03 00:23:11" ==
+          timeToStr(addDay(timeFromStr("2020-01-01 00:23:11"), 2)));
+  REQUIRE("2019-12-31 00:23:11" ==
+          timeToStr(addDay(timeFromStr("2020-01-01 00:23:11"), -1)));
   // month end
   REQUIRE("2020-02-01 00:00:00" ==
-          timeToStr(addDay(timeFromStr("2020-01-31"))));
+          timeToStr(addDay(timeFromStr("2020-01-31"), 1)));
   REQUIRE("2020-05-01 00:00:00" ==
-          timeToStr(addDay(timeFromStr("2020-04-30"))));
+          timeToStr(addDay(timeFromStr("2020-04-30"), 1)));
   // leap month
   REQUIRE("2020-02-29 00:00:00" ==
-          timeToStr(addDay(timeFromStr("2020-02-28"))));
+          timeToStr(addDay(timeFromStr("2020-02-28"), 1)));
   REQUIRE("2019-03-01 00:00:00" ==
-          timeToStr(addDay(timeFromStr("2019-02-28"))));
+          timeToStr(addDay(timeFromStr("2019-02-28"), 1)));
   // non-leap month
   REQUIRE("2019-02-28 00:00:00" ==
-          timeToStr(addDay(timeFromStr("2019-02-27"))));
+          timeToStr(addDay(timeFromStr("2019-02-27"), 1)));
   REQUIRE("2019-03-01 00:00:00" ==
-          timeToStr(addDay(timeFromStr("2019-02-28"))));
+          timeToStr(addDay(timeFromStr("2019-02-28"), 1)));
 }
 
 TEST_CASE("addWeek") {
   REQUIRE("2020-01-08 00:00:00" ==
-          timeToStr(addWeek(timeFromStr("2020-01-01"))));
+          timeToStr(addWeek(timeFromStr("2020-01-01"), 1)));
   // crossing month
   REQUIRE("2020-10-05 00:00:00" ==
-          timeToStr(addWeek(timeFromStr("2020-09-28"))));
+          timeToStr(addWeek(timeFromStr("2020-09-28"), 1)));
 }
 
 TEST_CASE("addMonth") {
@@ -255,6 +259,13 @@ TEST_CASE("addYear") {
 TEST_CASE("timeToDateStr") {
   REQUIRE("2020-10-05" == timeToDateStr(timeFromStr("2020-10-05 12:00:21")));
   REQUIRE("2020-10-05" == timeToDateStr(timeFromStr("2020-10-05")));
+}
+
+TEST_CASE("weekFor") {
+  TimePoint start, end;
+  weekFor(start, end, timeFromStr("2020-10-07"));
+  REQUIRE("2020-10-04" == timeToDateStr(start));
+  REQUIRE("2020-10-10" == timeToDateStr(end));
 }
 
 } // end namespace teditor
