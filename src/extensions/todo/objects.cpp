@@ -3,6 +3,7 @@
 #include "core/utils.h"
 #include "core/time_utils.h"
 #include <iostream>
+#include <algorithm>
 
 namespace teditor {
 namespace todo {
@@ -44,6 +45,12 @@ TimePoint CalendarItem::getNextOccurence(const TimePoint& pt) const {
   ASSERT(false, "Incorrect RepeatType passed '%d'!", repeat);
 }
 
+bool compareMatches(const MatchItem& a, const MatchItem& b) {
+  if (a.pt < b.pt) return true;
+  if (a.pt > b.pt) return false;
+  return a.idx < b.idx;
+}
+
 CalendarMatches findMatchesIn(const CalendarItems& items,
                               const TimePoint& start, const TimePoint& end) {
   ASSERT(start <= end, "findMatchesIn: start time is greater than end!");
@@ -63,6 +70,7 @@ CalendarMatches findMatchesIn(const CalendarItems& items,
       pt = item.getNextOccurence(pt);
     }
   }
+  std::sort(ret.begin(), ret.end(), compareMatches);
   return ret;
 }
 
