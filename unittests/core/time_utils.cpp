@@ -1,7 +1,6 @@
 #include "core/time_utils.h"
 #include <sys/time.h>
 #include "catch.hpp"
-#include <iostream>
 
 namespace teditor {
 
@@ -27,7 +26,6 @@ TEST_CASE("TimeUtils::Timeval") {
 TEST_CASE("TimeUtils::fromString") {
   SECTION("current-time") {
     auto s = currentTimeToStr();
-    std::cout << s << " current\n";
     auto ts = timeToStr(timeFromStr(s));
     REQUIRE(s == ts);
   }
@@ -50,78 +48,75 @@ TEST_CASE("TimeUtils::fromString") {
     auto ts = timeToStr(s);
     REQUIRE(ts == "2020-01-01 01:01:01");
   }
-  // SECTION("fmt once more") {
-  //   auto s = timeFromStr("2020-01-01 01:01:01");
-  //   auto ts = timeToStr(s);
-  //   REQUIRE(ts == "2020-01-01 01:01:01");
-  // }
-  // SECTION("fmt multiple times") {
-  //   auto s = timeFromStr("2020-01-01 01:01:01");
-  //   auto ts = timeToStr(s);
-  //   REQUIRE(ts == "2020-01-01 01:01:01");
-  //   s = timeFromStr("2020-01-01 01:01:01");
-  //   ts = timeToStr(s);
-  //   REQUIRE(ts == "2020-01-01 01:01:01");
-  // }
-  // SECTION("fmt and current-time") {
-  //   auto s = timeFromStr("2020-01-01 01:01:01");
-  //   auto ts = timeToStr(s);
-  //   REQUIRE(ts == "2020-01-01 01:01:01");
-  //   auto ref = currentTimeToStr();
-  //   s = timeFromStr(ref);
-  //   ts = timeToStr(s);
-  //   REQUIRE(ref == ts);
-  // }
-  // SECTION("current-time and fmt") {
-  //   auto ref = currentTimeToStr();
-  //   auto s = timeFromStr(ref);
-  //   auto ts = timeToStr(s);
-  //   REQUIRE(ref == ts);
-  //   s = timeFromStr("2020-01-01 01:01:01");
-  //   ts = timeToStr(s);
-  //   REQUIRE(ts == "2020-01-01 01:01:01");
-  // }
-  // SECTION("fmt1") {
-  //   auto s = timeFromStr("2020-01-01 01:01");
-  //   auto ts = timeToStr(s);
-  //   REQUIRE(ts == "2020-01-01 01:01:00");
-  // }
-  // SECTION("fmt1 once more") {
-  //   auto s = timeFromStr("2020-01-01 01:01");
-  //   auto ts = timeToStr(s);
-  //   REQUIRE(ts == "2020-01-01 01:01:00");
-  // }
-  // SECTION("fmt1 multiple times") {
-  //   auto s = timeFromStr("2020-01-01 01:01");
-  //   auto ts = timeToStr(s);
-  //   REQUIRE(ts == "2020-01-01 01:01:00");
-  //   s = timeFromStr("2020-01-01 01:01");
-  //   ts = timeToStr(s);
-  //   REQUIRE(ts == "2020-01-01 01:01:00");
-  // }
-  // SECTION("fmt2") {
-  //   auto s = timeFromStr("2020-01-01");
-  //   auto ts = timeToStr(s);
-  //   REQUIRE(ts == "2020-01-01 00:00:00");
-  // }
-  // SECTION("fmt2 once more") {
-  //   auto s = timeFromStr("2020-01-01");
-  //   auto ts = timeToStr(s);
-  //   REQUIRE(ts == "2020-01-01 00:00:00");
-  // }
-  // SECTION("fmt2 multiple times") {
-  //   auto s = timeFromStr("2020-01-01");
-  //   auto ts = timeToStr(s);
-  //   REQUIRE(ts == "2020-01-01 00:00:00");
-  //   s = timeFromStr("2020-01-01");
-  //   ts = timeToStr(s);
-  //   REQUIRE(ts == "2020-01-01 00:00:00");
-  // }
-  // SECTION("single digits") {
-  //   auto s = timeFromStr("2020-1-1");
-  //   REQUIRE("2020-01-01 00:00:00" == timeToStr(s));
-  // }
-  // REQUIRE_THROWS_AS(timeFromStr("2020:01:01"), std::runtime_error);
+  SECTION("fmt once more") {
+    auto s = timeFromStr("2020-01-01 01:01:01");
+    auto ts = timeToStr(s);
+    REQUIRE(ts == "2020-01-01 01:01:01");
+  }
+  SECTION("fmt multiple times") {
+    auto s = timeFromStr("2020-01-01 01:01:01");
+    auto ts = timeToStr(s);
+    REQUIRE(ts == "2020-01-01 01:01:01");
+    s = timeFromStr("2020-01-01 01:01:01");
+    ts = timeToStr(s);
+    REQUIRE(ts == "2020-01-01 01:01:01");
+  }
+  SECTION("fmt and current-time") {
+    auto s = timeFromStr("2020-01-01 01:01:01");
+    auto ts = timeToStr(s);
+    REQUIRE(ts == "2020-01-01 01:01:01");
+    auto ref = currentTimeToStr();
+    s = timeFromStr(ref);
+    ts = timeToStr(s);
+    REQUIRE(ref == ts);
+  }
+  SECTION("current-time and fmt") {
+    auto ref = currentTimeToStr();
+    auto s = timeFromStr(ref);
+    auto ts = timeToStr(s);
+    REQUIRE(ref == ts);
+    s = timeFromStr("2020-01-01 01:01:01");
+    ts = timeToStr(s);
+    REQUIRE(ts == "2020-01-01 01:01:01");
+  }
+  SECTION("fmt1") {
+    auto s = timeFromStr("2020-01-01 01:01");
+    auto ts = timeToStr(s);
+    REQUIRE(ts == "2020-01-01 01:01:00");
+  }
+  SECTION("fmt1 once more") {
+    auto s = timeFromStr("2020-01-01 01:01");
+    auto ts = timeToStr(s);
+    REQUIRE(ts == "2020-01-01 01:01:00");
+  }
+  SECTION("fmt1 multiple times") {
+    auto s = timeFromStr("2020-01-01 01:01");
+    auto ts = timeToStr(s);
+    REQUIRE(ts == "2020-01-01 01:01:00");
+    s = timeFromStr("2020-01-01 01:01");
+    ts = timeToStr(s);
+    REQUIRE(ts == "2020-01-01 01:01:00");
+  }
+  SECTION("fmt2") {
+    auto s = timeFromStr("2020-01-01");
+    auto ts = timeToStr(s);
+    REQUIRE(ts == "2020-01-01 00:00:00");
+  }
+  SECTION("fmt2 once more") {
+    auto s = timeFromStr("2020-01-01");
+    auto ts = timeToStr(s);
+    REQUIRE(ts == "2020-01-01 00:00:00");
+  }
+  SECTION("fmt2 multiple times") {
+    auto s = timeFromStr("2020-01-01");
+    auto ts = timeToStr(s);
+    REQUIRE(ts == "2020-01-01 00:00:00");
+    s = timeFromStr("2020-01-01");
+    ts = timeToStr(s);
+    REQUIRE(ts == "2020-01-01 00:00:00");
+  }
+  REQUIRE_THROWS_AS(timeFromStr("2020-1-1"), std::runtime_error);
+  REQUIRE_THROWS_AS(timeFromStr("2020:01:01"), std::runtime_error);
 }
 
 TEST_CASE("dayOfWeek") {
@@ -200,7 +195,7 @@ TEST_CASE("addDay") {
   REQUIRE("2020-01-02 00:23:11" ==
           timeToStr(addDay(timeFromStr("2020-01-01 00:23:11"))));
   // month end
-  REQUIRE("2020-02-01 00:year:year" ==
+  REQUIRE("2020-02-01 00:00:00" ==
           timeToStr(addDay(timeFromStr("2020-01-31"))));
   REQUIRE("2020-05-01 00:00:00" ==
           timeToStr(addDay(timeFromStr("2020-04-30"))));
@@ -221,7 +216,7 @@ TEST_CASE("addWeek") {
 
 TEST_CASE("timeToDateStr") {
   REQUIRE("2020-10-05" == timeToDateStr(timeFromStr("2020-10-05 12:00:21")));
-  REQUIRE("2020-10-05" == timeToDateStr(timeFromStr("2020-1-05")));
+  REQUIRE("2020-10-05" == timeToDateStr(timeFromStr("2020-10-05")));
 }
 
 } // end namespace teditor
