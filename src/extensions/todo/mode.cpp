@@ -12,12 +12,6 @@ class TodoMode : public text::TextMode {
  public:
   TodoMode(): text::TextMode("todo") {}
 
-  Strings cmdNames() const {
-    return allCmdNames([](const std::string& name) {
-      return name[0] != '.' && name.find("todo::") == 0;
-    });
-  }
-
   static Mode* create() { return new TodoMode; }
 
   static bool modeCheck(const std::string& file) {

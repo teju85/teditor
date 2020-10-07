@@ -19,7 +19,7 @@ Buffer& getTodoShowBuff(Editor& ed) {
 }
 
 DEF_CMD(
-  TodoOpen, "todo", DEF_OP() {
+  TodoOpen, "todo-open", DEF_OP() {
     auto todoFile = Option::get("todo::file").getStr();
     ed.load(todoFile, 0);
   },
@@ -46,7 +46,7 @@ void showTodosFor(Buffer& buf, const TimePoint& start, const TimePoint& end) {
 }
 
 DEF_CMD(
-  TodoShowThisWeek, "todo::show-this-week", DEF_OP() {
+  TodoShowThisWeek, "todo-show-this-week", DEF_OP() {
     auto& buf = getTodoShowBuff(ed);
     TimePoint s;
     TimePoint e;
