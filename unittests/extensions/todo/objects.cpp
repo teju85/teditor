@@ -94,6 +94,11 @@ TEST_CASE("CalendarItem::getNextOccurence") {
     REQUIRE("2020-01-05" == timeToDateStr(start));
     REQUIRE(start > item.end);
   }
+  SECTION("Invalid") {
+    item.hasStart = false;
+    REQUIRE_THROWS_AS(item.getNextOccurence(timeFromStr("2020-01-01")),
+                      std::runtime_error);
+  }
 }
 
 }  // namespace todo

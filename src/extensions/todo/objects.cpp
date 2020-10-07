@@ -36,8 +36,9 @@ TimePoint CalendarItem::getNextOccurence(const TimePoint& pt) const {
 CalendarItems findMatchesIn(const CalendarItems& items, const TimePoint& start,
                             const TimePoint& end) {
   CalendarItems ret;
-  // for (const auto& item : items) {
-  // }
+  for (const auto& item : items) {
+    if (!item.hasStart) continue;
+  }
   return ret;
 }
 
