@@ -24,11 +24,15 @@ void addMinute(TimePoint& pt);
 void addHour(TimePoint& pt);
 void addDay(TimePoint& pt);
 void addWeek(TimePoint& pt);
+void addMonth(TimePoint& pt);
+void addYear(TimePoint& pt);
 
 TimePoint addSecond(const TimePoint& pt);
 TimePoint addMinute(const TimePoint& pt);
 TimePoint addHour(const TimePoint& pt);
 TimePoint addDay(const TimePoint& pt);
 TimePoint addWeek(const TimePoint& pt);
+TimePoint addMonth(const TimePoint& pt);
+TimePoint addYear(const TimePoint& pt);
 
 }  // namespace teditor

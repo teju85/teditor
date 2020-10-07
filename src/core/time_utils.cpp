@@ -90,6 +90,22 @@ void addDay(TimePoint& pt) { pt += std::chrono::seconds(24 * 60 * 60); }
 
 void addWeek(TimePoint& pt) { pt += std::chrono::seconds(7 * 24 * 60 * 60); }
 
+void addMonth(TimePoint& pt) {
+  auto t = toStructTm(pt);
+  ++t.tm_mon;
+  if (t.tm_mon >= 12) {
+    t.tm_mon = 0;
+    ++t.tm_year;
+  }
+  pt = toTimePoint(t);
+}
+
+void addYear(TimePoint& pt) {
+  auto t = toStructTm(pt);
+  ++t.tm_year;
+  pt = toTimePoint(t);
+}
+
 TimePoint addSecond(const TimePoint& pt) {
   TimePoint ret = pt;
   addSecond(ret);
@@ -117,6 +133,18 @@ TimePoint addDay(const TimePoint& pt) {
 TimePoint addWeek(const TimePoint& pt) {
   TimePoint ret = pt;
   addWeek(ret);
+  return ret;
+}
+
+TimePoint addMonth(const TimePoint& pt) {
+  TimePoint ret = pt;
+  addMonth(ret);
+  return ret;
+}
+
+TimePoint addYear(const TimePoint& pt) {
+  TimePoint ret = pt;
+  addYear(ret);
   return ret;
 }
 

@@ -219,6 +219,39 @@ TEST_CASE("addWeek") {
           timeToStr(addWeek(timeFromStr("2020-09-28"))));
 }
 
+TEST_CASE("addMonth") {
+  REQUIRE("2020-02-08 00:00:00" ==
+          timeToStr(addMonth(timeFromStr("2020-01-08"))));
+  REQUIRE("2020-02-08 00:23:21" ==
+          timeToStr(addMonth(timeFromStr("2020-01-08 00:23:21"))));
+  // crossing month in a leap year
+  REQUIRE("2020-03-01 00:00:00" ==
+          timeToStr(addMonth(timeFromStr("2020-01-30"))));
+  // crossing month in a non-leap year
+  REQUIRE("2019-03-02 00:00:00" ==
+          timeToStr(addMonth(timeFromStr("2019-01-30"))));
+  // crossing year
+  REQUIRE("2020-01-21 00:00:00" ==
+          timeToStr(addMonth(timeFromStr("2019-12-21"))));
+  // crossing month
+  REQUIRE("2020-07-30 00:00:00" ==
+          timeToStr(addMonth(timeFromStr("2020-06-30 00:00:00"))));
+  REQUIRE("2020-07-01 00:00:00" ==
+          timeToStr(addMonth(timeFromStr("2020-05-31 00:00:00"))));
+}
+
+TEST_CASE("addYear") {
+  REQUIRE("2020-01-08 00:00:00" ==
+          timeToStr(addYear(timeFromStr("2019-01-08"))));
+  REQUIRE("2021-01-08 00:23:21" ==
+          timeToStr(addYear(timeFromStr("2020-01-08 00:23:21"))));
+  // leap year
+  REQUIRE("2020-02-28 00:00:00" ==
+          timeToStr(addYear(timeFromStr("2019-02-28"))));
+  REQUIRE("2021-03-01 00:00:00" ==
+          timeToStr(addYear(timeFromStr("2020-02-29"))));
+}
+
 TEST_CASE("timeToDateStr") {
   REQUIRE("2020-10-05" == timeToDateStr(timeFromStr("2020-10-05 12:00:21")));
   REQUIRE("2020-10-05" == timeToDateStr(timeFromStr("2020-10-05")));
