@@ -25,7 +25,6 @@ void CalendarItem::clear() {
 
 TimePoint CalendarItem::getNextOccurence(const TimePoint& pt) const {
   ASSERT(hasStart, "CalendarItem does not have a start point!");
-  TimePoint ret;
   if (repeat == Repeat_None)    return pt;
   if (repeat == Repeat_Yearly)  return addYear(pt);
   if (repeat == Repeat_Monthly) return addMonth(pt);
