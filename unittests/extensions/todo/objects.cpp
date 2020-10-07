@@ -127,6 +127,7 @@ TEST_CASE("findMatchesIn") {
   SECTION("matches") {
     auto start = timeFromStr("2020-10-04"), end = timeFromStr("2020-10-08");
     auto matches = findMatchesIn(items, start, end);
+    // items will be sorted as per the date of match and then their index
     REQUIRE(8U == matches.size());
     REQUIRE(0 == matches[0].idx);
     REQUIRE("2020-10-06" == timeToDateStr(matches[0].pt));
