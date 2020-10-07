@@ -38,7 +38,7 @@ void showTodosFor(Buffer& buf, const TimePoint& start, const TimePoint& end) {
     ss << "NONE\n";
   } else {
     for (const auto& m : matches) {
-      ss << timeToDateStr(m.pt) << " ---> \"" << items[m.idx].description
+      ss << timeToDateStr(m.pt) << " ---> " << items[m.idx].description
          << "\n";
     }
   }
@@ -48,10 +48,13 @@ void showTodosFor(Buffer& buf, const TimePoint& start, const TimePoint& end) {
 DEF_CMD(
   TodoShowThisWeek, "todo::show-this-week", DEF_OP() {
     auto& buf = getTodoShowBuff(ed);
-    showTodosFor(buf, timeFromStr("2020-10-01"), timeFromStr("2020-10-08"));
+    TimePoint s;
+    TimePoint e;
+    weekFor(s, e, std::chrono::system_clock::now());
+    showTodosFor(buf, s, e);
     ed.switchToBuff("*todo");
   },
-  DEF_HELP() { return "Opens the todo file in a new buffer."; });
+  DEF_HELP() { return "Shows all todo's in the current week."; });
 
 } // end namespace ops
 } // end namespace todo

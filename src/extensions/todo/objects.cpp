@@ -40,8 +40,8 @@ TimePoint CalendarItem::getNextOccurence(const TimePoint& pt) const {
   if (repeat == Repeat_None)    return pt;
   if (repeat == Repeat_Yearly)  return addYear(pt);
   if (repeat == Repeat_Monthly) return addMonth(pt);
-  if (repeat == Repeat_Weekly)  return addWeek(pt);
-  if (repeat == Repeat_Daily)   return addDay(pt);
+  if (repeat == Repeat_Weekly)  return addWeek(pt, 1);
+  if (repeat == Repeat_Daily)   return addDay(pt, 1);
   ASSERT(false, "Incorrect RepeatType passed '%d'!", repeat);
 }
 
