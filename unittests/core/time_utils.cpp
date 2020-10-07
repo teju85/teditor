@@ -204,6 +204,11 @@ TEST_CASE("addDay") {
           timeToStr(addDay(timeFromStr("2020-02-28"))));
   REQUIRE("2019-03-01 00:00:00" ==
           timeToStr(addDay(timeFromStr("2019-02-28"))));
+  // non-leap month
+  REQUIRE("2019-02-28 00:00:00" ==
+          timeToStr(addDay(timeFromStr("2019-02-27"))));
+  REQUIRE("2019-03-01 00:00:00" ==
+          timeToStr(addDay(timeFromStr("2019-02-28"))));
 }
 
 TEST_CASE("addWeek") {
