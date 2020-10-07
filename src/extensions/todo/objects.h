@@ -26,9 +26,13 @@ struct CalendarItem {
   std::string description;
 
   void clear();
+  TimePoint getNextOccurence(const TimePoint& pt) const;
 };  // struct CalendarItem
 
 typedef std::vector<CalendarItem> CalendarItems;
+
+CalendarItems findMatchesIn(const CalendarItems& items, const TimePoint& start,
+                            const TimePoint& end);
 
 }  // namespace todo
 }  // namespace teditor
