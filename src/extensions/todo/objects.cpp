@@ -2,6 +2,7 @@
 #include <cstring>
 #include "core/utils.h"
 #include "core/time_utils.h"
+#include <iostream>
 
 namespace teditor {
 namespace todo {
@@ -14,6 +15,16 @@ RepeatType strToRepeatType(const std::string& str) {
   if (!strcmp(cstr, "weekly")) return Repeat_Weekly;
   if (!strcmp(cstr, "daily")) return Repeat_Daily;
   ASSERT(false, "Incorrect RepeatType string passed '%s'!", cstr);
+}
+
+CalendarItem::CalendarItem(
+  const TimePoint& s, RepeatType r, const std::string& d):
+  start(s), hasStart(true), end(), hasEnd(false), repeat(r), description(d) {
+}
+
+CalendarItem::CalendarItem(
+  const TimePoint& s, const TimePoint& e, RepeatType r, const std::string& d):
+  start(s), hasStart(true), end(e), hasEnd(true), repeat(r), description(d) {
 }
 
 void CalendarItem::clear() {
@@ -33,11 +44,24 @@ TimePoint CalendarItem::getNextOccurence(const TimePoint& pt) const {
   ASSERT(false, "Incorrect RepeatType passed '%d'!", repeat);
 }
 
-CalendarItems findMatchesIn(const CalendarItems& items, const TimePoint& start,
-                            const TimePoint& end) {
-  CalendarItems ret;
+CalendarMatches findMatchesIn(const CalendarItems& items,
+                              const TimePoint& start, const TimePoint& end) {
+  ASSERT(start <= end, "findMatchesIn: start time is greater than end!");
+  CalendarMatches ret;
+  int idx = -1;
   for (const auto& item : items) {
+    ++idx;
     if (!item.hasStart) continue;
+    auto pt = item.start;
+    while (pt <= end) {
+      if (item.hasEnd && pt > item.end) break;
+      if (pt >= start) {
+        MatchItem mi{idx, pt};
+        ret.push_back(mi);
+      }
+      if (item.repeat == Repeat_None) break;
+      pt = item.getNextOccurence(pt);
+    }
   }
   return ret;
 }

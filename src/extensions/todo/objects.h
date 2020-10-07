@@ -25,14 +25,24 @@ struct CalendarItem {
   RepeatType repeat;
   std::string description;
 
+  CalendarItem() { clear(); }
+  CalendarItem(const TimePoint& s, RepeatType r, const std::string& d);
+  CalendarItem(const TimePoint& s, const TimePoint& e, RepeatType r,
+               const std::string& d);
   void clear();
   TimePoint getNextOccurence(const TimePoint& pt) const;
 };  // struct CalendarItem
 
-typedef std::vector<CalendarItem> CalendarItems;
+struct MatchItem {
+  int idx;
+  TimePoint pt;
+};  // struct MatchItem
 
-CalendarItems findMatchesIn(const CalendarItems& items, const TimePoint& start,
-                            const TimePoint& end);
+typedef std::vector<CalendarItem> CalendarItems;
+typedef std::vector<MatchItem> CalendarMatches;
+
+CalendarMatches findMatchesIn(const CalendarItems& items,
+                              const TimePoint& start, const TimePoint& end);
 
 }  // namespace todo
 }  // namespace teditor
