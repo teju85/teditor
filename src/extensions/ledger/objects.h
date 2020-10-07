@@ -64,7 +64,7 @@ public:
 /** date of transaction */
 struct Date {
   Date(const std::string& str): year(0), month(0), day(0) {
-    sscanf(str.c_str(), "%d/%d/%d", &year, &month, &day);
+    sscanf(str.c_str(), "%d-%d-%d", &year, &month, &day);
   }
 
   bool validate() const {

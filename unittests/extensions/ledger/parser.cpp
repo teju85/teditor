@@ -53,10 +53,10 @@ TEST_CASE("Parser::allAccounts") {
 
 TEST_CASE("Parser::minMaxDates") {
   Parser p("samples/ledger/sample.lg");
-  Date min("0/0/0"), max("0/0/0");
+  Date min("0-0-0"), max("0-0-0");
   p.minmaxDates(min, max);
-  REQUIRE(Date("2018/8/4") == min);
-  REQUIRE(Date("2018/9/10") == max);
+  REQUIRE(Date("2018-8-4") == min);
+  REQUIRE(Date("2018-9-10") == max);
 }
 
 void parse(const std::string& file) {

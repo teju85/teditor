@@ -21,7 +21,7 @@ account Assets:Bank2:SB
   alias       DefaultBank
 
 
-2018/8/4 Opening
+2018-08-04 Opening
   Cash                                   1030
   Bank1                                  4089.64
   Bank2                                 10000
@@ -29,27 +29,27 @@ account Assets:Bank2:SB
   Liabilities:Bank2:CreditCard         -12325.94
   Equity:OpeningBalances
 
-2018/8/5 Gas Station
+2018-08-05 Gas Station
   Expenses:Auto:TireRepair                700
   Cash
 # no space between successive transaction definitions is also valid!
-2018/8/6 Hospital
+2018-08-06 Hospital
   Expenses:Medical:BabyVaccination       8594
   Bank1
 
-2018/9/7 Reliance Fresh
+2018-09-07 Reliance Fresh
   Expenses:Food:Groceries                1872.09
   Expenses:Food:DryFruits                1031
   Bank1
 
-2018/9/8 LIC
+2018-09-08 LIC
   Assets:Investments:LIC                13600.01
   Bank1
 
-2018/9/9 Amazon
+2018-09-09 Amazon
   Expenses:Books:Wife                    5550.5  # ??
   Liabilities:Bank2:CreditCard
 
-2018/9/10 Amazon another order
+2018-09-10 Amazon another order
   Expenses:Books:Wife                    5550.5  # duplicate order!
   Liabilities:Bank2:CreditCard

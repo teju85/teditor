@@ -16,7 +16,7 @@ std::vector<parser::Grammar::TerminalDef>& getTokens() {
   static std::vector<parser::Grammar::TerminalDef> tokens = {
     {"Comment", "# [^\r\n]+"},
     {"Name", "[^ \t\r\n#]+"},
-    {"Date", "\\d\\d\\d\\d/\\d\\d?/\\d\\d?"},  // YYYY/MM/DD or YYYY/M/D
+    {"Date", "\\d\\d\\d\\d-\\d\\d-\\d\\d"},  // YYYY/MM/DD or YYYY/M/D
     {"Number", parser::Regexs::FloatingPt},
     {"Newline", parser::Regexs::Newline},
     {"Space", "\\s+"},
