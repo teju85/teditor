@@ -18,7 +18,7 @@ Buffer& getLedgerShowBuff(Editor& ed) {
 }
 
 DEF_CMD(
-  LedgerOpen, "ledger", DEF_OP() {
+  LedgerOpen, "ledger-open", DEF_OP() {
     auto ledgerFile = Option::get("ledger::file").getStr();
     ed.load(ledgerFile, 0);
   },
@@ -55,7 +55,7 @@ void showTopAccounts(Buffer& buf) {
 }
 
 DEF_CMD(
-  LedgerTop, "ledger::top", DEF_OP() {
+  LedgerTop, "ledger-top", DEF_OP() {
     auto& buf = getLedgerShowBuff(ed);
     showTopAccounts(buf);
     ed.switchToBuff("*ledger");
@@ -83,7 +83,7 @@ void showAllAccounts(Buffer& buf) {
 }
 
 DEF_CMD(
-  Ledger, "ledger::all", DEF_OP() {
+  Ledger, "ledger-all", DEF_OP() {
     auto& buf = getLedgerShowBuff(ed);
     showAllAccounts(buf);
     ed.switchToBuff("*ledger");

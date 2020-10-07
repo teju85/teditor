@@ -12,12 +12,6 @@ class LedgerMode : public text::TextMode {
  public:
   LedgerMode(): text::TextMode("ledger") {}
 
-  Strings cmdNames() const {
-    return allCmdNames([](const std::string& name) {
-      return name[0] != '.' && name.find("ledger::") == 0;
-    });
-  }
-
   static Mode* create() { return new LedgerMode; }
 
   static bool modeCheck(const std::string& file) {
@@ -45,8 +39,8 @@ class LedgerShowMode: public readonly::ReadOnlyMode {
 };  // class LedgerShowMode
 
 std::vector<KeyCmdPair> LedgerShowMode::Keys::All = {
-  {"a", "ledger::all"},
-  {"t", "ledger::top"}
+  {"a", "ledger-all"},
+  {"t", "ledger-top"}
 };
 
 std::vector<NameColorPair> LedgerShowMode::Colors::All = {};
