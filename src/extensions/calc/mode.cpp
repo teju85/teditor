@@ -1,17 +1,28 @@
 #include "core/buffer.h"
 #include "core/option.h"
-#include "mode.h"
+#include "../base/text.h"
+#include <string>
+#include "number.h"
 
 namespace teditor {
 namespace calc {
 
-CalcMode::CalcMode():
-  text::TextMode("calc"),
-  cmds(Option::get("calc:histFile").getStr(),
-       Option::get("calc:maxHistory").getInt()) {
-  populateKeyMap<CalcMode::Keys>(getKeyCmdMap());
-  populateColorMap<CalcMode::Colors>(getColorMap());
-}
+
+/** calc mode */
+class CalcMode: public text::TextMode {
+public:
+  CalcMode(): text::TextMode("calc") {
+    populateKeyMap<CalcMode::Keys>(getKeyCmdMap());
+    populateColorMap<CalcMode::Colors>(getColorMap());
+  }
+
+  static Mode* create() { return new CalcMode; }
+  static bool modeCheck(const std::string& file) { return file == "*calc"; }
+
+private:
+  struct Keys { static std::vector<KeyCmdPair> All; };
+  struct Colors { static std::vector<NameColorPair> All; };
+};  // class CalcMode
 
 std::vector<KeyCmdPair> CalcMode::Keys::All = {
   {" ", ".calc::insert-char"},

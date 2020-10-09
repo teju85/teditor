@@ -1,14 +1,15 @@
 #include "core/editor.h"
 #include "core/command.h"
-#include "core/isearch.h"
-#include "mode.h"
 #include "core/option.h"
 #include "number.h"
 #include "parser.h"
+#include "core/utils.h"
 
 namespace teditor {
 namespace calc {
 namespace ops {
+
+typedef std::unordered_map<std::string, Num64> VarMap;
 
 Buffer& getCalcBuff(Editor& ed) {
   bool newOne;
@@ -18,12 +19,25 @@ Buffer& getCalcBuff(Editor& ed) {
   return buf;
 }
 
-std::string prompt() {
-  return Option::get("calc:prompt").getStr();
+VarMap& vars() {
+  static VarMap v;
+  return v;
 }
 
-std::string lineSeparator() {
-  return Option::get("calc:lineSeparator").getStr();
+History& cmds() {
+  static History c(Option::get("calc:histFile").getStr(),
+                   Option::get("calc:maxHistory").getInt());
+  return c;
+}
+
+const std::string& prompt() {
+  static std::string p(Option::get("calc:prompt").getStr());
+  return p;
+}
+
+const std::string& lineSeparator() {
+  static std::string ls(Option::get("calc:lineSeparator").getStr());
+  return ls;
 }
 
 bool isPromptLine(Buffer& buf) {
@@ -63,23 +77,18 @@ void insertChar(Buffer& buf, char c, Editor& ed) {
   }
 }
 
-VarMap& getVars() {
-  static VarMap vars;
-  return vars;
-}
-
 void evaluate(Buffer& buf, Editor& ed) {
   Parser parser;
   const auto& pt = buf.getPoint();
   const auto& line = buf.at(pt.y).get();
-  auto p = prompt();
+  const auto& p = prompt();
   if (line.compare(0, p.size(), p) != 0) {
     CMBAR_MSG(ed, "Cannot evaluate a non-expr line!\n");
     return;
   }
   auto expr = line.substr(p.size());
   if (expr.empty()) return;
-  parser.evaluate(expr, getVars());
+  parser.evaluate(expr, vars());
   //@todo: fix this
   buf.insert(format("\nResult: %s\n", expr.c_str()));
   printHeader(buf);  // insert the next prompt
