@@ -2,7 +2,6 @@
 
 #include "core/parser/scanner.h"
 #include "core/parser/lexer.h"
-#include "core/parser/grammar.h"
 #include <unordered_map>
 #include "number.h"
 #include <string>
@@ -18,18 +17,15 @@ typedef std::stack<Num64> NumStack;
 
 /** expression parser and evaluator */
 struct Parser {
-  Parser();
   void evaluate(const std::string& expr, VarMap& vars);
   void evaluate(parser::Scanner *sc, VarMap& vars);
 
  private:
-  parser::Grammar grammar;
-
   bool lexingDone(const parser::Token& tok);
   Num64 computeBinaryOp(const Num64& a, const Num64& b, uint32_t op);
   Num64 computeUnaryFunc(const Num64& a, const std::string& func);
   bool isBinaryOp(uint32_t id);
-  bool isUnaryFunc(uint32_t id) { return id == grammar.getId("Func"); }
+  bool isUnaryFunc(uint32_t id);
   void evaluateExpr(std::shared_ptr<parser::Lexer>& lex, parser::Scanner *sc,
                     VarMap& vars, NumStack& stack);
 };  // struct Parser

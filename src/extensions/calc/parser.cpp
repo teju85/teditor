@@ -3,12 +3,15 @@
 
 #include "parser.h"
 #include "core/parser/regexs.h"
+#include "core/parser/scanner.h"
+#include "core/parser/lexer.h"
+#include "core/parser/grammar.h"
 
 namespace teditor {
 namespace calc {
 
-Parser::Parser():
-  grammar({
+parser::Grammar& getGrammar() {
+  static parser::Grammar g({
     {"IVal",  parser::Regexs::Integer},
     {"FVal",  parser::Regexs::FloatingPt},
     {"(",     "\\("},
@@ -44,7 +47,9 @@ Parser::Parser():
     {"Stmt", {"rhs"}},
     {"Stmt", {"lhs", "=", "rhs"}},
   },
-    "Stmt") {}
+    "Stmt");
+  return g;
+}
 
 bool Parser::lexingDone(const parser::Token& tok) {
   return tok.type == parser::Token::End || tok.type == parser::Token::Unknown;
@@ -56,6 +61,7 @@ void Parser::evaluate(const std::string& expr, VarMap& vars) {
 }
 
 void Parser::evaluate(parser::Scanner *sc, VarMap& vars) {
+  auto& grammar = getGrammar();
   auto lex = grammar.getLexer();
   NumStack stack;
   evaluateExpr(lex, sc, vars, stack);
@@ -63,6 +69,7 @@ void Parser::evaluate(parser::Scanner *sc, VarMap& vars) {
 
 void Parser::evaluateExpr(std::shared_ptr<parser::Lexer>& lex,
                           parser::Scanner *sc, VarMap& vars, NumStack& stack) {
+  auto& grammar = getGrammar();
   auto tok = lex->nextWithIgnore(sc, grammar.getId("space"));
   if (lexingDone(tok)) return;
   //if (isNumber(tok.type))
@@ -70,6 +77,7 @@ void Parser::evaluateExpr(std::shared_ptr<parser::Lexer>& lex,
 }
 
 Num64 Parser::computeBinaryOp(const Num64& a, const Num64& b, uint32_t id) {
+  auto& grammar = getGrammar();
   if (id == grammar.getId("+")) return a + b;
   if (id == grammar.getId("-")) return a - b;
   if (id == grammar.getId("*")) return a * b;
@@ -107,7 +115,13 @@ Num64 Parser::computeUnaryFunc(const Num64& a, const std::string& func) {
   return Num64();
 }
 
+bool Parser::isUnaryFunc(uint32_t id) {
+  auto& grammar = getGrammar();
+  return id == grammar.getId("Func");
+}
+
 bool Parser::isBinaryOp(uint32_t id) {
+  auto& grammar = getGrammar();
   return grammar.getId("+") <= id && id <= grammar.getId("^");
 }
 

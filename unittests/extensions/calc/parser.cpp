@@ -6,7 +6,6 @@ namespace teditor {
 namespace calc {
 
 TEST_CASE("Parser") {
-  Parser p;
   ///@todo: complete this test once the parser is ready
 }
 
