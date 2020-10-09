@@ -43,11 +43,11 @@ const std::string& lineSeparator() {
 bool isPromptLine(Buffer& buf) {
   const auto& pt = buf.getPoint();
   const auto& line = buf.at(pt.y).get();
-  auto p = prompt();
+  const auto& p = prompt();
   return line.compare(0, p.size(), p) == 0;
 }
 
-bool isOnPrompt(Buffer& buf, bool includeTrailingSpace = true) {
+bool isOnPrompt(Buffer& buf, bool includeTrailingSpace = false) {
   if (!isPromptLine(buf)) return false;
   const auto& pt = buf.getPoint();
   auto len = int(prompt().size());
@@ -77,23 +77,6 @@ void insertChar(Buffer& buf, char c, Editor& ed) {
   }
 }
 
-void evaluate(Buffer& buf, Editor& ed) {
-  Parser parser;
-  const auto& pt = buf.getPoint();
-  const auto& line = buf.at(pt.y).get();
-  const auto& p = prompt();
-  if (line.compare(0, p.size(), p) != 0) {
-    CMBAR_MSG(ed, "Cannot evaluate a non-expr line!\n");
-    return;
-  }
-  auto expr = line.substr(p.size());
-  if (expr.empty()) return;
-  parser.evaluate(expr, vars());
-  //@todo: fix this
-  buf.insert(format("\nResult: %s\n", expr.c_str()));
-  printHeader(buf);  // insert the next prompt
-}
-
 DEF_CMD(
   Calc, "calc", DEF_OP() {
     auto& buf = getCalcBuff(ed);
@@ -110,7 +93,21 @@ DEF_CMD(
 
 DEF_CMD(
   Evaluate, "calc::enter", DEF_OP() {
-    evaluate(ed.getBuff(), ed);
+    auto& buf = ed.getBuff();
+    Parser parser;
+    const auto& pt = buf.getPoint();
+    const auto& line = buf.at(pt.y).get();
+    const auto& p = prompt();
+    if (line.compare(0, p.size(), p) != 0) {
+      CMBAR_MSG(ed, "Cannot evaluate a non-expr line!\n");
+      return;
+    }
+    auto expr = line.substr(p.size());
+    if (expr.empty()) return;
+    parser.evaluate(expr, vars());
+    //@todo: fix this
+    buf.insert(format("\nResult: %s\n", expr.c_str()));
+    printHeader(buf);  // insert the next prompt
   },
   DEF_HELP() { return "Evaluate the current expression"; });
 

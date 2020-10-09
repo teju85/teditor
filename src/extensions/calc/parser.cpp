@@ -57,19 +57,13 @@ bool Parser::lexingDone(const parser::Token& tok) {
 
 void Parser::evaluate(const std::string& expr, VarMap& vars) {
   parser::StringScanner sc(expr);
-  evaluate(&sc, vars);
+  NumStack stack;
+  evaluateExpr(&sc, vars, stack);
 }
 
-void Parser::evaluate(parser::Scanner *sc, VarMap& vars) {
+void Parser::evaluateExpr(parser::Scanner *sc, VarMap& vars, NumStack& stack) {
   auto& grammar = getGrammar();
   auto lex = grammar.getLexer();
-  NumStack stack;
-  evaluateExpr(lex, sc, vars, stack);
-}
-
-void Parser::evaluateExpr(std::shared_ptr<parser::Lexer>& lex,
-                          parser::Scanner *sc, VarMap& vars, NumStack& stack) {
-  auto& grammar = getGrammar();
   auto tok = lex->nextWithIgnore(sc, grammar.getId("space"));
   if (lexingDone(tok)) return;
   //if (isNumber(tok.type))

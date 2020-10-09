@@ -18,7 +18,6 @@ typedef std::stack<Num64> NumStack;
 /** expression parser and evaluator */
 struct Parser {
   void evaluate(const std::string& expr, VarMap& vars);
-  void evaluate(parser::Scanner *sc, VarMap& vars);
 
  private:
   bool lexingDone(const parser::Token& tok);
@@ -26,8 +25,7 @@ struct Parser {
   Num64 computeUnaryFunc(const Num64& a, const std::string& func);
   bool isBinaryOp(uint32_t id);
   bool isUnaryFunc(uint32_t id);
-  void evaluateExpr(std::shared_ptr<parser::Lexer>& lex, parser::Scanner *sc,
-                    VarMap& vars, NumStack& stack);
+  void evaluateExpr(parser::Scanner *sc, VarMap& vars, NumStack& stack);
 };  // struct Parser
 
 }  // namespace calc
