@@ -5,50 +5,74 @@
 #include "core/parser/regexs.h"
 #include "core/parser/scanner.h"
 #include "core/parser/lexer.h"
-#include "core/parser/grammar.h"
 
 namespace teditor {
 namespace calc {
 
-parser::Grammar& getGrammar() {
-  static parser::Grammar g({
-    {"IVal",  parser::Regexs::Integer},
-    {"FVal",  parser::Regexs::FloatingPt},
-    {"(",     "\\("},
-    {")",     "\\)"},
-    ///@todo: enable
-    //{";",     ";"},
-    {"Var",   parser::Regexs::Variable},
-    {"=",     "="},
-    // add all binary operators from here //
-    {"+",     "[+]"},
-    {"-",     "-"},
-    {"*",     "[*]"},
-    {"/",     "/"},
-    {"^",     "^"},
-    // add all binary operators till here //
-    // assumed to be all unary functions only!
-    {"Func" , "[a-zA-Z_][a-zA-Z0-9_]*\\("},
-    {"space", "\\s+"},
-  }, {
-    {"Num",  {"IVal"}},
-    {"Num",  {"FVal"}},
-    {"R",    {parser::Grammar::Eps}},
-    {"S",    {parser::Grammar::Eps}},
-    {"Fac",  {"Num"}},
-    {"Term", {"Fac", "S"}},
-    {"rhs",  {"Term", "R"}},
-    {"R",    {"+", "rhs"}},
-    {"R",    {"-", "rhs"}},
-    {"S",    {"*", "Term"}},
-    {"S",    {"/", "Term"}},
-    {"Fac",  {"(", "rhs", ")"}},
-    {"Fac",  {"Func", "rhs", ")"}},
-    {"Stmt", {"rhs"}},
-    {"Stmt", {"lhs", "=", "rhs"}},
-  },
-    "Stmt");
-  return g;
+enum Tokens {
+  IVal = 0,
+  FVal,
+  BrktOpen,
+  BrktClose,
+  Var,
+  Equals,
+  Plus,
+  Minus,
+  Mul,
+  Div,
+  Exp,
+  Func,
+  Space,
+  SemiColon,
+};  // enum Tokens
+
+#define CASE(t) case t : return #t
+const char* tokens2str(uint32_t tok) {
+  if (tok == parser::Token::End) return "End";
+  if (tok == parser::Token::Unknown) return "Unknown";
+  switch (Tokens(tok)) {
+    CASE(IVal);
+    CASE(FVal);
+    CASE(BrktOpen);
+    CASE(BrktClose);
+    CASE(Var);
+    CASE(Equals);
+    CASE(Plus);
+    CASE(Minus);
+    CASE(Mul);
+    CASE(Div);
+    CASE(Exp);
+    CASE(Func);
+    CASE(Space);
+    CASE(SemiColon);
+  default:
+    ASSERT(false, "tokens2str: Bad token type passed '%d'!", tok);
+  }
+}
+#undef CASE
+
+parser::Lexer& getLexer() {
+  static parser::Lexer lexer(
+    {
+      {IVal, parser::Regexs::Integer},
+      {FVal, parser::Regexs::FloatingPt},
+      {BrktOpen, "\\("},
+      {BrktClose, "\\)"},
+      {Var, parser::Regexs::Variable},
+      {Equals, "="},
+      // add all binary operators from here //
+      {Plus, "[+]"},
+      {Minus, "-"},
+      {Mul, "[*]"},
+      {Div, "/"},
+      {Exp, "^"},
+      // add all binary operators till here //
+      // @todo: assumed to be all unary functions only for now!
+      {Func , "[a-zA-Z_][a-zA-Z0-9_]*\\("},
+      {Space, "\\s+"},
+      {SemiColon,     ";"},
+    });
+  return lexer;
 }
 
 bool Parser::lexingDone(const parser::Token& tok) {
@@ -62,21 +86,19 @@ void Parser::evaluate(const std::string& expr, VarMap& vars) {
 }
 
 void Parser::evaluateExpr(parser::Scanner *sc, VarMap& vars, NumStack& stack) {
-  auto& grammar = getGrammar();
-  auto lex = grammar.getLexer();
-  auto tok = lex->next(sc, grammar.getId("space"));
+  auto& lex = getLexer();
+  auto tok = lex.next(sc, Space);
   if (lexingDone(tok)) return;
   //if (isNumber(tok.type))
   ///@todo:
 }
 
 Num64 Parser::computeBinaryOp(const Num64& a, const Num64& b, uint32_t id) {
-  auto& grammar = getGrammar();
-  if (id == grammar.getId("+")) return a + b;
-  if (id == grammar.getId("-")) return a - b;
-  if (id == grammar.getId("*")) return a * b;
-  if (id == grammar.getId("/")) return a / b;
-  if (id == grammar.getId("^")) return pow(a, b);
+  if (id == Plus) return a + b;
+  if (id == Minus) return a - b;
+  if (id == Mul) return a * b;
+  if (id == Div) return a / b;
+  if (id == Exp) return pow(a, b);
   return Num64();
 }
 
@@ -109,14 +131,10 @@ Num64 Parser::computeUnaryFunc(const Num64& a, const std::string& func) {
   return Num64();
 }
 
-bool Parser::isUnaryFunc(uint32_t id) {
-  auto& grammar = getGrammar();
-  return id == grammar.getId("Func");
-}
+bool Parser::isUnaryFunc(uint32_t id) { return id == Func; }
 
 bool Parser::isBinaryOp(uint32_t id) {
-  auto& grammar = getGrammar();
-  return grammar.getId("+") <= id && id <= grammar.getId("^");
+  return Plus <= id && id <= Exp;
 }
 
 }  // namespace calc
