@@ -3,7 +3,6 @@
 #include <map>
 #include "parser.h"
 #include <vector>
-#include "core/parser/grammar.h"
 #include "core/parser/regexs.h"
 #include "core/parser/lexer.h"
 #include "core/parser/scanner.h"
@@ -12,24 +11,52 @@
 namespace teditor {
 namespace ledger {
 
-std::vector<parser::Grammar::TerminalDef>& getTokens() {
-  static std::vector<parser::Grammar::TerminalDef> tokens = {
-    {"Comment", "# [^\r\n]+"},
-    {"Name", "[^ \t\r\n#]+"},
-    {"Date", parser::Regexs::DateTime},
-    {"Number", parser::Regexs::FloatingPt},
-    {"Newline", parser::Regexs::Newline},
-    {"Space", "\\s+"},
-    {"AccountStart", "account\\s+"},
-    {"AccountDescription", "  description\\s+"},
-    {"AccountAlias", "  alias\\s+"},
-  };
-  return tokens;
-}
+enum Tokens {
+  Comment = 0,
+  Name,
+  Date,
+  Number,
+  Newline,
+  Space,
+  AccountStart,
+  AccountDescription,
+  AccountAlias,
+};  // enum Tokens
 
-parser::Grammar& getGrammar() {
-  static parser::Grammar grammar(getTokens(), {}, "");
-  return grammar;
+#define CASE(t) case t : return #t
+const char* tokens2str(uint32_t tok) {
+  if (tok == parser::Token::End) return "End";
+  if (tok == parser::Token::Unknown) return "Unknown";
+  switch (Tokens(tok)) {
+    CASE(Comment);
+    CASE(Name);
+    CASE(Date);
+    CASE(Number);
+    CASE(Newline);
+    CASE(Space);
+    CASE(AccountStart);
+    CASE(AccountDescription);
+    CASE(AccountAlias);
+  default:
+    ASSERT(false, "tokens2str: Bad token type passed '%d'!", tok);
+  }
+}
+#undef CASE
+
+parser::Lexer& getLexer() {
+  static parser::Lexer lexer(
+    {
+      {Comment, "# [^\r\n]+"},
+      {Name, "[^ \t\r\n#]+"},
+      {Date, parser::Regexs::DateTime},
+      {Number, parser::Regexs::FloatingPt},
+      {Newline, parser::Regexs::Newline},
+      {Space, "\\s+"},
+      {AccountStart, "account\\s+"},
+      {AccountDescription, "  description\\s+"},
+      {AccountAlias, "  alias\\s+"},
+    });
+  return lexer;
 }
 
 Parser::Parser(const std::string& f): file(f), trans(), accts() {
@@ -41,15 +68,8 @@ void Parser::parse(const std::string& f) {
   Buffer buff;
   buff.load(tmp, 0);
   parser::BufferScanner scanner(buff);
-  auto& g = getGrammar();
-  auto lexer = g.getLexer();
-  auto id_AccountStart = g.getId("AccountStart"),
-    id_Newline = g.getId("Newline"), id_Comment = g.getId("Comment"),
-    id_Space = g.getId("Space"), id_Name = g.getId("Name"),
-    id_AccountDescription = g.getId("AccountDescription"),
-    id_AccountAlias = g.getId("AccountAlias"),
-    id_Date = g.getId("Date"), id_Number = g.getId("Number");
-  std::unordered_set<uint32_t> ignores{id_Space, id_Newline, id_Comment};
+  auto& lexer = getLexer();
+  std::unordered_set<uint32_t> ignores{Space, Newline, Comment};
   parser::Token token;
   // to get the matched string
   auto getString = [&]() -> std::string {
@@ -59,58 +79,58 @@ void Parser::parse(const std::string& f) {
   auto collectSentence = [&]() -> std::string {
     std::string ret;
     do {
-      token = lexer->next(&scanner, id_Space);
-      if (token.type == id_Name) ret += " " + getString();
-    } while (token.type == id_Name);
-    ASSERT(token.type == id_Newline,
+      token = lexer.next(&scanner, Space);
+      if (token.type == Name) ret += " " + getString();
+    } while (token.type == Name);
+    ASSERT(token.type == Newline,
            "Sentence must end with a newline '%s'. Found token=%s",
-           ret.c_str(), g.getName(token.type).c_str());
+           ret.c_str(), tokens2str(token.type));
     return ret;
   };
   // reads next token
-  auto next = [&]() { token = lexer->next(&scanner, ignores); };
+  auto next = [&]() { token = lexer.next(&scanner, ignores); };
   // main parser loop
   next();
   while (!token.isEof()) {
-    if (token.type == id_AccountStart) {  // account info
+    if (token.type == AccountStart) {  // account info
       // name
       next();
-      ASSERT(token.type == id_Name, "Invalid token after 'account'");
+      ASSERT(token.type == Name, "Invalid token after 'account'");
       auto accName = getString();
       // description
       next();
-      ASSERT(token.type == id_AccountDescription,
+      ASSERT(token.type == AccountDescription,
              "Second line of account '%s' must be its description",
              accName.c_str());
       auto accDesc = collectSentence();
       next();
-      ASSERT(token.type == id_AccountAlias,
+      ASSERT(token.type == AccountAlias,
              "Account '%s' description must be followed by list of its aliases",
              accName.c_str());
       // alias
       Aliases accAls;
       do {
         next();
-        ASSERT(token.type == id_Name,
+        ASSERT(token.type == Name,
                "Account '%s' alias keyword must be followed by alias name",
                accName.c_str());
         accAls.insert(getString());
-      } while (token.type == id_AccountAlias);
+      } while (token.type == AccountAlias);
       accts.push_back(Account(accName, accDesc, accAls));
-    } else if (token.type == id_Date) {  // transaction info
+    } else if (token.type == Date) {  // transaction info
       auto dateStr = getString();
       // description
       auto desc = collectSentence();
       next();
       Transaction tr(dateStr, desc);
-      ASSERT(token.type == id_Name,
+      ASSERT(token.type == Name,
              "Transaction start of '%s' must be followed by account name",
              desc.c_str());
       // accounts
-      while (token.type == id_Name) {
+      while (token.type == Name) {
         auto acc = getString();
         next();
-        if (token.type == id_Number) {
+        if (token.type == Number) {
           tr.add(acc, str2double(getString()));
           next();
         } else {
