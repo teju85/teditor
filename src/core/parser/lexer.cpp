@@ -11,8 +11,14 @@ const uint32_t Token::Root = uint32_t(-3);
 
 
 std::ostream& operator<<(std::ostream& os, const Token& tok) {
-  os << "type=" << tok.type << " start=" << tok.start.y << "," << tok.start.x
-     << " end=" << tok.end.y << "," << tok.end.x;
+  if (tok.type == Token::End) {
+    os << "type=END";
+  } else if (tok.type == Token::Unknown) {
+    os << "type=UNKNOWN";
+  } else {
+    os << "type=" << tok.type << " start=" << tok.start.y << "," << tok.start.x
+       << " end=" << tok.end.y << "," << tok.end.x;
+  }
   return os;
 }
 
