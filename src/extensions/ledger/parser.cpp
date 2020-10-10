@@ -59,7 +59,7 @@ void Parser::parse(const std::string& f) {
   auto collectSentence = [&]() -> std::string {
     std::string ret;
     do {
-      token = lexer->nextWithIgnore(&scanner, id_Space);
+      token = lexer->next(&scanner, id_Space);
       if (token.type == id_Name) ret += " " + getString();
     } while (token.type == id_Name);
     ASSERT(token.type == id_Newline,
@@ -68,7 +68,7 @@ void Parser::parse(const std::string& f) {
     return ret;
   };
   // reads next token
-  auto next = [&]() { token = lexer->nextWithIgnore(&scanner, ignores); };
+  auto next = [&]() { token = lexer->next(&scanner, ignores); };
   // main parser loop
   next();
   while (!token.isEof()) {

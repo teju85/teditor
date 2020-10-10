@@ -48,7 +48,7 @@ void Parser::parse(const std::string& f) {
     id_Space = g.getId("Space");
   // reads next token
   parser::Token token;
-  auto next = [&]() { token = lexer->nextWithIgnore(&scanner, id_Space); };
+  auto next = [&]() { token = lexer->next(&scanner, id_Space); };
   // to get the matched string
   auto getString = [&]() -> std::string {
     return scanner.at(token.start, token.end);

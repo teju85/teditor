@@ -64,7 +64,7 @@ void Parser::evaluate(const std::string& expr, VarMap& vars) {
 void Parser::evaluateExpr(parser::Scanner *sc, VarMap& vars, NumStack& stack) {
   auto& grammar = getGrammar();
   auto lex = grammar.getLexer();
-  auto tok = lex->nextWithIgnore(sc, grammar.getId("space"));
+  auto tok = lex->next(sc, grammar.getId("space"));
   if (lexingDone(tok)) return;
   //if (isNumber(tok.type))
   ///@todo:

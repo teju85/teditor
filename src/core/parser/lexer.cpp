@@ -30,15 +30,15 @@ Lexer::Lexer(const TokenDefs& t): nfas(), tokenDefs(t) {
 
 Lexer::~Lexer() { for (auto t : nfas) delete t; }
 
-Token Lexer::nextWithIgnore(Scanner* sc,
-                            const std::unordered_set<uint32_t>& ignoreTypes) {
+Token Lexer::next(Scanner* sc,
+                  const std::unordered_set<uint32_t>& ignoreTypes) {
   auto tok = next(sc);
   while (ignoreTypes.find(tok.type) != ignoreTypes.end()) tok = next(sc);
   return tok;
 }
 
-Token Lexer::nextWithIgnore(Scanner* sc, uint32_t ignoreType) {
-  return nextWithIgnore(sc, std::unordered_set<uint32_t>({ignoreType}));
+Token Lexer::next(Scanner* sc, uint32_t ignoreType) {
+  return next(sc, std::unordered_set<uint32_t>({ignoreType}));
 }
 
 Token Lexer::next(Scanner* sc) {

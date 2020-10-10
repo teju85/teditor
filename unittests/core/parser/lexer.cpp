@@ -28,7 +28,7 @@ enum TokenIds {
   } while(0)
 
 #define CHECK_IGNORE(lex, sc, st, en, typ, ign)  do {      \
-    auto tok = lex.nextWithIgnore(&sc, ign);               \
+    auto tok = lex.next(&sc, ign);                         \
     REQUIRE(tok.type == typ);                              \
     REQUIRE(tok.start == st);                              \
     REQUIRE(tok.end == en);                                \
