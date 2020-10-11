@@ -63,6 +63,24 @@ void insertChar(Buffer& buf, char c, Editor& ed) {
   }
 }
 
+
+DEF_CMD(
+  CommandHistory, "calc::history", DEF_OP() {
+    StringChoices sc(cmds().get());
+    auto cmd = ed.prompt("Calc Command History: ", nullptr, &sc);
+    if(cmd.empty()) return;
+    auto& buf = ed.getBuff();
+    buf.startOfLine();
+    buf.killLine();
+    buf.insert(prompt());
+    buf.insert(cmd);
+  },
+  DEF_HELP() {
+    return "Opens a prompt with a list of previously entered calc commands to"
+      " quickly search and jump to that command and to be shown in the current"
+      " prompt instead.";
+  });
+
 DEF_CMD(
   Calc, "calc", DEF_OP() {
     auto& buf = getCalcBuff(ed);

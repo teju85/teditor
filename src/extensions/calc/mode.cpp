@@ -139,13 +139,13 @@ std::vector<KeyCmdPair> CalcMode::Keys::All = {
   {"~", ""},
   {"enter", "calc::enter"},
   {"C-U", ""},
-  {"C-R", ""},
   {"C-Y", ""},
   {"C-W", ""},
   {"tab", ""},
   {"backspace", "calc::backspace-char"},
   {"del", "calc::delete-char"},
   {"C-K", "calc::kill-line"},
+  {"C-R", "calc::history"},
 };
 
 std::vector<NameColorPair> CalcMode::Colors::All = {
