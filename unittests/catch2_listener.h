@@ -19,6 +19,7 @@
 #include <catch.hpp>
 #include "core/timer.h"
 #include <algorithm>
+#include <iomanip>
 
 namespace teditor {
 namespace catch2 {
@@ -58,8 +59,9 @@ struct Listener : Catch::TestEventListenerBase {
     const auto& name = stats.testInfo.name;
     const char* status = stats.totals.assertions.allPassed() ? "OK" : "FAIL";
     toc(name);
-    std::cout << "[" << status << "] [" << getTimer(name).elapsed() << "]"
-              << std::endl << std::flush;
+    std::cout << "[" << status << "] [" << std::fixed << std::setw(2)
+              << std::setprecision(6) << std::setfill('0')
+              << getTimer(name).elapsed() << "]" << std::endl << std::flush;
   }
 };  // struct Listener
 
