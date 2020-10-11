@@ -90,6 +90,7 @@ DEF_CMD(
     }
     auto expr = line.substr(p.size());
     if (expr.empty()) return;
+    addCmd(expr);
     parser.evaluate(expr, vars());
     //@todo: fix this
     buf.insert(format("\nResult: %s\n", expr.c_str()));

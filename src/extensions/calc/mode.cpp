@@ -19,6 +19,10 @@ History& cmds() {
   return c;
 }
 
+void addCmd(const std::string& c) {
+  cmds().add(c);
+}
+
 /** calc mode */
 class CalcMode: public text::TextMode {
 public:
