@@ -3,10 +3,21 @@
 #include "../base/text.h"
 #include <string>
 #include "number.h"
+#include "mode.h"
 
 namespace teditor {
 namespace calc {
 
+VarMap& vars() {
+  static VarMap v;
+  return v;
+}
+
+History& cmds() {
+  static History c(Option::get("calc:histFile").getStr(),
+                   Option::get("calc:maxHistory").getInt());
+  return c;
+}
 
 /** calc mode */
 class CalcMode: public text::TextMode {
@@ -15,6 +26,8 @@ public:
     populateKeyMap<CalcMode::Keys>(getKeyCmdMap());
     populateColorMap<CalcMode::Colors>(getColorMap());
   }
+
+  ~CalcMode() { cmds().store(); }
 
   static Mode* create() { return new CalcMode; }
   static bool modeCheck(const std::string& file) { return file == "*calc"; }

@@ -1,15 +1,12 @@
 #include "core/editor.h"
 #include "core/command.h"
 #include "core/option.h"
-#include "number.h"
 #include "parser.h"
-#include "core/utils.h"
+#include "mode.h"
 
 namespace teditor {
 namespace calc {
 namespace ops {
-
-typedef std::unordered_map<std::string, Num64> VarMap;
 
 Buffer& getCalcBuff(Editor& ed) {
   bool newOne;
@@ -17,17 +14,6 @@ Buffer& getCalcBuff(Editor& ed) {
   if (newOne)
     buf.setMode(Mode::createMode(Mode::inferMode(buf.bufferName(), false)));
   return buf;
-}
-
-VarMap& vars() {
-  static VarMap v;
-  return v;
-}
-
-History& cmds() {
-  static History c(Option::get("calc:histFile").getStr(),
-                   Option::get("calc:maxHistory").getInt());
-  return c;
 }
 
 const std::string& prompt() {
