@@ -38,7 +38,7 @@ TEST_CASE("TimeUtils::fromString") {
     auto s = currentTimeToStr();
     auto ts = timeToStr(timeFromStr(s));
     REQUIRE(s == ts);
-    sleep(2000);
+    sleep(1000);
     s = currentTimeToStr();
     ts = timeToStr(timeFromStr(s));
     REQUIRE(s == ts);

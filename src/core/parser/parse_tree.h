@@ -38,7 +38,9 @@ struct Token {
 struct Node {
   Node(const Token& t) : tok(t), children() {}
   ~Node() { for (auto* child : children) delete child; }
-  void add(const Token& t) { children.push_back(new Node(t)); }
+  // ownership is taken over by this class
+  void add(Node* n) { children.push_back(n); }
+  void add(const Token& t) { add(new Node(t)); }
   size_t size() const { return children.size(); }
   bool isLeaf() const { return children.empty(); }
   const Node& operator[](size_t idx) { return *children[idx]; }
