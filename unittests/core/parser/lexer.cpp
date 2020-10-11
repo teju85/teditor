@@ -4,6 +4,7 @@
 #include "core/parser/regexs.h"
 #include "catch.hpp"
 #include <string>
+#include <cstring>
 
 namespace teditor {
 namespace parser {
@@ -35,15 +36,33 @@ enum TokenIds {
   } while(0)
 
 TEST_CASE("Lexer") {
-  Lexer lex({{Float,      Regexs::FloatingPt},
-             {Int,        Regexs::Integer},
-             {Assignment, "="},
-             {BrktOpen,   "\\("},
-             {BrktClose,  "\\)"},
-             {SemiColon,  ";"},
-             {Symbol,     Regexs::Variable},
-             {Operators,  "[-+*/]"},
-             {WhiteSpace, "\\s+"}});
+  Lexer lex(
+    {
+      {Float,      Regexs::FloatingPt, "Float"},
+      {Int,        Regexs::Integer,    "Int"},
+      {Assignment, "=",                "Assignment"},
+      {BrktOpen,   "\\(",              "BrktOpen"},
+      {BrktClose,  "\\)",              "BrktClose"},
+      {SemiColon,  ";",                "SemiColon"},
+      {Symbol,     Regexs::Variable,   "Symbol"},
+      {Operators,  "[-+*/]",           "Operators"},
+      {WhiteSpace, "\\s+",             "WhiteSpace"},
+    });
+  SECTION("token2str") {
+    REQUIRE(!strcmp(lex.token2str(Float), "Float"));
+    REQUIRE(!strcmp(lex.token2str(Int), "Int"));
+    REQUIRE(!strcmp(lex.token2str(Assignment), "Assignment"));
+    REQUIRE(!strcmp(lex.token2str(BrktOpen), "BrktOpen"));
+    REQUIRE(!strcmp(lex.token2str(BrktClose), "BrktClose"));
+    REQUIRE(!strcmp(lex.token2str(SemiColon), "SemiColon"));
+    REQUIRE(!strcmp(lex.token2str(Symbol), "Symbol"));
+    REQUIRE(!strcmp(lex.token2str(Operators), "Operators"));
+    REQUIRE(!strcmp(lex.token2str(WhiteSpace), "WhiteSpace"));
+    REQUIRE(!strcmp(lex.token2str(Token::End), "End"));
+    REQUIRE(!strcmp(lex.token2str(Token::Unknown), "Unknown"));
+    REQUIRE(!strcmp(lex.token2str(Token::Root), "Root"));
+    REQUIRE_THROWS_AS(lex.token2str(42u), std::runtime_error);
+  }
   SECTION("simple-arithmetic") {
     std::string expr("1 + 2");
     StringScanner sc(expr);

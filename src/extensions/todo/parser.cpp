@@ -22,38 +22,20 @@ enum Tokens {
   Space,
 };  // enum Tokens
 
-#define CASE(t) case t : return #t
-const char* tokens2str(uint32_t tok) {
-  if (tok == parser::Token::End) return "End";
-  if (tok == parser::Token::Unknown) return "Unknown";
-  switch (Tokens(tok)) {
-    CASE(Comment);
-    CASE(Keywords);
-    CASE(Date);
-    CASE(String);
-    CASE(RepeatType);
-    CASE(Newline);
-    CASE(Space);
-  default:
-    ASSERT(false, "tokens2str: Bad token type passed '%d'!", tok);
-  }
-}
-#undef CASE
-
 parser::Lexer& getLexer() {
   static parser::Lexer lexer(
     {
-      {Comment, "# [^\r\n]+"},
+      {Comment, "# [^\r\n]+", "Comment"},
       // different keywords
-      {Keywords, "(on|for|repeat|until)"},
+      {Keywords, "(on|for|repeat|until)", "Keywords"},
       // YYYY-MM-DD HH:MM:SS
-      {Date, parser::Regexs::DateTime},
+      {Date, parser::Regexs::DateTime, "Date"},
       // string
-      {String, "\"[^\"]*\""},
+      {String, "\"[^\"]*\"", "String"},
       // repetition type
-      {RepeatType, "(yearly|monthly|weekly|daily)"},
-      {Newline, parser::Regexs::Newline},
-      {Space, "\\s+"},
+      {RepeatType, "(yearly|monthly|weekly|daily)", "RepeatType"},
+      {Newline, parser::Regexs::Newline, "Newline"},
+      {Space, "\\s+", "Space"},
     });
   return lexer;
 }
@@ -88,27 +70,27 @@ void Parser::parse(const std::string& f) {
       continue;
     }
     ASSERT(token.type == Keywords, "Expected 'Keywords' token, found '%s'",
-           tokens2str(token.type));
+           lexer.token2str(token.type));
     auto keyword = getString();
     next();
     auto value = getString();
     if (keyword == "on") {  // on <date>
       ASSERT(token.type == Date, "Expected 'Date' token, found '%s'",
-             tokens2str(token.type));
+             lexer.token2str(token.type));
       curr.hasStart = true;
       curr.start = timeFromStr(value);
     } else if (keyword == "for") {  // for "description"
       ASSERT(token.type == String, "Expected 'String' token, found '%s'",
-             tokens2str(token.type));
+             lexer.token2str(token.type));
       curr.description = value;
     } else if (keyword == "repeat") {  // repeat <repeatType>
       ASSERT(token.type == RepeatType,
              "Expected 'RepeatType' token, found '%s'",
-             tokens2str(token.type));
+             lexer.token2str(token.type));
       curr.repeat = strToRepeatType(value);
     } else if (keyword == "until") {  // until <date>
       ASSERT(token.type == Date, "Expected 'Date' token, found '%s'",
-             tokens2str(token.type));
+             lexer.token2str(token.type));
       curr.hasEnd = true;
       curr.end = timeFromStr(value);
     } else {

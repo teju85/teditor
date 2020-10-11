@@ -23,38 +23,18 @@ enum Tokens {
   AccountAlias,
 };  // enum Tokens
 
-#define CASE(t) case t : return #t
-const char* tokens2str(uint32_t tok) {
-  if (tok == parser::Token::End) return "End";
-  if (tok == parser::Token::Unknown) return "Unknown";
-  switch (Tokens(tok)) {
-    CASE(Comment);
-    CASE(Name);
-    CASE(Date);
-    CASE(Number);
-    CASE(Newline);
-    CASE(Space);
-    CASE(AccountStart);
-    CASE(AccountDescription);
-    CASE(AccountAlias);
-  default:
-    ASSERT(false, "tokens2str: Bad token type passed '%d'!", tok);
-  }
-}
-#undef CASE
-
 parser::Lexer& getLexer() {
   static parser::Lexer lexer(
     {
-      {Comment, "# [^\r\n]+"},
-      {Name, "[^ \t\r\n#]+"},
-      {Date, parser::Regexs::DateTime},
-      {Number, parser::Regexs::FloatingPt},
-      {Newline, parser::Regexs::Newline},
-      {Space, "\\s+"},
-      {AccountStart, "account\\s+"},
-      {AccountDescription, "  description\\s+"},
-      {AccountAlias, "  alias\\s+"},
+      {Comment, "# [^\r\n]+", "Coment"},
+      {Name, "[^ \t\r\n#]+", "Name"},
+      {Date, parser::Regexs::DateTime, "Date"},
+      {Number, parser::Regexs::FloatingPt, "Number"},
+      {Newline, parser::Regexs::Newline, "Newline"},
+      {Space, "\\s+", "Space"},
+      {AccountStart, "account\\s+", "AccountStart"},
+      {AccountDescription, "  description\\s+", "AccountDescription"},
+      {AccountAlias, "  alias\\s+", "AccountAlias"},
     });
   return lexer;
 }
@@ -84,7 +64,7 @@ void Parser::parse(const std::string& f) {
     } while (token.type == Name);
     ASSERT(token.type == Newline,
            "Sentence must end with a newline '%s'. Found token=%s",
-           ret.c_str(), tokens2str(token.type));
+           ret.c_str(), lexer.token2str(token.type));
     return ret;
   };
   // reads next token

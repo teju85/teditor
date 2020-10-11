@@ -26,51 +26,26 @@ enum Tokens {
   SemiColon,
 };  // enum Tokens
 
-#define CASE(t) case t : return #t
-const char* tokens2str(uint32_t tok) {
-  if (tok == parser::Token::End) return "End";
-  if (tok == parser::Token::Unknown) return "Unknown";
-  switch (Tokens(tok)) {
-    CASE(IVal);
-    CASE(FVal);
-    CASE(BrktOpen);
-    CASE(BrktClose);
-    CASE(Var);
-    CASE(Equals);
-    CASE(Plus);
-    CASE(Minus);
-    CASE(Mul);
-    CASE(Div);
-    CASE(Exp);
-    CASE(Func);
-    CASE(Space);
-    CASE(SemiColon);
-  default:
-    ASSERT(false, "tokens2str: Bad token type passed '%d'!", tok);
-  }
-}
-#undef CASE
-
 parser::Lexer& getLexer() {
   static parser::Lexer lexer(
     {
-      {IVal, parser::Regexs::Integer},
-      {FVal, parser::Regexs::FloatingPt},
-      {BrktOpen, "\\("},
-      {BrktClose, "\\)"},
-      {Var, parser::Regexs::Variable},
-      {Equals, "="},
+      {IVal, parser::Regexs::Integer, "IVal"},
+      {FVal, parser::Regexs::FloatingPt, "FVal"},
+      {BrktOpen, "\\(", "BrktOpen"},
+      {BrktClose, "\\)", "BrktClose"},
+      {Var, parser::Regexs::Variable, "Var"},
+      {Equals, "=", "Equals"},
       // add all binary operators from here //
-      {Plus, "[+]"},
-      {Minus, "-"},
-      {Mul, "[*]"},
-      {Div, "/"},
-      {Exp, "^"},
+      {Plus, "[+]", "Plus"},
+      {Minus, "-", "Minus"},
+      {Mul, "[*]", "Mul"},
+      {Div, "/", "Div"},
+      {Exp, "^", "Exp"},
       // add all binary operators till here //
       // @todo: assumed to be all unary functions only for now!
-      {Func , "[a-zA-Z_][a-zA-Z0-9_]*\\("},
-      {Space, "\\s+"},
-      {SemiColon,     ";"},
+      {Func , "[a-zA-Z_][a-zA-Z0-9_]*\\(", "Func"},
+      {Space, "\\s+", "Space"},
+      {SemiColon,     ";", "SemiColon"},
     });
   return lexer;
 }

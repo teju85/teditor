@@ -22,9 +22,14 @@ std::ostream& operator<<(std::ostream& os, const Token& tok) {
   return os;
 }
 
-Lexer::Lexer(const TokenDefs& t): nfas(), tokenDefs(t) {
+Lexer::Lexer(const TokenDefs& t): nfas(), tokenDefs(t), names() {
   for (auto td : tokenDefs) {
-    if (!td.regex.empty()) nfas.push_back(new NFA(td.regex));
+    if (!td.regex.empty()) {
+      nfas.push_back(new NFA(td.regex));
+      ASSERT(names.find(td.type) == names.end(),
+             "Lexer: token id '%u' is already defined!", td.type);
+      names[td.type] = td.name;
+    }
   }
 }
 
@@ -78,6 +83,15 @@ Token Lexer::next(Scanner* sc) {
   // try to see if there are any matching states, if so, pick the longest one
   getLongestMatchingToken(ret, false);
   return ret;
+}
+
+const char* Lexer::token2str(uint32_t tok) const {
+  if (tok == Token::End) return "End";
+  if (tok == Token::Unknown) return "Unknown";
+  if (tok == Token::Root) return "Root";
+  const auto itr = names.find(tok);
+  ASSERT(itr != names.end(), "token2str: Bad token type passed '%u'!", tok);
+  return itr->second.c_str();
 }
 
 bool Lexer::step(char c, const Point& pt, int& nActives, int& nSoleMatches,
