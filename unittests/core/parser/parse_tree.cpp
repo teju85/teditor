@@ -34,7 +34,6 @@ TEST_CASE("printToken") {
 
 TEST_CASE("printNode") {
   Node* root = new Node(Token{Token::Root, Point{0, 0}, Point{0, 0}});
-
   SECTION("zero deep") {
     std::ostringstream oss;
     oss << *root;
