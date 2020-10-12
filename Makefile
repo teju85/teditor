@@ -26,7 +26,7 @@ endif
 
 BINROOT        := bin
 BINDIR         := $(BINROOT)/$(TYPE)
-DEPDIR         := $(BINROOT)/.deps
+DEPDIR         := $(BINDIR)/deps
 DOCDIR         := $(BINROOT)/html
 
 SRC            := src
@@ -34,7 +34,7 @@ TESTS          := unittests
 MAIN           := main
 
 EXE            := $(BINDIR)/teditor
-TESTEXE        := $(BINDIR)/tests
+TESTEXE        := $(BINDIR)/teditor-tests
 
 MKDIR_P        := mkdir -p
 

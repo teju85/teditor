@@ -26,11 +26,10 @@ namespace catch2 {
 
 static char const* dashed_line =
   "--------------------------------------------------------------------------";
+static int const MAX_TEST_NAME_LEN = 64;
 
 struct Listener : Catch::TestEventListenerBase {
   using TestEventListenerBase::TestEventListenerBase;  // inherit ctor
-
-  static constexpr int TEST_NAME_LEN = 64;
 
   void testRunStarting(Catch::TestRunInfo const& info) override {
     tic(info.name);
@@ -50,7 +49,8 @@ struct Listener : Catch::TestEventListenerBase {
   void testCaseStarting(Catch::TestCaseInfo const& info) override {
     tic(info.name);
     std::string name = info.name + " ... ";
-    auto n_spaces = TEST_NAME_LEN - std::min(TEST_NAME_LEN, int(name.size()));
+    auto n_spaces =
+      MAX_TEST_NAME_LEN - std::min(MAX_TEST_NAME_LEN, int(name.size()));
     std::string spaces(n_spaces, ' ');
     std::cout << name << spaces << std::flush;
   }
