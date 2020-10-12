@@ -43,10 +43,16 @@ struct Node {
   void add(const Token& t) { add(new Node(t)); }
   size_t size() const { return children.size(); }
   bool isLeaf() const { return children.empty(); }
-  const Node& operator[](size_t idx) { return *children[idx]; }
+  Node& operator[](size_t idx) { return *children[idx]; }
+  const Node& operator[](size_t idx) const { return *children[idx]; }
 
   Token tok;
   std::vector<Node*> children;
+
+  friend std::ostream& operator<<(std::ostream& os, const Node& n);
+
+ private:
+  void printNode(std::ostream& os, int depth) const;
 };  // struct Node
 
 }  // namespace parser
