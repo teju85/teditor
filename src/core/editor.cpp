@@ -222,8 +222,9 @@ void Editor::run() {
     DEBUG("Editor:run: status=%d meta=%u key=%u keystr='%s'\n", status,
           term.mk.getMeta(), term.mk.getKey(), term.mk.toStr().c_str());
     if(status == Terminal::UndefinedSequence) {
-      MESSAGE(*this, "Editor:run:: Undefined sequence: %s\n",
-              term.getOldSeq().c_str());
+      CMBAR_MSG(*this, "Editor:run:: Undefined sequence: %s\n",
+                term.getOldSeq().c_str());
+      DEBUG("Editor:run:: Undefined sequence: %s\n", term.getOldSeq().c_str());
       continue;
     } else if(status < 0) {
       break;
@@ -428,8 +429,9 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
     DEBUG("Prompter::loop: status=%d meta=%u key=%u keystr='%s'\n", status,
           term.mk.getMeta(), term.mk.getKey(), term.mk.toStr().c_str());
     if(status == Terminal::UndefinedSequence) {
-      MESSAGE(*this, "Prompter::loop: Undefined sequence: %s\n",
-              term.getOldSeq().c_str());
+      CMBAR_MSG(*this, "Prompter::loop: Undefined sequence: %s\n",
+                term.getOldSeq().c_str());
+      DEBUG("Prompter::loop: Undefined sequence: %s\n", term.getOldSeq().c_str());
       break;
     } else if(status < 0) break;
     if(term.type == Event_Key) {

@@ -14,20 +14,32 @@ const std::vector<KeyCombo> KeyCombo::Combos = {
   {Key_PageUp|Meta_Ctrl|Meta_Shift, "[5;6~"},
   {Key_PageDown|Meta_Ctrl|Meta_Shift, "[6;6~"},
 
+  // for mintty
   {Key_ArrowUp|Meta_None, "OA"},
   {Key_ArrowDown|Meta_None, "OB"},
   {Key_ArrowRight|Meta_None, "OC"},
   {Key_ArrowLeft|Meta_None, "OD"},
+  // for windows cmd prompt
+  {Key_ArrowUp|Meta_None, "[A"},
+  {Key_ArrowDown|Meta_None, "[B"},
+  {Key_ArrowRight|Meta_None, "[C"},
+  {Key_ArrowLeft|Meta_None, "[D"},
 
   {Key_ArrowUp|Meta_Shift, "[1;2A"},
   {Key_ArrowDown|Meta_Shift, "[1;2B"},
   {Key_ArrowRight|Meta_Shift, "[1;2C"},
   {Key_ArrowLeft|Meta_Shift, "[1;2D"},
 
+  // for mintty
   {Key_ArrowUp|Meta_Alt, "[1;3A"},
   {Key_ArrowDown|Meta_Alt, "[1;3B"},
   {Key_ArrowRight|Meta_Alt, "[1;3C"},
   {Key_ArrowLeft|Meta_Alt, "[1;3D"},
+  // for windows cmd prompt
+  {Key_ArrowUp|Meta_Alt, "\e[A"},
+  {Key_ArrowDown|Meta_Alt, "\e[B"},
+  {Key_ArrowRight|Meta_Alt, "\e[C"},
+  {Key_ArrowLeft|Meta_Alt, "\e[D"},
 
   {Key_ArrowUp|Meta_Ctrl, "[1;5A"},
   {Key_ArrowDown|Meta_Ctrl, "[1;5B"},
