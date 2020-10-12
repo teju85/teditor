@@ -85,10 +85,14 @@ Terminal::Terminal(const std::string& tty):
                                table_offset));
   funcs.push_back(EnterMouseSeq);
   funcs.push_back(ExitMouseSeq);
-  INFO("Terminal: term=%s\n", termName.c_str());
+  INFO("Terminal: term=%s ttyFile=%s\n", termName.c_str(), ttyFile.c_str());
   // termios setup
   inout = open(ttyFile.c_str(), O_RDWR);
   ASSERT(inout >= 0, "Terminal: Failed to open tty '%s'!", ttyFile.c_str());
+  auto f = fcntl(inout, F_SETFL, O_NONBLOCK);
+  ASSERT(f >= 0, "Terminal: failed to fcntl in the tty descriptor (ret=%d)!", f);
+  ASSERT(isatty(inout), "Terminal: descriptor opened from '%s' not a tty!",
+         ttyFile.c_str());
   outbuff.reserve(BuffSize);
   setupTios();
   puts(Func_EnterKeypad);
@@ -233,6 +237,7 @@ void Terminal::reset() {
 }
 
 int Terminal::decodeChar(key_t ch) {
+  ULTRA_DEBUG("decodeChar: ch=%u\n", ch);
   mk.setKey(ch);
   // Ctrl A-Z and 0-7, except Enter
   if(ch < Key_Space && ch != Key_Enter && ch != Key_Tab)
@@ -242,7 +247,7 @@ int Terminal::decodeChar(key_t ch) {
 
 int Terminal::decodeEscSeq() {
   int len = (int)seq.length();
-  DEBUG("decodeEscSeq: len=%d seq=%s\n", len, seq.c_str());
+  ULTRA_DEBUG("decodeEscSeq: len=%d seq=%s\n", len, seq.c_str());
   if(len == 0) {
     mk.setKey(Key_Esc);
     return 1;
@@ -265,19 +270,20 @@ int Terminal::decodeEscSeq() {
   }
   oldSeq = seq;
   seq.clear();
+  DEBUG("decodeEscSeq: unknown seq=%s\n", oldSeq.c_str());
   return UndefinedSequence;
 }
 
 int Terminal::readAndExtract() {
-  if(seq.empty()) {
-    int rs = 1;
-    do {
-      char c;
-      rs = read(inout, &c, 1);
-      if(rs > 0)
-        seq += c;
-    } while(rs > 0);
-  }
+  ULTRA_DEBUG("Terminal::readAndExtract: before read seq=%s\n", seq.c_str());
+  int rs = 1;
+  do {
+    char c;
+    rs = read(inout, &c, 1);
+    if(rs > 0)
+      seq += c;
+  } while(rs > 0);
+  ULTRA_DEBUG("Terminal::readAndExtract: after read seq=%s\n", seq.c_str());
   ///@todo: support for mouse events
   type = Event_Key;
   mk.setMeta(Meta_None);
@@ -298,7 +304,9 @@ int Terminal::waitAndFill(struct timeval* timeout) {
     FD_SET(inout, &events);
     FD_SET(winchFds[0], &events);
     int maxfd  = std::max(winchFds[0], inout);
+    ULTRA_DEBUG("Terminal::waitAndFill: waiting on select...\n");
     int result = select(maxfd+1, &events, 0, 0, timeout);
+    ULTRA_DEBUG("Terminal::waitAndFill: result=%d\n", result);
     if(!result) return 0;
     // resize event
     if(FD_ISSET(winchFds[0], &events)) {
@@ -306,13 +314,16 @@ int Terminal::waitAndFill(struct timeval* timeout) {
       int zzz = 0;
       n = read(winchFds[0], &zzz, sizeof(int));
       buffResize = true;
+      ULTRA_DEBUG("Terminal::waitAndFill: winchFds event type=%d\n", type);
       return type;
     } else {
+      ULTRA_DEBUG("Terminal::waitAndFill: winchFds disabling resize\n");
       disableResize();
     }
     // key/mouse events
     if(FD_ISSET(inout, &events)) {
       n = readAndExtract();
+      ULTRA_DEBUG("Terminal::waitAndFill: inout keyval=%d\n", n);
       if(n == UndefinedSequence) return n;
       if(n < 0) return -1;
       if(n > 0) return type;

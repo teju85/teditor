@@ -211,7 +211,6 @@ void Editor::deleteBuffer(int idx) {
 void Editor::run() {
   loadFiles();
   setCurrBuff(0);
-  refresh();
   quitEventLoop = false;
   TrieStatus state = TS_NULL;
   std::string keySoFar, currKey;
@@ -422,9 +421,9 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
   if(!defVal.empty()) cmBar->insert(defVal.c_str());
   std::string currKey;
   TrieStatus state = TS_NULL;
-  refresh();
   auto& term = Terminal::getInstance();
   while(!quitPromptLoop) {
+    refresh();
     int status = pollEvent();
     DEBUG("Prompter::loop: status=%d meta=%u key=%u keystr='%s'\n", status,
           term.mk.getMeta(), term.mk.getKey(), term.mk.toStr().c_str());
@@ -443,7 +442,6 @@ std::string Editor::prompt(const std::string& msg, KeyCmdMap* kcMap,
       } else if(state == TS_NULL)
         kcMap->resetTraversal();
     }
-    refresh();
   }
   auto ret = cmBar->getFinalChoice();
   if(cancelPromptLoop) ret.clear();
