@@ -90,7 +90,6 @@ default:
 	@echo "  clean       - Clean the build files"
 	@echo "  clean_all   - Clean even the build files"
 	@echo "  stats       - Source code statistics"
-	@echo "  debug       - Do a debug build and launch editor"
 	@echo "Flags to customize behavior:"
 	@echo "  DEBUG   - Get a debug build if it is 1. Also enables debug"
 	@echo "            logging in Logger class. [0]"
@@ -131,10 +130,6 @@ clean:
 
 clean_all:
 	rm -rf $(BINDIR)
-
-debug:
-	$(MAKE) DEBUG=1 -j teditor
-	$(EXE) -v 100000 README.org Makefile LICENSE src/
 
 
 stats:
