@@ -50,7 +50,6 @@ Editor::Editor(const std::vector<FileInfo>& _files):
   defcMap = m->getColorMap();
   populateKeyMap<PromptYesNoKeys>(ynMap, true);
   resize();
-  clearBackBuff();
   DEBUG("Editor: ctor finished\n");
 }
 
@@ -233,7 +232,6 @@ void Editor::run() {
     }
     switch(term.type) {
     case Event_Resize:
-      clearBackBuff();
       resize();
       break;
     case Event_Key:
