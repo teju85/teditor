@@ -23,6 +23,10 @@ std::ostream& operator<<(std::ostream& os, const Token& tok) {
   return os;
 }
 
+Node::Node(uint32_t type, const Point& start, const Point& end):
+  tok{type, start, end}, children() {
+}
+
 void Node::printNode(std::ostream& os, int depth) const {
   for (int i = 0; i < depth; ++i) {
     os << " |";

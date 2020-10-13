@@ -37,6 +37,7 @@ struct Token {
 /** A node in the parse tree */
 struct Node {
   Node(const Token& t) : tok(t), children() {}
+  Node(uint32_t type, const Point& start, const Point& end);
   ~Node() { for (auto* child : children) delete child; }
   // ownership is taken over by this class
   void add(Node* n) { children.push_back(n); }
