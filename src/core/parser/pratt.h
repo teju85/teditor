@@ -1,13 +1,12 @@
 #pragma once
 
+#include "lexer.h"
+#include "parse_tree.h"
+
 namespace teditor {
 namespace parser {
 
-/**
- * @brief Main Pratt parser
- */
-class Pratt {
-};  // class Pratt
+Node* expression(Token& token, Lexer& lex, int rbp = 0);
 
 }  // namespace parser
 }  // namespace teditor
