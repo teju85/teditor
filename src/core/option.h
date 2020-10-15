@@ -78,6 +78,9 @@ class Option {
   /** dumps all options into the rcfile */
   static void dumpAll(const std::string& outfile);
 
+  /** prints all options to stdout in form of help message */
+  static void printOpts();
+
  private:
   /** name of this option */
   std::string name;

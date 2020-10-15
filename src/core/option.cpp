@@ -69,6 +69,16 @@ void Option::dumpAll(const std::string& outfile) {
   fp.close();
 }
 
+void Option::printOpts() {
+  auto& opts = options();
+  for (const auto& itr : opts) {
+    auto opt = itr.second;
+    printf("%25s [%8s] %s {%s}\n", itr.first.c_str(),
+           Option::type2str(opt->type).c_str(), opt->helpMsg.c_str(),
+           opt->value.c_str());
+  }
+}
+
 #define CASE(t) case t: return #t
 std::string Option::type2str(Option::Type t) {
   switch(t) {
@@ -176,6 +186,8 @@ bool parseArgs(int argc, char** argv, std::vector<FileInfo>& files) {
              "  -h                Print this help and exit.\n"
              "  -dump <rcFile>    Dump the default rc file and exit.\n"
              "  -rc <rcFile>      Configure the editor using this rc file.\n"
+             "  -listopts         List all options supported and exit.\n"
+             "  -opt <name> <val> Set the option as found in the 'Option'.\n"
              "  -v                Print version info and exit.\n"
              "  <files>           Files to be opened\n");
       return false;
@@ -192,6 +204,17 @@ bool parseArgs(int argc, char** argv, std::vector<FileInfo>& files) {
     } else if(!strcmp(argv[i], "-v")) {
       printf("teditor version %s\n", TEDITOR_VERSION_INFO);
       return false;
+    } else if(!strcmp(argv[i], "-listopts")) {
+      Option::printOpts();
+      return false;
+    } else if(!strcmp(argv[i], "-opt")) {
+      ++i;
+      ASSERT(i < argc, "'-opt' option expects 2 arguments!");
+      std::string optName(argv[i]);
+      ++i;
+      ASSERT(i < argc, "'-opt' option expects 2 arguments!");
+      std::string optVal(argv[i]);
+      Option::set(optName, optVal);
     } else {
       ASSERT(argv[i][0] != '-', "Invalid arg passed! '%s'", argv[i]);
       files.push_back(readFileInfo(argv[i]));

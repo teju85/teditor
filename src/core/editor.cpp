@@ -50,7 +50,6 @@ Editor::Editor(const std::vector<FileInfo>& _files):
   defcMap = m->getColorMap();
   populateKeyMap<PromptYesNoKeys>(ynMap, true);
   resize();
-  clearBackBuff();
   DEBUG("Editor: ctor finished\n");
 }
 
@@ -112,6 +111,8 @@ int Editor::cmBarHeight() const {
 
 const AttrColor& Editor::getColor(const std::string& name) const {
   if(buffs.empty()) return defcMap.get(name);
+  ULTRA_DEBUG("getColor: name=%s value=%u\n", name.c_str(),
+              getBuff().getColor(name));
   return getBuff().getColor(name);
 }
 
@@ -233,7 +234,6 @@ void Editor::run() {
     }
     switch(term.type) {
     case Event_Resize:
-      clearBackBuff();
       resize();
       break;
     case Event_Key:
@@ -313,9 +313,8 @@ void Editor::resize() {
   term.updateTermSize();
   backbuff.resize(term.width(), term.height());
   frontbuff.resize(term.width(), term.height());
-  const auto& defaultfg = getColor("defaultfg");
-  const auto& defaultbg = getColor("defaultbg");
-  frontbuff.clear(defaultfg, defaultbg);
+  const auto& clearfg = getColor("clearfg");
+  frontbuff.clear(clearfg, clearfg);
   clearBackBuff();
   bufResize();
   clearScreen();

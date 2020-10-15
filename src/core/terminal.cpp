@@ -276,13 +276,15 @@ int Terminal::decodeEscSeq() {
 
 int Terminal::readAndExtract() {
   ULTRA_DEBUG("Terminal::readAndExtract: before read seq=%s\n", seq.c_str());
-  int rs = 1;
-  do {
-    char c;
-    rs = read(inout, &c, 1);
-    if(rs > 0)
-      seq += c;
-  } while(rs > 0);
+  if (seq.empty()) {
+    int rs = 1;
+    do {
+      char c;
+      rs = read(inout, &c, 1);
+      if(rs > 0)
+        seq += c;
+    } while(rs > 0);
+  }
   ULTRA_DEBUG("Terminal::readAndExtract: after read seq=%s\n", seq.c_str());
   ///@todo: support for mouse events
   type = Event_Key;

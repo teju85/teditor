@@ -37,10 +37,12 @@ struct Token {
 /** A node in the parse tree */
 struct Node {
   Node(const Token& t) : tok(t), children() {}
+  Node(uint32_t type, const Point& start, const Point& end);
   ~Node() { for (auto* child : children) delete child; }
   // ownership is taken over by this class
   void add(Node* n) { children.push_back(n); }
   void add(const Token& t) { add(new Node(t)); }
+  void add(uint32_t type, const Point& start, const Point& end);
   size_t size() const { return children.size(); }
   bool isLeaf() const { return children.empty(); }
   Node& operator[](size_t idx) { return *children[idx]; }

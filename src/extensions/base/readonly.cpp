@@ -68,6 +68,7 @@ std::vector<KeyCmdPair> ReadOnlyMode::Keys::All = {
 };
 
 std::vector<NameColorPair> ReadOnlyMode::Colors::All = {
+  {"clearfg",           "Black"},
   {"defaultfg",         "White"},
   {"defaultbg",         "DarkerGray"},
   {"highlightfg",       "defaultfg"},

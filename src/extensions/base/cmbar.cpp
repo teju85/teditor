@@ -150,6 +150,7 @@ std::vector<KeyCmdPair> CmBarMode::Keys::All = {
 };
 
 std::vector<NameColorPair> CmBarMode::Colors::All = {
+  {"clearfg",           "Black"},
   {"defaultfg",         "White"},
   {"defaultbg",         "DarkerGray"},
   {"highlightfg",       "defaultfg"},
