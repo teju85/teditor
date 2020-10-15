@@ -46,7 +46,8 @@ CATCH2_HEADER  := https://raw.githubusercontent.com/catchorg/Catch2/master/singl
 INCLUDES       := $(SRC) \
                   $(TESTS) \
                   $(CATCH2_DIR)
-LIBRARIES      :=
+
+LIBS           :=
 INCS           := $(foreach inc,$(INCLUDES),-I$(inc))
 CC             := gcc
 CCFLAGS        := -std=c99 $(INCS)
@@ -56,6 +57,11 @@ LD             := g++
 LDFLAGS        :=
 AR             := ar
 ARFLAGS        := rcs
+
+ifeq ($(OS_NAME),GNU/Linux)
+    LIBS       += -L/usr/lib64 -lpthread
+    CXXFLAGS   += -Wno-unused-function
+endif
 
 CPPSRC         := $(shell find $(SRC) -name "*.cpp")
 CORE_OBJS      := $(patsubst %.cpp,$(BINDIR)/%.o,$(CPPSRC))
@@ -97,22 +103,22 @@ default:
 
 teditor: $(EXE)
 
-$(EXE): $(MAIN_OBJS) $(CORE_OBJS) $(LIBRARIES)
+$(EXE): $(MAIN_OBJS) $(CORE_OBJS)
 	@if [ "$(VERBOSE)" = "0" ]; then \
 	    echo "Building  $@ ..."; \
 	fi
-	$(PREFIX)$(LD) $(LDFLAGS) -o $@ $^
+	$(PREFIX)$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 tests: $(TESTEXE)
 	$(TESTEXE)
 
 $(TEST_OBJS): $(CATCH2_DIR)
 
-$(TESTEXE): $(CORE_OBJS) $(TEST_OBJS) $(LIBRARIES)
+$(TESTEXE): $(CORE_OBJS) $(TEST_OBJS)
 	@if [ "$(VERBOSE)" = "0" ]; then \
 	    echo "Building  $@ ..."; \
 	fi
-	$(PREFIX)$(LD) $(LDFLAGS) -o $@ $^
+	$(PREFIX)$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 $(BINDIR)/%.o: %.cpp $(DEPDIR)/%.d
 	@if [ "$(VERBOSE)" = "0" ]; then \
