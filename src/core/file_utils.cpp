@@ -106,7 +106,10 @@ Strings slurpToArr(const std::string& file) {
 
 std::string getpwd() {
   char cwd[2048];
-  (void)getcwd(cwd, 2048);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-result"
+  getcwd(cwd, 2048);
+#pragma GCC diagnostic pop
   return std::string(cwd);
 }
 
@@ -115,9 +118,12 @@ bool isAbs(const std::string& file) { return !file.empty() && file[0] == '/'; }
 std::string rel2abs(const std::string& pwd, const std::string& rel) {
   char abs[2048];
   auto currCwd = getpwd();
-  (void)chdir(pwd.c_str());
-  (void)realpath(rel.c_str(), abs);
-  (void)chdir(currCwd.c_str());
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-result"
+  chdir(pwd.c_str());
+  realpath(rel.c_str(), abs);
+  chdir(currCwd.c_str());
+#pragma GCC diagnostic pop
   std::string res(abs);
   if(res.empty()) res = pwd + '/' + rel;
   return res;
@@ -254,7 +260,12 @@ void copyFile(const std::string& in, const std::string& out) {
   int ofp = open(out.c_str(), O_WRONLY | O_CREAT, st.st_mode);
   size_t size;
   char buf[BUFSIZ];
-  while((size = read(ifp, buf, BUFSIZ)) > 0) (void)write(ofp, buf, size);
+  while((size = read(ifp, buf, BUFSIZ)) > 0) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-result"
+    write(ofp, buf, size);
+#pragma GCC diagnostic pop
+  }
   close(ifp);
   close(ofp);
 }
