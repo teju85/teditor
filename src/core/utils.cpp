@@ -109,8 +109,7 @@ std::string gitBranchName(const std::string& dir) {
 CmdStatus check_output(const std::string& cmd) {
   CmdStatus ret;
   if(cmd.back() == '&') {
-    ret.status = 0;
-    (void)system(cmd.c_str());
+    ret.status = system(cmd.c_str());
     return ret;
   }
   const int MaxBuff = 8192;

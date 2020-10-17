@@ -22,7 +22,10 @@ void exitGracefully(int signum) { exit(signum); }
 void sigwinch_handler(int xxx) {
   (void) xxx;
   const int zzz = 1;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-result"
   (void)write(Terminal::getInstance().getWinchFd(1), &zzz, sizeof(int));
+#pragma GCC diagnostic pop
 }
 
 const std::string Terminal::EnterMouseSeq = "\x1b[?1000h\x1b[?1002h\x1b[?1015h\x1b[?1006h";
@@ -53,7 +56,10 @@ void Terminal::puts(const char* data, size_t len) {
 }
 
 void Terminal::flush() {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-result"
   (void)write(inout, outbuff.c_str(), outbuff.length());
+#pragma GCC diagnostic pop
   ULTRA_DEBUG("flush: len=%lu buf=%s\n", outbuff.length(), outbuff.c_str());
   outbuff.clear();
 }
