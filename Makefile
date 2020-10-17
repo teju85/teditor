@@ -3,6 +3,7 @@
 
 DEBUG          ?= 0
 VERBOSE        ?= 0
+BINROOT        ?= bin
 
 ifeq ($(DEBUG),1)
     TYPE       := Debug
@@ -24,7 +25,6 @@ else
     STDCXX     := c++11
 endif
 
-BINROOT        := bin
 BINDIR         := $(BINROOT)/$(TYPE)
 DEPDIR         := $(BINDIR)/deps
 DOCDIR         := $(BINROOT)/html
@@ -100,6 +100,7 @@ default:
 	@echo "  DEBUG   - Get a debug build if it is 1. Also enables debug"
 	@echo "            logging in Logger class. [0]"
 	@echo "  VERBOSE - Print the actual commands. [0]"
+	@echo "  BINROOT - Root directory where to store build files. [bin/]"
 
 teditor: $(EXE)
 
