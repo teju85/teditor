@@ -146,12 +146,7 @@ TEST_CASE("Utils::Rel2Abs") {
   REQUIRE(pwd+"/README.org" == rel2abs(".", "README.org"));
   REQUIRE(pwd+"/unittests/core/utils.cpp" == rel2abs("unittests/core/", "utils.cpp"));
   REQUIRE(pwd+"/main/main.cpp" == rel2abs("unittests/", "../main/main.cpp"));
-  ///@note: sadly, the expansion of '.' is very platform specific!
-#if defined(__CYGWIN__)
   REQUIRE("./nofile" == rel2abs(".", "nofile"));
-#else
-  REQUIRE(pwd+"/nofile" == rel2abs(".", "nofile"));
-#endif
   REQUIRE("/some/non/existent/path/../nofile" ==
           rel2abs("/some/non/existent/path", "../nofile"));
   REQUIRE("/usr/include" == rel2abs(".", "/usr/include"));
