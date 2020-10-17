@@ -116,14 +116,15 @@ std::string getpwd() {
 bool isAbs(const std::string& file) { return !file.empty() && file[0] == '/'; }
 
 std::string rel2abs(const std::string& pwd, const std::string& rel) {
-  char abs[2048];
+  char abs[2048] = {0};
   auto currCwd = getpwd();
+  if (!chdir(pwd.c_str())) {
+    if (realpath(rel.c_str(), abs) == nullptr) abs[0] = '\0';
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-result"
-  chdir(pwd.c_str());
-  realpath(rel.c_str(), abs);
-  chdir(currCwd.c_str());
+    chdir(currCwd.c_str());
 #pragma GCC diagnostic pop
+  }
   std::string res(abs);
   if(res.empty()) res = pwd + '/' + rel;
   return res;

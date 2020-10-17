@@ -142,14 +142,19 @@ TEST_CASE("Utils::isAbs") {
 }
 
 TEST_CASE("Utils::Rel2Abs") {
-    std::string pwd = getpwd();
-    REQUIRE(pwd+"/README.org" == rel2abs(".", "README.org"));
-    REQUIRE(pwd+"/unittests/core/utils.cpp" == rel2abs("unittests/core/", "utils.cpp"));
-    REQUIRE(pwd+"/main/main.cpp" == rel2abs("unittests/", "../main/main.cpp"));
-    REQUIRE("./nofile" == rel2abs(".", "nofile"));
-    REQUIRE("/some/non/existent/path/../nofile" ==
-            rel2abs("/some/non/existent/path", "../nofile"));
-    REQUIRE("/usr/include" == rel2abs(".", "/usr/include"));
+  std::string pwd = getpwd();
+  REQUIRE(pwd+"/README.org" == rel2abs(".", "README.org"));
+  REQUIRE(pwd+"/unittests/core/utils.cpp" == rel2abs("unittests/core/", "utils.cpp"));
+  REQUIRE(pwd+"/main/main.cpp" == rel2abs("unittests/", "../main/main.cpp"));
+  ///@note: sadly, the expansion of '.' is very platform specific!
+#if defined(__CYGWIN__)
+  REQUIRE("./nofile" == rel2abs(".", "nofile"));
+#else
+  REQUIRE(pwd+"/nofile" == rel2abs(".", "nofile"));
+#endif
+  REQUIRE("/some/non/existent/path/../nofile" ==
+          rel2abs("/some/non/existent/path", "../nofile"));
+  REQUIRE("/usr/include" == rel2abs(".", "/usr/include"));
 }
 
 TEST_CASE("Utils::Basename") {
@@ -209,11 +214,15 @@ TEST_CASE("Utils::CheckOutput") {
 }
 
 TEST_CASE("Utils::FilePerm") {
-    FilePerm fp("samples/hello.txt");
-    REQUIRE(0 == strncmp(fp.perms, "-rw-r--r--", 10));
-    FilePerm fp1("samples");
-    REQUIRE(0 == strncmp(fp1.perms, "drwxr-xr-x", 10));
-    REQUIRE(0U == fp1.size);
+  check_output("touch /tmp/hello.txt && chmod 0644 /tmp/hello.txt");
+  FilePerm fp("/tmp/hello.txt");
+  remove("/tmp/hello.txt");
+  REQUIRE(0 == strncmp(fp.perms, "-rw-r--r--", 10));
+  REQUIRE(0U == fp.size);
+  check_output("mkdir /tmp/tmpdir && chmod 0700 /tmp/tmpdir");
+  FilePerm fp1("/tmp/tmpdir");
+  check_output("rm -rf /tmp/tmpdir");
+  REQUIRE(0 == strncmp(fp1.perms, "drwx------", 10));
 }
 
 TEST_CASE("Utils::ListDir") {
