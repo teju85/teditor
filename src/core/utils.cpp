@@ -15,6 +15,7 @@
 #include "file_utils.h"
 #include <chrono>
 #include <ctime>
+#include <thread>
 
 namespace teditor {
 
@@ -296,5 +297,7 @@ void History::add(const std::string& elem) {
 bool History::isDuplicate(const std::string& a, const std::string& b) const {
   return a == b;
 }
+
+unsigned numThreads() { return std::thread::hardware_concurrency(); }
 
 } // end namespace teditor

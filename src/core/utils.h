@@ -143,4 +143,6 @@ class History : public Strings {
   int maxLen;
 };  // class History
 
+unsigned numThreads();
+
 } // end namespace teditor
