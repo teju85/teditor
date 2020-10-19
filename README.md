@@ -2,10 +2,13 @@
 *teditor* is a terminal based editor, written from scratch in C++. More details
 about this editor can be found [here](https://teju85.github.io/blog/tags.html#teditor).
 
-# Supported OS's
-This has been only tested on cygwin with mintty and xterm-256 till now! Should
-work for unix-based systems. If it doesn't build/work properly on them, fixes or
-filing issues are most welcome.
+# Supported platforms
+This has been only tested on the following platforms:
+1. Cygwin + mintty + xterm-256color
+2. WSL + cmd-prompt + xterm-256color
+
+Should work for unix-based systems. If it doesn't build/work properly on them,
+PR's or filing issues are most welcome.
 
 # Pre-reqs
 Very minimal set of pre-reqs are needed for this project.
@@ -13,8 +16,8 @@ Very minimal set of pre-reqs are needed for this project.
 ## Compile time
 1. GNU-make (>= 4.2.1)
 2. G++ (>= 5.4.0)
-3. doxygen (>= 1.8.13) - for documentation generation
-4. curl - for downloading Catch2 header
+3. doxygen (>= 1.8.13) - optional, only for documentation generation
+4. curl - for downloading the Catch2 header file during unit-testing
 
 ## Runtime (alphabetical order)
 1. curl - for downloading from web
