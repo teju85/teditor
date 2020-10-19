@@ -29,7 +29,6 @@ const char* func2terminfo(Func f) {
   case Func_Underline: return "smul";
   case Func_Bold: return "bold";
   case Func_Blink: return "blink";
-  case Func_Reverse: return "rev";
   case Func_EnterKeypad: return "smkx";
   case Func_ExitKeypad: return "rmkx";
   case Func_EnterMouse: return "TBD";
@@ -54,7 +53,7 @@ const std::string Terminal::EnterMouseSeq = "\x1b[?1000h\x1b[?1002h\x1b[?1015h\x
 const std::string Terminal::ExitMouseSeq = "\x1b[?1006l\x1b[?1015l\x1b[?1002l\x1b[?1000l";
 const int Terminal::BuffSize = 32 * 1024;
 const int Terminal::Magic = 0432;
-const int Terminal::TiFuncs[] = {28, 40, 16, 13, 5, 39, 36, 27, 26, 34, 89, 88};
+const int Terminal::TiFuncs[] = {28, 40, 16, 13, 5, 39, 36, 27, 26, 89, 88};
 const int Terminal::TiNFuncs = sizeof(Terminal::TiFuncs) / sizeof(int);
 const int Terminal::UndefinedSequence = -10;
 Terminal* Terminal::inst = nullptr;

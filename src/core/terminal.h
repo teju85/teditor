@@ -16,7 +16,6 @@ namespace teditor {
 // [3m smso   Set "standout" attribute
 // [4m set    Set "underscore" (underlined text) attribute
 // [5m blink  Set "blink" attribute
-// [7m rev    Set "reverse" attribute
 // [8m invis  Set "hidden" attribute
 enum Func {
   Func_EnterCA,
@@ -28,7 +27,6 @@ enum Func {
   Func_Underline,
   Func_Bold,
   Func_Blink,
-  Func_Reverse,
   Func_EnterKeypad,
   Func_ExitKeypad,
   Func_EnterMouse,
