@@ -10,9 +10,7 @@
 #include <unordered_map>
 #include <signal.h>
 #include "file_utils.h"
-// Note:
-//   Most stuff here related to terminfo usage is shamelessly borrowed from
-// github.com/nsf/termbox. (Thanks!)
+#include "infocmp.h"
 
 
 namespace teditor {
@@ -52,9 +50,6 @@ void sigwinch_handler(int xxx) {
 const std::string Terminal::EnterMouseSeq = "\x1b[?1000h\x1b[?1002h\x1b[?1015h\x1b[?1006h";
 const std::string Terminal::ExitMouseSeq = "\x1b[?1006l\x1b[?1015l\x1b[?1002l\x1b[?1000l";
 const int Terminal::BuffSize = 32 * 1024;
-const int Terminal::Magic = 0432;
-const int Terminal::TiFuncs[] = {28, 40, 16, 13, 5, 39, 36, 27, 26, 89, 88};
-const int Terminal::TiNFuncs = sizeof(Terminal::TiFuncs) / sizeof(int);
 const int Terminal::UndefinedSequence = -10;
 Terminal* Terminal::inst = nullptr;
 
@@ -92,17 +87,9 @@ void Terminal::updateTermSize() {
 Terminal::Terminal(const std::string& tty):
   type(), mk(), loc(), funcs(), termName(env("TERM")), outbuff(), ttyFile(tty),
   inout(-1), tios(), origTios(), seq(), oldSeq(), buffResize(false),
-  winchFds(), infocmp() {
-  // // terminfo setup
-  // std::string tidata = loadTerminfo();
-  // int16_t *header = (int16_t*)&(tidata[0]);
-  // // old quirk to align everything on word boundaries
-  // if((header[1] + header[2]) % 2) header[2] += 1;
-  // const int str_offset = TiNFuncs + header[1] + header[2] + 2 * header[3];
-  // const int table_offset = str_offset + 2 * header[4];
-  // for(int i=0;i<Func_FuncsNum-2;++i)
-  //   funcs.push_back(copyString(tidata, str_offset + 2 * TiFuncs[i],
-  //                              table_offset));
+  winchFds() {
+  // terminfo setup
+  InfoCmp infocmp;
   for (int i = 0; i < Func_FuncsNum - 2; ++i) {
     funcs.push_back(infocmp.getStrCap(func2terminfo(Func(i))));
   }

@@ -7,7 +7,6 @@
 #include "pos2d.h"
 #include "keys.h"
 #include "logger.h"
-#include "infocmp.h"
 
 namespace teditor {
 
@@ -98,9 +97,6 @@ public:
   /** get the singleton instance */
   static Terminal& getInstance();
 
-  static const int Magic;
-  static const int TiFuncs[];
-  static const int TiNFuncs;
   /** flag to raise an undefined escape sequence scenario */
   static const int UndefinedSequence;
 
@@ -125,8 +121,6 @@ private:
   bool buffResize;
   /** window change listeners */
   int winchFds[2];
-  /** terminal capabilities read via `infocmp` */
-  InfoCmp infocmp;
 
   /** the singleton object */
   static Terminal* inst;
