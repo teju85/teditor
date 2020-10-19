@@ -34,12 +34,12 @@ TEST_CASE("Utils::same") {
 
 TEST_CASE("Utils::isDir") {
     REQUIRE(isDir("src"));
-    REQUIRE_FALSE(isDir("README.org"));
+    REQUIRE_FALSE(isDir("README.md"));
     REQUIRE_FALSE(isDir("I_dont_exist"));
 }
 
 TEST_CASE("Utils::isFile") {
-    REQUIRE(isFile("README.org"));
+    REQUIRE(isFile("README.md"));
     REQUIRE_FALSE(isFile("src"));
     REQUIRE_FALSE(isFile("I_dont_exist"));
 }
@@ -143,7 +143,7 @@ TEST_CASE("Utils::isAbs") {
 
 TEST_CASE("Utils::Rel2Abs") {
   std::string pwd = getpwd();
-  REQUIRE(pwd+"/README.org" == rel2abs(".", "README.org"));
+  REQUIRE(pwd+"/README.md" == rel2abs(".", "README.md"));
   REQUIRE(pwd+"/unittests/core/utils.cpp" == rel2abs("unittests/core/", "utils.cpp"));
   REQUIRE(pwd+"/main/main.cpp" == rel2abs("unittests/", "../main/main.cpp"));
   REQUIRE("./nofile" == rel2abs(".", "nofile"));
@@ -175,7 +175,7 @@ TEST_CASE("Utils::FindFirstUpwards") {
     REQUIRE("" == findFirstUpwards("", ""));
     REQUIRE("" == findFirstUpwards("/", ""));
     REQUIRE(pwd + "/.git" == findFirstUpwards(pwd, ".git"));
-    REQUIRE(pwd + "/README.org" == findFirstUpwards(pwd, "README.org"));
+    REQUIRE(pwd + "/README.md" == findFirstUpwards(pwd, "README.md"));
     REQUIRE(pwd + "/samples" == findFirstUpwards(pwd, "samples"));
     REQUIRE("" == findFirstUpwards(pwd, "non-existent"));
 }
@@ -294,12 +294,12 @@ TEST_CASE("Utils::ExpandEnvVars") {
 }
 
 TEST_CASE("Utils::ReadFileInfo") {
-  FileInfo fi = readFileInfo("README.org;10");
-  REQUIRE("README.org" == fi.first);
+  FileInfo fi = readFileInfo("README.md;10");
+  REQUIRE("README.md" == fi.first);
   REQUIRE(10 == fi.second);
-  REQUIRE_THROWS(readFileInfo("README.org;10;10"));
-  fi = readFileInfo("/ssh:remotehost:/usr/README.org;11");
-  REQUIRE("/ssh:remotehost:/usr/README.org" == fi.first);
+  REQUIRE_THROWS(readFileInfo("README.md;10;10"));
+  fi = readFileInfo("/ssh:remotehost:/usr/README.md;11");
+  REQUIRE("/ssh:remotehost:/usr/README.md" == fi.first);
   REQUIRE(11 == fi.second);
   fi = readFileInfo("/ssh:remotehost:/usr/;11");
   REQUIRE("/ssh:remotehost:/usr" == fi.first);
