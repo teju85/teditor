@@ -12,11 +12,12 @@ Very minimal set of pre-reqs are needed for this project.
 2. G++ (>= 5.4.0)
 3. doxygen (>= 1.8.13) - for documentation generation
 4. curl - for downloading Catch2 header
-** Runtime
+** Runtime (alphabetical order)
 1. curl - for downloading from web
-2. mintty - for running the editor
-3. git - to run git commands from inside the editor
-4. ssh - for launching remote commands
+2. git - to run git commands from inside the editor
+3. infocmp - to get to know terminal capabilities
+4. mintty - for running the editor
+5. ssh - for launching remote commands
 * Download and Build
 #+BEGIN_SRC bash
 $ git clone --recursive https://github.com/teju85/teditor
