@@ -170,57 +170,6 @@ Terminal::ColorSupport Terminal::colorSupported() const {
   return CS_None;
 }
 
-std::string Terminal::tryReading(const char* path, const char* term) const {
-  char tmp[2048];
-  // for unix
-  snprintf(tmp, sizeof(tmp), "%s/%c/%s", path, term[0], term);
-  try { return slurp(tmp); } catch (...) { }
-  // for MacOS
-  snprintf(tmp, sizeof(tmp), "%s/%x/%s", path, term[0], term);
-  try { return slurp(tmp); } catch (...) { }
-  // for WSL (does not seem to match '$TERM' with the file name!!)
-  std::string termStr(term);
-  for (size_t i = 0; i < termStr.size(); ++i) {
-    if (termStr[i] == '-') termStr[i] = '+';
-  }
-  snprintf(tmp, sizeof(tmp), "%s/%c/%s", path, term[0], termStr.c_str());
-  return slurp(tmp);
-}
-
-std::string Terminal::loadTerminfo() const {
-  // look inside $TERMINFO/
-  try {
-    std::string termInfo(env("TERMINFO"));
-    return tryReading(termInfo.c_str(), termName.c_str());
-  } catch(const std::runtime_error& e) {}
-  // else, look inside $HOME/.terminfo/
-  try {
-    std::string home(env("HOME"));
-    std::string path = home + "/.terminfo";
-    return tryReading(path.c_str(), termName.c_str());
-  } catch(const std::runtime_error& e) {}
-  // else, look inside dirs mentioned under $TERMINFO_DIRS
-  std::string termInfoDirs(env("TERMINFO_DIRS"));
-  auto dirs = split(termInfoDirs, ':');
-  for(const auto& dir : dirs) {
-    if(dir.empty()) continue;
-    try {
-      return tryReading(dir.c_str(), termName.c_str());
-    } catch(const std::runtime_error& e) {}
-  }
-  // finally... try /usr/share/terminfo
-  return tryReading("/usr/share/terminfo", termName.c_str());
-}
-
-std::string Terminal::copyString(const std::string& tidata, int str,
-                                 int table) const {
-  const char* d = &(tidata[0]);
-  const int16_t off = *(int16_t*)(d + str);
-  const char *src = d + table + off;
-  std::string ret(src);
-  return ret;
-}
-
 
 struct KeyCombo {
   MetaKey mk;

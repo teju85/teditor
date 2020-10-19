@@ -140,9 +140,6 @@ private:
   void setupTios();
   ColorSupport colorSupported() const;
   const char* func(int id) const { return funcs[id].c_str(); }
-  std::string tryReading(const char* path, const char* term) const;
-  std::string loadTerminfo() const;
-  std::string copyString(const std::string& tidata, int str, int table) const;
   int readAndExtract();
   int decodeChar(key_t ch);
   int decodeEscSeq();
