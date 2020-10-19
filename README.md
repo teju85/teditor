@@ -1,6 +1,6 @@
 # teditor
 *teditor* is a terminal based editor, written from scratch in C++. More details
-about this editor can be found (https://teju85.github.io/blog/tags.html#teditor)[here].
+about this editor can be found [here](https://teju85.github.io/blog/tags.html#teditor).
 
 # Supported OS's
 This has been only tested on cygwin with mintty and xterm-256 till now! Should
