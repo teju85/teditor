@@ -14,6 +14,7 @@ AttrHelper::AttrHelper(): amap(), rmap() {
   ADD(None);
   ADD(Bold);
   ADD(Underline);
+  ADD(Italic);
 }
 #undef ADD
 

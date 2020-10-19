@@ -370,8 +370,9 @@ void Editor::setColors(AttrColor fg, AttrColor bg) {
   lastfg = fg;
   lastbg = bg;
   term.puts(Func_Sgr0); // reset attrs
-  if(fg.isBold()) term.puts(Func_Bold);
-  if(fg.isUnderline()) term.puts(Func_Underline);
+  if (fg.isBold()) term.puts(Func_Bold);
+  if (fg.isUnderline()) term.puts(Func_Underline);
+  if (fg.isItalic()) term.puts(Func_Italic);
   uint8_t fgcol = (uint8_t)fg.color();
   uint8_t bgcol = (uint8_t)bg.color();
   writeLiteral("\033[38;5;%d;48;5;%dm", fgcol, bgcol);

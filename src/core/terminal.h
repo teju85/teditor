@@ -10,13 +10,6 @@
 
 namespace teditor {
 
-// [0m sgr0   Reset all attributes
-// [1m bold   Set "bright" attribute
-// [2m dim    Set "dim" attribute
-// [3m smso   Set "standout" attribute
-// [4m set    Set "underscore" (underlined text) attribute
-// [5m blink  Set "blink" attribute
-// [8m invis  Set "hidden" attribute
 enum Func {
   Func_EnterCA,
   Func_ExitCA,
@@ -25,6 +18,7 @@ enum Func {
   Func_ClearScreen,
   Func_Sgr0,
   Func_Underline,
+  Func_Italic,
   Func_Bold,
   Func_Blink,
   Func_EnterKeypad,

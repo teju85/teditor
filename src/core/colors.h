@@ -13,6 +13,7 @@ typedef uint16_t color_t;
 static const color_t Attr_None      = 0x0000;
 static const color_t Attr_Bold      = 0x0100;
 static const color_t Attr_Underline = 0x0200;
+static const color_t Attr_Italic    = 0x0400;
 
 struct AttrHelper {
 public:
@@ -64,8 +65,10 @@ struct AttrColor {
   void clearAttr() { ac &= Mask; }
   void setBold() { ac |= Attr_Bold; }
   void setUnderline() { ac |= Attr_Underline; }
+  void setItalic() { ac |= Attr_Italic; }
   bool isBold() const { return ac & Attr_Bold; }
   bool isUnderline() const { return ac & Attr_Underline; }
+  bool isItalic() const { return ac & Attr_Italic; }
   color_t color() const { return ac & Mask; }
   void setColor(color_t col) { ac |= (Mask & col); }
 };

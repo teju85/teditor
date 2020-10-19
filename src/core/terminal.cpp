@@ -25,6 +25,7 @@ const char* func2terminfo(Func f) {
   case Func_ClearScreen: return "clear";
   case Func_Sgr0: return "sgr0";
   case Func_Underline: return "smul";
+  case Func_Italic: return "sitm";
   case Func_Bold: return "bold";
   case Func_Blink: return "blink";
   case Func_EnterKeypad: return "smkx";
