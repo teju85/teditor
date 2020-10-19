@@ -52,6 +52,7 @@ void Terminal::puts(const char* data, size_t len) {
   auto requiredCap = outbuff.length() + len;
   while(currCap < requiredCap) currCap *= 2;
   if(outbuff.capacity() != currCap) outbuff.reserve(currCap);
+  ULTRA_DEBUG("puts: data='%s' len=%u\n", data, len);
   outbuff.append(data, len);
 }
 

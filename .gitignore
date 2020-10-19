@@ -7,5 +7,6 @@ tests.exe
 *.log
 *.tar.gz
 bin/
+wbin/
 test_hist.txt
 html/

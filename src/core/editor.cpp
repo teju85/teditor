@@ -481,13 +481,13 @@ void Editor::render() {
       Cell& front = frontbuff.at(x, y);
       int wid = back.width();
       if(wid < 1) wid = 1;
-      ULTRA_DEBUG("render: y,x=%d,%d back=%u,%hu,%hu front=%u,%hu,%hu\n",
-                  y, x, back.ch, back.fg, back.bg, front.ch, front.fg,
-                  front.bg);
       if(front == back) {
         x += wid;
         continue;
       }
+      ULTRA_DEBUG("render: y,x=%d,%d back=%u,%hu,%hu front=%u,%hu,%hu\n",
+                  y, x, back.ch, back.fg, back.bg, front.ch, front.fg,
+                  front.bg);
       front.copy(back);
       setColors(back.fg, back.bg);
       // if character exceeds the screen width
