@@ -116,7 +116,7 @@ std::string getpwd() {
 bool isAbs(const std::string& file) { return !file.empty() && file[0] == '/'; }
 
 std::string rel2abs(const std::string& pwd, const std::string& rel) {
-  char abs[2048] = {0};
+  char abs[4196] = {0};
   auto currCwd = getpwd();
   if (!chdir(pwd.c_str())) {
     if (realpath(rel.c_str(), abs) == nullptr) abs[0] = '\0';
