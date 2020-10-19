@@ -100,14 +100,12 @@ public:
   static const int Magic;
   static const int TiFuncs[];
   static const int TiNFuncs;
-  static const int TiKeys[];
-  static const int TiNKeys;
   /** flag to raise an undefined escape sequence scenario */
   static const int UndefinedSequence;
 
 private:
-  /** keys and functions */
-  Strings keys, funcs;
+  /** functions */
+  Strings funcs;
   /** pty name */
   std::string termName;
   /** buffer used to communicate commands to the pty */
@@ -144,7 +142,6 @@ private:
   void setSignalHandler();
   void setupTios();
   ColorSupport colorSupported() const;
-  const char* key(int id) const { return keys[id].c_str(); }
   const char* func(int id) const { return funcs[id].c_str(); }
   std::string tryReading(const char* path, const char* term) const;
   std::string loadTerminfo() const;

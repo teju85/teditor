@@ -34,11 +34,6 @@ const int Terminal::BuffSize = 32 * 1024;
 const int Terminal::Magic = 0432;
 const int Terminal::TiFuncs[] = {28, 40, 16, 13, 5, 39, 36, 27, 26, 34, 89, 88};
 const int Terminal::TiNFuncs = sizeof(Terminal::TiFuncs) / sizeof(int);
-const int Terminal::TiKeys[] = {
-  66, 68, /* apparently not a typo; 67 is F10 for whatever reason */
-  69, 70, 71, 72, 73, 74, 75, 67, 216, 217, 77, 59, 76, 164, 82, 81, 79, 83,
-  61, 87};
-const int Terminal::TiNKeys = sizeof(Terminal::TiKeys) / sizeof(int);
 const int Terminal::UndefinedSequence = -10;
 Terminal* Terminal::inst = nullptr;
 
@@ -74,9 +69,9 @@ void Terminal::updateTermSize() {
 }
 
 Terminal::Terminal(const std::string& tty):
-  type(), mk(), loc(),
-  keys(), funcs(), termName(env("TERM")), outbuff(), ttyFile(tty), inout(-1),
-  tios(), origTios(), seq(), oldSeq(), buffResize(false), winchFds() {
+  type(), mk(), loc(), funcs(), termName(env("TERM")), outbuff(), ttyFile(tty),
+  inout(-1), tios(), origTios(), seq(), oldSeq(), buffResize(false),
+  winchFds() {
   // terminfo setup
   std::string tidata = loadTerminfo();
   int16_t *header = (int16_t*)&(tidata[0]);
@@ -84,9 +79,6 @@ Terminal::Terminal(const std::string& tty):
   if((header[1] + header[2]) % 2) header[2] += 1;
   const int str_offset = TiNFuncs + header[1] + header[2] + 2 * header[3];
   const int table_offset = str_offset + 2 * header[4];
-  for(int i=0;i<TiNKeys;++i)
-    keys.push_back(copyString(tidata, str_offset + 2 * TiKeys[i],
-                              table_offset));
   for(int i=0;i<Func_FuncsNum-2;++i)
     funcs.push_back(copyString(tidata, str_offset + 2 * TiFuncs[i],
                                table_offset));
