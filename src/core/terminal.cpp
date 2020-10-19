@@ -30,8 +30,8 @@ const char* func2terminfo(Func f) {
   case Func_Bold: return "bold";
   case Func_Blink: return "blink";
   case Func_Reverse: return "rev";
-  case Func_EnterKeypad: return "TBD";
-  case Func_ExitKeypad: return "TBD";
+  case Func_EnterKeypad: return "smkx";
+  case Func_ExitKeypad: return "rmkx";
   case Func_EnterMouse: return "TBD";
   case Func_ExitMouse: return "TBD";
   default:
