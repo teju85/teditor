@@ -33,7 +33,7 @@ enum Func {
   Func_ExitKeypad,
   Func_EnterMouse,
   Func_ExitMouse,
-  Func_FuncsNum
+  Func_FuncsNum,
 };
 
 enum EventType {
@@ -42,6 +42,8 @@ enum EventType {
   Event_Mouse,
   Event_None = 0
 };
+
+const char* func2terminfo(Func f);
 
 
 ///@todo: implement decodeUtf8 if needed

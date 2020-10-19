@@ -17,6 +17,28 @@
 
 namespace teditor {
 
+// ref: https://invisible-island.net/ncurses/man/terminfo.5.html
+const char* func2terminfo(Func f) {
+  switch (f) {
+  case Func_EnterCA: return "smcup";
+  case Func_ExitCA: return "rmcup";
+  case Func_ShowCursor: return "cnorm";
+  case Func_HideCursor: return "civis";
+  case Func_ClearScreen: return "clear";
+  case Func_Sgr0: return "sgr0";
+  case Func_Underline: return "smul";
+  case Func_Bold: return "bold";
+  case Func_Blink: return "blink";
+  case Func_Reverse: return "rev";
+  case Func_EnterKeypad: return "TBD";
+  case Func_ExitKeypad: return "TBD";
+  case Func_EnterMouse: return "TBD";
+  case Func_ExitMouse: return "TBD";
+  default:
+    ASSERT(false, "func2terminfo: bad func passed '%d'!", f);
+  };
+}
+
 void exitGracefully(int signum) { exit(signum); }
 
 void sigwinch_handler(int xxx) {
