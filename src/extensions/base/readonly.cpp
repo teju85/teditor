@@ -80,7 +80,7 @@ std::vector<NameColorPair> ReadOnlyMode::Colors::All = {
   {"inactivecursorbg",  "DarkGray"},
   {"statusfg",          "DarkGreen"},
   {"statusbg",          "DarkestGray"},
-  {"statusnamefg",      "Underline:Yellow"},
+  {"statusnamefg",      "Bold:Yellow"},
 };
 
 } // end namespace readonly

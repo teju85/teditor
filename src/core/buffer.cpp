@@ -424,22 +424,20 @@ void Buffer::drawStatusBar(Editor& ed, const Window& win) {
   const auto& bg = getColor("statusbg");
   const auto& namefg = getColor("statusnamefg");
   ed.sendString(x, y, fg, bg, line.c_str(), dim.x);
-  // modified + linenum
-  int count = ed.sendStringf(x, y, fg, bg, " %s [%d:%d]/%d ",
-                             modified? "**" : "  ", cu.y, cu.x, length());
-  // buffer name
-  count += ed.sendString(x+count, y, namefg, bg, buffName.c_str(),
-                         (int)buffName.length());
-  // buffer counts
-  count += ed.sendStringf(x+count, y, fg, bg, " <%d/%d> [%s]", currId+1,
-                          ed.buffSize(), readOnly? "r-" : "rw");
+  int count = 0;
   // mode
   count += ed.sendStringf(x+count, y, fg, bg, " [mode=%s]",
                           mode->name().c_str());
-  // remote or local?
-  if (isRemote(fileName)) {
-    count += ed.sendStringf(x+count, y, fg, bg, " [ssh]");
-  }
+  // buffer counts
+  count += ed.sendStringf(x+count, y, fg, bg, " <%d/%d> [%s] %s", currId+1,
+                          ed.buffSize(), readOnly? "r-" : "rw",
+                          isRemote(fileName) ? "[ssh] " : "");
+  // buffer name
+  count += ed.sendString(x+count, y, namefg, bg, buffName.c_str(),
+                         (int)buffName.length());
+  // modified + linenum
+  count += ed.sendStringf(x+count, y, fg, bg, " %s [%d:%d]/%d ",
+                          modified? "**" : "  ", cu.y, cu.x, length());
 }
 
 std::string Buffer::dirModeGetFileAtLine(int line) {

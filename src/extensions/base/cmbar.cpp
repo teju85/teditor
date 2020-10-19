@@ -160,7 +160,7 @@ std::vector<NameColorPair> CmBarMode::Colors::All = {
   {"inactivecursorbg",  "DarkGray"},
   {"statusfg",          "DarkGreen"},
   {"statusbg",          "DarkestGray"},
-  {"statusnamefg",      "Underline:Yellow"},
+  {"statusnamefg",      "Bold:Yellow"},
 };
 
 } // end namespace cmbar
