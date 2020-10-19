@@ -50,4 +50,8 @@ make -j tests
 ## Debug builds
 ```bash
 make DEBUG=1 -j teditor tests
+./bin/Debug/teditor
 ```
+In addition for debug symbols, this also enables `DEBUG` and `ULTRA_DEBUG`
+logger macros in the logging module which can be very helpful while debugging
+editor core modules.
