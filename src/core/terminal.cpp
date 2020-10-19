@@ -92,17 +92,20 @@ void Terminal::updateTermSize() {
 Terminal::Terminal(const std::string& tty):
   type(), mk(), loc(), funcs(), termName(env("TERM")), outbuff(), ttyFile(tty),
   inout(-1), tios(), origTios(), seq(), oldSeq(), buffResize(false),
-  winchFds() {
-  // terminfo setup
-  std::string tidata = loadTerminfo();
-  int16_t *header = (int16_t*)&(tidata[0]);
-  // old quirk to align everything on word boundaries
-  if((header[1] + header[2]) % 2) header[2] += 1;
-  const int str_offset = TiNFuncs + header[1] + header[2] + 2 * header[3];
-  const int table_offset = str_offset + 2 * header[4];
-  for(int i=0;i<Func_FuncsNum-2;++i)
-    funcs.push_back(copyString(tidata, str_offset + 2 * TiFuncs[i],
-                               table_offset));
+  winchFds(), infocmp() {
+  // // terminfo setup
+  // std::string tidata = loadTerminfo();
+  // int16_t *header = (int16_t*)&(tidata[0]);
+  // // old quirk to align everything on word boundaries
+  // if((header[1] + header[2]) % 2) header[2] += 1;
+  // const int str_offset = TiNFuncs + header[1] + header[2] + 2 * header[3];
+  // const int table_offset = str_offset + 2 * header[4];
+  // for(int i=0;i<Func_FuncsNum-2;++i)
+  //   funcs.push_back(copyString(tidata, str_offset + 2 * TiFuncs[i],
+  //                              table_offset));
+  for (int i = 0; i < Func_FuncsNum - 2; ++i) {
+    funcs.push_back(infocmp.getStrCap(func2terminfo(Func(i))));
+  }
   funcs.push_back(EnterMouseSeq);
   funcs.push_back(ExitMouseSeq);
   INFO("Terminal: term=%s ttyFile=%s\n", termName.c_str(), ttyFile.c_str());

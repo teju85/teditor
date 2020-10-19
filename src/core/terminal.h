@@ -7,6 +7,7 @@
 #include "pos2d.h"
 #include "keys.h"
 #include "logger.h"
+#include "infocmp.h"
 
 namespace teditor {
 
@@ -124,6 +125,8 @@ private:
   bool buffResize;
   /** window change listeners */
   int winchFds[2];
+  /** terminal capabilities read via `infocmp` */
+  InfoCmp infocmp;
 
   /** the singleton object */
   static Terminal* inst;

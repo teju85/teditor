@@ -35,6 +35,11 @@ InfoCmp::InfoCmp(): header(), boolCaps(), numCaps(), strCaps() {
     if (eq != std::string::npos) {
       auto name(line.substr(start, eq - start));
       auto val = line.substr(eq + 1, line.length() - eq - 2);
+      // escape char needs to be handled properly!
+      size_t pos;
+      while ((pos = val.find("\\E")) != std::string::npos) {
+        val.replace(pos, 2, "\033");
+      }
       strCaps[name] = val;
       continue;
     }
