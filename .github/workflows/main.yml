@@ -17,7 +17,8 @@ jobs:
   release:
     runs-on: ubuntu-latest
     env:
-      DEBUG: 0
+      TEDITOR_DEBUG: 0
+      TEDITOR_BUILD_DOCS: 0
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/build-and-test
@@ -25,7 +26,16 @@ jobs:
   debug:
     runs-on: ubuntu-latest
     env:
-      DEBUG: 1
+      TEDITOR_DEBUG: 1
+      TEDITOR_BUILD_DOCS: 0
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/build-and-test
+
+  docs:
+    runs-on: ubuntu-latest
+    env:
+      TEDITOR_BUILD_DOCS: 1
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/build-and-test
