@@ -623,9 +623,7 @@ void Buffer::lineUp(const Point& dim) {
   while(totalLinesNeeded(dim) > dimY) ++startLine;
 }
 
-void Buffer::lineDown() {
-  startLine = std::min(startLine, cu.y);
-}
+void Buffer::lineDown() { startLine = std::min(startLine, cu.y); }
 
 void Buffer::lineEnd(const Point& start, const Point& dim) {
   auto screen = buffer2screen(cu, start, dim);

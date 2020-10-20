@@ -239,13 +239,16 @@ DEF_COLOR(Grey100,          231);
 DEF_COLOR(Grey3,            232);
 DEF_COLOR(Grey7,            233);
 DEF_COLOR(Grey11,           234);
+DEF_COLOR(DarkestGray,      234);
 DEF_COLOR(Grey15,           235);
 DEF_COLOR(Grey19,           236);
+DEF_COLOR(DarkerGray,       236);
 DEF_COLOR(Grey23,           237);
 DEF_COLOR(Grey27,           238);
 DEF_COLOR(Grey30,           239);
 DEF_COLOR(Grey35,           240);
 DEF_COLOR(Grey39,           241);
+DEF_COLOR(DarkGray,         241);
 DEF_COLOR(Grey42,           242);
 DEF_COLOR(Grey46,           243);
 DEF_COLOR(Grey50,           244);
@@ -256,15 +259,11 @@ DEF_COLOR(Grey66,           248);
 DEF_COLOR(Grey70,           249);
 DEF_COLOR(Grey74,           250);
 DEF_COLOR(Grey78,           251);
+DEF_COLOR(LightGray,        251);
 DEF_COLOR(Grey82,           252);
 DEF_COLOR(Grey85,           253);
 DEF_COLOR(Grey89,           254);
-DEF_COLOR(Grey93,           255);
-
-DEF_COLOR(DarkestGray,      234);
-DEF_COLOR(DarkerGray,       236);
-DEF_COLOR(DarkGray,         241);
-DEF_COLOR(LightGray,        251);
 DEF_COLOR(LightestGray,     254);
+DEF_COLOR(Grey93,           255);
 
 #undef DEF_COLOR

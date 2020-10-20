@@ -373,8 +373,8 @@ void Editor::setColors(AttrColor fg, AttrColor bg) {
   if (fg.isBold()) term.puts(Func_Bold);
   if (fg.isUnderline()) term.puts(Func_Underline);
   if (fg.isItalic()) term.puts(Func_Italic);
-  uint8_t fgcol = (uint8_t)fg.color();
-  uint8_t bgcol = (uint8_t)bg.color();
+  auto fgcol = (uint8_t)fg.color();
+  auto bgcol = (uint8_t)bg.color();
   writeLiteral("\033[38;5;%d;48;5;%dm", fgcol, bgcol);
 }
 
@@ -474,12 +474,12 @@ void Editor::render() {
     term.disableResize();
     resize();
   }
-  int h = (int)frontbuff.h();
-  int w = (int)frontbuff.w();
+  auto h = (int)frontbuff.h();
+  auto w = (int)frontbuff.w();
   for(int y=0;y<h;++y) {
     for(int x=0;x<w;) {
-      const Cell& back = backbuff.at(x, y);
-      Cell& front = frontbuff.at(x, y);
+      const auto& back = backbuff.at(x, y);
+      auto& front = frontbuff.at(x, y);
       int wid = back.width();
       if(wid < 1) wid = 1;
       if(front == back) {
