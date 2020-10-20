@@ -1,4 +1,4 @@
-@mainpage teditor teditor
+@mainpage teditor
 
 @section mainpage_intro Introduction
 teditor is a terminal based editor written from scratch, completely in C++.
