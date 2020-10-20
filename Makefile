@@ -4,6 +4,7 @@
 DEBUG          ?= 0
 VERBOSE        ?= 0
 BINROOT        ?= bin
+CURL_OPTS      ?=
 
 ifeq ($(DEBUG),1)
     TYPE       := Debug
@@ -157,7 +158,7 @@ $(CATCH2_DIR):
 	    echo "Downloading $@ ..."; \
 	fi
 	$(PREFIX)$(MKDIR_P) $@
-	$(PREFIX)$(CURL) $(CURL_QUIET) -o $@/catch.hpp $(CATCH2_HEADER)
+	$(PREFIX)$(CURL) $(CURL_QUIET) $(CURL_OPTS) -o $@/catch.hpp $(CATCH2_HEADER)
 
 $(DEPFILES):
 
