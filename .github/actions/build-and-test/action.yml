@@ -1,0 +1,5 @@
+name: 'Release Build and Tests'
+description: 'Build a release version and run tests'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

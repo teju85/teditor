@@ -1,0 +1,31 @@
+name: teditor CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  TERM: xterm-256color
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      DEBUG: 0
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/build-and-test
+
+  debug:
+    runs-on: ubuntu-latest
+    env:
+      DEBUG: 1
+    steps:
+      - uses: actions/checkout@v2
+      - uses ./.github/actions/build-and-test
