@@ -54,8 +54,6 @@ CXX            := g++
 CXXFLAGS       := -std=$(STDCXX) -Wall -Werror $(INCS)
 LD             := g++
 LDFLAGS        :=
-AR             := ar
-ARFLAGS        := rcs
 
 ifeq ($(OS_NAME),GNU/Linux)
     LIBS       += -L/usr/lib64 -lpthread
@@ -75,13 +73,11 @@ MAIN_DEPS      := $(patsubst %.cpp,$(DEPDIR)/%.d,$(MAINSRC))
 DEPFILES       := $(SRC_DEPS) $(TEST_DEPS) $(MAIN_DEPS)
 
 ifeq ($(DEBUG),1)
-    CXXFLAGS   += -g
+    CXXFLAGS   += -g -DDEBUG_BUILD
     LDFLAGS    += -g
-    CXXFLAGS   += -DDEBUG_BUILD
 else
-    CXXFLAGS   += -O3
+    CXXFLAGS   += -O3 -UDEBUG_BUILD
     LDFLAGS    += -O3
-    CXXFLAGS   += -UDEBUG_BUILD
 endif
 
 
