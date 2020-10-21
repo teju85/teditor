@@ -43,6 +43,9 @@ your experience with the default colors may vary!!
 @subsection mainpage_usage_bin Pre-built binaries
 For the above mentioned platforms, pre-built binaries are found here: TBD!
 
+@subsection main_page_usage_tutorials Tutorials
+Refer to @ref tutorials.
+
 @section mainpage_dev Developers
 Refer to @ref developers.
 
