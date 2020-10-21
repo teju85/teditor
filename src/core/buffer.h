@@ -125,9 +125,9 @@ public:
    * @{
    */
   /** move to begining of line */
-  void startOfLine() { cu.x = getMinStartLoc(); }
+  void startOfLine() { longestX = cu.x = getMinStartLoc(); }
   /** move to end of line */
-  void endOfLine() { cu.x = lengthOf(cu.y); }
+  void endOfLine() { longestX = cu.x = lengthOf(cu.y); }
   /** move left */
   void left();
   /** move right */
@@ -278,6 +278,8 @@ protected:
   ModePtr mode;
   /** cursor */
   Point cu;
+  /** cursor's longest 'x' location */
+  int longestX;
   /** stack of operations for undo */
   OpStack undoStack;
   /** stack of operations for redo */

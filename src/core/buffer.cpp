@@ -14,8 +14,8 @@ namespace teditor {
 Buffer::Buffer(const std::string& name, bool noUndoRedo):
   lines(), startLine(0), modified(false), readOnly(false), buffName(name),
   fileName(), dirName(), tmpFileName(), region(-1, -1),
-  mode(Mode::createMode("text")), cu(0, 0), undoStack(), redoStack(),
-  disableStack(noUndoRedo) {
+  mode(Mode::createMode("text")), cu(0, 0), longestX(0), undoStack(),
+  redoStack(), disableStack(noUndoRedo) {
   addLine();
   dirName = getpwd();
   begin();
@@ -680,6 +680,7 @@ void Buffer::left() {
     }
   }
   lineDown();
+  longestX = cu.x;
 }
 
 void Buffer::right() {
@@ -691,42 +692,43 @@ void Buffer::right() {
     } else
       --cu.x;
   }
+  longestX = cu.x;
 }
 
 void Buffer::down() {
   if(cu.y < length()-1) {
     ++cu.y;
-    cu.x = std::min(cu.x, lengthOf(cu.y));
+    cu.x = std::min(lengthOf(cu.y), longestX);
   }
 }
 
 void Buffer::up() {
   if(cu.y >= 1) {
     --cu.y;
-    cu.x = std::min(cu.x, lengthOf(cu.y));
+    cu.x = std::min(lengthOf(cu.y), longestX);
   }
   lineDown();
 }
 
 void Buffer::begin() {
-  cu.x = cu.y = 0;
+  longestX = cu.x = cu.y = 0;
   lineReset();
 }
 
 void Buffer::end() {
   cu.y = std::max(0, length() - 1);
-  cu.x = lengthOf(cu.y);
+  longestX = cu.x = lengthOf(cu.y);
 }
 
 void Buffer::pageDown(int ijump) {
-  cu.x = 0;
   cu.y = std::min(length() - 1, cu.y + ijump);
+  cu.x = std::min(lengthOf(cu.y), longestX);
 }
 
 void Buffer::pageUp(int ijump) {
-  cu.x = 0;
   cu.y = std::max(0, cu.y - ijump);
   lineDown();
+  cu.x = std::min(lengthOf(cu.y), longestX);
 }
 
 void Buffer::nextPara() {
@@ -737,7 +739,7 @@ void Buffer::nextPara() {
     prevLen = lengthOf(cu.y);
   }
   cu.y = std::min(cu.y, len-1);
-  cu.x = 0;
+  cu.x = std::min(lengthOf(cu.y), longestX);
 }
 
 void Buffer::previousPara() {
@@ -747,8 +749,8 @@ void Buffer::previousPara() {
     prevLen = lengthOf(cu.y);
   }
   cu.y = std::max(cu.y, 0);
-  cu.x = 0;
   lineDown();
+  cu.x = std::min(lengthOf(cu.y), longestX);
 }
 
 void Buffer::nextWord() {
@@ -768,6 +770,7 @@ void Buffer::nextWord() {
     cu.x = line.findFirstNotOf(word, cu.x + 1);
     break;
   }
+  longestX = cu.x;
 }
 
 void Buffer::previousWord() {
@@ -788,12 +791,13 @@ void Buffer::previousWord() {
     break;
   }
   lineDown();
+  longestX = cu.x;
 }
 
 void Buffer::gotoLine(int lineNum, const Point& dim) {
   cu.y = std::min(length() - 1, std::max(0, lineNum));
-  cu.x = 0;
   startLine = std::max(0, lineNum - dim.y / 2);
+  longestX = cu.x = 0;
 }
 ////// End: Cursor movements //////
 

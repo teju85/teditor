@@ -654,6 +654,48 @@ TEST_CASE("Buffer::cursor") {
   }
 }
 
+TEST_CASE("emacs-style-cursor-navigation") {
+  Buffer ml;
+  setupBuff(ml, {0, 0}, {80, 10}, "samples/default.rcfile");
+  REQUIRE(53 == ml.length());
+  ml.begin();
+
+  SECTION("C-home + down + up") {
+    ml.down();
+    REQUIRE(Point(0, 1) == ml.getPoint());
+    ml.up();
+    REQUIRE(Point(0, 0) == ml.getPoint());
+  }
+
+  SECTION("C-end + up + down") {
+    ml.end();
+    ml.up();
+    REQUIRE(Point(0, 51) == ml.getPoint());
+    ml.down();
+    REQUIRE(Point(0, 52) == ml.getPoint());
+  }
+
+  SECTION("remembers the longest line encountered") {
+    auto len = ml.at(0).length();
+    ml.endOfLine();
+    REQUIRE(Point(len, 0) == ml.getPoint());
+    // move down
+    ml.down();
+    REQUIRE(Point(ml.at(1).length(), 1) == ml.getPoint());
+    ml.down();
+    REQUIRE(Point(ml.at(2).length(), 2) == ml.getPoint());
+    ml.down();
+    REQUIRE(Point(ml.at(3).length(), 3) == ml.getPoint());
+    // move up now
+    ml.up();
+    REQUIRE(Point(ml.at(2).length(), 2) == ml.getPoint());
+    ml.up();
+    REQUIRE(Point(ml.at(1).length(), 1) == ml.getPoint());
+    ml.up();
+    REQUIRE(Point(len, 0) == ml.getPoint());
+  }
+}
+
 TEST_CASE("Buffer::SingleCursorEdits") {
   Buffer ml;
   setupBuff(ml, {0, 0}, {30, 10}, "samples/multiline.txt");
