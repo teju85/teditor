@@ -42,7 +42,7 @@ MKDIR_P        := mkdir -p
 CURL           := curl
 
 CATCH2_DIR     := $(BINROOT)/Catch2
-CATCH2_HEADER  := https://raw.githubusercontent.com/catchorg/Catch2/master/single_include/catch2/catch.hpp
+CATCH2_HEADER  := https://raw.githubusercontent.com/catchorg/Catch2/v2.x/single_include/catch2/catch.hpp
 
 INCLUDES       := $(SRC) \
                   $(TESTS) \
