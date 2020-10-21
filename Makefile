@@ -21,9 +21,9 @@ endif
 
 OS_NAME        := $(shell uname -o)
 ifeq ($(OS_NAME),Cygwin)
-    STDCXX     := gnu++11
+    STDCXX     := gnu++14
 else
-    STDCXX     := c++11
+    STDCXX     := c++14
 endif
 
 BINDIR         := $(BINROOT)/$(TYPE)
