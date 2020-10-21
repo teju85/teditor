@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [ master ]
 
-env:
-  TERM: xterm-256color
-
 defaults:
   run:
     shell: bash

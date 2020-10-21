@@ -5,7 +5,6 @@ on:
     branches: [ master ]
 
 env:
-  TERM: xterm-256color
   DEPLOY_TOKEN: ${{ secrets.GHPAGESPUSH }}
 
 defaults:
