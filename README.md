@@ -5,7 +5,7 @@
 
 # teditor
 *teditor* is a terminal based editor, written from scratch in C++. More details
-about this editor can be found [here](https://teju85.github.io/blog/tags.html#teditor).
+about this editor can be found [here](https://teju85.github.io/teditor/).
 
 # Supported platforms
 This has been only tested on the following platforms:
