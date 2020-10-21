@@ -21,7 +21,7 @@ Very minimal set of pre-reqs are needed for this project.
 1. GNU-make (>= 4.2.1)
 2. G++ (>= 5.4.0)
 3. doxygen (>= 1.8.13) - optional, only for documentation generation
-4. curl - for downloading the Catch2 header file during unit-testing
+4. curl - for downloading the Catch2 header file for unit-testing
 
 ## Runtime (alphabetical order)
 1. curl - for downloading from web
