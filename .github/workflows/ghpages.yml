@@ -1,0 +1,22 @@
+name: gh-pages
+
+on:
+  push:
+    branches: [ master ]
+
+env:
+  TERM: xterm-256color
+  DEPLOY_TOKEN: ${{ secrets.GHPAGESPUSH }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    env:
+      TEDITOR_BUILD_DOCS: 1
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/gh-pages

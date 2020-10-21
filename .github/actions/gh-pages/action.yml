@@ -1,0 +1,5 @@
+name: 'Update gh-pages'
+description: 'Update the gh-pages with latest generated documentation'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
