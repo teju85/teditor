@@ -20,7 +20,9 @@ git config user.name "$GITHUB_ACTOR"
 git config user.email "${GITHUB_ACTOR}@bots.github.com"
 
 make doc
-git checkout -t "$remote_name/$target_branch"
+git branch -D "$target_branch"
+git fetch "$remote_name" "$target_name:$target_name"
+git checkout "$target_branch"
 rm -rf *.html *.js *.css *.png search/
 cp -r bin/html/html/* .
 
