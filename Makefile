@@ -50,8 +50,6 @@ INCLUDES       := $(SRC) \
 
 LIBS           :=
 INCS           := $(foreach inc,$(INCLUDES),-I$(inc))
-CC             := gcc
-CCFLAGS        := -std=c99 $(INCS)
 CXX            := g++
 CXXFLAGS       := -std=$(STDCXX) -Wall -Werror $(INCS)
 LD             := g++
@@ -77,12 +75,10 @@ MAIN_DEPS      := $(patsubst %.cpp,$(DEPDIR)/%.d,$(MAINSRC))
 DEPFILES       := $(SRC_DEPS) $(TEST_DEPS) $(MAIN_DEPS)
 
 ifeq ($(DEBUG),1)
-    CCFLAGS    += -g
     CXXFLAGS   += -g
     LDFLAGS    += -g
     CXXFLAGS   += -DDEBUG_BUILD
 else
-    CCFLAGS    += -O3
     CXXFLAGS   += -O3
     LDFLAGS    += -O3
     CXXFLAGS   += -UDEBUG_BUILD
