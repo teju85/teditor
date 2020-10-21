@@ -15,8 +15,6 @@ defaults:
 jobs:
   docs:
     runs-on: ubuntu-latest
-    env:
-      TEDITOR_BUILD_DOCS: 1
     steps:
       - uses: actions/checkout@v2
         with:
