@@ -1,4 +1,6 @@
-![teditor CI](https://github.com/teju85/teditor/workflows/teditor%20CI/badge.svg)
+![release-build](https://github.com/teju85/teditor/workflows/release-build/badge.svg)
+![debug-build](https://github.com/teju85/teditor/workflows/debug-build/badge.svg)
+![docs-build](https://github.com/teju85/teditor/workflows/docs-build/badge.svg)
 
 # teditor
 *teditor* is a terminal based editor, written from scratch in C++. More details
