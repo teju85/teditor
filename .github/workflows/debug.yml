@@ -1,0 +1,24 @@
+name: debug-build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  TERM: xterm-256color
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    env:
+      TEDITOR_DEBUG: 1
+      TEDITOR_BUILD_DOCS: 0
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/build-and-test
