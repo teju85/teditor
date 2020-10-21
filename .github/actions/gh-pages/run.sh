@@ -1,4 +1,6 @@
 #!/bin/bash
+# Thanks to: https://www.innoq.com/en/blog/github-actions-automation/
+
 echo "----- All env-vars -----"
 env
 echo "----- All env-vars -----"
@@ -19,8 +21,10 @@ git config user.email "${GITHUB_ACTOR}@bots.github.com"
 
 make doc
 git checkout "$target_branch"
+rm -rf *.html *.js *.css *.png search/
 cp -r bin/html/html/* .
 
+git add .
 git commit -m "updated GitHub Pages"
 if [ $? -ne 0 ]; then
     echo "nothing to commit"
