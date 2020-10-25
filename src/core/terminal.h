@@ -137,6 +137,7 @@ private:
   int readAndExtract();
   int decodeChar(key_t ch);
   int decodeEscSeq();
+  int readKey();
 
   template <typename A, typename B> friend class SingletonHandler;
 };

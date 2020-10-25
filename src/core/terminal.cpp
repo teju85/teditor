@@ -257,8 +257,16 @@ int Terminal::readAndExtract() {
          (uint32_t)c);
 }
 
+int Terminal::readKey() {
+  auto n = readAndExtract();
+  ULTRA_DEBUG("Terminal::readKey: inout keyval=%d\n", n);
+  if(n == UndefinedSequence) return n;
+  if(n < 0) return -1;
+  if(n > 0) return type;
+  return 0;
+}
+
 int Terminal::waitAndFill(struct timeval* timeout) {
-  int n;
   fd_set events;
   reset();
   while(1) {
@@ -266,6 +274,7 @@ int Terminal::waitAndFill(struct timeval* timeout) {
     FD_SET(inout, &events);
     FD_SET(winchFds[0], &events);
     int maxfd  = std::max(winchFds[0], inout);
+    if (!seq.empty()) return readKey();
     ULTRA_DEBUG("Terminal::waitAndFill: waiting on select...\n");
     int result = select(maxfd+1, &events, 0, 0, timeout);
     ULTRA_DEBUG("Terminal::waitAndFill: result=%d\n", result);
@@ -274,7 +283,10 @@ int Terminal::waitAndFill(struct timeval* timeout) {
     if(FD_ISSET(winchFds[0], &events)) {
       type = Event_Resize;
       int zzz = 0;
-      n = read(winchFds[0], &zzz, sizeof(int));
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-result"
+      read(winchFds[0], &zzz, sizeof(int));
+#pragma GCC diagnostic pop
       buffResize = true;
       ULTRA_DEBUG("Terminal::waitAndFill: winchFds event type=%d\n", type);
       return type;
@@ -283,13 +295,7 @@ int Terminal::waitAndFill(struct timeval* timeout) {
       disableResize();
     }
     // key/mouse events
-    if(FD_ISSET(inout, &events)) {
-      n = readAndExtract();
-      ULTRA_DEBUG("Terminal::waitAndFill: inout keyval=%d\n", n);
-      if(n == UndefinedSequence) return n;
-      if(n < 0) return -1;
-      if(n > 0) return type;
-    }
+    if(FD_ISSET(inout, &events)) return readKey();
   }
 }
 
