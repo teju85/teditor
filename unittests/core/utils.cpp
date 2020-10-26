@@ -388,4 +388,19 @@ TEST_CASE("History") {
   remove(file.c_str());
 }
 
+TEST_CASE("sortedKeys") {
+  std::unordered_map<std::string, std::string> map{
+    {"b", "b"},
+    {"a", "a"},
+    {"d", "d"},
+    {"c", "c"},
+  };
+  auto keys = sortedKeys(map);
+  REQUIRE(4u == keys.size());
+  REQUIRE("a" == keys[0]);
+  REQUIRE("b" == keys[1]);
+  REQUIRE("c" == keys[2]);
+  REQUIRE("d" == keys[3]);
+}
+
 } // end namespace teditor

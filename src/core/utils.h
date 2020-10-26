@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <vector>
 #include <stdarg.h>
-
+#include <unordered_map>
 
 namespace teditor {
 
@@ -144,5 +144,14 @@ class History : public Strings {
 };  // class History
 
 unsigned numThreads();
+
+template <typename K, typename V>
+std::vector<K> sortedKeys(
+  const std::unordered_map<K, V>& map) {
+  std::vector<K> keys;
+  for (auto itr : map) keys.push_back(itr.first);
+  std::sort(keys.begin(), keys.end());
+  return keys;
+}
 
 } // end namespace teditor

@@ -4,6 +4,7 @@
 #include <memory>
 #include <string.h>
 #include "version.h"
+#include "utils.h"
 
 namespace teditor {
 
@@ -60,23 +61,31 @@ void Option::dumpAll(const std::string& outfile) {
   fp.open(outfile.c_str());
   ASSERT(fp.is_open(), "Failed to open file '%s'!", outfile.c_str());
   auto& opts = options();
-  for (const auto& itr : opts) {
-    auto opt = itr.second;
+  auto keys = sortedKeys(opts);
+  for (const auto& k : keys) {
+    auto opt = opts[k];
     fp << "# " << opt->helpMsg << "\n";
     fp << "# Type: " << Option::type2str(opt->type) << "\n";
-    fp << itr.first << " " << opt->value << "\n\n";
+    fp << k << " " << opt->value << "\n\n";
   }
   fp.close();
 }
 
 void Option::printOpts() {
   auto& opts = options();
-  for (const auto& itr : opts) {
-    auto opt = itr.second;
-    printf("%25s [%8s] %s {%s}\n", itr.first.c_str(),
-           Option::type2str(opt->type).c_str(), opt->helpMsg.c_str(),
-           opt->value.c_str());
+  auto keys = sortedKeys(opts);
+  std::string filler(25, ' ');
+  printf("List of all supported options are:\n");
+  printf(" . Value inside square braces is the data-type of the option.\n");
+  printf(" . Value inside curly braces show the value of the option.\n");
+  printf("------------------\n");
+  for (const auto& k : keys) {
+    auto opt = opts[k];
+    auto tstr = Option::type2str(opt->type);
+    printf("%-25s %s\n", k.c_str(), opt->helpMsg.c_str());
+    printf("%s [%s] {%s}\n", filler.c_str(), tstr.c_str(), opt->value.c_str());
   }
+  printf("------------------\n");
 }
 
 #define CASE(t) case t: return #t
