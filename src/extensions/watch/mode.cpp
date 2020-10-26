@@ -8,7 +8,7 @@ namespace watch {
 
 WatchMode::WatchMode():
   readonly::ReadOnlyMode("watch"), buf(nullptr), watchCmd(),
-  defaultSleepMilliSec(Option::get("watch::defaultSleepMs").getInt()),
+  defaultSleepMilliSec(Option::get("watch:defaultSleepMs").getInt()),
   sleepMilliSec(defaultSleepMilliSec), alreadyRunning(false), runner() {
   populateKeyMap<WatchMode::Keys>(getKeyCmdMap());
   populateColorMap<WatchMode::Colors>(getColorMap());

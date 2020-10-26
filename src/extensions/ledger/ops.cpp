@@ -19,7 +19,7 @@ Buffer& getLedgerShowBuff(Editor& ed) {
 
 DEF_CMD(
   LedgerOpen, "ledger-open", DEF_OP() {
-    auto ledgerFile = Option::get("ledger::file").getStr();
+    auto ledgerFile = Option::get("ledger:file").getStr();
     ed.load(ledgerFile, 0);
   },
   DEF_HELP() { return "Opens the ledger file in a new buffer."; });
@@ -36,7 +36,7 @@ void printHeader(Buffer& buf, const TimePoint& min, const TimePoint& max) {
 }
 
 void showTopAccounts(Buffer& buf) {
-  auto file = Option::get("ledger::file").getStr();
+  auto file = Option::get("ledger:file").getStr();
   Parser p(file);
   TimePoint min, max;
   p.minmaxDates(min, max);
@@ -63,7 +63,7 @@ DEF_CMD(
   DEF_HELP() { return "Starts ledger-mode buffer, if not already done."; });
 
 void showAllAccounts(Buffer& buf) {
-  auto file = Option::get("ledger::file").getStr();
+  auto file = Option::get("ledger:file").getStr();
   Parser p(file);
   TimePoint min, max;
   p.minmaxDates(min, max);

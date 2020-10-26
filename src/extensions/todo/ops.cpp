@@ -20,13 +20,13 @@ Buffer& getTodoShowBuff(Editor& ed) {
 
 DEF_CMD(
   TodoOpen, "todo-open", DEF_OP() {
-    auto todoFile = Option::get("todo::file").getStr();
+    auto todoFile = Option::get("todo:file").getStr();
     ed.load(todoFile, 0);
   },
   DEF_HELP() { return "Opens the todo file in a new buffer."; });
 
 void showTodosFor(Buffer& buf, const TimePoint& start, const TimePoint& end) {
-  auto todoFile = Option::get("todo::file").getStr();
+  auto todoFile = Option::get("todo:file").getStr();
   Parser p(todoFile);
   buf.clear();
   std::stringstream ss;

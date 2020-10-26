@@ -40,7 +40,7 @@ Editor::Editor(const std::vector<FileInfo>& _files):
   fileshist(Option::get("histFile").getStr(), Option::get("maxHistory").getInt()) {
   DEBUG("Editor: ctor started\n");
   timeout.tv_sec = 0;
-  timeout.tv_usec = Option::get("editor::pollTimeoutMs").getInt() * 1000;
+  timeout.tv_usec = Option::get("editor:pollTimeoutMs").getInt() * 1000;
   // This array is here only to make sure we get consistent interface to the
   // Window API.
   cmBarArr.push_back(cmBar);
@@ -105,8 +105,8 @@ void Editor::saveBuffer(Buffer& buf) {
 
 int Editor::cmBarHeight() const {
   if(cmdMsgBarActive && cmBar->usingChoices())
-    return Option::get("cmBar::multiheight").getInt();
-  return Option::get("cmBar::height").getInt();
+    return Option::get("cmBar:multiheight").getInt();
+  return Option::get("cmBar:height").getInt();
 }
 
 const AttrColor& Editor::getColor(const std::string& name) const {

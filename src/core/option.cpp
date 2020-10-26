@@ -116,14 +116,14 @@ void registerAllOptions() {
   Option::add("calc:maxHistory", "50",
               "History size for storing all calc-mode commands",
               Option::Type::Integer);
-  Option::add("cmBar::height", "1", "Cmd-bar height", Option::Type::Integer);
-  Option::add("cmBar::multiheight", "8", "Cmd-bar height during interaction",
+  Option::add("cmBar:height", "1", "Cmd-bar height", Option::Type::Integer);
+  Option::add("cmBar:multiheight", "8", "Cmd-bar height during interaction",
               Option::Type::Integer);
   Option::add("dnldProg", "curl", "Program used for downloading URLs",
               Option::Type::String);
   Option::add("dnldProgOpts", "-s", "Options passed to <dnldProg>",
               Option::Type::String);
-  Option::add("editor::pollTimeoutMs", "50", "Input poll event timeout (in ms)",
+  Option::add("editor:pollTimeoutMs", "50", "Input poll event timeout (in ms)",
               Option::Type::Integer);
   Option::add("grepCmd", "grep -nH -e ", "Default grep command for prompting",
               Option::Type::String);
@@ -133,7 +133,7 @@ void registerAllOptions() {
               Option::Type::String);
   Option::add("iCaseSearch", "NO", "Perform case insensitive searches",
               Option::Type::Boolean);
-  Option::add("ledger::file", "<homeFolder>/ledger.lg",
+  Option::add("ledger:file", "<homeFolder>/ledger.lg",
               "Ledger file for double-entry book-keeping", Option::Type::String);
   Option::add("logLevel", "-1", "Spew verbosity. Higher value means more spews",
               Option::Type::Integer);
@@ -154,11 +154,11 @@ void registerAllOptions() {
   Option::add("tabSpaces", "2", "Number of spaces per tab",
               Option::Type::Integer);
   Option::add("title", "teditor", "Window title", Option::Type::String);
-  Option::add("todo::file", "<homeFolder>/tasks.todo",
+  Option::add("todo:file", "<homeFolder>/tasks.todo",
               "File containing list of tasks to todo and/or set reminders for",
               Option::Type::String);
   Option::add("tty", "/dev/tty", "Path to the tty file", Option::Type::String);
-  Option::add("watch::defaultSleepMs", "1000",
+  Option::add("watch:defaultSleepMs", "1000",
               "Default sleep duration (in ms) between reruns in watch-mode",
               Option::Type::Integer);
   Option::add("windowSplitter", "|", "Character used as window splitter",
