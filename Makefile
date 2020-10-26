@@ -112,6 +112,7 @@ release:
 	cp $(BINROOT)/Release/teditor $(RELEASE_DIR)/Release
 	cp $(BINROOT)/Debug/teditor $(RELEASE_DIR)/Debug
 	cp -r $(BINROOT)/html/html $(RELEASE_DIR)
+	tar cjf $(RELEASE_DIR).tar.gz $(RELEASE_DIR)
 
 teditor: $(EXE)
 

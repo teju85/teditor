@@ -23,5 +23,14 @@ logger macros in the logging module which can be very helpful while debugging
 editor core modules.
 
 @section developers_release_checklist Release Checklist
-1. Check that the `VERSION` variable inside `Makefile` is updated properly
-2. Run `make release`
+1. Check that the `VERSION` variable inside `Makefile` is updated properly.
+2. Create a `docs/releases/v$(VERSION).md` file and update its contents with the
+   list of features in the current release. You can coy the contents of another
+   file in this dir and use it as a starting point.
+3. Update `docs/releases.md` to point to the document of this new release.
+4. Commit all changes if not done already.
+5. Run `make release`. It creates a `teditor-<version>.tar.gz` file.
+6. Push all the changes to remote: `git push origin master`
+7. Go to [releases](https://github.com/teju85/teditor/releases/new) pages and
+   prepare a new release. Attach the above tarball into this page.
+8. After verifying the contents of this page, click `Publish release`.

@@ -19,6 +19,7 @@ Very minimal set of pre-reqs are needed for this project.
 2. G++ (>= 5.4.0)
 3. doxygen (>= 1.8.13) - optional, only for documentation generation
 4. curl - for downloading the Catch2 header file during unit-testing
+5. tar - for packaging the release
 
 @subsection mainpage_deps_run Runtime
 1. curl - for downloading from web
