@@ -192,13 +192,13 @@ bool parseArgs(int argc, char** argv, std::vector<FileInfo>& files) {
              "USAGE:\n"
              "  teditor [-h] [-dump <rcfile>] [-rc <rcFile>] <files>\n"
              "OPTIONS:\n"
-             "  -h                Print this help and exit.\n"
-             "  -dump <rcFile>    Dump the default rc file and exit.\n"
-             "  -rc <rcFile>      Configure the editor using this rc file.\n"
-             "  -listopts         List all options supported and exit.\n"
-             "  -opt <name> <val> Set the option as found in the 'Option'.\n"
-             "  -v                Print version info and exit.\n"
-             "  <files>           Files to be opened\n");
+             "  -h               Print this help and exit.\n"
+             "  -dump <rcFile>   Dump the default rc file and exit.\n"
+             "  -rc <rcFile>     Configure the editor using this rc file.\n"
+             "  -listopts        List all options supported and exit.\n"
+             "  -o <name> <val>  Set the option as found in the 'Option'.\n"
+             "  -v               Print version info and exit.\n"
+             "  <files>          Files to be opened\n");
       return false;
     } else if (!strcmp(argv[i], "-dump")) {
       ++i;
@@ -216,12 +216,12 @@ bool parseArgs(int argc, char** argv, std::vector<FileInfo>& files) {
     } else if(!strcmp(argv[i], "-listopts")) {
       Option::printOpts();
       return false;
-    } else if(!strcmp(argv[i], "-opt")) {
+    } else if(!strcmp(argv[i], "-o")) {
       ++i;
-      ASSERT(i < argc, "'-opt' option expects 2 arguments!");
+      ASSERT(i < argc, "'-o' option expects 2 arguments!");
       std::string optName(argv[i]);
       ++i;
-      ASSERT(i < argc, "'-opt' option expects 2 arguments!");
+      ASSERT(i < argc, "'-o' option expects 2 arguments!");
       std::string optVal(argv[i]);
       Option::set(optName, optVal);
     } else {

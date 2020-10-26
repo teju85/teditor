@@ -16,7 +16,7 @@ tabSpaces 2
 
 # Cmd-bar height during interaction
 # Type: Integer
-cmBar::multiheight 8
+cmBar:multiheight 8
 
 # Path to history file
 # Type: String
@@ -28,7 +28,7 @@ browserCmd cygstart firefox -private-window
 
 # Cmd-bar height
 # Type: Integer
-cmBar::height 1
+cmBar:height 1
 
 # History size for storing all files visited
 # Type: Integer
