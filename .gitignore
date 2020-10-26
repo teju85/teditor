@@ -8,5 +8,4 @@ tests.exe
 *.tar.gz
 bin/
 wbin/
-test_hist.txt
-html/
+teditor-*

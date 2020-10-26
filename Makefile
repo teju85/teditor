@@ -8,6 +8,7 @@ CURL_OPTS      ?=
 
 # NOTE: Change this to increment release version
 VERSION        := 1.8.0
+RELEASE_DIR    := teditor-$(VERSION)
 
 ifeq ($(DEBUG),1)
     TYPE       := Debug
@@ -88,17 +89,29 @@ CXXFLAGS       += -DTEDITOR_VERSION_INFO='"$(VERSION)"'
 
 default:
 	@echo "make what? Available targets are:"
-	@echo "  teditor     - Build the editor"
-	@echo "  tests       - Build the unit-tests and run them"
 	@echo "  doc         - Build doxygen documentation"
 	@echo "  clean       - Clean the build files"
 	@echo "  clean_all   - Clean even the build files"
+	@echo "  release     - Prepare release package"
 	@echo "  stats       - Source code statistics"
+	@echo "  teditor     - Build the editor"
+	@echo "  tests       - Build the unit-tests and run them"
 	@echo "Flags to customize behavior:"
 	@echo "  DEBUG   - Get a debug build if it is 1. Also enables debug"
 	@echo "            logging in Logger class. [0]"
 	@echo "  VERBOSE - Print the actual commands. [0]"
 	@echo "  BINROOT - Root directory where to store build files. [bin/]"
+
+release:
+	$(MKDIR_P) $(RELEASE_DIR)
+	$(MAKE) clean_all
+	$(MAKE) -j teditor tests
+	$(MAKE) -j DEBUG=1 teditor tests
+	$(MAKE) doc
+	$(MKDIR_P) $(RELEASE_DIR)/Release $(RELEASE_DIR)/Debug
+	cp $(BINROOT)/Release/teditor $(RELEASE_DIR)/Release
+	cp $(BINROOT)/Debug/teditor $(RELEASE_DIR)/Debug
+	cp -r $(BINROOT)/html/html $(RELEASE_DIR)
 
 teditor: $(EXE)
 
