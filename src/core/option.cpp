@@ -3,7 +3,6 @@
 #include "option.h"
 #include <memory>
 #include <string.h>
-#include "version.h"
 #include "utils.h"
 
 namespace teditor {

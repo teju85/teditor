@@ -6,6 +6,9 @@ VERBOSE        ?= 0
 BINROOT        ?= bin
 CURL_OPTS      ?=
 
+# NOTE: Change this to increment release version
+VERSION        := 1.8.0
+
 ifeq ($(DEBUG),1)
     TYPE       := Debug
 else
@@ -80,6 +83,8 @@ else
     LDFLAGS    += -O3
 endif
 
+CXXFLAGS       += -DTEDITOR_VERSION_INFO='"$(VERSION)"'
+
 
 default:
 	@echo "make what? Available targets are:"
@@ -129,7 +134,7 @@ clean:
 	rm -rf $(DEPFILES)
 
 clean_all:
-	rm -rf $(BINDIR)
+	rm -rf $(BINROOT)
 
 
 stats:
@@ -143,7 +148,8 @@ stats:
 doc:
 	rm -rf $(DOCDIR)
 	$(MKDIR_P) $(BINDIR)
-	doxygen Doxyfile
+	sed -e "s/PROJECT_NUMBER         =/PROJECT_NUMBER         = $(VERSION)/" < Doxyfile > $(BINROOT)/Doxyfile
+	doxygen $(BINROOT)/Doxyfile
 
 $(CATCH2_DIR):
 	@if [ "$(VERBOSE)" = "0" ]; then \
