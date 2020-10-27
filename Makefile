@@ -134,7 +134,7 @@ package:
 	$(MAKE) doc
 	rm -rf $(RELEASE_ROOT)/html
 	cp -r $(BINROOT)/html $(RELEASE_ROOT)
-	tar xjf $(RELEASE_ROOT).tar.gz $(RELEASE_ROOT)
+	tar cjf $(RELEASE_ROOT).tar.gz $(RELEASE_ROOT)
 
 teditor: $(EXE)
 
