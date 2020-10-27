@@ -8,6 +8,13 @@ namespace teditor {
 namespace calc {
 namespace ops {
 
+/**
+ * @page calc_ops Operations in calc-mode
+ * All operations that are supported while under `calc-mode`
+ *
+ * @tableofcontents
+ */
+
 Buffer& getCalcBuff(Editor& ed) {
   bool newOne;
   auto& buf = ed.getBuff("*calc", true, newOne);
@@ -64,6 +71,29 @@ void insertChar(Buffer& buf, char c, Editor& ed) {
 }
 
 
+/**
+ * @page calc_ops
+ * @section calc
+ * Starts the calculator under `calc-mode`, if not already done.
+ *
+ * @note Available since v1.7.0
+ */
+DEF_CMD(
+  Calc, "calc", DEF_OP() {
+    auto& buf = getCalcBuff(ed);
+    printHeader(buf);
+    ed.switchToBuff("*calc");
+  },
+  DEF_HELP() { return "Starts the calculator, if not already done."; });
+
+/**
+ * @page calc_ops
+ * @section calc_history calc::history
+ * Opens a prompt with a list of previoulsy entered commands to quickly search
+ * and jump to the command of interest to be shown in the current prompt instead
+ *
+ * @note Available since v1.7.0
+ */
 DEF_CMD(
   CommandHistory, "calc::history", DEF_OP() {
     StringChoices sc(cmds().get());
@@ -81,20 +111,29 @@ DEF_CMD(
       " prompt instead.";
   });
 
-DEF_CMD(
-  Calc, "calc", DEF_OP() {
-    auto& buf = getCalcBuff(ed);
-    printHeader(buf);
-    ed.switchToBuff("*calc");
-  },
-  DEF_HELP() { return "Starts the calculator, if not already done."; });
-
+/**
+ * @page calc_ops
+ * @section calc_insert-char .calc::insert-char
+ * Inserts currently pressed char into buffer, at the current calculator line.
+ *
+ * @note Available since v1.7.0
+ *
+ * @note Preceeding `.` implies that this command is not searchable from the
+ *        editor command prompt.
+ */
 DEF_CMD(
   InsertChar, ".calc::insert-char", DEF_OP() {
     insertChar(ed.getBuff(), (char)ed.getKey(), ed);
   },
   DEF_HELP() { return "Inserts currently pressed char into buffer."; });
 
+/**
+ * @page calc_ops
+ * @section calc_enter calc::enter
+ * Evaluate the current expression and print the result below it.
+ * 
+ * @note Available since v1.7.0
+ */
 DEF_CMD(
   Evaluate, "calc::enter", DEF_OP() {
     auto& buf = ed.getBuff();
@@ -116,6 +155,13 @@ DEF_CMD(
   },
   DEF_HELP() { return "Evaluate the current expression"; });
 
+/**
+ * @page calc_ops
+ * @section calc_backspace-char calc::backspace-char
+ * Removes the char to the left of the cursor, from the current line.
+ * 
+ * @note Available since v1.7.0
+ */
 DEF_CMD(
   BackspaceChar, "calc::backspace-char", DEF_OP() {
     auto& buf = ed.getBuff();
@@ -130,6 +176,13 @@ DEF_CMD(
     return "Removes the char to the left of cursor, if it is not on prompt";
   });
 
+/**
+ * @page calc_ops
+ * @section calc_delete-char calc::delete-char
+ * Removes the char on the cursor, from the current line.
+ * 
+ * @note Available since v1.7.0
+ */
 DEF_CMD(
   DeleteChar, "calc::delete-char", DEF_OP() {
     auto& buf = ed.getBuff();
@@ -144,6 +197,16 @@ DEF_CMD(
     return "Removes the char on the cursor, if it is not on prompt";
   });
 
+/**
+ * @page calc_ops
+ * @section calc_kill-line calc::kill-line
+ * Removes the rest of the line and copies it to the clipboard.
+ * 
+ * @note Available since v1.7.0
+ *
+ * @note Currently editor has a notion of clipboard that is separate from the
+ *        OS provided system clipboard!
+ */
 DEF_CMD(
   KillLine, "calc::kill-line", DEF_OP() {
     auto& buf = ed.getBuff();
