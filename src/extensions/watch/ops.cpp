@@ -7,6 +7,13 @@ namespace teditor {
 namespace watch {
 namespace ops {
 
+/**
+ * @page watch_ops Operations under watch-mode
+ * All operations supported under `watch-mode`.
+ *
+ * @tableofcontents
+ */
+
 Buffer& getWatchBuff(Editor& ed) {
   bool newOne;
   auto& buf = ed.getBuff("*watch", true, newOne);
@@ -16,6 +23,16 @@ Buffer& getWatchBuff(Editor& ed) {
   return buf;
 }
 
+/**
+ * @page watch_ops
+ * @section watch
+ * Prompts for a command and start a watch on it. Sleep time between successive
+ * invocations of this shell command is controlled by the Option
+ * `watch:defaultSleepMs`. The `stdout` and `stderr` of the command will be
+ * printed in the current Buffer.
+ *
+ * @note Available since v1.8.0.
+ */
 DEF_CMD(
   Watch, "watch", DEF_OP() {
     auto cmd = ed.prompt("Command to watch: ");
@@ -28,6 +45,15 @@ DEF_CMD(
   },
   DEF_HELP() { return "Start a watch command."; });
 
+/**
+ * @page watch_ops
+ * @section watch-sleep
+ * Prompts for a command and then a sleep time (in ms) and starts a watch on it.
+ * The `stdout` and `stderr` of the command will be printed in the current
+ * Buffer.
+ *
+ * @note Available since v1.8.0.
+ */
 DEF_CMD(
   WatchSleep, "watch-sleep", DEF_OP() {
     auto cmd = ed.prompt("Command to watch: ");
@@ -43,6 +69,13 @@ DEF_CMD(
   },
   DEF_HELP() { return "Start a watch command."; });
 
+/**
+ * @page watch_ops
+ * @section watch_stop watch::stop
+ * Stops the currently running watch command.
+ *
+ * @note Available since v1.8.0.
+ */
 DEF_CMD(
   WatchStop, "watch::stop", DEF_OP() {
     CMBAR_MSG(ed, "Waiting for previously running command to complete...\n");
@@ -54,6 +87,13 @@ DEF_CMD(
   },
   DEF_HELP() { return "Stops the underlying watch command."; });
 
+/**
+ * @page watch_ops
+ * @section watch_restart watch::restart
+ * Restarts the previously stopped watch command.
+ *
+ * @note Available since v1.8.0
+ */
 DEF_CMD(
   WatchRestart, "watch::restart", DEF_OP() {
     CMBAR_MSG(ed, "Restarting the watch command...\n");

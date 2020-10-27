@@ -32,3 +32,4 @@ Given below are the groups of extensions that are currently supported:
 3. @ref grep_ops
 4. @ref ledger_ops
 5. @ref todo_ops
+6. @ref watch_ops
