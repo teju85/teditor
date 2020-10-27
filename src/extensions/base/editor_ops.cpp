@@ -38,10 +38,9 @@ DEF_CMD(HelpCommand, "help-command", "editor_ops", DEF_OP() {
     auto cmd = ed.prompt("Help for Cmd? ", nullptr, &sc);
     if(cmd.empty()) return;
     try {
-      // auto contents = getCmd(cmd).second(ed);
-      // std::string name = "*help-" + cmd;
-      // ed.createReadOnlyBuff(name, contents, true);
-      CMBAR_MSG(ed, "TODO\n");
+      auto c = getCmd(cmd);
+      auto url = "https://teju85.github.io/teditor/" + c.second + ".html#" + cmd;
+      check_output(Option::get("browserCmd").getStr() + " '" + url + "'");
     } catch(const std::runtime_error& e) {
       CMBAR_MSG(ed, "Unknown command: %s!\n", cmd.c_str());
     }
