@@ -9,6 +9,13 @@ namespace teditor {
 namespace ledger {
 namespace ops {
 
+/**
+ * @page ledger_ops Operations that are supported in ledger-mode
+ * All operations that are supported in `ledger-mode`.
+ *
+ * @tableofcontents
+ */
+
 Buffer& getLedgerShowBuff(Editor& ed) {
   bool newOne;
   auto& buf = ed.getBuff("*ledger", true, newOne);
@@ -17,6 +24,14 @@ Buffer& getLedgerShowBuff(Editor& ed) {
   return buf;
 }
 
+/**
+ * @page ledger_ops
+ * @section ledger-open
+ * Opens the ledger file in a new Buffer, if not already done, and switches to
+ * it. Location of this file can be configured with the Option `ledger::file`.
+ *
+ * @note Available since v1.3.0
+ */
 DEF_CMD(
   LedgerOpen, "ledger-open", DEF_OP() {
     auto ledgerFile = Option::get("ledger:file").getStr();
@@ -54,6 +69,13 @@ void showTopAccounts(Buffer& buf) {
   buf.insert(format("%12s  %-16s\n", valStr.c_str(), "Total"));
 }
 
+/**
+ * @page ledger_ops
+ * @section ledger-top
+ * Shows all top-level account transaction summary inside a `*ledger` Buffer.
+ *
+ * @note Available since v1.3.0
+ */
 DEF_CMD(
   LedgerTop, "ledger-top", DEF_OP() {
     auto& buf = getLedgerShowBuff(ed);
@@ -82,6 +104,13 @@ void showAllAccounts(Buffer& buf) {
   buf.insert(format("%12s  %-16s\n", valStr.c_str(), "total"));
 }
 
+/**
+ * @page ledger_ops
+ * @section ledger-all
+ * Shows all account transaction summary inside a `*ledger` Buffer.
+ *
+ * @note Available since v1.3.0
+ */
 DEF_CMD(
   Ledger, "ledger-all", DEF_OP() {
     auto& buf = getLedgerShowBuff(ed);
