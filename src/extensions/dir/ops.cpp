@@ -8,6 +8,20 @@ namespace teditor {
 namespace dir {
 namespace ops {
 
+/**
+ * @page dir_ops Operations supported under dir-mode
+ * All operations supported under `dir-mode`.
+ *
+ * @tableofcontents
+ */
+
+/**
+ * @page dir_ops
+ * @section dirmode-open-file
+ * Open the file under the cursor in a new Buffer.
+ *
+ * @note Available since v0.1.0
+ */
 DEF_CMD(
   OpenFile, "dirmode-open-file", DEF_OP() {
     auto& buf = ed.getBuff();
@@ -23,6 +37,13 @@ DEF_CMD(
   },
   DEF_HELP() { return "Open the file under the cursor in a new buffer."; });
 
+/**
+ * @page dir_ops
+ * @section dirmode-open-special-file
+ * Open the file using the program specified in the Option `startProg`.
+ *
+ * @note Available since v0.1.0
+ */
 DEF_CMD(
   OpenSpecialFile, "dirmode-open-special-file", DEF_OP() {
     auto& buf = ed.getBuff();
@@ -39,6 +60,14 @@ DEF_CMD(
   },
   DEF_HELP() { return "Open the file using the <startProg>."; });
 
+/**
+ * @page dir_ops
+ * @section dirmode-copy-file
+ * Copy the file under the cursor by prompting for the name of the new file.
+ * Currently, copying of directories is NOT supported.
+ *
+ * @note Available since v0.1.0
+ */
 DEF_CMD(
   CopyFile, "dirmode-copy-file", DEF_OP() {
     auto& buf = ed.getBuff();
@@ -62,6 +91,14 @@ DEF_CMD(
       " the new file. Currently, copying directories is unsupported!";
   });
 
+/**
+ * @page dir_ops
+ * @section dirmode-rename-file
+ * Rename the file under the cursor by prompting for its new name. This will
+ * reload the buffer at the end to reflect the changes.
+ *
+ * @note Available since v0.1.0
+ */
 DEF_CMD(
   RenameFile, "dirmode-rename-file", DEF_OP() {
     auto& buf = ed.getBuff();
@@ -83,6 +120,14 @@ DEF_CMD(
       " buffer at the end to reflect the changes.";
   });
 
+/**
+ * @page dir_ops
+ * @section dirmode-delete-file
+ * Delete the file under the cursor. This will reload the buffer at the end to
+ * reflect the changes.
+ *
+ * @note Available since v0.1.0
+ */
 DEF_CMD(
   DeleteFile, "dirmode-delete-file", DEF_OP() {
     auto& buf = ed.getBuff();

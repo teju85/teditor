@@ -24,3 +24,4 @@ Given below are the groups of commands that are currently supported:
 3. @ref cursor_ops
 4. @ref editor_ops
 5. @ref calc_ops
+6. @ref dir_ops
