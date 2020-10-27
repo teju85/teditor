@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">teditor
-   &#160;<span id="projectnumber">1.8.0</span>
+   &#160;<span id="projectnumber">1.8.0@@b664020</span>
    </div>
    <div id="projectbrief">Terminal based editor written in C++</div>
   </td>
@@ -82,11 +82,11 @@ Debug builds</h1>
 Release Checklist</h1>
 <ol type="1">
 <li>Check that the <code>VERSION</code> variable inside <code>Makefile</code> is updated properly.</li>
-<li>Create a <code>docs/releases/v.md</code> file and update its contents with the list of features in the current release. You can copy the contents of another file in this dir and use it as a starting point.</li>
+<li>Create a <code>docs/releases/v{VERSION}.md</code> file and update its contents with the list of features in the current release. You can copy the contents of another file in this dir and use it as a starting point.</li>
 <li>Update <code><a class="el" href="releases_8md.html">docs/releases.md</a></code> to point to the document of this new release.</li>
 <li>Commit all changes if not done already.</li>
-<li>For every supported release platform: 5a. Run <code>make release</code>. It creates a <code>teditor-&lt;version&gt;/&lt;OS&gt;</code> folder.</li>
-<li>Run the command: <code>make package</code>, which converts the <code>teditor-&lt;version&gt;</code> into a tarball with the same basename.</li>
+<li>For every supported release platform: Run <code>make release</code>. It creates a <code>teditor-&lt;version&gt;/&lt;OS&gt;</code> folder.</li>
+<li>Run the command: <code>make package</code> from ONLY one of the platforms. It creates doxygen docs and also compresses the <code>teditor-&lt;version&gt;</code> into a tarball with the same basename.</li>
 <li>Push all the changes to remote: <code>git push origin master</code></li>
 <li>Go to <a href="https://github.com/teju85/teditor/releases/new">releases</a> page and prepare a new release. Attach the above tarball into this page.</li>
 <li>After verifying the contents of this page, click <code>Publish release</code>. </li>
