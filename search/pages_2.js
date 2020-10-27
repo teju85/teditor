@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['teditor',['teditor',['../index.html',1,'']]],
-  ['tutorials',['Tutorials',['../tutorials.html',1,'']]]
+  ['dir_2dmode_2138',['dir-mode',['../dir_ops.html',1,'']]]
 ];

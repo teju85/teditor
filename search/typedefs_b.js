@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['removedlines',['RemovedLines',['../classteditor_1_1Buffer.html#a20da42a29a442474ec80bcfce21aca42',1,'teditor::Buffer']]]
+  ['strings_2007',['Strings',['../namespaceteditor.html#acc1c98f19acfc1145708cbf2b1045675',1,'teditor']]]
 ];
