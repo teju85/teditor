@@ -18,10 +18,15 @@ A Command is an operation that changes any of the following:
 These commands can either be entered via keystrokes attached to them or via the
 `M-x <command-name> Enter` command itself.
 
-Given below are the groups of commands that are currently supported:
+@subsection tutorial_all_commands_core Core Commands
+Given below are groups of core commands that are currently supported:
 1. @ref buffer_ops
 2. @ref cmbar_ops
 3. @ref cursor_ops
 4. @ref editor_ops
-5. @ref calc_ops
-6. @ref dir_ops
+
+@subsection tutorial_all_commands_extensions Extensions
+Given below are the groups of extensions that are currently supported:
+1. @ref calc_ops
+2. @ref dir_ops
+3. @ref grep_ops

@@ -8,6 +8,13 @@ namespace teditor {
 namespace grep {
 namespace ops {
 
+/**
+ * @page grep_ops Operations supported under grep-mode
+ * All operations supported under `grep-mode`.
+ *
+ * @tableofcontents
+ */
+
 Buffer& getGrepBuff(Editor& ed) {
   bool newOne;
   auto& buf = ed.getBuff("*grep", true, newOne);
@@ -16,6 +23,15 @@ Buffer& getGrepBuff(Editor& ed) {
   return buf;
 }
 
+/**
+ * @page grep_ops
+ * @section grep
+ * Prompts for the `grep` command to be run, executes the command on the given
+ * file/folder. Then starts `grep-mode` buffer, if not already done and puts the
+ * output of this command in this buffer for your perusal.
+ *
+ * @note Available since v1.6.0
+ */
 DEF_CMD(
   Grep, "grep", DEF_OP() {
     auto cmd = ed.prompt("Run grep (like this): ", nullptr, nullptr,
@@ -45,6 +61,14 @@ DEF_CMD(
   },
   DEF_HELP() { return "Starts grep-mode buffer, if not already done."; });
 
+/**
+ * @page grep_ops
+ * @section grep-find-file
+ * During the `grep-mode`, this opens up the file that the cursor is currently
+ * on and jumps to the line number as seen in the output of grep.
+ *
+ * @note Available since v1.6.0
+ */
 DEF_CMD(
   GrepFindFile, "grep-find-file", DEF_OP() {
     auto& buf = getGrepBuff(ed);
