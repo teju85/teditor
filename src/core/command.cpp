@@ -11,11 +11,11 @@ CommandMap& cmds() {
 }
 
 CmdRegistrar::CmdRegistrar(const std::string& cmd, OperateFunc op,
-                           HelpFunc help) {
+                           const std::string& grp) {
   auto& c = cmds();
   ASSERT(c.find(cmd) == c.end(),
          "Command '%s' already registered!", cmd.c_str());
-  c[cmd] = std::make_pair(op, help);
+  c[cmd] = std::make_pair(op, grp);
 }
 
 bool defaultCmdFilterOp(const std::string& name) { return true; }

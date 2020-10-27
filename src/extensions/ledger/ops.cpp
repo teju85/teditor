@@ -32,12 +32,10 @@ Buffer& getLedgerShowBuff(Editor& ed) {
  *
  * @note Available since v1.3.0
  */
-DEF_CMD(
-  LedgerOpen, "ledger-open", DEF_OP() {
+DEF_CMD(LedgerOpen, "ledger-open", "ledger_ops", DEF_OP() {
     auto ledgerFile = Option::get("ledger:file").getStr();
     ed.load(ledgerFile, 0);
-  },
-  DEF_HELP() { return "Opens the ledger file in a new buffer."; });
+  });
 
 void printHeader(Buffer& buf, const TimePoint& min, const TimePoint& max) {
   std::stringstream ss;
@@ -76,13 +74,11 @@ void showTopAccounts(Buffer& buf) {
  *
  * @note Available since v1.3.0
  */
-DEF_CMD(
-  LedgerTop, "ledger-top", DEF_OP() {
+DEF_CMD(LedgerTop, "ledger-top", "ledger_ops", DEF_OP() {
     auto& buf = getLedgerShowBuff(ed);
     showTopAccounts(buf);
     ed.switchToBuff("*ledger");
-  },
-  DEF_HELP() { return "Starts ledger-mode buffer, if not already done."; });
+  });
 
 void showAllAccounts(Buffer& buf) {
   auto file = Option::get("ledger:file").getStr();
@@ -111,13 +107,11 @@ void showAllAccounts(Buffer& buf) {
  *
  * @note Available since v1.3.0
  */
-DEF_CMD(
-  Ledger, "ledger-all", DEF_OP() {
+DEF_CMD(Ledger, "ledger-all", "ledger_ops", DEF_OP() {
     auto& buf = getLedgerShowBuff(ed);
     showAllAccounts(buf);
     ed.switchToBuff("*ledger");
-  },
-  DEF_HELP() { return "Shows all account transaction summary."; });
+  });
 
 } // end namespace ops
 } // end namespace ledger

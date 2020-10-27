@@ -78,13 +78,11 @@ void insertChar(Buffer& buf, char c, Editor& ed) {
  *
  * @note Available since v1.7.0
  */
-DEF_CMD(
-  Calc, "calc", DEF_OP() {
+DEF_CMD(Calc, "calc", "calc_ops", DEF_OP() {
     auto& buf = getCalcBuff(ed);
     printHeader(buf);
     ed.switchToBuff("*calc");
-  },
-  DEF_HELP() { return "Starts the calculator, if not already done."; });
+  });
 
 /**
  * @page calc_ops
@@ -94,8 +92,7 @@ DEF_CMD(
  *
  * @note Available since v1.7.0
  */
-DEF_CMD(
-  CommandHistory, "calc::history", DEF_OP() {
+DEF_CMD(CommandHistory, "calc::history", "calc_ops", DEF_OP() {
     StringChoices sc(cmds().get());
     auto cmd = ed.prompt("Calc Command History: ", nullptr, &sc);
     if(cmd.empty()) return;
@@ -104,11 +101,6 @@ DEF_CMD(
     buf.killLine();
     buf.insert(prompt());
     buf.insert(cmd);
-  },
-  DEF_HELP() {
-    return "Opens a prompt with a list of previously entered calc commands to"
-      " quickly search and jump to that command and to be shown in the current"
-      " prompt instead.";
   });
 
 /**
@@ -121,11 +113,8 @@ DEF_CMD(
  * @note Preceeding `.` implies that this command is not searchable from the
  *        editor command prompt.
  */
-DEF_CMD(
-  InsertChar, ".calc::insert-char", DEF_OP() {
-    insertChar(ed.getBuff(), (char)ed.getKey(), ed);
-  },
-  DEF_HELP() { return "Inserts currently pressed char into buffer."; });
+DEF_CMD(InsertChar, ".calc::insert-char", "calc_ops",
+        DEF_OP() { insertChar(ed.getBuff(), (char)ed.getKey(), ed); });
 
 /**
  * @page calc_ops
@@ -134,8 +123,7 @@ DEF_CMD(
  * 
  * @note Available since v1.7.0
  */
-DEF_CMD(
-  Evaluate, "calc::enter", DEF_OP() {
+DEF_CMD(Evaluate, "calc::enter", "calc_ops", DEF_OP() {
     auto& buf = ed.getBuff();
     Parser parser;
     const auto& pt = buf.getPoint();
@@ -152,8 +140,7 @@ DEF_CMD(
     //@todo: fix this
     buf.insert(format("\nResult: %s\n", expr.c_str()));
     printHeader(buf);  // insert the next prompt
-  },
-  DEF_HELP() { return "Evaluate the current expression"; });
+  });
 
 /**
  * @page calc_ops
@@ -162,8 +149,7 @@ DEF_CMD(
  * 
  * @note Available since v1.7.0
  */
-DEF_CMD(
-  BackspaceChar, "calc::backspace-char", DEF_OP() {
+DEF_CMD(BackspaceChar, "calc::backspace-char", "calc_ops", DEF_OP() {
     auto& buf = ed.getBuff();
     if (buf.isRegionActive()) buf.stopRegion();
     if (isOnPrompt(buf, true) || isOnSeparator(buf)) {
@@ -171,9 +157,6 @@ DEF_CMD(
       return;
     }
     buf.remove();
-  },
-  DEF_HELP() {
-    return "Removes the char to the left of cursor, if it is not on prompt";
   });
 
 /**
@@ -183,8 +166,7 @@ DEF_CMD(
  * 
  * @note Available since v1.7.0
  */
-DEF_CMD(
-  DeleteChar, "calc::delete-char", DEF_OP() {
+DEF_CMD(DeleteChar, "calc::delete-char", "calc_ops", DEF_OP() {
     auto& buf = ed.getBuff();
     if (buf.isRegionActive()) buf.stopRegion();
     if (isOnPrompt(buf, false) || isOnSeparator(buf)) {
@@ -192,9 +174,6 @@ DEF_CMD(
       return;
     }
     buf.remove(true);
-  },
-  DEF_HELP() {
-    return "Removes the char on the cursor, if it is not on prompt";
   });
 
 /**
@@ -207,8 +186,7 @@ DEF_CMD(
  * @note Currently editor has a notion of clipboard that is separate from the
  *        OS provided system clipboard!
  */
-DEF_CMD(
-  KillLine, "calc::kill-line", DEF_OP() {
+DEF_CMD(KillLine, "calc::kill-line", "calc_ops", DEF_OP() {
     auto& buf = ed.getBuff();
     if (buf.isRegionActive()) buf.stopRegion();
     if (isOnPrompt(buf, false) || isOnSeparator(buf)) {
@@ -218,9 +196,6 @@ DEF_CMD(
     auto del = buf.killLine();
     ed.setClipboard(del);
     CMBAR_MSG(ed, "Line killed\n");
-  },
-  DEF_HELP() {
-    return "Removes the rest of the line and copies it to the clipboard.";
   });
 
 } // end namespace ops

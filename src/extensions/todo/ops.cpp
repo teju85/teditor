@@ -33,12 +33,10 @@ Buffer& getTodoShowBuff(Editor& ed) {
  *
  * @note Available since v1.8.0.
  */
-DEF_CMD(
-  TodoOpen, "todo-open", DEF_OP() {
+DEF_CMD(TodoOpen, "todo-open", "ledger_ops", DEF_OP() {
     auto todoFile = Option::get("todo:file").getStr();
     ed.load(todoFile, 0);
-  },
-  DEF_HELP() { return "Opens the todo file in a new buffer."; });
+  });
 
 void showTodosFor(Buffer& buf, const TimePoint& start, const TimePoint& end) {
   auto todoFile = Option::get("todo:file").getStr();
@@ -68,16 +66,14 @@ void showTodosFor(Buffer& buf, const TimePoint& start, const TimePoint& end) {
  *
  * @note Available since v1.8.0.
  */
-DEF_CMD(
-  TodoShowThisWeek, "todo-show-this-week", DEF_OP() {
+DEF_CMD(TodoShowThisWeek, "todo-show-this-week", "ledger_ops", DEF_OP() {
     auto& buf = getTodoShowBuff(ed);
     TimePoint s;
     TimePoint e;
     weekFor(s, e, std::chrono::system_clock::now());
     showTodosFor(buf, s, e);
     ed.switchToBuff("*todo");
-  },
-  DEF_HELP() { return "Shows all todo's in the current week."; });
+  });
 
 } // end namespace ops
 } // end namespace todo

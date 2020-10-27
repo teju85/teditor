@@ -5,7 +5,6 @@
 #include "utils.h"
 #include <utility>
 
-
 namespace teditor {
 
 class Editor;
@@ -13,12 +12,10 @@ class Editor;
 
 /** main lambda to operate on the editor/buffer */
 typedef void (*OperateFunc)(Editor& ed);
-/** help message associated with this command */
-typedef std::string (*HelpFunc)(Editor& ed);
 /** Main class to add operators onto the editor/buffer */
-typedef std::pair<OperateFunc, HelpFunc> Command;
+typedef std::pair<OperateFunc, std::string> Command;
 /** list of all currently registered commands */
-typedef std::unordered_map<std::string,Command> CommandMap;
+typedef std::unordered_map<std::string, Command> CommandMap;
 /** command name filter */
 typedef bool (*CmdFilterOp)(const std::string&);
 
@@ -47,17 +44,14 @@ Strings allCmdNames(CmdFilterOp filterOp = defaultCmdFilterOp);
 
 
 struct CmdRegistrar {
-  CmdRegistrar(const std::string& cmd, OperateFunc op, HelpFunc help);
+  CmdRegistrar(const std::string& cmd, OperateFunc op, const std::string& grp);
 };
 
 /** macro to register a command to the database */
-#define DEF_CMD(UniqName, CmdName, OpFunc, HelpFunc)            \
-  CmdRegistrar cmd ## UniqName(CmdName, OpFunc, HelpFunc)
+#define DEF_CMD(UniqName, CmdName, CmdGroup, OpFunc)    \
+  CmdRegistrar cmd ## UniqName(CmdName, OpFunc, CmdGroup)
 
 /** helper macro to define a command function */
 #define DEF_OP()  [](Editor& ed)
-
-/** helper macro to define a help function */
-#define DEF_HELP()  [](Editor& ed) -> std::string
 
 }; // end namespace teditor

@@ -23,9 +23,8 @@ namespace ops {
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(Quit, "prompt-quit",
-        DEF_OP() { ed.requestQuitPromptLoop(); },
-        DEF_HELP() { return "Quit the current prompt"; });
+DEF_CMD(Quit, "prompt-quit", "cmbar_ops",
+        DEF_OP() { ed.requestQuitPromptLoop(); });
 
 /**
  * @page cmbar_ops
@@ -36,12 +35,10 @@ DEF_CMD(Quit, "prompt-quit",
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  Cancel, "prompt-cancel", DEF_OP() {
+DEF_CMD(Cancel, "prompt-cancel", "cmbar_ops", DEF_OP() {
     ed.requestCancelPromptLoop();
     ed.requestQuitPromptLoop();
-  },
-  DEF_HELP() { return "Cancels the currently active prompt"; });
+  });
 
 /**
  * @page cmbar_ops
@@ -51,15 +48,10 @@ DEF_CMD(
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  InsertChar, "prompt-insert-char", DEF_OP() {
+DEF_CMD(InsertChar, "prompt-insert-char", "cmbar_ops", DEF_OP() {
     auto& cmBar = ed.getCmBar();
     auto c = (char)ed.getKey();
     cmBar.insert(c);
-  },
-  DEF_HELP() {
-    return "Insert a character at the current cursor position"
-      " and move the cursor one character to the right.";
   });
 
 /**
@@ -69,12 +61,10 @@ DEF_CMD(
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  InsertCharQuit, "prompt-insert-char-quit", DEF_OP() {
+DEF_CMD(InsertCharQuit, "prompt-insert-char-quit", "cmbar_ops", DEF_OP() {
     ed.runCmd("prompt-insert-char");
     ed.runCmd("prompt-quit");
-  },
-  DEF_HELP() { return "Insert character and quit the prompt"; });
+  });
 
 /**
  * @page cmbar_ops
@@ -83,9 +73,8 @@ DEF_CMD(
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(CursorRight, "prompt-cursor-right",
-        DEF_OP() { ed.getCmBar().right(); },
-        DEF_HELP() { return "Move cursor one char to the right"; });
+DEF_CMD(CursorRight, "prompt-cursor-right", "cmbar_ops",
+        DEF_OP() { ed.getCmBar().right(); });
 
 /**
  * @page cmbar_ops
@@ -94,9 +83,8 @@ DEF_CMD(CursorRight, "prompt-cursor-right",
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(CursorLeft, "prompt-cursor-left",
-        DEF_OP() { ed.getCmBar().left(); },
-        DEF_HELP() { return "Move cursor one char to the left"; });
+DEF_CMD(CursorLeft, "prompt-cursor-left", "cmbar_ops",
+        DEF_OP() { ed.getCmBar().left(); });
 
 /**
  * @page cmbar_ops
@@ -105,9 +93,8 @@ DEF_CMD(CursorLeft, "prompt-cursor-left",
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(CursorHome, "prompt-cursor-home",
-        DEF_OP() { ed.getCmBar().startOfLine(); },
-        DEF_HELP() { return "Move cursor to the beginning of the prompt"; });
+DEF_CMD(CursorHome, "prompt-cursor-home", "cmbar_ops",
+        DEF_OP() { ed.getCmBar().startOfLine(); });
 
 /**
  * @page cmbar_ops
@@ -116,9 +103,8 @@ DEF_CMD(CursorHome, "prompt-cursor-home",
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(CursorLineEnd, "prompt-cursor-line-end",
-        DEF_OP() { ed.getCmBar().endOfLine(); },
-        DEF_HELP() { return "Move cursor to the end of the prompt"; });
+DEF_CMD(CursorLineEnd, "prompt-cursor-line-end", "cmbar_ops",
+        DEF_OP() { ed.getCmBar().endOfLine(); });
 
 /**
  * @page cmbar_ops
@@ -128,13 +114,11 @@ DEF_CMD(CursorLineEnd, "prompt-cursor-line-end",
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  BackspaceChar, "prompt-backspace-char", DEF_OP() {
+DEF_CMD(BackspaceChar, "prompt-backspace-char", "cmbar_ops", DEF_OP() {
     auto& cmBar = ed.getCmBar();
     cmBar.remove();
     cmBar.updateChoices();
-  },
-  DEF_HELP() { return "Remove one char from the left of the cursor"; });
+  });
 
 /**
  * @page cmbar_ops
@@ -144,13 +128,11 @@ DEF_CMD(
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  DeleteChar, "prompt-delete-char", DEF_OP() {
+DEF_CMD(DeleteChar, "prompt-delete-char", "cmbar_ops", DEF_OP() {
     auto& cmBar = ed.getCmBar();
     cmBar.remove(true);
     cmBar.updateChoices();
-  },
-  DEF_HELP() { return "Remove one char at the cursor"; });
+  });
 
 /**
  * @page cmbar_ops
@@ -159,9 +141,8 @@ DEF_CMD(
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(OptionsDown, "prompt-options-down",
-        DEF_OP() { ed.getCmBar().down(); },
-        DEF_HELP() { return "Scroll down in the options list"; });
+DEF_CMD(OptionsDown, "prompt-options-down", "cmbar_ops",
+        DEF_OP() { ed.getCmBar().down(); });
 
 /**
  * @page cmbar_ops
@@ -170,9 +151,8 @@ DEF_CMD(OptionsDown, "prompt-options-down",
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(OptionsUp, "prompt-options-up",
-        DEF_OP() { ed.getCmBar().up(); },
-        DEF_HELP() { return "Scroll up in the options list"; });
+DEF_CMD(OptionsUp, "prompt-options-up", "cmbar_ops",
+        DEF_OP() { ed.getCmBar().up(); });
 
 } // end namespace ops
 } // end namespace cmbar

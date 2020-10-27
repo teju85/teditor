@@ -20,9 +20,8 @@ namespace ops {
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(CursorDown, "cursor-down",
-        DEF_OP() { ed.getBuff().down(); },
-        DEF_HELP() { return "Move cursor(s) a line down"; });
+DEF_CMD(CursorDown, "cursor-down", "cursor_ops",
+        DEF_OP() { ed.getBuff().down(); });
 
 /**
  * @page cursor_ops
@@ -31,9 +30,8 @@ DEF_CMD(CursorDown, "cursor-down",
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(CursorUp, "cursor-up",
-        DEF_OP() { ed.getBuff().up(); },
-        DEF_HELP() { return "Move cursor(s) a line up"; });
+DEF_CMD(CursorUp, "cursor-up", "cursor_ops",
+        DEF_OP() { ed.getBuff().up(); });
 
 /**
  * @page cursor_ops
@@ -42,9 +40,8 @@ DEF_CMD(CursorUp, "cursor-up",
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(CursorRight, "cursor-right",
-        DEF_OP() { ed.getBuff().right(); },
-        DEF_HELP() { return "Move cursor(s) a char to right"; });
+DEF_CMD(CursorRight, "cursor-right", "cursor_ops",
+        DEF_OP() { ed.getBuff().right(); });
 
 /**
  * @page cursor_ops
@@ -53,9 +50,8 @@ DEF_CMD(CursorRight, "cursor-right",
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(CursorLeft, "cursor-left",
-        DEF_OP() { ed.getBuff().left(); },
-        DEF_HELP() { return "Move cursor(s) a char to left"; });
+DEF_CMD(CursorLeft, "cursor-left", "cursor_ops",
+        DEF_OP() { ed.getBuff().left(); });
 
 /**
  * @page cursor_ops
@@ -64,9 +60,8 @@ DEF_CMD(CursorLeft, "cursor-left",
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(CursorReset, "cursor-reset",
-        DEF_OP() { ed.getBuff().begin(); },
-        DEF_HELP() { return "Go to start of the buffer"; });
+DEF_CMD(CursorReset, "cursor-reset", "cursor_ops",
+        DEF_OP() { ed.getBuff().begin(); });
 
 /**
  * @page cursor_ops
@@ -75,14 +70,12 @@ DEF_CMD(CursorReset, "cursor-reset",
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  CursorEnd, "cursor-end", DEF_OP() {
+DEF_CMD(CursorEnd, "cursor-end", "cursor_ops", DEF_OP() {
     auto& buf = ed.getBuff();
     const auto& w = ed.getWindow();
     buf.end();
     buf.lineEnd(w.start(), w.dim());
-  },
-  DEF_HELP() { return "Go to end of the buffer"; });
+  });
 
 /**
  * @page cursor_ops
@@ -91,9 +84,8 @@ DEF_CMD(
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(CursorHome, "cursor-home",
-        DEF_OP() { ed.getBuff().startOfLine(); },
-        DEF_HELP() { return "Go to start of line";});
+DEF_CMD(CursorHome, "cursor-home", "cursor_ops",
+        DEF_OP() { ed.getBuff().startOfLine(); });
 
 /**
  * @page cursor_ops
@@ -102,9 +94,8 @@ DEF_CMD(CursorHome, "cursor-home",
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(CursorLineEnd, "cursor-line-end",
-        DEF_OP() { ed.getBuff().endOfLine(); },
-        DEF_HELP() { return "Go to end of line";});
+DEF_CMD(CursorLineEnd, "cursor-line-end", "cursor_ops",
+        DEF_OP() { ed.getBuff().endOfLine(); });
 
 /**
  * @page cursor_ops
@@ -114,15 +105,10 @@ DEF_CMD(CursorLineEnd, "cursor-line-end",
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  PageDown, "page-down", DEF_OP() {
+DEF_CMD(PageDown, "page-down", "cursor_ops", DEF_OP() {
     auto jump = Option::get("pageScrollJump").getReal();
     auto& buf = ed.getBuff();
     buf.pageDown(int(jump * ed.getWindow().dim().y));
-  },
-  DEF_HELP() {
-    return "Scroll down by a page. Definition of a page is as given by the"
-      " value of the arg 'pageScrollJump'";
   });
 
 /**
@@ -133,15 +119,10 @@ DEF_CMD(
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  PageUp, "page-up", DEF_OP() {
+DEF_CMD(PageUp, "page-up", "cursor_ops", DEF_OP() {
     auto jump = Option::get("pageScrollJump").getReal();
     auto& buf = ed.getBuff();
     buf.pageUp(int(jump * ed.getWindow().dim().y));
-  },
-  DEF_HELP() {
-    return "Scroll up by a page. Definition of a page is as given by the"
-      " value of the arg 'pageScrollJump'";
   });
 
 /**
@@ -151,9 +132,8 @@ DEF_CMD(
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(NextPara, "next-para",
-        DEF_OP() { ed.getBuff().nextPara(); },
-        DEF_HELP() { return "Go to start of next paragraph"; });
+DEF_CMD(NextPara, "next-para", "cursor_ops",
+        DEF_OP() { ed.getBuff().nextPara(); });
 
 /**
  * @page cursor_ops
@@ -162,9 +142,8 @@ DEF_CMD(NextPara, "next-para",
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(PreviousPara, "previous-para",
-        DEF_OP() { ed.getBuff().previousPara(); },
-        DEF_HELP() { return "Go to start of previous paragraph"; });
+DEF_CMD(PreviousPara, "previous-para", "cursor_ops",
+        DEF_OP() { ed.getBuff().previousPara(); });
 
 /**
  * @page cursor_ops
@@ -173,9 +152,8 @@ DEF_CMD(PreviousPara, "previous-para",
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(NextWord, "next-word",
-        DEF_OP() { ed.getBuff().nextWord(); },
-        DEF_HELP() { return "Go to start of next word"; });
+DEF_CMD(NextWord, "next-word", "cursor_ops",
+        DEF_OP() { ed.getBuff().nextWord(); });
 
 /**
  * @page cursor_ops
@@ -184,9 +162,8 @@ DEF_CMD(NextWord, "next-word",
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(PreviousWord, "previous-word",
-        DEF_OP() { ed.getBuff().previousWord(); },
-        DEF_HELP() { return "Go to start of previous word"; });
+DEF_CMD(PreviousWord, "previous-word", "cursor_ops",
+        DEF_OP() { ed.getBuff().previousWord(); });
 
 /**
  * @page cursor_ops
@@ -195,14 +172,12 @@ DEF_CMD(PreviousWord, "previous-word",
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  MatchParen, "match-paren", DEF_OP() {
+DEF_CMD(MatchParen, "match-paren", "cursor_ops", DEF_OP() {
     auto& buff = ed.getBuff();
     auto& win = ed.getWindow();
     bool isOpen = buff.matchCurrentParen();
     isOpen? buff.lineUp(win.dim()) : buff.lineDown();
-  },
-  DEF_HELP() { return "Jump to matching parenthesis of current one"; });
+  });
 
 /**
  * @page cursor_ops
@@ -211,13 +186,11 @@ DEF_CMD(
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  GotoLine, "goto-line", DEF_OP() {
+DEF_CMD(GotoLine, "goto-line", "cursor_ops", DEF_OP() {
     auto line = ed.prompt("Goto: ");
     int lineNum = str2num(line);
     ed.getBuff().gotoLine(lineNum, ed.getWindow().dim());
-  },
-  DEF_HELP() { return "Jump to the specified line number"; });
+  });
 
 } // end namespace ops
 } // end namespace cursor

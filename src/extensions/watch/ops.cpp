@@ -33,8 +33,7 @@ Buffer& getWatchBuff(Editor& ed) {
  *
  * @note Available since v1.8.0.
  */
-DEF_CMD(
-  Watch, "watch", DEF_OP() {
+DEF_CMD(Watch, "watch", "ledger_ops", DEF_OP() {
     auto cmd = ed.prompt("Command to watch: ");
     if (cmd.empty()) return;
     CMBAR_MSG(ed, "Starting watch on '%s'...\n", cmd.c_str());
@@ -42,8 +41,7 @@ DEF_CMD(
     ed.switchToBuff("*watch");
     auto* mode = buf.getMode<watch::WatchMode>("watch");
     mode->start(&buf, cmd);
-  },
-  DEF_HELP() { return "Start a watch command."; });
+  });
 
 /**
  * @page watch_ops
@@ -54,8 +52,7 @@ DEF_CMD(
  *
  * @note Available since v1.8.0.
  */
-DEF_CMD(
-  WatchSleep, "watch-sleep", DEF_OP() {
+DEF_CMD(WatchSleep, "watch-sleep", "ledger_ops", DEF_OP() {
     auto cmd = ed.prompt("Command to watch: ");
     if (cmd.empty()) return;
     auto sleep = ed.prompt("Sleep time (in ms) between retries: ");
@@ -66,8 +63,7 @@ DEF_CMD(
     ed.switchToBuff("*watch");
     auto* mode = buf.getMode<watch::WatchMode>("watch");
     mode->start(&buf, cmd, str2num(sleep));
-  },
-  DEF_HELP() { return "Start a watch command."; });
+  });
 
 /**
  * @page watch_ops
@@ -76,16 +72,14 @@ DEF_CMD(
  *
  * @note Available since v1.8.0.
  */
-DEF_CMD(
-  WatchStop, "watch::stop", DEF_OP() {
+DEF_CMD(WatchStop, "watch::stop", "ledger_ops", DEF_OP() {
     CMBAR_MSG(ed, "Waiting for previously running command to complete...\n");
     auto& buf = getWatchBuff(ed);
     ed.switchToBuff("*watch");
     auto* mode = buf.getMode<watch::WatchMode>("watch");
     mode->stop();
     CMBAR_MSG(ed, "Watch command stopped successfully\n");
-  },
-  DEF_HELP() { return "Stops the underlying watch command."; });
+  });
 
 /**
  * @page watch_ops
@@ -94,16 +88,14 @@ DEF_CMD(
  *
  * @note Available since v1.8.0
  */
-DEF_CMD(
-  WatchRestart, "watch::restart", DEF_OP() {
+DEF_CMD(WatchRestart, "watch::restart", "ledger_ops", DEF_OP() {
     CMBAR_MSG(ed, "Restarting the watch command...\n");
     auto& buf = getWatchBuff(ed);
     ed.switchToBuff("*watch");
     auto* mode = buf.getMode<watch::WatchMode>("watch");
     mode->restart();
     CMBAR_MSG(ed, "Watch command restarted successfully\n");
-  },
-  DEF_HELP() { return "Restarts the underlying watch command."; });
+  });
 
 } // end namespace ops
 } // end namespace watch

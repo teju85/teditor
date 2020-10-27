@@ -27,11 +27,9 @@ namespace ops {
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  CommandUndo, "command-undo", DEF_OP() {
+DEF_CMD(CommandUndo, "command-undo", "buffer_ops", DEF_OP() {
     if(!ed.getBuff().undo()) CMBAR_MSG(ed, "No further undo information\n");
-  },
-  DEF_HELP() { return "Undo the previous edition in this buffer."; });
+  });
 
 /**
  * @page buffer_ops
@@ -42,11 +40,9 @@ DEF_CMD(
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  CommandRedo, "command-redo", DEF_OP() {
+DEF_CMD(CommandRedo, "command-redo", "buffer_ops", DEF_OP() {
     if(!ed.getBuff().redo()) CMBAR_MSG(ed, "No further redo information\n");
-  },
-  DEF_HELP() { return "Redo the previous undo in this buffer."; });
+  });
 
 /**
  * @page buffer_ops
@@ -60,14 +56,12 @@ DEF_CMD(
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  InsertChar, ".insert-char", DEF_OP() {
+DEF_CMD(InsertChar, ".insert-char", "buffer_ops", DEF_OP() {
     auto& buf = ed.getBuff();
     if(buf.isRegionActive()) ed.runCmd(".backspace-char");
     auto c = (char)ed.getKey();
     buf.insert(c);
-  },
-  DEF_HELP() { return "Inserts currently pressed char into buffer."; });
+  });
 
 /**
  * @page buffer_ops
@@ -81,12 +75,8 @@ DEF_CMD(
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(BackspaceChar, ".backspace-char",
-        DEF_OP() { ed.getBuff().remove(); },
-        DEF_HELP() {
-          return "Removes the char to the left of cursor, or if a region is"
-            " active, will remove it instead.";
-        });
+DEF_CMD(BackspaceChar, ".backspace-char", "buffer_ops",
+        DEF_OP() { ed.getBuff().remove(); });
 
 /**
  * @page buffer_ops
@@ -99,12 +89,8 @@ DEF_CMD(BackspaceChar, ".backspace-char",
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(DeleteChar, ".delete-char",
-        DEF_OP() { ed.getBuff().remove(true); },
-        DEF_HELP() {
-          return "Removes the char on the cursor, or if a region is active,"
-            " will remove it instead";
-        });
+DEF_CMD(DeleteChar, ".delete-char", "buffer_ops",
+        DEF_OP() { ed.getBuff().remove(true); });
 
 /**
  * @page buffer_ops
@@ -113,14 +99,10 @@ DEF_CMD(DeleteChar, ".delete-char",
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  KillLine, "kill-line", DEF_OP() {
+DEF_CMD(KillLine, "kill-line", "buffer_ops", DEF_OP() {
     auto del = ed.getBuff().killLine();
     ed.setClipboard(del);
     CMBAR_MSG(ed, "Line killed\n");
-  },
-  DEF_HELP() {
-    return "Removes the rest of the line and copies it to the clipboard.";
   });
 
 // CMD_UNDO4(SortLines, "sort-lines", Positions after, Positions regs,
@@ -171,12 +153,8 @@ void keepRemoveLines(Editor& ed, bool keep) {
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  KeepLines, "keep-lines", DEF_OP() { keepRemoveLines(ed, true); },
-  DEF_HELP() {
-    return "Prompts for a PCRE regex and only keeps those lines that match"
-      " this regex";
-  });
+DEF_CMD(KeepLines, "keep-lines", "buffer_ops",
+        DEF_OP() { keepRemoveLines(ed, true); });
 
 /**
  * @page buffer_ops
@@ -186,12 +164,8 @@ DEF_CMD(
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  RemoveLines, "remove-lines", DEF_OP() { keepRemoveLines(ed, false); },
-  DEF_HELP() {
-    return "Prompts for a PCRE regex and only removes those lines that match"
-      " this regex";
-  });
+DEF_CMD(RemoveLines, "remove-lines", "buffer_ops",
+        DEF_OP() { keepRemoveLines(ed, false); });
 
 /**
  * @page buffer_ops
@@ -203,8 +177,7 @@ DEF_CMD(
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  ShellToBuffer, "shell-to-buffer", DEF_OP() {
+DEF_CMD(ShellToBuffer, "shell-to-buffer", "buffer_ops", DEF_OP() {
     auto& buf = ed.getBuff();
     if(buf.isRegionActive()) buf.remove();
     auto cmd = ed.prompt("Shell Command: ");
@@ -214,10 +187,6 @@ DEF_CMD(
     if(res.output.empty()) return;
     buf.insert(res.output);
     MESSAGE(ed, "Exit Code: %d\nError: %s\n", res.status, res.error.c_str());
-  },
-  DEF_HELP() {
-    return "Prompts the user for a command, executes it inside a shall"
-      " and inserts its output into the current buffer.";
   });
 
 /**
@@ -229,8 +198,7 @@ DEF_CMD(
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  StartRegion, "start-region", DEF_OP() {
+DEF_CMD(StartRegion, "start-region", "buffer_ops", DEF_OP() {
     auto& buf = ed.getBuff();
     if(!buf.isRegionActive()) {
       buf.startRegion();
@@ -238,8 +206,7 @@ DEF_CMD(
       buf.stopRegion();
       buf.startRegion();
     }
-  },
-  DEF_HELP() { return "Start region from the current cursor position"; });
+  });
 
 /**
  * @page buffer_ops
@@ -250,12 +217,10 @@ DEF_CMD(
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  Cancel, "cancel", DEF_OP() {
+DEF_CMD(Cancel, "cancel", "buffer_ops", DEF_OP() {
     auto& buf = ed.getBuff();
     if(buf.isRegionActive()) buf.stopRegion();
-  },
-  DEF_HELP() { return "Cancel all active regions"; });
+  });
 
 /**
  * @page buffer_ops
@@ -267,15 +232,11 @@ DEF_CMD(
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  PasteRegion, "paste-region", DEF_OP() {
+DEF_CMD(PasteRegion, "paste-region", "buffer_ops", DEF_OP() {
     auto& buf = ed.getBuff();
     if(buf.isRegionActive()) buf.remove();
     auto copy = ed.clipboard();
     if (!copy.empty()) buf.insert(copy);
-  },
-  DEF_HELP() {
-    return "Copies the last copied (or cut) region from the clipboard.";
   });
 
 /**
@@ -289,8 +250,7 @@ DEF_CMD(
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  CopyRegion, "copy-region", DEF_OP() {
+DEF_CMD(CopyRegion, "copy-region", "buffer_ops", DEF_OP() {
     auto& buf = ed.getBuff();
     if(!buf.isRegionActive()) {
       CMBAR_MSG(ed, "No selection to copy!\n");
@@ -300,8 +260,7 @@ DEF_CMD(
     ed.setClipboard(cp);
     buf.stopRegion();
     CMBAR_MSG(ed, "Copy done\n");
-  },
-  DEF_HELP() { return "Copy current region into internal clipboard"; });
+  });
 
 /**
  * @page buffer_ops
@@ -314,8 +273,7 @@ DEF_CMD(
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  CutRegion, "cut-region", DEF_OP() {
+DEF_CMD(CutRegion, "cut-region", "buffer_ops", DEF_OP() {
     auto& buf = ed.getBuff();
     if(!buf.isRegionActive()) {
       CMBAR_MSG(ed, "No selection to cut!\n");
@@ -324,10 +282,6 @@ DEF_CMD(
     auto del = buf.removeAndCopy();
     ed.setClipboard(del);
     CMBAR_MSG(ed, "Cut done\n");
-  },
-  DEF_HELP() {
-    return "Cuts the currently active region and copies that data into"
-      " the clipboard for a future paste command.";
   });
 
 /**
@@ -338,8 +292,7 @@ DEF_CMD(
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  DownloadBuffer, "download-to-buffer", DEF_OP() {
+DEF_CMD(DownloadBuffer, "download-to-buffer", "buffer_ops", DEF_OP() {
     auto& buf = ed.getBuff();
     if(buf.isRegionActive()) buf.remove();
     auto url = ed.prompt("URL: ");
@@ -348,10 +301,6 @@ DEF_CMD(
                                       Option::get("dnldProgOpts").getStr());
     if(output.empty()) return;
     buf.insert(output);
-  },
-  DEF_HELP() {
-    return "Prompt the user for a URL and downloads the contents of"
-      " that URL into the buffer.";
   });
 
 /**
@@ -371,16 +320,14 @@ DEF_CMD(
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  TextSearch, "search", DEF_OP() {
+DEF_CMD(TextSearch, "search", "buffer_ops", DEF_OP() {
     auto& buf = ed.getBuff();
     auto pos = buf.getPoint();
     ISearch is(ed.getWindow(), Option::get("iCaseSearch").getBool());
     is.reset();
     auto ret = ed.prompt("Search: ", nullptr, &is);
     buf.gotoLine(!ret.empty()? is.getChoiceIdx() : pos.y, ed.getWindow().dim());
-  },
-  DEF_HELP() { return "Search and jump to the matching location."; });
+  });
 
 /**
  * @page buffer_ops
@@ -395,17 +342,13 @@ DEF_CMD(
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  Save, "save-buffer", DEF_OP() {
+DEF_CMD(Save, "save-buffer", "buffer_ops", DEF_OP() {
     auto& buf = ed.getBuff();
     if(buf.isRO()) {
       CMBAR_MSG(ed, "save-buffer: Read Only Buffer!\n");
       return;
     }
     ed.saveBuffer(buf);
-  },
-  DEF_HELP() {
-    return "Saves contents of the current buffer to the filesystem.";
   });
 
 /**
@@ -416,12 +359,10 @@ DEF_CMD(
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  Pwd, "pwd", DEF_OP() {
+DEF_CMD(Pwd, "pwd", "buffer_ops", DEF_OP() {
     const auto& buf = ed.getBuff();
     CMBAR_MSG(ed, "Pwd: %s\n", buf.pwd().c_str());
-  },
-  DEF_HELP() { return "Prints the current working directory of the buffer."; });
+  });
 
 /**
  * @page buffer_ops
@@ -430,9 +371,8 @@ DEF_CMD(
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(Next, "next-buffer",
-        DEF_OP() { ed.incrementCurrBuff(); },
-        DEF_HELP() { return "Switch to the next buffer"; });
+DEF_CMD(Next, "next-buffer", "buffer_ops",
+        DEF_OP() { ed.incrementCurrBuff(); });
 
 /**
  * @page buffer_ops
@@ -441,9 +381,8 @@ DEF_CMD(Next, "next-buffer",
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(Previous, "prev-buffer",
-        DEF_OP() { ed.decrementCurrBuff(); },
-        DEF_HELP() { return "Switch to the previous buffer"; });
+DEF_CMD(Previous, "prev-buffer", "buffer_ops",
+        DEF_OP() { ed.decrementCurrBuff(); });
 
 /**
  * @page buffer_ops
@@ -453,12 +392,8 @@ DEF_CMD(Previous, "prev-buffer",
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(KillThis, "kill-this-buffer",
-        DEF_OP() { ed.killCurrBuff(); },
-        DEF_HELP() {
-          return "Kill the current buffer. It'll check for this buffer to"
-            " be modified but unsaved and if so, will prompt for saving.";
-        });
+DEF_CMD(KillThis, "kill-this-buffer", "buffer_ops",
+        DEF_OP() { ed.killCurrBuff(); });
 
 /**
  * @page buffer_ops
@@ -469,12 +404,8 @@ DEF_CMD(KillThis, "kill-this-buffer",
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(KillOthers, "kill-other-buffers",
-        DEF_OP() { ed.killOtherBuffs(); },
-        DEF_HELP() {
-          return "Kill other buffers. It'll check for any modified but"
-            " unsaved buffers and will prompt them to be saved.";
-        });
+DEF_CMD(KillOthers, "kill-other-buffers", "buffer_ops",
+        DEF_OP() { ed.killOtherBuffs(); });
 
 /**
  * @page buffer_ops
@@ -488,16 +419,11 @@ DEF_CMD(KillOthers, "kill-other-buffers",
  *
  * @note Available since v1.0.0
  */
-DEF_CMD(
-  Reload, "reload-buffer", DEF_OP() {
+DEF_CMD(Reload, "reload-buffer", "buffer_ops", DEF_OP() {
     auto& buf = ed.getBuff();
     if(!buf.isModified() ||
        ed.promptYesNo("Buffer modified, still reload? "))
       buf.reload();
-  },
-  DEF_HELP() {
-    return "Reloads the buffer contents from the filesystem. Note that this"
-      " will overwrite any modified-but-unsaved changes in current buffer!";
   });
 
 } // end namespace ops

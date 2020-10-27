@@ -32,8 +32,7 @@ Buffer& getGrepBuff(Editor& ed) {
  *
  * @note Available since v1.6.0
  */
-DEF_CMD(
-  Grep, "grep", DEF_OP() {
+DEF_CMD(Grep, "grep", "grep_ops", DEF_OP() {
     auto cmd = ed.prompt("Run grep (like this): ", nullptr, nullptr,
                          Option::get("grepCmd").getStr());
     if (cmd.empty()) {
@@ -58,8 +57,7 @@ DEF_CMD(
     buf.insert(res.output);
     buf.begin();
     ed.switchToBuff("*grep");
-  },
-  DEF_HELP() { return "Starts grep-mode buffer, if not already done."; });
+  });
 
 /**
  * @page grep_ops
@@ -69,8 +67,7 @@ DEF_CMD(
  *
  * @note Available since v1.6.0
  */
-DEF_CMD(
-  GrepFindFile, "grep-find-file", DEF_OP() {
+DEF_CMD(GrepFindFile, "grep-find-file", "grep_ops", DEF_OP() {
     auto& buf = getGrepBuff(ed);
     const auto& cu = buf.getPoint();
     if (cu.y < 4) {
@@ -97,8 +94,7 @@ DEF_CMD(
       file = pwd + '/' + file;
     }
     ed.load(file, lineNum);
-  },
-  DEF_HELP() { return "Starts grep-mode buffer, if not already done."; });
+  });
 
 } // end namespace ops
 } // end namespace grep
