@@ -6,7 +6,6 @@ VERSION        := 1.8.0
 
 DEBUG          ?= 0
 VERBOSE        ?= 0
-BINROOT        ?= bin
 CURL_OPTS      ?=
 
 OS_NAME        := $(shell uname -o | sed -e 's:/:_:g')
@@ -27,6 +26,9 @@ endif
 BUILD_VERSION  := $(VERSION)@@$(GIT_COMMIT)$(DIRTY)
 RELEASE_ROOT   := teditor-$(VERSION)
 RELEASE_DIR    := $(RELEASE_ROOT)/$(REL_NAME)
+BINROOT        := bin/$(REL_NAME)
+BINDIR         := $(BINROOT)/$(TYPE)
+DEPDIR         := $(BINDIR)/deps
 
 ifeq ($(DEBUG),1)
     TYPE       := Debug
@@ -46,9 +48,6 @@ ifeq ($(OS_NAME),Cygwin)
 else
     STDCXX     := c++14
 endif
-
-BINDIR         := $(BINROOT)/$(TYPE)
-DEPDIR         := $(BINDIR)/deps
 
 SRC            := src
 TESTS          := unittests
