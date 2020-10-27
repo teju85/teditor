@@ -10,6 +10,13 @@ namespace teditor {
 namespace todo {
 namespace ops {
 
+/**
+ * @page todo_ops Operations supported under todo-mode
+ * All operations supported under `todo-mode`.
+ *
+ * @tableofcontents
+ */
+
 Buffer& getTodoShowBuff(Editor& ed) {
   bool newOne;
   auto& buf = ed.getBuff("*todo", true, newOne);
@@ -18,6 +25,14 @@ Buffer& getTodoShowBuff(Editor& ed) {
   return buf;
 }
 
+/**
+ * @page todo_ops
+ * @section todo-open
+ * Open the todo file in a new Buffer, if not already done, and switch to it.
+ * The location of this file can be configured with the Option `todo:file`.
+ *
+ * @note Available since v1.8.0.
+ */
 DEF_CMD(
   TodoOpen, "todo-open", DEF_OP() {
     auto todoFile = Option::get("todo:file").getStr();
@@ -45,6 +60,14 @@ void showTodosFor(Buffer& buf, const TimePoint& start, const TimePoint& end) {
   buf.insert(ss.str());
 }
 
+/**
+ * @page todo_ops
+ * @section todo-show-this-week
+ * Show all todo's to be done in the current week. Current week starts from
+ * Sunday.
+ *
+ * @note Available since v1.8.0.
+ */
 DEF_CMD(
   TodoShowThisWeek, "todo-show-this-week", DEF_OP() {
     auto& buf = getTodoShowBuff(ed);

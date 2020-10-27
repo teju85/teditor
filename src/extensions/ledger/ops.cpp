@@ -28,7 +28,7 @@ Buffer& getLedgerShowBuff(Editor& ed) {
  * @page ledger_ops
  * @section ledger-open
  * Opens the ledger file in a new Buffer, if not already done, and switches to
- * it. Location of this file can be configured with the Option `ledger::file`.
+ * it. Location of this file can be configured with the Option `ledger:file`.
  *
  * @note Available since v1.3.0
  */
