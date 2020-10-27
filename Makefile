@@ -1,16 +1,32 @@
 # auto dependency generation logic here is thanks to:
 #  http://make.mad-scientist.net/papers/advanced-auto-dependency-generation/
 
+# NOTE: Change this to increment release version
+VERSION        := 1.8.0
+
 DEBUG          ?= 0
 VERBOSE        ?= 0
 BINROOT        ?= bin
 CURL_OPTS      ?=
 
-OS_NAME        := $(shell uname -o | sed -e 's/\//_/g')
-# NOTE: Change this to increment release version
-VERSION        := 1.8.0
+OS_NAME        := $(shell uname -o | sed -e 's:/:_:g')
+IS_WSL         := $(shell uname -r | grep Microsoft)
+ifeq ($(IS_WSL),)
+    REL_NAME   := $(OS_NAME)
+else
+    REL_NAME   := WSL
+endif
+GIT_COMMIT     := $(shell git rev-parse --short HEAD)
+DIRTY          := $(shell git status -s)
+ifneq ($(DIRTY),)
+    DIRTY      := -dirty
+else
+    DIRTY      :=
+endif
+
+BUILD_VERSION  := $(VERSION)@@$(GIT_COMMIT)$(DIRTY)
 RELEASE_ROOT   := teditor-$(VERSION)
-RELEASE_DIR    := $(RELEASE_ROOT)/$(OS_NAME)
+RELEASE_DIR    := $(RELEASE_ROOT)/$(REL_NAME)
 
 ifeq ($(DEBUG),1)
     TYPE       := Debug
@@ -33,7 +49,6 @@ endif
 
 BINDIR         := $(BINROOT)/$(TYPE)
 DEPDIR         := $(BINDIR)/deps
-DOCDIR         := $(BINROOT)/html
 
 SRC            := src
 TESTS          := unittests
@@ -85,7 +100,7 @@ else
     LDFLAGS    += -O3
 endif
 
-CXXFLAGS       += -DTEDITOR_VERSION_INFO='"$(VERSION)"'
+CXXFLAGS       += -DTEDITOR_VERSION_INFO='"$(BUILD_VERSION)"'
 
 
 default:
@@ -109,16 +124,16 @@ release:
 	$(MKDIR_P) $(RELEASE_DIR)
 	$(MAKE) clean_all
 	$(MAKE) -j teditor tests
-	$(MAKE) -j DEBUG=1 teditor tests
-	$(MAKE) doc
-	$(MKDIR_P) $(RELEASE_DIR)/Release $(RELEASE_DIR)/Debug
+	$(MKDIR_P) $(RELEASE_DIR)/Release
 	cp $(BINROOT)/Release/teditor $(RELEASE_DIR)/Release
+	$(MAKE) -j DEBUG=1 teditor tests
+	$(MKDIR_P) $(RELEASE_DIR)/Debug
 	cp $(BINROOT)/Debug/teditor $(RELEASE_DIR)/Debug
-	rm -rf $(RELEASE_ROOT)/docs
-	cp -r $(BINROOT)/html/html $(RELEASE_ROOT)/docs
-	rm -rf $(BINROOT)/html
 
 package:
+	$(MAKE) doc
+	rm -rf $(RELEASE_ROOT)/html
+	cp -r $(BINROOT)/html $(RELEASE_ROOT)
 	tar xjf $(RELEASE_ROOT).tar.gz $(RELEASE_ROOT)
 
 teditor: $(EXE)
@@ -167,9 +182,11 @@ stats:
 	@find $(TESTS) -name "*.cpp" -o -name "*.h" | xargs wc -lwc | tail -n1
 
 doc:
-	rm -rf $(DOCDIR)
+	rm -rf $(BINROOT)/html
 	$(MKDIR_P) $(BINDIR)
-	sed -e "s/PROJECT_NUMBER         =/PROJECT_NUMBER         = $(VERSION)/" < Doxyfile > $(BINROOT)/Doxyfile
+	sed -e "s/PROJECT_NUMBER         =/PROJECT_NUMBER         = $(BUILD_VERSION)/" \
+	    -e "s:OUTPUT_DIRECTORY       =:OUTPUT_DIRECTORY       = $(BINROOT):" \
+	    < Doxyfile > $(BINROOT)/Doxyfile
 	doxygen -v
 	doxygen $(BINROOT)/Doxyfile
 
