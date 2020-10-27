@@ -1,5 +1,6 @@
 @page releases Releases
 All of the latest and past releases and their information are:
+* @ref releases_180
 * @ref releases_170
 * @ref releases_160
 * @ref releases_150
