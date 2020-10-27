@@ -1,13 +1,14 @@
 # auto dependency generation logic here is thanks to:
 #  http://make.mad-scientist.net/papers/advanced-auto-dependency-generation/
 
-# NOTE: Change this to increment release version
-VERSION        := 1.8.0
-
 DEBUG          ?= 0
 VERBOSE        ?= 0
 CURL_OPTS      ?=
 
+# NOTE: Change this to increment release version
+VERSION        := 1.8.0
+MKDIR_P        := mkdir -p
+CURL           := curl
 OS_NAME        := $(shell uname -o | sed -e 's:/:_:g')
 IS_WSL         := $(shell uname -r | grep Microsoft)
 ifeq ($(IS_WSL),)
@@ -23,13 +24,6 @@ else
     DIRTY      :=
 endif
 
-BUILD_VERSION  := $(VERSION)@@$(GIT_COMMIT)$(DIRTY)
-RELEASE_ROOT   := teditor-$(VERSION)
-RELEASE_DIR    := $(RELEASE_ROOT)/$(REL_NAME)
-BINROOT        := bin/$(REL_NAME)
-BINDIR         := $(BINROOT)/$(TYPE)
-DEPDIR         := $(BINDIR)/deps
-
 ifeq ($(DEBUG),1)
     TYPE       := Debug
 else
@@ -43,6 +37,15 @@ else
     CURL_QUIET := -s
 endif
 
+BUILD_VERSION  := $(VERSION)@@$(GIT_COMMIT)$(DIRTY)
+RELEASE_ROOT   := teditor-$(VERSION)
+RELEASE_DIR    := $(RELEASE_ROOT)/$(REL_NAME)
+BINROOT        := bin/$(REL_NAME)
+BINDIR         := $(BINROOT)/$(TYPE)
+DEPDIR         := $(BINDIR)/deps
+EXE            := $(BINDIR)/teditor
+TESTEXE        := $(BINDIR)/teditor-tests
+
 ifeq ($(OS_NAME),Cygwin)
     STDCXX     := gnu++14
 else
@@ -52,13 +55,6 @@ endif
 SRC            := src
 TESTS          := unittests
 MAIN           := main
-
-EXE            := $(BINDIR)/teditor
-TESTEXE        := $(BINDIR)/teditor-tests
-
-MKDIR_P        := mkdir -p
-
-CURL           := curl
 
 CATCH2_DIR     := $(BINROOT)/Catch2
 CATCH2_HEADER  := https://raw.githubusercontent.com/catchorg/Catch2/v2.x/single_include/catch2/catch.hpp
