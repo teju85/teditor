@@ -22,3 +22,4 @@ Given below are the groups of commands that are currently supported:
 1. @ref buffer_ops
 2. @ref cmbar_ops
 3. @ref cursor_ops
+4. @ref editor_ops

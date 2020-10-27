@@ -7,6 +7,21 @@ namespace teditor {
 namespace editor {
 namespace ops {
 
+/**
+ * @page editor_ops Operations in a session
+ * All operations that can be performed inside the Editor session.
+ *
+ * @tableofcontents
+ */
+
+/**
+ * @page editor_ops
+ * @section quit
+ * Quit the editor session. It'll check for any modified-but-unsaved buffers and
+ * prompts for saving them, before exiting the session.
+ *
+ * @note Available since v1.0.0
+ */
 DEF_CMD(
   Quit, "quit", DEF_OP() {
     ed.requestQuitEventLoop();
@@ -16,6 +31,16 @@ DEF_CMD(
       " buffers and prompt for saving them.";
   });
 
+/**
+ * @page editor_ops
+ * @section help-command
+ * Prints helps messages for a given command. It creates a new read-only Buffer
+ * for doing so.
+ *
+ * @note Available since v1.0.0
+ * @note In favor of doxygen-based command documentation, this command will be
+ *       deprecated in future releases
+ */
 DEF_CMD(
   HelpCommand, "help-command", DEF_OP() {
     StringChoices sc(ed.getBuff().cmdNames());
@@ -34,10 +59,29 @@ DEF_CMD(
       " read-only buffer for doing so.";
   });
 
+/**
+ * @page editor_ops
+ * @section scratch-buffer
+ * Start a `*scratch` Buffer if it is not present and switches to it.
+ *
+ * @note Available since v1.0.0
+ */
 DEF_CMD(ScratchBuffer, "scratch-buffer",
         DEF_OP() { ed.createScratchBuff(true); },
         DEF_HELP() { return "Create a scratch buffer and switch to it"; });
 
+/**
+ * @page editor_ops
+ * @section find-file-histoy
+ * Opens a prompt with a list of previously opened files for a speedier finding
+ * of a file. History file is always stored at `<homeFolder>/history`.
+ *
+ * The Option `homeFolder` can be customized as it is the folder which has all
+ * the teditor related settings. The Option `maxFileHistory` controls the number
+ * of previous files to be remembered across sessions.
+ *
+ * @note Available since v1.0.0
+ */
 DEF_CMD(
   FindFileHistory, "find-file-history", DEF_OP() {
     StringChoices sc(ed.fileHistoryToString());
@@ -55,6 +99,14 @@ DEF_CMD(
       " to be remembered.";
   });
 
+/**
+ * @page editor_ops
+ * @section split-vertically
+ * Splits the current window vertically.
+ *
+ * @note Available since v1.0.0
+ * @note Currently only one split is supported.
+ */
 DEF_CMD(
   VerticalSplit, "split-vertically", DEF_OP() {
     auto status = ed.splitVertically();
@@ -62,10 +114,24 @@ DEF_CMD(
   },
   DEF_HELP() { return "Splits the current window vertically (only once!)."; });
 
+/**
+ * @page editor_ops
+ * @section clear-all-windows
+ * Merge all split windows into one.
+ *
+ * @note Available since v1.0.0
+ */
 DEF_CMD(ClearAllWindows, "clear-all-windows",
         DEF_OP() { ed.clearAllWindows(); },
         DEF_HELP() { return "Merge all split windows into one."; });
 
+/**
+ * @page editor_ops
+ * @section next-window
+ * Shift the focus on the next Window.
+ *
+ * @note Available since v1.0.0
+ */
 DEF_CMD(NextWindow, "next-window",
         DEF_OP() { ed.incrementCurrWin(); },
         DEF_HELP() { return "Shift focus on the next window."; });
@@ -90,6 +156,15 @@ public:
   }
 };
 
+/**
+ * @page editor_ops
+ * @section find-file
+ * Opens a prompt for user to find a file and opens it in a new Buffer. If that
+ * file is already open in the current session, it'll just switch over to that
+ * Buffer instead.
+ *
+ * @note Available since v1.0.0
+ */
 DEF_CMD(
   FindFile, "find-file", DEF_OP() {
     auto& buf = ed.getBuff();
@@ -100,6 +175,14 @@ DEF_CMD(
   },
   DEF_HELP() { return "Opens a prompt for user to find a file."; });
 
+/**
+ * @page editor_ops
+ * @section run-command
+ * Prompts the user to choose a command from the current list of supported
+ * commands and runs it.
+ *
+ * @note Available since v1.0.0
+ */
 DEF_CMD(
   RunCommand, "run-command", DEF_OP() {
     StringChoices sc(ed.getBuff().cmdNames());
@@ -116,6 +199,16 @@ DEF_CMD(
       " and runs it.";
   });
 
+/**
+ * @page editor_ops
+ * @section shell-command
+ * Prompts the user to type in a shell command to run. The current working dir
+ * for this command will be the same as that of the current Buffer. In case if
+ * the current dir is remote, the command will be executed instead on that
+ * remote machine.
+ *
+ * @note Available since v1.0.0
+ */
 DEF_CMD(
   ShellCommand, "shell-command", DEF_OP() {
     auto cmd = ed.prompt("Shell Command: ");
@@ -130,10 +223,27 @@ DEF_CMD(
       " dir for this command will be the same as that of the current buffer.";
   });
 
+/**
+ * @page editor_ops
+ * @section open-explorer
+ * Opens the file explorer.
+ *
+ * @note Available since v1.0.0
+ * @note Currently available only on Windows OS.
+ */
 DEF_CMD(LaunchExplorer, "open-explorer",
         DEF_OP() { check_output("cygstart " + ed.getBuff().pwd()); },
         DEF_HELP() { return "Opens the file explorer. (Only on cygwin!)"; });
 
+/**
+ * @page editor_ops
+ * @section browser
+ * Opens the url pointed by the current active region in the browser. If no
+ * active region, it'll just open the browser. The Option `browserCmd` can be
+ * used to customize the command used for launching the browser.
+ *
+ * @note Available since v1.0.0
+ */
 DEF_CMD(
   LaunchBrowser, "browser", DEF_OP() {
     auto& buf = ed.getBuff();
@@ -147,6 +257,15 @@ DEF_CMD(
       " can be used to customize the command used to launch the browser.";
   });
 
+/**
+ * @page editor_ops
+ * @section browser-search
+ * Opens a prompt to search for a given string among various search options.
+ * The given string is first tried for in the currently active region, if not,
+ * it'll be prompted for.
+ *
+ * @note Available since v1.0.0
+ */
 DEF_CMD(
   BrowserSearch, "browser-search", DEF_OP() {
     OptionMap opts;
@@ -172,6 +291,13 @@ DEF_CMD(
       " region, if not, it'll be prompted for.";
   });
 
+/**
+ * @page editor_ops
+ * @section download-url
+ * Prompts for a URL and a filename and downloads that URL into this file.
+ *
+ * @note Available since v1.0.0
+ */
 DEF_CMD(
   Download, "download-url", DEF_OP() {
     auto url = ed.prompt("URL: ");
@@ -186,6 +312,13 @@ DEF_CMD(
       " file.";
   });
 
+/**
+ * @page editor_ops
+ * @section mkdir
+ * Creates a directory by prompting for its path.
+ *
+ * @note Available since v1.0.0
+ */
 DEF_CMD(
   MakeDir, "mkdir", DEF_OP() {
     auto res = ed.prompt("Dir name: ");
@@ -193,6 +326,14 @@ DEF_CMD(
   },
   DEF_HELP() { return "Creates a directory by prompting the user."; });
 
+/**
+ * @page editor_ops
+ * @section buffer-switch
+ * Switches to the user selected Buffer from the list of current buffers in the
+ * session.
+ *
+ * @note Available since v1.0.0
+ */
 DEF_CMD(
   SwitchBuffer, "buffer-switch", DEF_OP() {
     StringChoices sc(ed.buffNamesToString());
@@ -201,6 +342,15 @@ DEF_CMD(
   },
   DEF_HELP() { return "Switches to a user selected buffer."; });
 
+/**
+ * @page editor_ops
+ * @section git-branch
+ * Prints the git branch of the current directory into the command status bar.
+ * It expects the `git` executable to be made available in the `PATH`
+ * environment variable of the shell.
+ *
+ * @note Available since v1.0.0
+ */
 DEF_CMD(
   GitBranch, "git-branch", DEF_OP() {
     auto& buf = ed.getBuff();
@@ -212,10 +362,26 @@ DEF_CMD(
   },
   DEF_HELP() { return "Prints the git branch of the current dir."; });
 
+/**
+ * @page editor_ops
+ * @section indent
+ * Indents the current line. Definition of indent and de-indent is as per the
+ * Mode of the current Buffer.
+ *
+ * @note Available since v1.0.0
+ */
 DEF_CMD(IndentLine, "indent",
         DEF_OP() { ed.getBuff().indent(); },
         DEF_HELP() { return "Indents the current line."; });
 
+/**
+ * @page editor_ops
+ * @section org-notes-dir
+ * Loads the dir containing all the org notes files. Theis dir can be customized
+ * using the Option `orgNotesDir`.
+ *
+ * @note Available since v1.0.0
+ */
 DEF_CMD(
   OrgNotesDir, "org-notes-dir", DEF_OP() {
     ed.load(Option::get("orgNotesDir").getStr(), 0);
@@ -225,6 +391,14 @@ DEF_CMD(
       " parameterized by the arg 'orgNotesDir'.";
   });
 
+/**
+ * @page editor_ops
+ * @section songs-dir
+ * Loads the dir containing songs. This dir location can be customized using the
+ * Option `songsDir`.
+ *
+ * @note Available since v1.0.0
+ */
 DEF_CMD(
   SongsDir, "songs-dir", DEF_OP() {
     ed.load(Option::get("songsDir").getStr(), 0);
@@ -234,6 +408,14 @@ DEF_CMD(
       " arg 'songsDir'.";
   });
 
+/**
+ * @page editor_ops
+ * @section task-manager
+ * Starts the task manager UI.
+ *
+ * @note Available since v1.0.0
+ * @note Currently only supports Windows OS
+ */
 DEF_CMD(
   TaskManager, "task-manager",
   DEF_OP() {
@@ -244,6 +426,14 @@ DEF_CMD(
   },
   DEF_HELP() { return "Starts task manager UI. Only for windows!"; });
 
+/**
+ * @page editor_ops
+ * @section dns
+ * Performs a DNS lookup for the given URL and prints the result on the command
+ * status bar.
+ *
+ * @note Available since v1.0.0
+ */
 DEF_CMD(
   DNSLookup, "dns",
   DEF_OP() {
