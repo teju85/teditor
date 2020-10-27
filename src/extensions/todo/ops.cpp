@@ -11,10 +11,24 @@ namespace todo {
 namespace ops {
 
 /**
- * @page todo_ops Operations supported under todo-mode
+ * @page todo_ops todo-mode
  * All operations supported under `todo-mode`.
  *
  * @tableofcontents
+ *
+ *
+ * @section todo-open
+ * Open the todo file in a new Buffer, if not already done, and switch to it.
+ * The location of this file can be configured with the Option `todo:file`.
+ *
+ * @note Available since v1.8.0.
+ *
+ *
+ * @section todo-show-this-week
+ * Show all todo's to be done in the current week. Current week starts from
+ * Sunday.
+ *
+ * @note Available since v1.8.0.
  */
 
 Buffer& getTodoShowBuff(Editor& ed) {
@@ -25,14 +39,6 @@ Buffer& getTodoShowBuff(Editor& ed) {
   return buf;
 }
 
-/**
- * @page todo_ops
- * @section todo-open
- * Open the todo file in a new Buffer, if not already done, and switch to it.
- * The location of this file can be configured with the Option `todo:file`.
- *
- * @note Available since v1.8.0.
- */
 DEF_CMD(TodoOpen, "todo-open", "ledger_ops", DEF_OP() {
     auto todoFile = Option::get("todo:file").getStr();
     ed.load(todoFile, 0);
@@ -58,14 +64,6 @@ void showTodosFor(Buffer& buf, const TimePoint& start, const TimePoint& end) {
   buf.insert(ss.str());
 }
 
-/**
- * @page todo_ops
- * @section todo-show-this-week
- * Show all todo's to be done in the current week. Current week starts from
- * Sunday.
- *
- * @note Available since v1.8.0.
- */
 DEF_CMD(TodoShowThisWeek, "todo-show-this-week", "ledger_ops", DEF_OP() {
     auto& buf = getTodoShowBuff(ed);
     TimePoint s;

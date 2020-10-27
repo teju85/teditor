@@ -9,16 +9,41 @@ namespace dir {
 namespace ops {
 
 /**
- * @page dir_ops Operations supported under dir-mode
+ * @page dir_ops dir-mode
  * All operations supported under `dir-mode`.
  *
  * @tableofcontents
- */
-
-/**
- * @page dir_ops
+ *
+ *
  * @section dirmode-open-file
  * Open the file under the cursor in a new Buffer.
+ *
+ * @note Available since v0.1.0
+ *
+ *
+ * @section dirmode-open-special-file
+ * Open the file using the program specified in the Option `startProg`.
+ *
+ * @note Available since v0.1.0
+ *
+ *
+ * @section dirmode-copy-file
+ * Copy the file under the cursor by prompting for the name of the new file.
+ * Currently, copying of directories is NOT supported.
+ *
+ * @note Available since v0.1.0
+ *
+ *
+ * @section dirmode-rename-file
+ * Rename the file under the cursor by prompting for its new name. This will
+ * reload the buffer at the end to reflect the changes.
+ *
+ * @note Available since v0.1.0
+ *
+ *
+ * @section dirmode-delete-file
+ * Delete the file under the cursor. This will reload the buffer at the end to
+ * reflect the changes.
  *
  * @note Available since v0.1.0
  */
@@ -35,13 +60,6 @@ DEF_CMD(OpenFile, "dirmode-open-file", "dir_ops", DEF_OP() {
     ed.load(dir+'/'+file, 0);
   });
 
-/**
- * @page dir_ops
- * @section dirmode-open-special-file
- * Open the file using the program specified in the Option `startProg`.
- *
- * @note Available since v0.1.0
- */
 DEF_CMD(OpenSpecialFile, "dirmode-open-special-file", "dir_ops", DEF_OP() {
     auto& buf = ed.getBuff();
     const auto& cu = buf.getPoint();
@@ -56,14 +74,6 @@ DEF_CMD(OpenSpecialFile, "dirmode-open-special-file", "dir_ops", DEF_OP() {
     check_output(cmd);
   });
 
-/**
- * @page dir_ops
- * @section dirmode-copy-file
- * Copy the file under the cursor by prompting for the name of the new file.
- * Currently, copying of directories is NOT supported.
- *
- * @note Available since v0.1.0
- */
 DEF_CMD(CopyFile, "dirmode-copy-file", "dir_ops", DEF_OP() {
     auto& buf = ed.getBuff();
     const auto& cu = buf.getPoint();
@@ -82,14 +92,6 @@ DEF_CMD(CopyFile, "dirmode-copy-file", "dir_ops", DEF_OP() {
     ed.runCmd("reload-buffer");
   });
 
-/**
- * @page dir_ops
- * @section dirmode-rename-file
- * Rename the file under the cursor by prompting for its new name. This will
- * reload the buffer at the end to reflect the changes.
- *
- * @note Available since v0.1.0
- */
 DEF_CMD(RenameFile, "dirmode-rename-file", "dir_ops", DEF_OP() {
     auto& buf = ed.getBuff();
     const auto& cu = buf.getPoint();
@@ -106,14 +108,6 @@ DEF_CMD(RenameFile, "dirmode-rename-file", "dir_ops", DEF_OP() {
     ed.runCmd("reload-buffer");
   });
 
-/**
- * @page dir_ops
- * @section dirmode-delete-file
- * Delete the file under the cursor. This will reload the buffer at the end to
- * reflect the changes.
- *
- * @note Available since v0.1.0
- */
 DEF_CMD(DeleteFile, "dirmode-delete-file", "dir_ops", DEF_OP() {
     auto& buf = ed.getBuff();
     auto& dir = buf.getFileName();

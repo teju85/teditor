@@ -8,10 +8,38 @@ namespace watch {
 namespace ops {
 
 /**
- * @page watch_ops Operations under watch-mode
+ * @page watch_ops watch-mode
  * All operations supported under `watch-mode`.
  *
  * @tableofcontents
+ *
+ * @section watch
+ * Prompts for a command and start a watch on it. Sleep time between successive
+ * invocations of this shell command is controlled by the Option
+ * `watch:defaultSleepMs`. The `stdout` and `stderr` of the command will be
+ * printed in the current Buffer.
+ *
+ * @note Available since v1.8.0.
+ *
+ *
+ * @section watch-sleep
+ * Prompts for a command and then a sleep time (in ms) and starts a watch on it.
+ * The `stdout` and `stderr` of the command will be printed in the current
+ * Buffer.
+ *
+ * @note Available since v1.8.0.
+ *
+ *
+ * @section watch_stop watch::stop
+ * Stops the currently running watch command.
+ *
+ * @note Available since v1.8.0.
+ *
+ *
+ * @section watch_restart watch::restart
+ * Restarts the previously stopped watch command.
+ *
+ * @note Available since v1.8.0
  */
 
 Buffer& getWatchBuff(Editor& ed) {
@@ -23,16 +51,6 @@ Buffer& getWatchBuff(Editor& ed) {
   return buf;
 }
 
-/**
- * @page watch_ops
- * @section watch
- * Prompts for a command and start a watch on it. Sleep time between successive
- * invocations of this shell command is controlled by the Option
- * `watch:defaultSleepMs`. The `stdout` and `stderr` of the command will be
- * printed in the current Buffer.
- *
- * @note Available since v1.8.0.
- */
 DEF_CMD(Watch, "watch", "ledger_ops", DEF_OP() {
     auto cmd = ed.prompt("Command to watch: ");
     if (cmd.empty()) return;
@@ -43,15 +61,6 @@ DEF_CMD(Watch, "watch", "ledger_ops", DEF_OP() {
     mode->start(&buf, cmd);
   });
 
-/**
- * @page watch_ops
- * @section watch-sleep
- * Prompts for a command and then a sleep time (in ms) and starts a watch on it.
- * The `stdout` and `stderr` of the command will be printed in the current
- * Buffer.
- *
- * @note Available since v1.8.0.
- */
 DEF_CMD(WatchSleep, "watch-sleep", "ledger_ops", DEF_OP() {
     auto cmd = ed.prompt("Command to watch: ");
     if (cmd.empty()) return;
@@ -65,13 +74,6 @@ DEF_CMD(WatchSleep, "watch-sleep", "ledger_ops", DEF_OP() {
     mode->start(&buf, cmd, str2num(sleep));
   });
 
-/**
- * @page watch_ops
- * @section watch_stop watch::stop
- * Stops the currently running watch command.
- *
- * @note Available since v1.8.0.
- */
 DEF_CMD(WatchStop, "watch::stop", "ledger_ops", DEF_OP() {
     CMBAR_MSG(ed, "Waiting for previously running command to complete...\n");
     auto& buf = getWatchBuff(ed);
@@ -81,13 +83,6 @@ DEF_CMD(WatchStop, "watch::stop", "ledger_ops", DEF_OP() {
     CMBAR_MSG(ed, "Watch command stopped successfully\n");
   });
 
-/**
- * @page watch_ops
- * @section watch_restart watch::restart
- * Restarts the previously stopped watch command.
- *
- * @note Available since v1.8.0
- */
 DEF_CMD(WatchRestart, "watch::restart", "ledger_ops", DEF_OP() {
     CMBAR_MSG(ed, "Restarting the watch command...\n");
     auto& buf = getWatchBuff(ed);

@@ -9,10 +9,59 @@ namespace calc {
 namespace ops {
 
 /**
- * @page calc_ops Operations in calc-mode
+ * @page calc_ops calc-mode
  * All operations that are supported while under `calc-mode`
  *
  * @tableofcontents
+ *
+ *
+ * @section calc
+ * Starts the calculator under `calc-mode`, if not already done.
+ *
+ * @note Available since v1.7.0
+ *
+ *
+ * @section calc_history calc::history
+ * Opens a prompt with a list of previoulsy entered commands to quickly search
+ * and jump to the command of interest to be shown in the current prompt instead
+ *
+ * @note Available since v1.7.0
+ *
+ *
+ * @section calc_insert-char .calc::insert-char
+ * Inserts currently pressed char into buffer, at the current calculator line.
+ *
+ * @note Available since v1.7.0
+ *
+ * @note Preceeding `.` implies that this command is not searchable from the
+ *        editor command prompt.
+ *
+ *
+ * @section calc_enter calc::enter
+ * Evaluate the current expression and print the result below it.
+ * 
+ * @note Available since v1.7.0
+ *
+ *
+ * @section calc_backspace-char calc::backspace-char
+ * Removes the char to the left of the cursor, from the current line.
+ * 
+ * @note Available since v1.7.0
+ *
+ *
+ * @section calc_delete-char calc::delete-char
+ * Removes the char on the cursor, from the current line.
+ *
+ * @note Available since v1.7.0
+ *
+ *
+ * @section calc_kill-line calc::kill-line
+ * Removes the rest of the line and copies it to the clipboard.
+ * 
+ * @note Available since v1.7.0
+ *
+ * @note Currently editor has a notion of clipboard that is separate from the
+ *        OS provided system clipboard!
  */
 
 Buffer& getCalcBuff(Editor& ed) {
@@ -71,27 +120,12 @@ void insertChar(Buffer& buf, char c, Editor& ed) {
 }
 
 
-/**
- * @page calc_ops
- * @section calc
- * Starts the calculator under `calc-mode`, if not already done.
- *
- * @note Available since v1.7.0
- */
 DEF_CMD(Calc, "calc", "calc_ops", DEF_OP() {
     auto& buf = getCalcBuff(ed);
     printHeader(buf);
     ed.switchToBuff("*calc");
   });
 
-/**
- * @page calc_ops
- * @section calc_history calc::history
- * Opens a prompt with a list of previoulsy entered commands to quickly search
- * and jump to the command of interest to be shown in the current prompt instead
- *
- * @note Available since v1.7.0
- */
 DEF_CMD(CommandHistory, "calc::history", "calc_ops", DEF_OP() {
     StringChoices sc(cmds().get());
     auto cmd = ed.prompt("Calc Command History: ", nullptr, &sc);
@@ -103,26 +137,9 @@ DEF_CMD(CommandHistory, "calc::history", "calc_ops", DEF_OP() {
     buf.insert(cmd);
   });
 
-/**
- * @page calc_ops
- * @section calc_insert-char .calc::insert-char
- * Inserts currently pressed char into buffer, at the current calculator line.
- *
- * @note Available since v1.7.0
- *
- * @note Preceeding `.` implies that this command is not searchable from the
- *        editor command prompt.
- */
 DEF_CMD(InsertChar, ".calc::insert-char", "calc_ops",
         DEF_OP() { insertChar(ed.getBuff(), (char)ed.getKey(), ed); });
 
-/**
- * @page calc_ops
- * @section calc_enter calc::enter
- * Evaluate the current expression and print the result below it.
- * 
- * @note Available since v1.7.0
- */
 DEF_CMD(Evaluate, "calc::enter", "calc_ops", DEF_OP() {
     auto& buf = ed.getBuff();
     Parser parser;
@@ -142,13 +159,6 @@ DEF_CMD(Evaluate, "calc::enter", "calc_ops", DEF_OP() {
     printHeader(buf);  // insert the next prompt
   });
 
-/**
- * @page calc_ops
- * @section calc_backspace-char calc::backspace-char
- * Removes the char to the left of the cursor, from the current line.
- * 
- * @note Available since v1.7.0
- */
 DEF_CMD(BackspaceChar, "calc::backspace-char", "calc_ops", DEF_OP() {
     auto& buf = ed.getBuff();
     if (buf.isRegionActive()) buf.stopRegion();
@@ -159,13 +169,6 @@ DEF_CMD(BackspaceChar, "calc::backspace-char", "calc_ops", DEF_OP() {
     buf.remove();
   });
 
-/**
- * @page calc_ops
- * @section calc_delete-char calc::delete-char
- * Removes the char on the cursor, from the current line.
- * 
- * @note Available since v1.7.0
- */
 DEF_CMD(DeleteChar, "calc::delete-char", "calc_ops", DEF_OP() {
     auto& buf = ed.getBuff();
     if (buf.isRegionActive()) buf.stopRegion();
@@ -176,16 +179,6 @@ DEF_CMD(DeleteChar, "calc::delete-char", "calc_ops", DEF_OP() {
     buf.remove(true);
   });
 
-/**
- * @page calc_ops
- * @section calc_kill-line calc::kill-line
- * Removes the rest of the line and copies it to the clipboard.
- * 
- * @note Available since v1.7.0
- *
- * @note Currently editor has a notion of clipboard that is separate from the
- *        OS provided system clipboard!
- */
 DEF_CMD(KillLine, "calc::kill-line", "calc_ops", DEF_OP() {
     auto& buf = ed.getBuff();
     if (buf.isRegionActive()) buf.stopRegion();
