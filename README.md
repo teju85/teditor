@@ -1,5 +1,5 @@
-
 | OS           | Builds   | Status |
+| ------------ | -------- | ------ |
 | Ubuntu 18.04 | Release  | ![release-build](https://github.com/teju85/teditor/workflows/release-build/badge.svg) |
 |              | Debug    | ![debug-build](https://github.com/teju85/teditor/workflows/debug-build/badge.svg) |
 |              | Docs     | ![docs-build](https://github.com/teju85/teditor/workflows/docs-build/badge.svg) |
