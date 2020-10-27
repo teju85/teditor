@@ -60,7 +60,7 @@ CXXFLAGS       := -std=$(STDCXX) -Wall -Werror $(INCS)
 LD             := g++
 LDFLAGS        :=
 
-ifeq ($(OS_NAME),GNU/Linux)
+ifeq ($(OS_NAME),GNU_Linux)
     LIBS       += -L/usr/lib64 -lpthread
     CXXFLAGS   += -Wno-unused-function
 endif
