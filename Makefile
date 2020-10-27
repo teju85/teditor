@@ -6,9 +6,11 @@ VERBOSE        ?= 0
 BINROOT        ?= bin
 CURL_OPTS      ?=
 
+OS_NAME        := $(shell uname -o | sed -e 's/\//_/g')
 # NOTE: Change this to increment release version
 VERSION        := 1.8.0
-RELEASE_DIR    := teditor-$(VERSION)
+RELEASE_ROOT   := teditor-$(VERSION)
+RELEASE_DIR    := $(RELEASE_ROOT)/$(OS_NAME)
 
 ifeq ($(DEBUG),1)
     TYPE       := Debug
@@ -23,7 +25,6 @@ else
     CURL_QUIET := -s
 endif
 
-OS_NAME        := $(shell uname -o)
 ifeq ($(OS_NAME),Cygwin)
     STDCXX     := gnu++14
 else
@@ -93,6 +94,8 @@ default:
 	@echo "  clean       - Clean the build files"
 	@echo "  clean_all   - Clean even the build files"
 	@echo "  release     - Prepare release package"
+	@echo "  package     - After preparing release packages for all"
+	@echo "                supported platforms, tarball this folder."
 	@echo "  stats       - Source code statistics"
 	@echo "  teditor     - Build the editor"
 	@echo "  tests       - Build the unit-tests and run them"
@@ -111,8 +114,12 @@ release:
 	$(MKDIR_P) $(RELEASE_DIR)/Release $(RELEASE_DIR)/Debug
 	cp $(BINROOT)/Release/teditor $(RELEASE_DIR)/Release
 	cp $(BINROOT)/Debug/teditor $(RELEASE_DIR)/Debug
-	cp -r $(BINROOT)/html/html $(RELEASE_DIR)
-	tar cjf $(RELEASE_DIR).tar.gz $(RELEASE_DIR)
+	rm -rf $(RELEASE_ROOT)/docs
+	cp -r $(BINROOT)/html/html $(RELEASE_ROOT)/docs
+	rm -rf $(BINROOT)/html
+
+package:
+	tar xjf $(RELEASE_ROOT).tar.gz $(RELEASE_ROOT)
 
 teditor: $(EXE)
 
