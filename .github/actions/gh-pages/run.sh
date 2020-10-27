@@ -27,7 +27,7 @@ git checkout "$target_branch"
 echo "Removing old documentation..."
 rm -rf *.html *.js *.css *.png search/
 echo "Copying the new documentation..."
-cp -r bin/html/html/* .
+cp -r bin/html/* .
 echo "Committing..."
 git add .
 git commit -m "updated GitHub Pages"
