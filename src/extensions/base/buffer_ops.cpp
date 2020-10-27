@@ -16,7 +16,7 @@ namespace ops {
 
 /**
  * @page buffer_ops
- * @section command-undo command-undo
+ * @section command-undo
  * Undo the effect of previously executed command on the current buffer
  *
  * Only the effect of those commands which would have edited the buffer contents
@@ -35,7 +35,7 @@ DEF_CMD(
 
 /**
  * @page buffer_ops
- * @section command-redo command-redo
+ * @section command-redo
  * Redo the effect of previously undo'd command on the current buffer.
  *
  * Available for all modes which enable editing.
@@ -108,7 +108,7 @@ DEF_CMD(DeleteChar, ".delete-char",
 
 /**
  * @page buffer_ops
- * @section kill-line kill-line
+ * @section kill-line
  * Removes the rest of the line and copies it to the clipboard.
  *
  * @note Available since v1.0.0
@@ -165,7 +165,7 @@ void keepRemoveLines(Editor& ed, bool keep) {
 
 /**
  * @page buffer_ops
- * @section keep-lines keep-lines
+ * @section keep-lines
  * Prompts for a regex and only keeps those lines that match this regex in the
  * whole Buffer.
  *
@@ -180,7 +180,7 @@ DEF_CMD(
 
 /**
  * @page buffer_ops
- * @section remove-lines remove-lines
+ * @section remove-lines
  * Prompts for a regex and only removes those lines that match this regex in the
  * whole Buffer.
  *
@@ -222,7 +222,7 @@ DEF_CMD(
 
 /**
  * @page buffer_ops
- * @section start-region start-region
+ * @section start-region
  * Start a region from the current cursor position. The background color of the
  * active region changes from the default in order to notify the users of the
  * active region in the current Buffer.
@@ -243,7 +243,7 @@ DEF_CMD(
 
 /**
  * @page buffer_ops
- * @section cancel cancel
+ * @section cancel
  * Cancels the following things:
  * 1. active region in the current Buffer, if there's one.
  * 2. ongoing @ref search operation.
@@ -259,7 +259,7 @@ DEF_CMD(
 
 /**
  * @page buffer_ops
- * @section paste-region paste-region
+ * @section paste-region
  * Copies the last copied (or cut) region from the *internal* clipboard.
  *
  * @note Currently editor has a notion of clipboard that is separate from the
@@ -280,7 +280,7 @@ DEF_CMD(
 
 /**
  * @page buffer_ops
- * @section copy-region copy-region
+ * @section copy-region
  * Copies the currently active region's contents into the *internal* clipboard
  * for a future @ref paste-region command.
  *
@@ -305,7 +305,7 @@ DEF_CMD(
 
 /**
  * @page buffer_ops
- * @section cut-region cut-region
+ * @section cut-region
  * Cuts the currently active region and copies its contents into the *internal*
  * clipboard for a future @ref paste-region command.
  *
@@ -332,7 +332,7 @@ DEF_CMD(
 
 /**
  * @page buffer_ops
- * @section download-to-buffer download-to-buffer
+ * @section download-to-buffer
  * Prompt the user for a URL and downloads the contents of that URL into the
  * current Buffer from the current cursor location onwards.
  *
@@ -356,7 +356,7 @@ DEF_CMD(
 
 /**
  * @page buffer_ops
- * @section search search
+ * @section search
  * Search for the user supplied string of chars in the current Buffer and jump
  * to a matching location.
  *
@@ -384,7 +384,7 @@ DEF_CMD(
 
 /**
  * @page buffer_ops
- * @section save-buffer save-buffer
+ * @section save-buffer
  * Saves the currents of the current Buffer to the filesystem. If the file is at
  * a remote location, then it'll be stored on the filesystem of that remote
  * machine, instead.
@@ -410,7 +410,7 @@ DEF_CMD(
 
 /**
  * @page buffer_ops
- * @section pwd pwd
+ * @section pwd
  * Prints the current working directory of the current Buffer, in the status bar
  * below. This command does NOT modify the Buffer contents.
  *
@@ -425,7 +425,7 @@ DEF_CMD(
 
 /**
  * @page buffer_ops
- * @section next-buffer next-buffer
+ * @section next-buffer
  * Switch to the next Buffer in the current sesion.
  *
  * @note Available since v1.0.0
@@ -436,7 +436,7 @@ DEF_CMD(Next, "next-buffer",
 
 /**
  * @page buffer_ops
- * @section prev-buffer prev-buffer
+ * @section prev-buffer
  * Switch to the previous Buffer in the current sesion.
  *
  * @note Available since v1.0.0
@@ -447,7 +447,7 @@ DEF_CMD(Previous, "prev-buffer",
 
 /**
  * @page buffer_ops
- * @section kill-this-buffer kill-this-buffer
+ * @section kill-this-buffer
  * Kill the current Buffer. It'll check for if it is modified and then prompts
  * the users whether to save it to the filesystem, before killing it.
  *
@@ -462,7 +462,7 @@ DEF_CMD(KillThis, "kill-this-buffer",
 
 /**
  * @page buffer_ops
- * @section kill-other-buffers kill-other-buffers
+ * @section kill-other-buffers
  * Kill all the buffers other than the current one. It'll check for if those
  * buffers are modified and then prompts the users whether to save each of them
  * to the filesystem, before killing it.
@@ -478,7 +478,7 @@ DEF_CMD(KillOthers, "kill-other-buffers",
 
 /**
  * @page buffer_ops
- * @section reload-buffer reload-buffer
+ * @section reload-buffer
  * Reloads the Buffer contents from the filesystem. It'll check for if this
  * buffer is modified and then prompts the users to save it to the filesystem,
  * before reloading it.

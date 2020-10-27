@@ -20,3 +20,4 @@ These commands can either be entered via keystrokes attached to them or via the
 
 Given below are the groups of commands that are currently supported:
 1. @ref buffer_ops
+2. @ref cmbar_ops
