@@ -170,6 +170,7 @@ doc:
 	rm -rf $(DOCDIR)
 	$(MKDIR_P) $(BINDIR)
 	sed -e "s/PROJECT_NUMBER         =/PROJECT_NUMBER         = $(VERSION)/" < Doxyfile > $(BINROOT)/Doxyfile
+	doxygen -v
 	doxygen $(BINROOT)/Doxyfile
 
 $(CATCH2_DIR):
