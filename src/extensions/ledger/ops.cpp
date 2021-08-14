@@ -16,13 +16,6 @@ namespace ops {
  * @tableofcontents
  *
  *
- * @section ledger-open
- * Opens the ledger file in a new Buffer, if not already done, and switches to
- * it. Location of this file can be configured with the Option `ledger:file`.
- *
- * @note Available since v1.3.0
- *
- *
  * @section ledger-top
  * Shows all top-level account transaction summary inside a `*ledger` Buffer.
  *
@@ -43,11 +36,6 @@ Buffer& getLedgerShowBuff(Editor& ed) {
   return buf;
 }
 
-DEF_CMD(LedgerOpen, "ledger-open", "ledger_ops", DEF_OP() {
-    auto ledgerFile = Option::get("ledger:file").getStr();
-    ed.load(ledgerFile, 0);
-  });
-
 void printHeader(Buffer& buf, const TimePoint& min, const TimePoint& max) {
   std::stringstream ss;
   buf.clear();
@@ -59,8 +47,7 @@ void printHeader(Buffer& buf, const TimePoint& min, const TimePoint& max) {
   buf.insert(ss.str());
 }
 
-void showTopAccounts(Buffer& buf) {
-  auto file = Option::get("ledger:file").getStr();
+void showTopAccounts(Buffer& buf, const std::string& file) {
   Parser p(file);
   TimePoint min, max;
   p.minmaxDates(min, max);
@@ -78,14 +65,14 @@ void showTopAccounts(Buffer& buf) {
   buf.insert(format("%12s  %-16s\n", valStr.c_str(), "Total"));
 }
 
-DEF_CMD(LedgerTop, "ledger-top", "ledger_ops", DEF_OP() {
+DEF_CMD(LedgerTop, "ledger::top", "ledger_ops", DEF_OP() {
+    const auto& file = ed.getBuff().getFileName();
     auto& buf = getLedgerShowBuff(ed);
-    showTopAccounts(buf);
+    showTopAccounts(buf, file);
     ed.switchToBuff("*ledger");
   });
 
-void showAllAccounts(Buffer& buf) {
-  auto file = Option::get("ledger:file").getStr();
+void showAllAccounts(Buffer& buf, const std::string& file) {
   Parser p(file);
   TimePoint min, max;
   p.minmaxDates(min, max);
@@ -104,9 +91,10 @@ void showAllAccounts(Buffer& buf) {
   buf.insert(format("%12s  %-16s\n", valStr.c_str(), "total"));
 }
 
-DEF_CMD(Ledger, "ledger-all", "ledger_ops", DEF_OP() {
+DEF_CMD(Ledger, "ledger::all", "ledger_ops", DEF_OP() {
+    const auto& file = ed.getBuff().getFileName();
     auto& buf = getLedgerShowBuff(ed);
-    showAllAccounts(buf);
+    showAllAccounts(buf, file);
     ed.switchToBuff("*ledger");
   });
 
