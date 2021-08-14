@@ -39,7 +39,7 @@ var searchData=
   ['cmd_5fmsg_5fbar_2eh_109',['cmd_msg_bar.h',['../cmd__msg__bar_8h.html',1,'']]],
   ['cmdfilterop_110',['CmdFilterOp',['../namespaceteditor.html#a9937c216a68dafe431dc02f64b7da799',1,'teditor']]],
   ['cmdmsgbar_111',['CmdMsgBar',['../classteditor_1_1CmdMsgBar.html',1,'teditor::CmdMsgBar'],['../classteditor_1_1CmdMsgBar.html#a5db0311b6aa8fee3e35a6d4081425763',1,'teditor::CmdMsgBar::CmdMsgBar()']]],
-  ['cmdnames_112',['cmdNames',['../classteditor_1_1Buffer.html#acf5f189343c83f9482305f5962bec85d',1,'teditor::Buffer::cmdNames()'],['../classteditor_1_1Mode.html#a1f4c2654ccd7d840334a696f7ec57b44',1,'teditor::Mode::cmdNames()'],['../classteditor_1_1watch_1_1WatchMode.html#a812d2dea637d76c8f52958e7040dd59e',1,'teditor::watch::WatchMode::cmdNames()']]],
+  ['cmdnames_112',['cmdNames',['../classteditor_1_1Buffer.html#acf5f189343c83f9482305f5962bec85d',1,'teditor::Buffer::cmdNames()'],['../classteditor_1_1Mode.html#a1f4c2654ccd7d840334a696f7ec57b44',1,'teditor::Mode::cmdNames()'],['../classteditor_1_1ledger_1_1LedgerMode.html#a12835a4e331df7af7e3cd97080d876fe',1,'teditor::ledger::LedgerMode::cmdNames()'],['../classteditor_1_1watch_1_1WatchMode.html#a812d2dea637d76c8f52958e7040dd59e',1,'teditor::watch::WatchMode::cmdNames()']]],
   ['cmdregistrar_113',['CmdRegistrar',['../structteditor_1_1CmdRegistrar.html',1,'teditor::CmdRegistrar'],['../structteditor_1_1CmdRegistrar.html#a3bd5ad58e1b47d8f32088080998ee9db',1,'teditor::CmdRegistrar::CmdRegistrar()']]],
   ['cmds_114',['cmds',['../namespaceteditor.html#a48114545fa2b43650aa9d96624bd9c96',1,'teditor::cmds()'],['../namespaceteditor_1_1calc.html#a967b3c1e4d18019ac819e7c15f2cb62e',1,'teditor::calc::cmds()']]],
   ['cmdstatus_115',['CmdStatus',['../structteditor_1_1CmdStatus.html',1,'teditor']]],

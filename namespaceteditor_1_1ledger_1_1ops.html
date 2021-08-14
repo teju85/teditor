@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">teditor
-   &#160;<span id="projectnumber">1.8.0@@28a08ca</span>
+   &#160;<span id="projectnumber">1.8.0@@ce8580a</span>
    </div>
    <div id="projectbrief">Terminal based editor written in C++</div>
   </td>
@@ -78,22 +78,20 @@ $(function() {
 Functions</h2></td></tr>
 <tr class="memitem:acd602bc252d000f1fc3d71049a94dab7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classteditor_1_1Buffer.html">Buffer</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#acd602bc252d000f1fc3d71049a94dab7">getLedgerShowBuff</a> (<a class="el" href="classteditor_1_1Editor.html">Editor</a> &amp;ed)</td></tr>
 <tr class="separator:acd602bc252d000f1fc3d71049a94dab7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e173a114e11a597f56b30b181ad39c7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#a4e173a114e11a597f56b30b181ad39c7">DEF_CMD</a> (LedgerOpen, &quot;ledger-open&quot;, &quot;ledger_ops&quot;, DEF_OP() { auto ledgerFile=<a class="el" href="classteditor_1_1Option.html#a8b2705972fde931d74095678286f096f">Option::get</a>(&quot;ledger:file&quot;).getStr();ed.load(ledgerFile, 0);})</td></tr>
-<tr class="separator:a4e173a114e11a597f56b30b181ad39c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9887d058bc941754d9acc855807dc5cd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#a9887d058bc941754d9acc855807dc5cd">printHeader</a> (<a class="el" href="classteditor_1_1Buffer.html">Buffer</a> &amp;buf, const <a class="el" href="namespaceteditor.html#a0db64fc6f7320090cd20e3b90224f522">TimePoint</a> &amp;min, const <a class="el" href="namespaceteditor.html#a0db64fc6f7320090cd20e3b90224f522">TimePoint</a> &amp;max)</td></tr>
 <tr class="separator:a9887d058bc941754d9acc855807dc5cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b4a6f84bd39c00b77954a5ee6ac9752"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#a5b4a6f84bd39c00b77954a5ee6ac9752">showTopAccounts</a> (<a class="el" href="classteditor_1_1Buffer.html">Buffer</a> &amp;buf)</td></tr>
-<tr class="separator:a5b4a6f84bd39c00b77954a5ee6ac9752"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a56045cee2b95fe3106bdc58bba1575e0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#a56045cee2b95fe3106bdc58bba1575e0">DEF_CMD</a> (LedgerTop, &quot;ledger-top&quot;, &quot;ledger_ops&quot;, DEF_OP() { auto &amp;buf=<a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#acd602bc252d000f1fc3d71049a94dab7">getLedgerShowBuff</a>(ed);<a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#a5b4a6f84bd39c00b77954a5ee6ac9752">showTopAccounts</a>(buf);ed.switchToBuff(&quot;*ledger&quot;);})</td></tr>
-<tr class="separator:a56045cee2b95fe3106bdc58bba1575e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a263a94365203a99f7c89dcb008437522"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#a263a94365203a99f7c89dcb008437522">showAllAccounts</a> (<a class="el" href="classteditor_1_1Buffer.html">Buffer</a> &amp;buf)</td></tr>
-<tr class="separator:a263a94365203a99f7c89dcb008437522"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af31f8c0f73bf7a858402a8c3a10031e7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#af31f8c0f73bf7a858402a8c3a10031e7">DEF_CMD</a> (Ledger, &quot;ledger-all&quot;, &quot;ledger_ops&quot;, DEF_OP() { auto &amp;buf=<a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#acd602bc252d000f1fc3d71049a94dab7">getLedgerShowBuff</a>(ed);<a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#a263a94365203a99f7c89dcb008437522">showAllAccounts</a>(buf);ed.switchToBuff(&quot;*ledger&quot;);})</td></tr>
-<tr class="separator:af31f8c0f73bf7a858402a8c3a10031e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae0bfb3f12541423994664a56f8a057a4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#ae0bfb3f12541423994664a56f8a057a4">showTopAccounts</a> (<a class="el" href="classteditor_1_1Buffer.html">Buffer</a> &amp;buf, const std::string &amp;file)</td></tr>
+<tr class="separator:ae0bfb3f12541423994664a56f8a057a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad42bdae62bf30f53e5f104348d2f3efc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#ad42bdae62bf30f53e5f104348d2f3efc">DEF_CMD</a> (LedgerTop, &quot;ledger::top&quot;, &quot;ledger_ops&quot;, DEF_OP() { const auto &amp;file=ed.getBuff().getFileName();auto &amp;buf=<a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#acd602bc252d000f1fc3d71049a94dab7">getLedgerShowBuff</a>(ed);<a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#ae0bfb3f12541423994664a56f8a057a4">showTopAccounts</a>(buf, file);ed.switchToBuff(&quot;*ledger&quot;);})</td></tr>
+<tr class="separator:ad42bdae62bf30f53e5f104348d2f3efc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8bc410bc87a22ed3a7b15bd60d956d4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#af8bc410bc87a22ed3a7b15bd60d956d4">showAllAccounts</a> (<a class="el" href="classteditor_1_1Buffer.html">Buffer</a> &amp;buf, const std::string &amp;file)</td></tr>
+<tr class="separator:af8bc410bc87a22ed3a7b15bd60d956d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa37dee112f8dcd3c57a8267b53f538a3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#aa37dee112f8dcd3c57a8267b53f538a3">DEF_CMD</a> (Ledger, &quot;ledger::all&quot;, &quot;ledger_ops&quot;, DEF_OP() { const auto &amp;file=ed.getBuff().getFileName();auto &amp;buf=<a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#acd602bc252d000f1fc3d71049a94dab7">getLedgerShowBuff</a>(ed);<a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#af8bc410bc87a22ed3a7b15bd60d956d4">showAllAccounts</a>(buf, file);ed.switchToBuff(&quot;*ledger&quot;);})</td></tr>
+<tr class="separator:aa37dee112f8dcd3c57a8267b53f538a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="af31f8c0f73bf7a858402a8c3a10031e7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af31f8c0f73bf7a858402a8c3a10031e7">&#9670;&nbsp;</a></span>DEF_CMD() <span class="overload">[1/3]</span></h2>
+<a id="aa37dee112f8dcd3c57a8267b53f538a3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa37dee112f8dcd3c57a8267b53f538a3">&#9670;&nbsp;</a></span>DEF_CMD() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -107,7 +105,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">&quot;ledger-all&quot;&#160;</td>
+          <td class="paramtype">&quot;ledger::all&quot;&#160;</td>
           <td class="paramname">, </td>
         </tr>
         <tr>
@@ -119,7 +117,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="command_8h.html#a033b8ddc7a4bf1c81d858f5c0121b0cd">DEF_OP</a>() { auto &amp;buf=<a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#acd602bc252d000f1fc3d71049a94dab7">getLedgerShowBuff</a>(ed);<a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#a263a94365203a99f7c89dcb008437522">showAllAccounts</a>(buf);ed.switchToBuff(&quot;*ledger&quot;);}&#160;</td>
+          <td class="paramtype"><a class="el" href="command_8h.html#a033b8ddc7a4bf1c81d858f5c0121b0cd">DEF_OP</a>() { const auto &amp;file=ed.getBuff().getFileName();auto &amp;buf=<a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#acd602bc252d000f1fc3d71049a94dab7">getLedgerShowBuff</a>(ed);<a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#af8bc410bc87a22ed3a7b15bd60d956d4">showAllAccounts</a>(buf, file);ed.switchToBuff(&quot;*ledger&quot;);}&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>
@@ -132,48 +130,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a4e173a114e11a597f56b30b181ad39c7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4e173a114e11a597f56b30b181ad39c7">&#9670;&nbsp;</a></span>DEF_CMD() <span class="overload">[2/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">teditor::ledger::ops::DEF_CMD </td>
-          <td>(</td>
-          <td class="paramtype">LedgerOpen&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&quot;ledger-open&quot;&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&quot;ledger_ops&quot;&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="command_8h.html#a033b8ddc7a4bf1c81d858f5c0121b0cd">DEF_OP</a>() { auto ledgerFile=<a class="el" href="classteditor_1_1Option.html#a8b2705972fde931d74095678286f096f">Option::get</a>(&quot;ledger:file&quot;).getStr();ed.load(ledgerFile, 0);}&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a56045cee2b95fe3106bdc58bba1575e0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a56045cee2b95fe3106bdc58bba1575e0">&#9670;&nbsp;</a></span>DEF_CMD() <span class="overload">[3/3]</span></h2>
+<a id="ad42bdae62bf30f53e5f104348d2f3efc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad42bdae62bf30f53e5f104348d2f3efc">&#9670;&nbsp;</a></span>DEF_CMD() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -187,7 +145,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">&quot;ledger-top&quot;&#160;</td>
+          <td class="paramtype">&quot;ledger::top&quot;&#160;</td>
           <td class="paramname">, </td>
         </tr>
         <tr>
@@ -199,7 +157,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="command_8h.html#a033b8ddc7a4bf1c81d858f5c0121b0cd">DEF_OP</a>() { auto &amp;buf=<a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#acd602bc252d000f1fc3d71049a94dab7">getLedgerShowBuff</a>(ed);<a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#a5b4a6f84bd39c00b77954a5ee6ac9752">showTopAccounts</a>(buf);ed.switchToBuff(&quot;*ledger&quot;);}&#160;</td>
+          <td class="paramtype"><a class="el" href="command_8h.html#a033b8ddc7a4bf1c81d858f5c0121b0cd">DEF_OP</a>() { const auto &amp;file=ed.getBuff().getFileName();auto &amp;buf=<a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#acd602bc252d000f1fc3d71049a94dab7">getLedgerShowBuff</a>(ed);<a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#ae0bfb3f12541423994664a56f8a057a4">showTopAccounts</a>(buf, file);ed.switchToBuff(&quot;*ledger&quot;);}&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>
@@ -264,8 +222,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a263a94365203a99f7c89dcb008437522"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a263a94365203a99f7c89dcb008437522">&#9670;&nbsp;</a></span>showAllAccounts()</h2>
+<a id="af8bc410bc87a22ed3a7b15bd60d956d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af8bc410bc87a22ed3a7b15bd60d956d4">&#9670;&nbsp;</a></span>showAllAccounts()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -274,16 +232,26 @@ Functions</h2></td></tr>
           <td class="memname">void teditor::ledger::ops::showAllAccounts </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classteditor_1_1Buffer.html">Buffer</a> &amp;&#160;</td>
-          <td class="paramname"><em>buf</em></td><td>)</td>
+          <td class="paramname"><em>buf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>file</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a5b4a6f84bd39c00b77954a5ee6ac9752"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5b4a6f84bd39c00b77954a5ee6ac9752">&#9670;&nbsp;</a></span>showTopAccounts()</h2>
+<a id="ae0bfb3f12541423994664a56f8a057a4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae0bfb3f12541423994664a56f8a057a4">&#9670;&nbsp;</a></span>showTopAccounts()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -292,8 +260,18 @@ Functions</h2></td></tr>
           <td class="memname">void teditor::ledger::ops::showTopAccounts </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classteditor_1_1Buffer.html">Buffer</a> &amp;&#160;</td>
-          <td class="paramname"><em>buf</em></td><td>)</td>
+          <td class="paramname"><em>buf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>file</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">

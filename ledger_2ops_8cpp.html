@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">teditor
-   &#160;<span id="projectnumber">1.8.0@@28a08ca</span>
+   &#160;<span id="projectnumber">1.8.0@@ce8580a</span>
    </div>
    <div id="projectbrief">Terminal based editor written in C++</div>
   </td>
@@ -94,18 +94,16 @@ Namespaces</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:acd602bc252d000f1fc3d71049a94dab7"><td class="memItemLeft" align="right" valign="top">Buffer &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#acd602bc252d000f1fc3d71049a94dab7">teditor::ledger::ops::getLedgerShowBuff</a> (Editor &amp;ed)</td></tr>
 <tr class="separator:acd602bc252d000f1fc3d71049a94dab7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e173a114e11a597f56b30b181ad39c7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#a4e173a114e11a597f56b30b181ad39c7">teditor::ledger::ops::DEF_CMD</a> (LedgerOpen, &quot;ledger-open&quot;, &quot;ledger_ops&quot;, DEF_OP() { auto ledgerFile=Option::get(&quot;ledger:file&quot;).getStr();ed.load(ledgerFile, 0);})</td></tr>
-<tr class="separator:a4e173a114e11a597f56b30b181ad39c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9887d058bc941754d9acc855807dc5cd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#a9887d058bc941754d9acc855807dc5cd">teditor::ledger::ops::printHeader</a> (Buffer &amp;buf, const TimePoint &amp;min, const TimePoint &amp;max)</td></tr>
 <tr class="separator:a9887d058bc941754d9acc855807dc5cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b4a6f84bd39c00b77954a5ee6ac9752"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#a5b4a6f84bd39c00b77954a5ee6ac9752">teditor::ledger::ops::showTopAccounts</a> (Buffer &amp;buf)</td></tr>
-<tr class="separator:a5b4a6f84bd39c00b77954a5ee6ac9752"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a56045cee2b95fe3106bdc58bba1575e0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#a56045cee2b95fe3106bdc58bba1575e0">teditor::ledger::ops::DEF_CMD</a> (LedgerTop, &quot;ledger-top&quot;, &quot;ledger_ops&quot;, DEF_OP() { auto &amp;buf=getLedgerShowBuff(ed);showTopAccounts(buf);ed.switchToBuff(&quot;*ledger&quot;);})</td></tr>
-<tr class="separator:a56045cee2b95fe3106bdc58bba1575e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a263a94365203a99f7c89dcb008437522"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#a263a94365203a99f7c89dcb008437522">teditor::ledger::ops::showAllAccounts</a> (Buffer &amp;buf)</td></tr>
-<tr class="separator:a263a94365203a99f7c89dcb008437522"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af31f8c0f73bf7a858402a8c3a10031e7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#af31f8c0f73bf7a858402a8c3a10031e7">teditor::ledger::ops::DEF_CMD</a> (Ledger, &quot;ledger-all&quot;, &quot;ledger_ops&quot;, DEF_OP() { auto &amp;buf=getLedgerShowBuff(ed);showAllAccounts(buf);ed.switchToBuff(&quot;*ledger&quot;);})</td></tr>
-<tr class="separator:af31f8c0f73bf7a858402a8c3a10031e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae0bfb3f12541423994664a56f8a057a4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#ae0bfb3f12541423994664a56f8a057a4">teditor::ledger::ops::showTopAccounts</a> (Buffer &amp;buf, const std::string &amp;file)</td></tr>
+<tr class="separator:ae0bfb3f12541423994664a56f8a057a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad42bdae62bf30f53e5f104348d2f3efc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#ad42bdae62bf30f53e5f104348d2f3efc">teditor::ledger::ops::DEF_CMD</a> (LedgerTop, &quot;ledger::top&quot;, &quot;ledger_ops&quot;, DEF_OP() { const auto &amp;file=ed.getBuff().getFileName();auto &amp;buf=getLedgerShowBuff(ed);showTopAccounts(buf, file);ed.switchToBuff(&quot;*ledger&quot;);})</td></tr>
+<tr class="separator:ad42bdae62bf30f53e5f104348d2f3efc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8bc410bc87a22ed3a7b15bd60d956d4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#af8bc410bc87a22ed3a7b15bd60d956d4">teditor::ledger::ops::showAllAccounts</a> (Buffer &amp;buf, const std::string &amp;file)</td></tr>
+<tr class="separator:af8bc410bc87a22ed3a7b15bd60d956d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa37dee112f8dcd3c57a8267b53f538a3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceteditor_1_1ledger_1_1ops.html#aa37dee112f8dcd3c57a8267b53f538a3">teditor::ledger::ops::DEF_CMD</a> (Ledger, &quot;ledger::all&quot;, &quot;ledger_ops&quot;, DEF_OP() { const auto &amp;file=ed.getBuff().getFileName();auto &amp;buf=getLedgerShowBuff(ed);showAllAccounts(buf, file);ed.switchToBuff(&quot;*ledger&quot;);})</td></tr>
+<tr class="separator:aa37dee112f8dcd3c57a8267b53f538a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
