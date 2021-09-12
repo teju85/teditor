@@ -30,7 +30,7 @@ const Command& getCmd(const std::string& cmd) {
 Strings allCmdNames(CmdFilterOp filterOp) {
   auto& cs = cmds();
   Strings ret;
-  for(const auto itr : cs)
+  for(const auto& itr : cs)
     if (filterOp(itr.first)) ret.push_back(itr.first);
   return ret;
 }

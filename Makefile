@@ -10,7 +10,7 @@ VERSION        := 1.8.0
 MKDIR_P        := mkdir -p
 CURL           := curl
 OS_NAME        := $(shell uname -o | sed -e 's:/:_:g')
-IS_WSL         := $(shell uname -r | grep Microsoft)
+IS_WSL         := $(shell uname -r | grep -i microsoft)
 ifeq ($(IS_WSL),)
     REL_NAME   := $(OS_NAME)
 else
@@ -66,7 +66,7 @@ INCLUDES       := $(SRC) \
 LIBS           :=
 INCS           := $(foreach inc,$(INCLUDES),-I$(inc))
 CXX            := g++
-CXXFLAGS       := -std=$(STDCXX) -Wall -Werror $(INCS)
+CXXFLAGS       := -std=$(STDCXX) -Wall -Werror $(INCS) -Wno-error=unused-function
 LD             := g++
 LDFLAGS        :=
 

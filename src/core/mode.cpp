@@ -17,7 +17,7 @@ Strings allModeNames() {
   auto& m = modes();
   Strings ret;
   // 'cmbar' is not really a mode per-se!
-  for(const auto itr : m)
+  for(const auto& itr : m)
     if(itr.first != "cmbar") ret.push_back(itr.first);
   return ret;
 }
@@ -40,7 +40,7 @@ Mode::Registrar::Registrar(const std::string& mode, ModeCreator fptr,
 std::string Mode::inferMode(const std::string& file, bool isDir) {
   auto& i = infers();
   if(isDir) return "dir";  // special case for directories
-  for(const auto itr : i)
+  for(const auto& itr : i)
     if(itr.second(file)) return itr.first;
   return "text";  // default mode
 }
