@@ -114,6 +114,11 @@ default:
 	@echo "            logging in Logger class. [$(DEBUG)]"
 	@echo "  VERBOSE - Print the actual commands. [$(VERBOSE)]"
 	@echo "  BINROOT - Root directory where to store build files. [$(BINROOT)]"
+	@echo "  CUSTOM_LEDGER_FILE - Path to a ledger file which can be passed"
+	@echo "                       to unit-tests to parse in order to verify"
+	@echo "                       its correctness. A quick-n-dirty way to"
+	@echo "                       debug your ledger file when it causes issues"
+	@echo "                       with the editor! [$(CUSTOM_LEDGER_FILE)]"
 
 release:
 	$(MKDIR_P) $(RELEASE_DIR)
