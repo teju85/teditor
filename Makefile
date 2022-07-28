@@ -111,9 +111,9 @@ default:
 	@echo "  tests       - Build the unit-tests and run them"
 	@echo "Flags to customize behavior:"
 	@echo "  DEBUG   - Get a debug build if it is 1. Also enables debug"
-	@echo "            logging in Logger class. [0]"
-	@echo "  VERBOSE - Print the actual commands. [0]"
-	@echo "  BINROOT - Root directory where to store build files. [bin/]"
+	@echo "            logging in Logger class. [$(DEBUG)]"
+	@echo "  VERBOSE - Print the actual commands. [$(VERBOSE)]"
+	@echo "  BINROOT - Root directory where to store build files. [$(BINROOT)]"
 
 release:
 	$(MKDIR_P) $(RELEASE_DIR)
