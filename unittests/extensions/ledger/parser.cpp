@@ -1,4 +1,5 @@
 #include "extensions/ledger/parser.h"
+#include "core/utils.h"
 #include "catch.hpp"
 
 
@@ -57,6 +58,13 @@ TEST_CASE("Parser::minMaxDates") {
   p.minmaxDates(min, max);
   REQUIRE("2018-08-04" == timeToDateStr(min));
   REQUIRE("2018-09-10" == timeToDateStr(max));
+}
+
+TEST_CASE("Parser::customFile") {
+  auto customFile = env("CUSTOM_LEDGER_FILE");
+  if (!customFile.empty()) {
+    Parser p(customFile);
+  }
 }
 
 void parse(const std::string& file) {
