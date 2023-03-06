@@ -35,7 +35,7 @@ Very minimal set of pre-reqs are needed for this project.
 git clone https://github.com/teju85/teditor
 cd teditor
 make -j teditor
-./bin/Release/teditor
+./bin/<os>/Release/teditor
 ```
 
 NOTE: If you have customized your minttyrc for the user configured colors, then
